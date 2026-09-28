@@ -10,6 +10,8 @@ export function Stage({ shadowScale }: { shadowScale: number }) {
       <hemisphereLight args={['#ffffff', '#d9d2c7', 0.55]} />
       <directionalLight position={[2.5, 5, 3.5]} intensity={1.1} />
       <Environment resolution={256} frames={1}>
+        {/* Estudio claro: sin esto los metales reflejan negro. */}
+        <color attach="background" args={['#cfcac2']} />
         <Lightformer form="rect" intensity={2.2} position={[0, 4, 3]} scale={[8, 3, 1]} target={[0, 0, 0]} />
         <Lightformer form="rect" intensity={1.4} position={[-5, 1.5, 1]} scale={[1.2, 6, 1]} target={[0, 1, 0]} />
         <Lightformer form="rect" intensity={1.0} position={[5, 1.5, -1]} scale={[1.2, 6, 1]} target={[0, 1, 0]} />

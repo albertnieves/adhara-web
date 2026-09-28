@@ -1,5 +1,7 @@
 import type { ProductConfig } from '../products';
 import { latheShoulderSize } from './bottles/latheShoulder';
+import { rectPrismSize } from './bottles/RectPrismBottle';
+import { squareGlassSize } from './bottles/SquareGlassBottle';
 import { MM } from './units';
 
 /** Medidas del producto en unidades de escena (escala incluida). */
@@ -9,6 +11,10 @@ export function productDims(p: ProductConfig) {
     switch (p.bottle.archetype) {
       case 'lathe-shoulder':
         return latheShoulderSize(p.bottle);
+      case 'rect-prism':
+        return rectPrismSize(p.bottle);
+      case 'square-glass':
+        return squareGlassSize(p.bottle);
     }
   })();
   const box = p.measurements.box;

@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { motionSpec } from './motion/spec';
 import { Timeline, type Phase } from './motion/timeline';
 import { products } from './products';
-import { UnboxingScene } from './scene/UnboxingScene';
+import { UnboxingScene, type FrameStats } from './scene/UnboxingScene';
 import { DebugDock } from './ui/DebugDock';
 import { DraftBadge } from './ui/DraftBadge';
 import { detectWebGL, usePrefersReducedMotion } from './ui/env';
@@ -23,7 +23,9 @@ export function App() {
   );
   const product = products.find((p) => p.slug === slug) ?? products[0]!;
   const [speed, setSpeed] = useState(1);
-  const [grey, setGrey] = useState(true);
+  const [grey, setGrey] = useState(
+    () => new URLSearchParams(window.location.search).get('grey') === '1',
+  );
   const [simReduced, setSimReduced] = useState(false);
   const realReduced = usePrefersReducedMotion();
   const reduced = realReduced || simReduced;
@@ -35,6 +37,7 @@ export function App() {
   const [dockOpen, setDockOpen] = useState(() => window.innerWidth >= 768);
   const fpsRef = useRef<HTMLSpanElement>(null);
   const timeRef = useRef<HTMLSpanElement>(null);
+  const costRef = useRef<HTMLSpanElement>(null);
 
   useEffect(
     () =>
@@ -77,8 +80,10 @@ export function App() {
   const skip = useCallback(() => timeline.skipToEnd(), [timeline]);
 
   const onFps = useCallback(
-    (fps: number) => {
+    ({ fps, calls, triangles }: FrameStats) => {
       if (fpsRef.current) fpsRef.current.textContent = fps.toFixed(0);
+      if (costRef.current)
+        costRef.current.textContent = `${calls} draw calls · ${(triangles / 1000).toFixed(1)}k tris`;
       if (timeRef.current) timeRef.current.textContent = timeline.t.toFixed(2);
     },
     [timeline],
@@ -107,6 +112,7 @@ export function App() {
         phase={phase}
         fpsRef={fpsRef}
         timeRef={timeRef}
+        costRef={costRef}
         open={dockOpen}
         onOpen={setDockOpen}
       />

@@ -29,6 +29,7 @@ interface Props {
   phase: Phase;
   fpsRef: Ref<HTMLSpanElement>;
   timeRef: Ref<HTMLSpanElement>;
+  costRef: Ref<HTMLSpanElement>;
   open: boolean;
   onOpen: (v: boolean) => void;
 }
@@ -102,6 +103,10 @@ export function DebugDock(p: Props) {
             Simular reduced motion
           </label>
           <p className="dock__info">
+            <span ref={p.costRef} data-testid="cost">
+              –
+            </span>
+            {' · '}
             {p.realReduced && 'prefers-reduced-motion activo en el sistema · '}
             {p.webgl ? 'WebGL disponible' : 'Sin WebGL: fallback'}
           </p>
