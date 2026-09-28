@@ -1,0 +1,7 @@
+{
+  "setup": {
+    "status": "Development environment ready.",
+    "catalog": "Catalog",
+    "empty": "The catalog will be added using verified data."
+  }
+}

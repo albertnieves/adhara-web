@@ -1,0 +1,26 @@
+@import 'tailwindcss';
+@theme {
+  --color-surface: #fafafa;
+  --color-ink: #202020;
+}
+body {
+  background: var(--color-surface);
+  color: var(--color-ink);
+  font-family: system-ui, sans-serif;
+}
+main {
+  max-width: 64rem;
+  margin-inline: auto;
+  padding: 2rem;
+}
+h1 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+a {
+  text-decoration: underline;
+}
+a:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 4px;
+}
