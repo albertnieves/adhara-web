@@ -1,0 +1,367 @@
+:root {
+  --bg: #f6f4f0;
+  --surface: #ffffff;
+  --ink: #1c1a17;
+  --muted: #6d675f;
+  --line: #e4dfd7;
+  --accent: #8a6d3b;
+  --serif: 'Iowan Old Style', 'Palatino Linotype', Palatino, 'Book Antiqua', Georgia, serif;
+  --sans: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
+    sans-serif;
+  color-scheme: light;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+button,
+select,
+input {
+  font: inherit;
+  color: inherit;
+}
+
+.app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100svh;
+}
+
+/* ---------- Controles de revisión (fuera de la escena) ---------- */
+
+.dock {
+  position: relative;
+  z-index: 5;
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
+  font-size: 12px;
+  line-height: 1.3;
+}
+
+.dock__bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 16px;
+  white-space: nowrap;
+}
+
+.dock__title {
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-size: 11px;
+}
+
+.dock__phase {
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--ink);
+  color: var(--bg);
+  font-variant-numeric: tabular-nums;
+}
+
+.dock__metric {
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.dock__toggle {
+  margin-left: auto;
+}
+
+.dock__body {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 20px;
+  padding: 4px 16px 12px;
+}
+
+.dock button,
+.dock select {
+  border: 1px solid var(--line);
+  background: var(--surface);
+  border-radius: 6px;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+.dock button:hover {
+  border-color: var(--muted);
+}
+
+.btns {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.field {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.field--range output {
+  min-width: 3.2em;
+  font-variant-numeric: tabular-nums;
+}
+
+.check {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+.dock__info {
+  margin: 0;
+  color: var(--muted);
+  flex-basis: 100%;
+}
+
+/* ---------- Escena ---------- */
+
+.stage {
+  position: relative;
+  flex: 1;
+  min-height: 560px;
+  overflow: hidden;
+}
+
+.stage__canvas {
+  position: absolute;
+  inset: 0;
+}
+
+.stage__canvas canvas {
+  touch-action: none;
+}
+
+.draft-badge {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  z-index: 3;
+  padding: 4px 10px;
+  border: 1px solid #b4412f;
+  color: #b4412f;
+  background: rgb(255 255 255 / 0.85);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border-radius: 4px;
+  pointer-events: none;
+}
+
+.replay {
+  position: absolute;
+  z-index: 3;
+  left: 16px;
+  bottom: 16px;
+  border: 1px solid var(--line);
+  background: rgb(255 255 255 / 0.9);
+  border-radius: 999px;
+  padding: 8px 16px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.fallback {
+  position: absolute;
+  inset: 0 46% 0 0;
+  display: grid;
+  place-items: center;
+  padding: 56px 24px 24px;
+}
+
+.fallback img {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  object-fit: contain;
+  mix-blend-mode: multiply;
+}
+
+/* ---------- Panel de producto (HTML) ---------- */
+
+.panel {
+  --enter: 0.6s;
+  position: absolute;
+  z-index: 2;
+  left: 54%;
+  top: 50%;
+  width: min(400px, 38%);
+  transform: translate(24px, -50%);
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity var(--enter) cubic-bezier(0.215, 0.61, 0.355, 1),
+    transform var(--enter) cubic-bezier(0.215, 0.61, 0.355, 1),
+    visibility 0s linear var(--enter);
+}
+
+.panel[data-visible='true'] {
+  opacity: 1;
+  visibility: visible;
+  transform: translate(0, -50%);
+  transition-delay: 0s;
+}
+
+.panel__brand {
+  margin: 0 0 6px;
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.panel__name {
+  margin: 0 0 16px;
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(34px, 4.2vw, 52px);
+  line-height: 1.02;
+  letter-spacing: -0.01em;
+}
+
+.panel__price {
+  margin: 0 0 20px;
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  font-size: 20px;
+  font-variant-numeric: tabular-nums;
+}
+
+.panel__note {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.panel__desc {
+  margin: 0 0 24px;
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.6;
+  max-width: 36ch;
+}
+
+.tag {
+  display: inline-block;
+  padding: 1px 6px;
+  margin-right: 4px;
+  border: 1px dashed var(--muted);
+  border-radius: 3px;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  vertical-align: 2px;
+}
+
+.panel__cta {
+  width: 100%;
+  max-width: 320px;
+  padding: 14px 20px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--ink);
+  color: var(--bg);
+  font-size: 14px;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+}
+
+.panel__cta:focus-visible,
+.dock button:focus-visible,
+.replay:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.panel__foot {
+  margin: 12px 0 0;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+/* Móvil: el panel entra desde abajo y el frasco queda arriba. */
+@media (max-width: 767px) {
+  .stage {
+    min-height: 0;
+  }
+
+  .dock__bar {
+    gap: 8px;
+  }
+
+  .fallback {
+    inset: 0 0 48% 0;
+    padding: 48px 16px 0;
+  }
+
+  .dock__metric--time {
+    display: none;
+  }
+
+  .panel {
+    left: 0;
+    right: 0;
+    top: auto;
+    bottom: 0;
+    width: auto;
+    padding: 20px 16px calc(20px + env(safe-area-inset-bottom));
+    background: linear-gradient(to bottom, rgb(246 244 240 / 0), var(--bg) 18%);
+    transform: translateY(24px);
+  }
+
+  .panel[data-visible='true'] {
+    transform: translateY(0);
+  }
+
+  .panel__name {
+    font-size: 34px;
+    margin-bottom: 10px;
+  }
+
+  .panel__price {
+    margin-bottom: 12px;
+  }
+
+  .panel__desc {
+    font-size: 14px;
+    margin-bottom: 16px;
+  }
+
+  .panel__cta {
+    max-width: none;
+  }
+
+  .replay {
+    top: 16px;
+    bottom: auto;
+    left: auto;
+    right: 16px;
+  }
+}
+
+.app[data-reduced='true'] .panel {
+  transition: none;
+}
