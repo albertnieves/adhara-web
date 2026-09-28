@@ -18,3 +18,5 @@ El detalle de cada revisión está en `pilot/PILOTO_ANIMACION_FLUJO.md` §9.
 | khamrah/khamrah_bottle-34_nbpro_v2_DRAFT.png | Nano Banana Pro | ídem | 2026-09-28 |
 | club-de-nuit-intense-man-le/cdn-le_bottle-front_nbpro_v1_REJECTED.png | Nano Banana Pro | https://armaf.com/cdn/shop/files/Untitleddesign_74_9303a701-fe01-492b-9199-2338cf103b6d.png | 2026-09-28 |
 | club-de-nuit-intense-man-le/cdn-le_bottle-front_nbpro_v2_DRAFT.png | Nano Banana Pro | ídem | 2026-09-28 |
+| odyssey-mandarin-sky/mandarin-sky_bottle-front_nbpro_v1_DRAFT.png | Nano Banana Pro | https://armaf.com/cdn/shop/files/odysseymandarinsky-bottle.jpg | 2026-09-28 |
+| odyssey-mandarin-sky/mandarin-sky_bottle-front_v1_zoom-text.png | — (recorte de revisión) | ídem | 2026-09-28 |

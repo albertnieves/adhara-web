@@ -195,3 +195,21 @@ Créditos iniciales: 150.
 - N1 la describe como **Eau de Parfum**, 3,6 oz (≈105 ml), estuche regalo con gemelos. ⚠ Nueva discrepancia: varios retailers N3 (intenseoud, jomashop) la venden como «Pure Parfum». Hay que verificarlo en el envase.
 | 28/09/2026 | CDN Intense Man LE | Frontal (`cdn-le_bottle-front_nbpro_v1_REJECTED.png`, 800×1328) | Nano Banana Pro | **Rechazado por encuadre:** el frasco sale recortado por los lados y por abajo, sin margen. Lo demás es fiel: cuerpo gris grafito/gunmetal; tapón cuadrado con cristales en las esquinas; cadena con medallión «ARMAF» y un cristal; textos «Limited Edition» (rojo), «Parfum» y «club de nuit intense man»; «club de nuit» en relieve en el lateral. **Hallazgo:** el envase dice «Parfum», lo que apoya a los retailers (N3) frente a la ficha de Armaf (N1: EDP). La discrepancia sigue abierta hasta verlo en el envase físico. Nota: el ZIP incluía además un duplicado de Khamrah v2 (mismo md5), descartado | `GENERATED` · rechazado |
 | 28/09/2026 | CDN Intense Man LE | Frontal (`cdn-le_bottle-front_nbpro_v2_DRAFT.png`, 896×1200) | Nano Banana Pro | **Válido.** Frasco completo con margen, fondo blanco puro y 3:4. Textos correctos: «Limited Edition», «Parfum», «club de nuit intense man», «ARMAF». Tapón con cristales, cadena y medallión fieles. Detalle menor: se ve un poco el lateral izquierdo (relieve «club de nuit»), así que no es ortográfica pura. Sin impacto en el 3D: la geometría es un prisma y la etiqueta se toma de la cara frontal. El ZIP traía las salidas anteriores (Khamrah v2 y CDN v1, mismo md5), descartadas | `GENERATED` · draft, pendiente de tu aprobación |
+| 28/09/2026 | Odyssey Mandarin Sky | Frontal (`mandarin-sky_bottle-front_nbpro_v1_DRAFT.png`, 896×1200) | Nano Banana Pro | Encuadre completo con margen, fondo blanco y 3:4. Forma, colores, funda con pespunte negro, tira con pasador y tapón naranja con asa fieles. «ODYSSEY», «EAU DE PARFUM» y «LIMITED EDITION» legibles. **Falla el texto script: la palabra «Mandarinsky» sale deformada.** Como el grabado es tono sobre tono, en el 3D se rehace en vector (paso 5). ⚠ Lleva «LIMITED EDITION» (C-02) y el producto no está en el catálogo del distribuidor (C-05). El ZIP volvió a traer salidas antiguas, descartadas | `GENERATED` · draft con texto a rehacer |
+
+### Cierre de las pruebas de artes planos (28/09/2026)
+
+| Producto | Mejor resultado | Texto | Uso previsto |
+|---|---|---|---|
+| Asad | Pro v1 frontal | ✔ | Packshot + textura frontal |
+| Yara | Flash v1 frontal | ✔ (medallión dudoso) | Packshot; el medallión se revisa con la foto real |
+| Khamrah | Pro v2 en 3/4 | ✔ placa | Packshot 3/4; el vidrio se hace en código (normal map) |
+| CDN Intense Man LE | Pro v2 frontal | ✔ | Packshot + textura frontal |
+| Odyssey Mandarin Sky | Pro v1 frontal | ✖ script | Packshot solo tras rehacer el texto; bloqueado por C-02 y C-05 |
+
+**Conclusiones:**
+- **Nano Banana Pro** es el modelo por defecto: conserva árabe, latino y detalle. Flash solo sirve para borradores.
+- **Encuadre:** pedir siempre «ZOOMED OUT… nothing cropped» y proporción 3:4 vertical. Si la referencia está en 3/4, el modelo tiende a copiar ese ángulo.
+- **Texto script o decorativo pequeño:** hay que prever rehacerlo en vector.
+- **Operativa de Weave:** desconectar los nodos antiguos antes de ejecutar, porque el ZIP exporta todas las salidas del lienzo.
+- **Siguiente fase:** prototipo visual de la coreografía (§4, paso 3a).
