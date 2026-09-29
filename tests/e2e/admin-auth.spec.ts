@@ -1,6 +1,15 @@
 import { expect, test } from '@playwright/test';
 
-for (const path of ['/admin', '/admin/mfa', '/admin/contrasena']) {
+for (const path of [
+  '/admin',
+  '/admin/mfa',
+  '/admin/contrasena',
+  '/admin/catalogo',
+  '/admin/catalogo/nuevo',
+  '/admin/inventario',
+  '/admin/movimientos',
+  '/admin/equipo',
+]) {
   test(`sin sesión ${path} redirige al acceso`, async ({ request }) => {
     const response = await request.get(path, { maxRedirects: 0 });
     expect(response.status()).toBe(307);

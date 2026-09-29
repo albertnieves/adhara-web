@@ -35,3 +35,21 @@ for (const [locale, path] of [
 test('rutas no soportadas devuelven 404', async ({ request }) => {
   expect((await request.get('/xx')).status()).toBe(404);
 });
+
+test('un perfume inexistente devuelve 404 con la página de la tienda', async ({
+  page,
+}) => {
+  const response = await page.goto('/es/perfume/no-existe');
+  expect(response?.status()).toBe(404);
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText(
+    'Esta página no existe',
+  );
+});
+
+test('la colección en inglés responde con su título', async ({ page }) => {
+  const response = await page.goto('/en/catalog');
+  expect(response?.status()).toBe(200);
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText(
+    'All fragrances',
+  );
+});
