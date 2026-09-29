@@ -1,3 +1,4 @@
+import { AuthError, AuthScreen, Field } from '@/modules/admin';
 import { signIn } from '@/modules/auth/server';
 
 const ERRORS: Record<string, string> = {
@@ -14,38 +15,31 @@ export default async function AdminLogin({
   const { error } = await searchParams;
   const message = error ? ERRORS[error] : undefined;
   return (
-    <main className="mx-auto max-w-sm">
-      <h1>Acceso al panel</h1>
-      {message && (
-        <p role="alert" className="mb-4 text-red-700">
-          {message}
-        </p>
-      )}
-      <form action={signIn} className="flex flex-col gap-4">
-        <label className="flex flex-col gap-1">
-          Email
+    <AuthScreen title="Acceso al panel">
+      {message && <AuthError>{message}</AuthError>}
+      <form action={signIn} className="flex flex-col gap-5">
+        <Field label="Email">
           <input
             name="email"
             type="email"
             autoComplete="username"
             required
-            className="border p-2"
+            className="input"
           />
-        </label>
-        <label className="flex flex-col gap-1">
-          Contraseña
+        </Field>
+        <Field label="Contraseña">
           <input
             name="password"
             type="password"
             autoComplete="current-password"
             required
-            className="border p-2"
+            className="input"
           />
-        </label>
-        <button type="submit" className="border p-2">
+        </Field>
+        <button type="submit" className="btn btn-primary mt-4">
           Entrar
         </button>
       </form>
-    </main>
+    </AuthScreen>
   );
 }

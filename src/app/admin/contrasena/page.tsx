@@ -1,3 +1,4 @@
+import { AuthError, AuthScreen, Field } from '@/modules/admin';
 import {
   requireStaffSessionAnyLevel,
   setPassword,
@@ -11,43 +12,40 @@ export default async function AdminPassword({
   const { email } = await requireStaffSessionAnyLevel();
   const { error } = await searchParams;
   return (
-    <main className="mx-auto max-w-sm">
-      <h1>Elige tu contraseña</h1>
-      {email && <p className="mb-4">Cuenta: {email}</p>}
+    <AuthScreen title="Elige tu contraseña">
+      {email && <p className="text-smoke mb-6 text-sm">Cuenta: {email}</p>}
       {error && (
-        <p role="alert" className="mb-4 text-red-700">
+        <AuthError>
           {error === 'requisitos'
             ? 'Mínimo 12 caracteres y ambas contraseñas iguales.'
             : 'No se pudo guardar la contraseña. Inténtalo de nuevo.'}
-        </p>
+        </AuthError>
       )}
-      <form action={setPassword} className="flex flex-col gap-4">
-        <label className="flex flex-col gap-1">
-          Nueva contraseña
+      <form action={setPassword} className="flex flex-col gap-5">
+        <Field label="Nueva contraseña" hint="Mínimo 12 caracteres.">
           <input
             name="password"
             type="password"
             autoComplete="new-password"
             minLength={12}
             required
-            className="border p-2"
+            className="input"
           />
-        </label>
-        <label className="flex flex-col gap-1">
-          Repite la contraseña
+        </Field>
+        <Field label="Repite la contraseña">
           <input
             name="confirmation"
             type="password"
             autoComplete="new-password"
             minLength={12}
             required
-            className="border p-2"
+            className="input"
           />
-        </label>
-        <button type="submit" className="border p-2">
+        </Field>
+        <button type="submit" className="btn btn-primary mt-4">
           Guardar
         </button>
       </form>
-    </main>
+    </AuthScreen>
   );
 }

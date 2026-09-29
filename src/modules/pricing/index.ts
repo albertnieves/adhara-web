@@ -16,3 +16,4 @@ export type {
 } from './domain/price-change';
 export { adjustRetailPrice } from './domain/adjustment';
 export type { PriceAdjustment, PriceEnding } from './domain/adjustment';
+export { PROVISIONAL_PRICING_POLICY, VAT_GENERAL_BP } from './domain/policy';

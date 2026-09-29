@@ -469,6 +469,22 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
+      admin_grant_staff: {
+        Args: { p_display_name?: string; p_email: string; p_role: string };
+        Returns: string;
+      };
+      admin_list_staff: {
+        Args: never;
+        Returns: {
+          active: boolean;
+          created_at: string;
+          display_name: string;
+          email: string;
+          last_sign_in_at: string;
+          role: string;
+          user_id: string;
+        }[];
+      };
       admin_record_inventory_movement: {
         Args: {
           p_location_id: string;
@@ -535,6 +551,10 @@ export type Database = {
           p_reorder_point: number;
           p_variant_id: string;
         };
+        Returns: undefined;
+      };
+      admin_set_staff_active: {
+        Args: { p_active: boolean; p_user_id: string };
         Returns: undefined;
       };
       admin_variant_price_history: {

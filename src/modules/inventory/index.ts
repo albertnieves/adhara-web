@@ -24,3 +24,4 @@ export type {
   StockSnapshot,
   StockWatchPolicy,
 } from './domain/stock-watch';
+export { MOVEMENT_LABELS } from './domain/labels';

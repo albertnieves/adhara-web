@@ -14,11 +14,11 @@ export function TotpEnrollment({
     return (
       <form action={start} className="flex flex-col gap-4">
         {state.status === 'error' && (
-          <p role="alert" className="text-red-700">
+          <p role="alert" className="text-danger text-sm">
             No se pudo iniciar el alta. Inténtalo de nuevo.
           </p>
         )}
-        <button type="submit" disabled={pending} className="border p-2">
+        <button type="submit" disabled={pending} className="btn btn-primary">
           Configurar la app de autenticación
         </button>
       </form>
@@ -26,7 +26,7 @@ export function TotpEnrollment({
   }
   return (
     <form action={verify} className="flex flex-col gap-4">
-      <p>
+      <p className="text-smoke text-sm leading-relaxed">
         Escanea el código con tu app de autenticación (Google Authenticator,
         1Password, Authy…) y escribe el código de 6 cifras.
       </p>
@@ -37,23 +37,26 @@ export function TotpEnrollment({
         alt="Código QR para la app de autenticación"
         width={200}
         height={200}
+        className="border-line self-center border bg-white p-3"
       />
-      <p className="text-sm break-all">
+      <p className="text-smoke text-xs break-all">
         Clave manual: <code>{state.secret}</code>
       </p>
       <input type="hidden" name="factorId" value={state.factorId} />
-      <label className="flex flex-col gap-1">
-        Código
+      <label className="flex flex-col gap-1.5">
+        <span className="text-smoke text-[0.6875rem] font-semibold tracking-[0.16em] uppercase">
+          Código
+        </span>
         <input
           name="code"
           inputMode="numeric"
           autoComplete="one-time-code"
           pattern="[0-9]{6}"
           required
-          className="border p-2"
+          className="input text-center text-2xl tracking-[0.4em] tabular-nums"
         />
       </label>
-      <button type="submit" className="border p-2">
+      <button type="submit" className="btn btn-primary">
         Verificar y activar
       </button>
     </form>

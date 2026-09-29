@@ -1,16 +1,29 @@
 import Link from 'next/link';
 import type { ReactNode } from 'react';
-import { ROLE_LABELS } from '@/modules/auth';
+import { PanelNav } from '@/modules/admin/ui/PanelNav';
+import type { NavItem } from '@/modules/admin/ui/PanelNav';
+import { ROLE_LABELS, isAllowed } from '@/modules/auth';
+import type { Permission } from '@/modules/auth';
 import { requireStaff, signOut } from '@/modules/auth/server';
+import { Logo } from '@/modules/brand';
 
-const SECTIONS = [
-  'Precios',
-  'Inventario',
-  'Agente de stock',
-  'Pedidos',
-  'Mensajes',
-  'Clientes',
-  'Informes',
+const SECTIONS: (NavItem & { permission?: Permission })[] = [
+  { href: '/admin', label: 'Inicio' },
+  { href: '/admin/catalogo', label: 'Catálogo', permission: 'catalog.edit' },
+  {
+    href: '/admin/inventario',
+    label: 'Inventario',
+    permission: 'inventory.view',
+  },
+  {
+    href: '/admin/movimientos',
+    label: 'Movimientos',
+    permission: 'inventory.view',
+  },
+  { href: '/admin/equipo', label: 'Equipo', permission: 'staff.manage' },
+  { href: '/admin/pedidos', label: 'Pedidos', soon: true },
+  { href: '/admin/mensajes', label: 'Mensajes', soon: true },
+  { href: '/admin/clientes', label: 'Clientes', soon: true },
 ];
 
 export default async function PanelLayout({
@@ -19,36 +32,47 @@ export default async function PanelLayout({
   children: ReactNode;
 }) {
   const staff = await requireStaff();
+  const items = SECTIONS.filter(
+    (s) =>
+      !s.permission ||
+      isAllowed({ role: staff.role, aal: 'aal2' }, s.permission),
+  ).map(({ href, label, soon }) => ({ href, label, soon }));
+
   return (
-    <div className="min-h-screen md:grid md:grid-cols-[14rem_1fr]">
-      <nav
-        aria-label="Secciones del panel"
-        className="border-b p-4 md:border-r md:border-b-0"
-      >
-        <p className="mb-4 font-semibold">ADHARA</p>
-        <ul className="flex flex-wrap gap-3 md:flex-col">
-          <li>
-            <Link href="/admin">Inicio</Link>
-          </li>
-          {SECTIONS.map((section) => (
-            <li key={section} className="text-neutral-500">
-              {section} <span className="text-xs">(próximamente)</span>
-            </li>
-          ))}
-        </ul>
-      </nav>
-      <div>
-        <header className="flex flex-wrap items-center justify-between gap-2 border-b p-4">
-          <p>
-            {staff.displayName ?? staff.email} · {ROLE_LABELS[staff.role]}
+    <div className="min-h-screen lg:grid lg:grid-cols-[15rem_1fr]">
+      <aside className="bg-night text-ivory relative flex items-center justify-between px-5 py-4 lg:sticky lg:top-0 lg:h-screen lg:flex-col lg:items-stretch lg:justify-start lg:gap-10 lg:px-4 lg:py-8">
+        <Link href="/admin" className="lg:px-3" aria-label="Inicio del panel">
+          <Logo />
+        </Link>
+        <PanelNav items={items} />
+        <div className="hidden lg:mt-auto lg:block lg:px-3">
+          <Link
+            href="/es"
+            className="text-ivory/60 hover:text-ivory text-xs tracking-[0.16em] uppercase"
+            target="_blank"
+          >
+            Ver la tienda ↗
+          </Link>
+        </div>
+      </aside>
+      <div className="min-w-0">
+        <header className="border-line flex flex-wrap items-center justify-between gap-3 border-b px-5 py-4 sm:px-10">
+          <p className="text-sm">
+            <span className="font-semibold">
+              {staff.displayName ?? staff.email}
+            </span>
+            <span className="text-smoke"> · {ROLE_LABELS[staff.role]}</span>
           </p>
           <form action={signOut}>
-            <button type="submit" className="border px-3 py-1">
+            <button
+              type="submit"
+              className="link-underline text-smoke text-xs tracking-[0.16em] uppercase"
+            >
               Cerrar sesión
             </button>
           </form>
         </header>
-        {children}
+        <div className="px-5 py-10 sm:px-10">{children}</div>
       </div>
     </div>
   );

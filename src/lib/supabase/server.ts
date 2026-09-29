@@ -2,6 +2,7 @@ import 'server-only';
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 import { getSupabaseConfig } from './config';
+import type { Database } from './database.types';
 
 /** Cliente con la sesión del usuario (RLS aplica). Uno por petición. */
 export async function createSupabaseServerClient() {
@@ -10,7 +11,7 @@ export async function createSupabaseServerClient() {
   const cookieStore = await cookies();
   const config = getSupabaseConfig();
   if (!config) return null;
-  return createServerClient(config.url, config.publishableKey, {
+  return createServerClient<Database>(config.url, config.publishableKey, {
     cookies: {
       getAll: () => cookieStore.getAll(),
       setAll(cookiesToSet) {

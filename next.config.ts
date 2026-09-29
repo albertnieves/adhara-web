@@ -4,6 +4,11 @@ const withNextIntl = createNextIntlPlugin('./src/modules/i18n/request.ts');
 const config: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
+  experimental: {
+    // Subida de imágenes desde el panel. Vercel limita el cuerpo de la
+    // petición a 4,5 MB, así que el límite se queda por debajo.
+    serverActions: { bodySizeLimit: '4mb' },
+  },
   images: {
     // Imágenes subidas desde el panel al bucket público product-media.
     remotePatterns: [

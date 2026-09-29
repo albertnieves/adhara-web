@@ -17,3 +17,4 @@ export {
   verifyTotp,
 } from './server/actions';
 export type { EnrollState } from './server/actions';
+export { grantStaff, setStaffActive } from './server/staff';
