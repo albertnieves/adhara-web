@@ -5,9 +5,10 @@
 1. Repositorio privado conectado. Verificar CI real. Configurar protección de main cuando exista un primer run válido.
 2. Consolidar arquitectura y decisiones de la Fase 1: idiomas, cuatro tipos de precio, costes internos y permisos. Los originales no se sobrescriben.
 3. Preparar Supabase local con Docker y CLI versionada. Crear dev en región UE tras elegir organización. Escribir migraciones, seed solo de referencia, pgTAP y tipos generados. Probar denegación por defecto y aislamiento de costes.
-4. Implementar sesión, invitación, roles y MFA del admin. Hace falta el email del primer owner. No pedir secretos por chat: configurar variables de entorno local o del proveedor.
+4. Implementar sesión, invitación, roles y MFA del admin (fase A1 de docs/ADMIN_PLAN.md). La matriz de `src/modules/auth/domain/permissions.ts` es la fuente del seed de `role_permissions` y de la tabla de verdad pgTAP. Hace falta el email del primer owner. No pedir secretos por chat: configurar variables de entorno local o del proveedor.
 5. Vercel ya está conectado al repositorio (producción desde `main`, previews por rama). Falta conectarlo al entorno dev para previews y separar producción cuando proceda. Verificar CI, base de datos y E2E completos.
 6. Completar criterios de Fase 1; después Design System e importación del catálogo real.
+7. Panel de administración: seguir el orden de docs/ADMIN_PLAN.md §7 (A2 precios → A3 inventario → A4 agente → A6 mensajes → A5 pedidos…). A0 (reglas de dominio) ya está implementada.
 
 ## Servicios y acceso que faltan
 

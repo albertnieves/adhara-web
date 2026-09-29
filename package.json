@@ -16,9 +16,12 @@
     "test:e2e": "playwright test",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "check": "pnpm lint && pnpm typecheck && pnpm test:unit && pnpm build"
+    "check": "pnpm lint && pnpm typecheck && pnpm test:unit && pnpm build",
+    "bootstrap:owner": "node scripts/bootstrap-owner.ts"
   },
   "dependencies": {
+    "@supabase/ssr": "0.12.7",
+    "@supabase/supabase-js": "2.117.2",
     "next": "16.3.6",
     "next-intl": "4.14.7",
     "react": "19.3.0",
