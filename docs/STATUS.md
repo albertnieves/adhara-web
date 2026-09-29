@@ -23,9 +23,9 @@
 
 ### Base de datos (`adhara-dev`, Frankfurt)
 
-Siete migraciones en `supabase/migrations/` (detalle en supabase/README.md): personal y permisos (PR #5), catálogo, inventario, gestión del personal y borrado de niveles con su formato. RLS en todas las tablas públicas; costes fuera de la API (`internal`); historial de PVP, movimientos y auditoría de solo inserción.
+Ocho migraciones en `supabase/migrations/` (detalle en supabase/README.md): personal y permisos (PR #5), catálogo, inventario, gestión del personal y borrado de niveles con su formato. RLS en todas las tablas públicas; costes fuera de la API (`internal`); historial de PVP, movimientos y auditoría de solo inserción.
 
-Datos cargados: los 4 perfumes del piloto como **borradores sin PVP** (`supabase/data/20260929_pilot_products.sql`), con marca, concentración y formato solo cuando constan en la caja o la ficha oficial (Khamrah sin formato), e imágenes oficiales de marca marcadas como provisionales. Ubicación: Tienda de Castelldefels. **Sin usuarios del personal** todavía.
+Datos cargados: los 4 perfumes del piloto como **borradores sin PVP** (`supabase/data/20260929_pilot_products.sql`), con marca, concentración y formato solo cuando constan en la caja o la ficha oficial (Khamrah sin formato), e imágenes oficiales de marca marcadas como provisionales. Ubicación: Tienda de Castelldefels. **Sin cuentas del personal** todavía; los roles del administrador del sistema y del administrador de la tienda están preasignados por email (se aplican al crear las cuentas).
 
 ### Despliegue
 
@@ -51,7 +51,7 @@ La revisión visual con perfumes se hizo en local con un Supabase simulado que d
 
 ## Pendiente del usuario
 
-1. Crear en Supabase (`adhara-dev` → Authentication → Users → Add user → Create new user, con «Auto Confirm User») las cuentas `anievesd840@gmail.com` (administrador del sistema) y `Pecora.agus14@icloud.com` (administrador de la tienda, Agustín). Después se asignan los roles (el primero por SQL; los siguientes desde Equipo).
+1. Crear en Supabase (`adhara-dev` → Authentication → Users → Add user → Create new user, con «Auto Confirm User») las cuentas del administrador del sistema y del administrador de la tienda. **Sus roles ya están preasignados** en `adhara-dev`: al crearlas reciben el rol automáticamente y el primer acceso pide configurar la verificación en dos pasos.
 2. Subir el catálogo «CATALOGO global 2026» (adjunto en el chat o en `docs/source/catalogo/` de esta rama) para importar perfumes, formatos y PVP.
 3. Decidir cuándo abrir la web a Agustín: con Vercel Authentication para todo, solo entra quien tiene cuenta en el equipo de Vercel (en Hobby, solo el titular).
 4. Revisar y fusionar el PR #6 (incluye el PR #5) para llevarlo a producción.
