@@ -5,7 +5,10 @@ import { heroMedia, lowestPrice, variantLabel } from '@/modules/catalog';
 import { Link } from '@/modules/i18n';
 import { ProductImage } from './ProductImage';
 
-/** Tarjeta de la colección: la imagen respira al pasar el cursor. */
+/**
+ * Tarjeta de la colección: la imagen respira al pasar el cursor y, si hay una
+ * segunda imagen (la caja), aparece con un fundido.
+ */
 export function ProductCard({
   product,
   priority = false,
@@ -18,6 +21,7 @@ export function ProductCard({
   const price = lowestPrice(product);
   const priced = product.variants.filter((v) => v.priceCents !== null);
   const media = heroMedia(product);
+  const alternate = product.media.find((m) => m.url !== media?.url) ?? null;
   const sizes = product.variants.map(variantLabel).join(' · ');
 
   return (
@@ -26,7 +30,10 @@ export function ProductCard({
       className="group block min-w-0"
     >
       <div className="bg-stage relative aspect-[4/5] overflow-hidden">
-        <div className="absolute inset-6 transition-transform duration-[1.6s] ease-(--ease-luxe) group-hover:scale-[1.05]">
+        <div
+          // Fondo propio: al escalar, la capa se aísla y multiply necesita un fondo dentro.
+          className={`bg-stage absolute inset-6 transition-[transform,opacity] duration-[1.6s] ease-(--ease-luxe) group-hover:scale-[1.05] ${alternate ? 'group-hover:opacity-0' : ''}`}
+        >
           <ProductImage
             media={media}
             alt={`${product.brand.name} ${product.name}`}
@@ -35,6 +42,19 @@ export function ProductCard({
             priority={priority}
           />
         </div>
+        {alternate && (
+          <div
+            aria-hidden
+            className="bg-stage absolute inset-6 scale-[0.97] opacity-0 transition-[transform,opacity] duration-[1.6s] ease-(--ease-luxe) group-hover:scale-100 group-hover:opacity-100"
+          >
+            <ProductImage
+              media={alternate}
+              alt=""
+              brand={product.brand.name}
+              sizes="(min-width: 1024px) 25vw, (min-width: 640px) 45vw, 90vw"
+            />
+          </div>
+        )}
         {media?.provisional && (
           <span className="text-smoke/80 absolute top-3 left-3 text-[0.5625rem] tracking-[0.25em] uppercase">
             {t('product.provisionalImage')}

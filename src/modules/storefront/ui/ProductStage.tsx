@@ -1,6 +1,13 @@
 'use client';
 
-import { AnimatePresence, motion } from 'motion/react';
+import {
+  AnimatePresence,
+  motion,
+  useMotionValue,
+  useReducedMotion,
+  useSpring,
+  useTransform,
+} from 'motion/react';
 import dynamic from 'next/dynamic';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
@@ -28,13 +35,39 @@ function Gallery({
   const t = useTranslations('product');
   const [index, setIndex] = useState(0);
   const current = media[index] ?? null;
+  const reduced = useReducedMotion();
+  // Inclinación suave que sigue al cursor (sin efecto con reduced motion).
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+  const rotateX = useSpring(useTransform(y, [-0.5, 0.5], [5, -5]), {
+    stiffness: 120,
+    damping: 18,
+  });
+  const rotateY = useSpring(useTransform(x, [-0.5, 0.5], [-7, 7]), {
+    stiffness: 120,
+    damping: 18,
+  });
   return (
     <div className="flex h-full flex-col">
-      <div className="relative flex-1">
+      <motion.div
+        className="relative flex-1 [perspective:1200px]"
+        onPointerMove={(event) => {
+          if (reduced || event.pointerType !== 'mouse') return;
+          const box = event.currentTarget.getBoundingClientRect();
+          x.set((event.clientX - box.left) / box.width - 0.5);
+          y.set((event.clientY - box.top) / box.height - 0.5);
+        }}
+        onPointerLeave={() => {
+          x.set(0);
+          y.set(0);
+        }}
+      >
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
             key={current?.url ?? 'empty'}
-            className="absolute inset-8 sm:inset-14"
+            // Fondo propio: al inclinar, la capa se aísla y multiply lo necesita.
+            className="bg-stage absolute inset-8 sm:inset-14"
+            style={reduced ? undefined : { rotateX, rotateY }}
             initial={{ opacity: 0, scale: 1.02 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0 }}
@@ -54,7 +87,7 @@ function Gallery({
             {t('provisionalImage')}
           </span>
         )}
-      </div>
+      </motion.div>
       {media.length > 1 && (
         <ul className="flex justify-center gap-3 pb-6">
           {media.map((item, i) => (
