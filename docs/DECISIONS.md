@@ -18,7 +18,7 @@
 ## Panel de administración — 29/09/2026
 
 13. El panel se planifica en fases A0–A8 (docs/ADMIN_PLAN.md), enlazadas con el roadmap original. Se empieza por A0: reglas de dominio puras y probadas, sin servicios, dependencias nuevas ni pantallas. /admin sigue en 404 (decisión 9).
-14. La matriz de permisos amplía la de la Fase 0 §11 con pedidos, mensajes, compras y agente. Propuesta pendiente de confirmar: solo owner registra costes; owner y manager los ven con aal2.
+14. Roles del personal confirmados por el usuario: `system_admin` (administrador del sistema, todo), `store_admin` (administrador de la tienda in situ, toda la operación incluidos costes y reembolsos, sin usuarios ni configuración) y `viewer` (encargado, solo lectura sin clientes ni costes). Sustituyen a owner/manager/store_staff/content_editor de la Fase 0 §11. Los clientes no son rol de personal: acceso a sus propios datos por RLS.
 15. Agente de inventario en dos capas: vigilante determinista (`watchStock`) y asistente conversacional. Solo lee y propone; una persona con permiso aprueba y la propuesta se ejecuta por el caso de uso normal. Para el asistente se propone Claude API con el tool runner del SDK de TypeScript en nuestro servidor; `@anthropic-ai/sdk` no se instala hasta A4.2.
 16. El precio anterior tachado se valida con el criterio Ómnibus: no puede superar el PVP más bajo de los 30 días previos. Las excepciones legales (rebajas progresivas) quedan pendientes de asesoría.
 17. Esta sesión de Claude Code trabaja en la rama `claude/wizardly-ride-5ul3ai`, asignada por el entorno, en lugar del prefijo `codex/` de AGENTS.md. El cambio se revisa igualmente mediante PR.

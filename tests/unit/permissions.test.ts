@@ -9,54 +9,53 @@ import {
 } from '@/modules/auth';
 
 describe('matriz de permisos del personal', () => {
-  it('owner tiene todos los permisos', () => {
+  it('el administrador del sistema tiene todos los permisos', () => {
     for (const permission of PERMISSIONS) {
-      expect(roleHasPermission('owner', permission)).toBe(true);
+      expect(roleHasPermission('system_admin', permission)).toBe(true);
     }
   });
 
-  it('solo owner gestiona personal, configuración y costes', () => {
-    for (const permission of [
-      'staff.manage',
-      'settings.manage',
-      'pricing.edit_cost',
-    ] as const) {
+  it('solo el administrador del sistema gestiona personal y configuración', () => {
+    for (const permission of ['staff.manage', 'settings.manage'] as const) {
       const holders = STAFF_ROLES.filter((role) =>
         roleHasPermission(role, permission),
       );
-      expect(holders).toEqual(['owner']);
+      expect(holders).toEqual(['system_admin']);
     }
   });
 
-  it('content_editor no accede a pedidos, clientes, mensajes ni precios', () => {
-    const granted = [...ROLE_PERMISSIONS.content_editor];
-    expect(
-      granted.filter((permission) =>
-        /^(orders|customers|messages|pricing|purchasing)\./.test(permission),
-      ),
-    ).toEqual([]);
+  it('el administrador de la tienda lleva la operación completa', () => {
+    for (const permission of [
+      'pricing.edit_retail',
+      'pricing.edit_cost',
+      'inventory.adjust',
+      'orders.refund',
+      'messages.reply',
+      'customers.manage',
+    ] as const) {
+      expect(roleHasPermission('store_admin', permission)).toBe(true);
+    }
   });
 
-  it('store_staff no ve costes ni ajusta stock sin recuento', () => {
-    expect(roleHasPermission('store_staff', 'pricing.view_cost')).toBe(false);
-    expect(roleHasPermission('store_staff', 'inventory.adjust')).toBe(false);
-    expect(roleHasPermission('store_staff', 'inventory.stocktake')).toBe(true);
-    expect(roleHasPermission('store_staff', 'orders.fulfill')).toBe(true);
+  it('el encargado solo lee, sin clientes ni costes', () => {
+    const granted = [...ROLE_PERMISSIONS.viewer];
+    expect(
+      granted.every((permission) => /\.(view|use)$/.test(permission)),
+    ).toBe(true);
+    expect(roleHasPermission('viewer', 'customers.view')).toBe(false);
+    expect(roleHasPermission('viewer', 'pricing.view_cost')).toBe(false);
   });
 
   it('los permisos sensibles exigen MFA verificada (aal2)', () => {
     expect(
-      isAllowed({ role: 'manager', aal: 'aal1' }, 'pricing.view_cost'),
+      isAllowed({ role: 'store_admin', aal: 'aal1' }, 'pricing.view_cost'),
     ).toBe(false);
     expect(
-      isAllowed({ role: 'manager', aal: 'aal2' }, 'pricing.view_cost'),
+      isAllowed({ role: 'store_admin', aal: 'aal2' }, 'pricing.view_cost'),
     ).toBe(true);
-    expect(isAllowed({ role: 'store_staff', aal: 'aal1' }, 'orders.view')).toBe(
+    expect(isAllowed({ role: 'viewer', aal: 'aal1' }, 'orders.view')).toBe(
       true,
     );
-    expect(
-      isAllowed({ role: 'content_editor', aal: 'aal2' }, 'pricing.view_cost'),
-    ).toBe(false);
   });
 
   it('todo permiso con aal2 pertenece al catálogo', () => {

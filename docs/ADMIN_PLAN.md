@@ -27,28 +27,17 @@ Operar la tienda online y la física de Castelldefels desde un único sitio, usa
 
 ## 3. Roles y permisos
 
-Fuente de verdad en código: `src/modules/auth/domain/permissions.ts`. De ella saldrán el seed de `role_permissions` y la tabla de verdad de las pruebas pgTAP. Amplía la matriz de la Fase 0 §11 con pedidos, mensajes, compras y agente. **Propuesta pendiente de tu confirmación** (sobre todo quién edita costes).
+Fuente de verdad en código: `src/modules/auth/domain/permissions.ts`. De ella saldrán el seed de `role_permissions` y la tabla de verdad de las pruebas pgTAP. Roles confirmados el 29/09/2026:
 
-| Área                                          | owner | manager | store_staff | content_editor |
-| --------------------------------------------- | :---: | :-----: | :---------: | :------------: |
-| Catálogo, research, media                     |   ✓   |    ✓    |             |       ✓        |
-| Publicar productos                            |   ✓   |    ✓    |             |                |
-| Editar PVP (aal2)                             |   ✓   |    ✓    |             |                |
-| Ver coste y margen (aal2)                     |   ✓   |    ✓    |             |                |
-| Registrar costes (aal2)                       |   ✓   |         |             |                |
-| Ver stock, recibir, recuento, venta en tienda |   ✓   |    ✓    |      ✓      |                |
-| Ajustes manuales de stock                     |   ✓   |    ✓    |             |                |
-| Compras a proveedor (aal2)                    |   ✓   |    ✓    |             |                |
-| Ver y preparar pedidos                        |   ✓   |    ✓    |      ✓      |                |
-| Cancelar y reembolsar (aal2)                  |   ✓   |    ✓    |             |                |
-| Mensajes con clientes                         |   ✓   |    ✓    |      ✓      |                |
-| Ver clientes                                  |   ✓   |    ✓    |      ✓      |                |
-| Exportar o borrar clientes (aal2)             |   ✓   |    ✓    |             |                |
-| Promociones e informes                        |   ✓   |    ✓    |             |                |
-| Asistente de inventario                       |   ✓   |    ✓    |      ✓      |                |
-| Configuración y personal (aal2)               |   ✓   |         |             |                |
+| Rol (código)   | Quién                                             | Alcance                                                                                                                                                        |
+| -------------- | ------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `system_admin` | Administrador del sistema (Albert)                | Todo, incluidos usuarios, roles y configuración                                                                                                                |
+| `store_admin`  | Administrador de la tienda (Agustín, en el local) | Toda la operación: precios y costes, stock, compras, pedidos y reembolsos, mensajes, clientes, promociones, catálogo e informes. Sin usuarios ni configuración |
+| `viewer`       | Encargado                                         | Solo lectura: stock, pedidos y mensajes, y preguntas al asistente de inventario. Sin datos de clientes ni costes                                               |
 
-Todo el personal tendrá MFA obligatoria desde la Fase A1. La marca aal2 es defensa adicional, comprobada también en SQL.
+Los **clientes** no son personal: tendrán cuenta en la tienda online (fase A7/F14) y solo verán sus propios pedidos, direcciones y mensajes, garantizado por RLS.
+
+Todo el personal tendrá MFA obligatoria desde la fase A1. Los permisos de precios, costes, compras, reembolsos, clientes, configuración y personal exigen además sesión verificada con MFA (aal2), comprobado también en SQL.
 
 ## 4. Fases
 
@@ -76,7 +65,7 @@ Criterio cumplido: `pnpm check` en verde con pruebas unitarias de cada regla (do
 
 Aceptación: criterios 14–16 de la Fase 1 (sin sesión → acceso; sin fila de personal → 404; sin MFA → alta de MFA; con aal2 → panel) en E2E, y pgTAP de la matriz de permisos.
 
-Necesito: organización de Supabase y permiso para crear `adhara-dev` en la UE; email del primer owner; Docker disponible para Supabase local.
+Necesito: organización de Supabase y permiso para crear `adhara-dev` en la UE; email del administrador del sistema (primer usuario) y de Agustín; Docker disponible para Supabase local.
 
 ### A2 — Catálogo y precios (F1 migraciones 0004–0009, parte de F3)
 
@@ -199,16 +188,15 @@ La bandeja básica de mensajes (A6.1) puede adelantarse a pedidos porque solo de
 
 ## 8. Decisiones que necesito de ti
 
-| #   | Pregunta                                                                    | Fase |
-| --- | --------------------------------------------------------------------------- | ---- |
-| 1   | Organización de Supabase y permiso para crear `adhara-dev` en región UE     | A1   |
-| 2   | Email del primer owner                                                      | A1   |
-| 3   | ¿Los precios del PDF son PVP con IVA, mayorista o coste?                    | A2   |
-| 4   | ¿Registra costes solo el owner o también el manager?                        | A2   |
-| 5   | Margen mínimo y umbral a partir del cual un cambio de PVP pide confirmación | A2   |
-| 6   | ¿Hay TPV en la tienda? ¿Cuál? ¿Tiene API o exportación?                     | A3   |
-| 7   | Proveedores, plazos de entrega y múltiplos de compra                        | A3   |
-| 8   | Parámetros del vigilante: cobertura objetivo, colchón, días de inmovilizado | A4   |
-| 9   | Confirmar Claude como proveedor de IA y el tratamiento de datos             | A4.2 |
-| 10  | Canales de mensajes, número de WhatsApp Business y tiempo de respuesta      | A6   |
-| 11  | Proveedor de email transaccional                                            | A5   |
+| #   | Pregunta                                                                                   | Fase |
+| --- | ------------------------------------------------------------------------------------------ | ---- |
+| 1   | Permiso para crear `adhara-dev` en región UE dentro de «albertnieves's Org» (ya conectada) | A1   |
+| 2   | Email del administrador del sistema y de Agustín                                           | A1   |
+| 3   | ¿Los precios del PDF son PVP con IVA, mayorista o coste?                                   | A2   |
+| 4   | Margen mínimo y umbral a partir del cual un cambio de PVP pide confirmación                | A2   |
+| 5   | ¿Hay TPV en la tienda? ¿Cuál? ¿Tiene API o exportación?                                    | A3   |
+| 6   | Proveedores, plazos de entrega y múltiplos de compra                                       | A3   |
+| 7   | Parámetros del vigilante: cobertura objetivo, colchón, días de inmovilizado                | A4   |
+| 8   | Confirmar Claude como proveedor de IA y el tratamiento de datos                            | A4.2 |
+| 9   | Canales de mensajes, número de WhatsApp Business y tiempo de respuesta                     | A6   |
+| 10  | Proveedor de email transaccional                                                           | A5   |

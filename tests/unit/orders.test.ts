@@ -2,8 +2,8 @@ import { describe, expect, it } from 'vitest';
 import { availableTransitions, planTransition } from '@/modules/orders';
 
 const system = { kind: 'system' } as const;
-const staff = { kind: 'staff', role: 'store_staff', aal: 'aal2' } as const;
-const manager = { kind: 'staff', role: 'manager', aal: 'aal2' } as const;
+const viewer = { kind: 'staff', role: 'viewer', aal: 'aal2' } as const;
+const storeAdmin = { kind: 'staff', role: 'store_admin', aal: 'aal2' } as const;
 
 describe('estados del pedido', () => {
   it('solo el sistema confirma el pago y compromete la reserva', () => {
@@ -16,7 +16,7 @@ describe('estados del pedido', () => {
       inventory: 'commit_reservation',
       refund: false,
     });
-    expect(planTransition(order, 'paid', manager)).toEqual({
+    expect(planTransition(order, 'paid', storeAdmin)).toEqual({
       ok: false,
       reason: 'forbidden',
     });
@@ -27,12 +27,12 @@ describe('estados del pedido', () => {
       status: 'processing',
       fulfillment: 'click_collect',
     } as const;
-    expect(planTransition(processing, 'ready_for_pickup', staff)).toMatchObject(
-      {
-        ok: true,
-      },
-    );
-    expect(planTransition(processing, 'shipped', staff)).toEqual({
+    expect(
+      planTransition(processing, 'ready_for_pickup', storeAdmin),
+    ).toMatchObject({
+      ok: true,
+    });
+    expect(planTransition(processing, 'shipped', storeAdmin)).toEqual({
       ok: false,
       reason: 'wrong_fulfillment',
     });
@@ -40,7 +40,7 @@ describe('estados del pedido', () => {
       planTransition(
         { status: 'ready_for_pickup', fulfillment: 'click_collect' },
         'completed',
-        staff,
+        storeAdmin,
       ),
     ).toEqual({ ok: true, inventory: 'sale_click_collect', refund: false });
   });
@@ -50,21 +50,21 @@ describe('estados del pedido', () => {
       planTransition(
         { status: 'processing', fulfillment: 'shipping' },
         'shipped',
-        staff,
+        storeAdmin,
       ),
     ).toEqual({ ok: true, inventory: 'sale_online', refund: false });
   });
 
   it('cancelar un pedido pagado exige permiso de reembolso con MFA', () => {
     const paid = { status: 'paid', fulfillment: 'shipping' } as const;
-    expect(planTransition(paid, 'cancelled', staff)).toEqual({
+    expect(planTransition(paid, 'cancelled', viewer)).toEqual({
       ok: false,
       reason: 'forbidden',
     });
     expect(
-      planTransition(paid, 'cancelled', { ...manager, aal: 'aal1' }),
+      planTransition(paid, 'cancelled', { ...storeAdmin, aal: 'aal1' }),
     ).toEqual({ ok: false, reason: 'forbidden' });
-    expect(planTransition(paid, 'cancelled', manager)).toEqual({
+    expect(planTransition(paid, 'cancelled', storeAdmin)).toEqual({
       ok: true,
       inventory: 'release_reservation',
       refund: true,
@@ -76,7 +76,7 @@ describe('estados del pedido', () => {
       planTransition(
         { status: 'pending_payment', fulfillment: 'shipping' },
         'shipped',
-        manager,
+        storeAdmin,
       ),
     ).toEqual({ ok: false, reason: 'invalid_transition' });
     expect(
@@ -94,13 +94,10 @@ describe('estados del pedido', () => {
       fulfillment: 'click_collect',
     } as const;
     expect(
-      availableTransitions(order, { role: 'store_staff', aal: 'aal2' }),
-    ).toEqual(['ready_for_pickup']);
-    expect(
-      availableTransitions(order, { role: 'manager', aal: 'aal2' }),
-    ).toEqual(['ready_for_pickup', 'cancelled']);
-    expect(
-      availableTransitions(order, { role: 'content_editor', aal: 'aal2' }),
+      availableTransitions(order, { role: 'viewer', aal: 'aal2' }),
     ).toEqual([]);
+    expect(
+      availableTransitions(order, { role: 'store_admin', aal: 'aal2' }),
+    ).toEqual(['ready_for_pickup', 'cancelled']);
   });
 });

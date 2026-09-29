@@ -1,14 +1,9 @@
 /**
- * Matriz rol → permiso del personal (Fase 0 §11, ampliada en docs/ADMIN_PLAN.md).
- * Es la fuente de la que saldrán el seed de role_permissions y la tabla de
- * verdad de las pruebas pgTAP. La autorización real se repite en servidor y RLS.
+ * Matriz rol → permiso del personal (docs/ADMIN_PLAN.md §3). Es la fuente del
+ * seed de role_permissions y de la tabla de verdad de las pruebas pgTAP.
+ * Los clientes no son personal: su acceso se limita a sus propios datos por RLS.
  */
-export const STAFF_ROLES = [
-  'owner',
-  'manager',
-  'store_staff',
-  'content_editor',
-] as const;
+export const STAFF_ROLES = ['system_admin', 'store_admin', 'viewer'] as const;
 export type StaffRole = (typeof STAFF_ROLES)[number];
 
 export const PERMISSIONS = [
@@ -55,45 +50,26 @@ export const AAL2_PERMISSIONS: ReadonlySet<Permission> = new Set([
   'staff.manage',
 ]);
 
-const STORE_FLOOR: readonly Permission[] = [
-  'inventory.view',
-  'inventory.receive',
-  'inventory.stocktake',
-  'inventory.sell_in_store',
-  'orders.view',
-  'orders.fulfill',
-  'messages.view',
-  'messages.reply',
-  'customers.view',
-  'agent.use',
-];
+/** Administrador de la tienda: toda la operación diaria, sin personal ni configuración. */
+const STORE_ADMIN: readonly Permission[] = PERMISSIONS.filter(
+  (permission) =>
+    permission !== 'staff.manage' && permission !== 'settings.manage',
+);
 
-const CONTENT: readonly Permission[] = [
-  'catalog.edit',
-  'research.edit',
-  'media.edit',
-  'content.edit',
+/** Encargado: solo lectura, sin datos de clientes ni costes. */
+const VIEWER: readonly Permission[] = [
+  'inventory.view',
+  'orders.view',
+  'messages.view',
+  'agent.use',
 ];
 
 export const ROLE_PERMISSIONS: Readonly<
   Record<StaffRole, ReadonlySet<Permission>>
 > = {
-  owner: new Set(PERMISSIONS),
-  manager: new Set([
-    ...STORE_FLOOR,
-    ...CONTENT,
-    'catalog.publish',
-    'pricing.edit_retail',
-    'pricing.view_cost',
-    'inventory.adjust',
-    'purchasing.manage',
-    'orders.refund',
-    'customers.manage',
-    'promotions.manage',
-    'reports.view',
-  ]),
-  store_staff: new Set(STORE_FLOOR),
-  content_editor: new Set(CONTENT),
+  system_admin: new Set(PERMISSIONS),
+  store_admin: new Set(STORE_ADMIN),
+  viewer: new Set(VIEWER),
 };
 
 export function roleHasPermission(
