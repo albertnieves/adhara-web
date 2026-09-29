@@ -13,12 +13,16 @@ Proyecto de desarrollo: **`adhara-dev`** (ref `xgpsislololgbakzcmad`), región `
 | 20260929170513 | Índices de claves foráneas                                                                                                                                                                                              |
 | 20260929220732 | Catálogo: `brands`, `products`, `product_translations`, `product_variants` (PVP en céntimos), `product_media` con procedencia, historial de PVP en `internal`, reglas de publicación y precio, bucket `product-media`   |
 | 20260929220840 | Inventario: `stock_locations`, `inventory_levels`, `inventory_movements` (solo inserción), funciones `admin_record_inventory_movement`, `admin_record_stocktake`, `admin_set_reorder_point` y `storefront_availability` |
+| 20260929224423 | Gestión del personal desde el panel: `admin_list_staff`, `admin_grant_staff`, `admin_set_staff_active` (staff.manage)                                                                                                   |
+| 20260929230737 | Un nivel de stock se borra con su formato; el historial de movimientos sigue impidiendo borrar formatos con movimientos                                                                                                 |
 
 La matriz de permisos se genera desde `src/modules/auth/domain/permissions.ts`; `tests/unit/permissions-sql.test.ts` falla si ambas divergen. Del mismo modo, `tests/unit/inventory-sql.test.ts` compara tipos, efectos, permisos y motivos de los movimientos con `src/modules/inventory/domain/movements.ts`.
 
 Los tipos de `src/lib/supabase/database.types.ts` se generan desde `adhara-dev` tras cada migración.
 
 ## Pruebas de base de datos
+
+Sin Docker, las pruebas se ejecutan contra `adhara-dev` con `tests/tap_remote.py`, que revierte todo al terminar. Resultado del 29/09/2026: `01_staff_permissions` 22/22 (sesión del PR #5) y `02_catalog_inventory` 33/33.
 
 `tests/database/*.test.sql` son pruebas pgTAP para `supabase test db`. Crean usuarios ficticios dentro de una transacción que se revierte. Cubren anon, usuario sin personal (cliente), `viewer`, `store_admin` y `system_admin`, con y sin MFA (aal2), y la auditoría de solo inserción.
 
@@ -30,6 +34,10 @@ Los tipos de `src/lib/supabase/database.types.ts` se generan desde `adhara-dev` 
   `{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=invite` y
   `{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=recovery` respectivamente.
 - Alta del primer administrador: `pnpm bootstrap:owner` con `BOOTSTRAP_OWNER_EMAIL`, `SUPABASE_SECRET_KEY` y `NEXT_PUBLIC_SUPABASE_URL` en el entorno.
+
+## Datos
+
+`data/` guarda cargas de datos versionadas (no son migraciones): `20260929_pilot_products.sql` crea los 4 perfumes del piloto como borradores sin PVP, con su procedencia.
 
 ## Pendiente
 

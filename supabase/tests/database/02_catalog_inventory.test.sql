@@ -4,7 +4,7 @@ begin;
 create extension if not exists pgtap with schema extensions;
 set search_path = public, extensions;
 
-select plan(31);
+select plan(33);
 
 insert into auth.users (id, email) values
   ('00000000-0000-4000-8000-000000000011', 'sistema@test.invalid'),
@@ -168,6 +168,18 @@ select throws_ok(
 select is(
   (select count(*)::int from public.audit_log where entity = 'inventory_level'),
   3, 'cada movimiento queda en la auditoría');
+
+-- Borrar formatos: con movimientos no; con solo un nivel sin movimientos, sí.
+insert into public.product_variants (id, product_id, size_ml) values
+  ('00000000-0000-4000-8000-0000000000c2', '00000000-0000-4000-8000-0000000000a2', 30);
+insert into public.inventory_levels (variant_id, location_id, reorder_point)
+values ('00000000-0000-4000-8000-0000000000c2', pg_temp.location_id(), 2);
+select throws_ok(
+  $$delete from public.product_variants where id = '00000000-0000-4000-8000-0000000000c1'$$,
+  '23503', null, 'un formato con movimientos no se puede borrar');
+select lives_ok(
+  $$delete from public.product_variants where id = '00000000-0000-4000-8000-0000000000c2'$$,
+  'un formato sin movimientos se borra con su nivel de stock');
 
 set local role anon;
 select is(
