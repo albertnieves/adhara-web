@@ -1,6 +1,6 @@
-# Estado real — 28/09/2026
+# Estado real — 29/09/2026
 
-**Arranque local verificado. La Fase 1 completa sigue pendiente.**
+**Arranque local y despliegue en Vercel verificados. La Fase 1 completa sigue pendiente.**
 
 ## Preparado
 
@@ -10,6 +10,7 @@
 - Seis habilidades instaladas en Codex: React Best Practices, Web Design Guidelines, Supabase Postgres Best Practices, Security Best Practices, GH Fix CI y Vercel Deploy.
 - Workflow de calidad preparado para GitHub Actions, todavía sin run remoto.
 - Repositorio privado en https://github.com/albertnieves/adhara-web. Acceso de lectura y escritura confirmado mediante el conector de Codex. Publicación inicial mediante la API de GitHub; Git local sigue sin credenciales.
+- Vercel: proyecto `adhara-web` en el equipo SOAPBRXND (plan Hobby) de la cuenta albertnieves, conectado a GitHub. Cada push a `main` despliega a producción en https://adhara-web.vercel.app (pública, con noindex); ramas y PR generan previews protegidas con Vercel Authentication. Build con pnpm 11.19.0, Node 24.x y Webpack. Funciones en la región por defecto, iad1 (EE. UU.).
 
 ## Validación ejecutada
 
@@ -24,11 +25,14 @@
 | Dependencias pares                      | Sin incompatibilidades                        |
 | Auditoría de dependencias de producción | Sin vulnerabilidades conocidas en la consulta |
 | Documentos originales                   | Copias idénticas a los aportados              |
+| Despliegue Vercel (commit 5a444ce)      | Build correcto; rutas verificadas en la URL   |
 
 Las pruebas de navegador cubren redirección inicial, preferencia por cookie, rutas traducidas, html lang, noindex y 404 para admin/no soportado. No son pruebas de ecommerce, auth ni base de datos.
 
+En Vercel se comprobaron contra https://adhara-web.vercel.app las aserciones de Playwright: redirección e idioma por cabecera y cookie, 404 de admin y locale no soportado, estado 200, noindex, html lang y h1 en las tres rutas del catálogo, y /api/health. Las tres pruebas de navegador no pudieron ejecutarse en Chromium desde el entorno cloud por el proxy TLS; sus aserciones se verificaron por HTTP.
+
 ## Pendiente
 
-Verificar CI remoto y configurar las protecciones de main disponibles en el plan; Docker/Supabase local; migraciones y RLS; admin/MFA; validación de variables de servicios; SEO editorial; pruebas de fuga de costes; proyectos dev/prod y Vercel Preview. No se ha creado ni cobrado ningún servicio remoto. No existe catálogo ni datos ficticios.
+Verificar CI remoto y configurar las protecciones de main disponibles en el plan; Docker/Supabase local; migraciones y RLS; admin/MFA; validación de variables de servicios; SEO editorial; pruebas de fuga de costes; entornos dev/prod separados y variables en Vercel cuando exista Supabase; región de funciones en la UE. El único servicio remoto creado es el proyecto de Vercel en plan Hobby, sin cargos. No existe catálogo ni datos ficticios.
 
 Ver docs/DEVELOPMENT.md para continuar. Los problemas de compatibilidad y el ajuste de servidor local están en docs/DECISIONS.md.

@@ -13,4 +13,4 @@
 
 11. Se usan `next dev --webpack` y `next build --webpack`: Turbopack no puede abrir el puerto de su proceso CSS en este entorno, incluso al solicitar ejecución ampliada. Webpack compiló correctamente. Revisar Turbopack cuando cambie el entorno.
 
-12. Los servidores locales se ligan a localhost para mantener el mismo origen que las reescrituras de Next.js. La prueba con 127.0.0.1 producía bucles en rutas traducidas; con localhost pasan las 12 pruebas. Incidencia similar documentada en https://github.com/vercel/next.js/issues/94342. Verificar por separado el despliegue real.
+12. Los servidores locales se ligan a localhost para mantener el mismo origen que las reescrituras de Next.js. La prueba con 127.0.0.1 producía bucles en rutas traducidas; con localhost pasan las 12 pruebas. Incidencia similar documentada en https://github.com/vercel/next.js/issues/94342. Verificar por separado el despliegue real. Verificado en Vercel el 29/09/2026: las rutas traducidas responden 200 sin bucles.
