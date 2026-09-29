@@ -20,6 +20,7 @@ export function squareGlassSize(s: Shape) {
     heightMm: s.body.heightMm + s.cap.heightMm,
     /** Anchura máxima durante el giro: la diagonal de la planta cuadrada. */
     widthMm: Math.SQRT2 * Math.max(s.body.widthMm, s.cap.widthMm),
+    depthMm: Math.max(s.body.widthMm, s.cap.widthMm),
   };
 }
 

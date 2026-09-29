@@ -22,13 +22,19 @@ interface Props {
 export function Bottle({ product, dims, timeline, grey }: Props) {
   const ref = useRef<Group>(null);
   const { start, end } = risePositions(dims, timeline.spec);
+  // Tumbado boca arriba (estuche horizontal): el frente mira hacia arriba y el
+  // tapón hacia la bisagra; durante el ascenso (S2) se endereza.
+  const lying = product.box.bottlePose === 'lying';
+  const startY = lying ? dims.wall + dims.bottle.depth / 2 : start;
+  const startZ = lying ? dims.bottle.height / 2 : 0;
+  const startPitch = lying ? -Math.PI / 2 : 0;
 
   useFrame(() => {
     const g = ref.current;
     if (!g) return;
     const s = sample(timeline.spec, timeline.t);
-    g.position.y = lerp(start, end, s.rise);
-    g.rotation.y = s.spin;
+    g.position.set(0, lerp(startY, end, s.rise), lerp(startZ, 0, s.rise));
+    g.rotation.set(lerp(startPitch, 0, s.rise), s.spin, 0);
   });
 
   const m = grey ? GREY : product.materials;
@@ -36,7 +42,7 @@ export function Bottle({ product, dims, timeline, grey }: Props) {
   const shape = product.bottle;
 
   return (
-    <group ref={ref} position-y={start}>
+    <group ref={ref} position={[0, startY, startZ]} rotation-x={startPitch} name="bottle">
       <group scale={dims.k}>
         {shape.archetype === 'lathe-shoulder' && <LatheBottle shape={shape} m={m} front={front} />}
         {shape.archetype === 'rect-prism' && <RectPrismBottle shape={shape} m={m} front={front} />}

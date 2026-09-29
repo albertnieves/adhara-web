@@ -30,6 +30,8 @@ export function phaseAt(spec: MotionSpec, t: number): Phase {
 /** Estado de la escena en el instante `t`. Función pura: mismo `t`, mismo fotograma. */
 export interface SceneSample {
   phase: Phase;
+  /** Progreso de la apertura 0–1 (con curva). */
+  open: number;
   /** Ángulo de la solapa (rad). */
   flapAngle: number;
   /** Ascenso del frasco 0–1. */
@@ -58,6 +60,7 @@ export function sample(spec: MotionSpec, t: number): SceneSample {
 
   return {
     phase: phaseAt(spec, t),
+    open,
     flapAngle: ((spec.s1Open.flapAngleDeg * Math.PI) / 180) * open,
     rise,
     boxDrop: rise,

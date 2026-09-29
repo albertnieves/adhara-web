@@ -1,5 +1,7 @@
 import draftSrc from '@drafts/yara/yara_bottle-front_nb_v1_DRAFT.png';
 import { LATTAFA_CYLINDER_PROFILE } from './asad';
+import boxBack from '@refs/yara/box_back.jpg';
+import boxFront from '@refs/yara/box_front.jpg';
 import { PLACEHOLDER_DESCRIPTION } from './placeholders';
 import { ProductConfigSchema } from './schema';
 
@@ -24,7 +26,26 @@ export const yara = ProductConfigSchema.parse({
   measurements: {
     estimated: true,
     note: 'ESTIMADAS: perfil de Asad, pendiente de confirmar con el kit de tienda.',
-    box: { widthMm: 72, heightMm: 152, depthMm: 72 },
+  },
+  /*
+   * Caja: referencia oficial (pilot/assets-refs/yara): frontal y trasera en plano.
+   * Proporciones ESTIMADAS (alto ≈ 1,12 × frasco en official_yara-2.jpg; frontal 0,586).
+   * Laterales y tapa no aparecen: color rosa muestreado. Apertura supuesta: solapa superior.
+   */
+  box: {
+    widthMm: 91,
+    heightMm: 156,
+    depthMm: 88,
+    estimated: true,
+    opening: 'top-flap',
+    lidFraction: 0,
+    bottlePose: 'standing',
+    color: '#e6c8d7',
+    insideColor: '#d9bccb',
+    faces: {
+      front: { src: boxFront, file: 'pilot/assets-refs/yara/box_front.jpg', origin: 'OFFICIAL' },
+      back: { src: boxBack, file: 'pilot/assets-refs/yara/box_back.jpg', origin: 'OFFICIAL' },
+    },
   },
   scale: 1,
   bottle: {
@@ -37,7 +58,6 @@ export const yara = ProductConfigSchema.parse({
     cap: { color: '#e9b9c3', roughness: 0.45, metalness: 0 },
     accent: { color: '#dcdde0', roughness: 0.14, metalness: 1 },
   },
-  boxColor: '#e2dbd0',
   draftImage: { src: DRAFT.src, file: DRAFT.file },
   // Frasco de y=187 a y=822 px (sin la sombra), centro en x=510,5.
   frontTexture: { ...DRAFT, centerXPx: 510.5, baseYPx: 822, pxPerMm: 635 / 140 },

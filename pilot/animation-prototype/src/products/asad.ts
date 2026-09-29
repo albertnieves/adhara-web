@@ -1,4 +1,5 @@
 import draftSrc from '@drafts/asad/asad_bottle-front_nbpro_v1_DRAFT.png';
+import boxFront from '@refs/asad/box_front.jpg';
 import { PLACEHOLDER_DESCRIPTION } from './placeholders';
 import { ProductConfigSchema } from './schema';
 
@@ -43,7 +44,25 @@ export const asad = ProductConfigSchema.parse({
   measurements: {
     estimated: true,
     note: 'ESTIMADAS desde el draft (altura supuesta 140 mm). Pendiente del kit de tienda.',
-    box: { widthMm: 72, heightMm: 152, depthMm: 72 },
+  },
+  /*
+   * Caja: referencia oficial (pilot/assets-refs/asad). Proporciones ESTIMADAS respecto al
+   * frasco en official_asad-2.jpg (alto ≈ 1,13 × frasco; frontal ≈ 0,59 ancho/alto; fondo ≈
+   * ancho). Apertura no visible: se supone estuche de cartón con solapa superior.
+   */
+  box: {
+    widthMm: 92,
+    heightMm: 158,
+    depthMm: 90,
+    estimated: true,
+    opening: 'top-flap',
+    lidFraction: 0,
+    bottlePose: 'standing',
+    color: '#252525',
+    insideColor: '#1a1a1a',
+    faces: {
+      front: { src: boxFront, file: 'pilot/assets-refs/asad/box_front.jpg', origin: 'OFFICIAL' },
+    },
   },
   scale: 1,
   bottle: {
@@ -56,7 +75,6 @@ export const asad = ProductConfigSchema.parse({
     cap: { color: '#121212', roughness: 0.8, metalness: 0 },
     accent: { color: '#c9a24a', roughness: 0.18, metalness: 1 },
   },
-  boxColor: '#e2dbd0',
   draftImage: { src: ASAD_DRAFT.src, file: ASAD_DRAFT.file },
   frontTexture: { ...ASAD_DRAFT, centerXPx: 447.5, baseYPx: 982, pxPerMm: 761 / 140 },
   panel: { priceLabel: '— €', description: PLACEHOLDER_DESCRIPTION },

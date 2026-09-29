@@ -17,10 +17,14 @@ export function productDims(p: ProductConfig) {
         return squareGlassSize(p.bottle);
     }
   })();
-  const box = p.measurements.box;
+  const box = p.box;
   return {
     k,
-    bottle: { height: bottle.heightMm * k, width: bottle.widthMm * k },
+    bottle: {
+      height: bottle.heightMm * k,
+      width: bottle.widthMm * k,
+      depth: bottle.depthMm * k,
+    },
     box: { width: box.widthMm * k, height: box.heightMm * k, depth: box.depthMm * k },
     /** Grosor del cartón. */
     wall: 1.2 * k,

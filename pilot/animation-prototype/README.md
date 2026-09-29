@@ -16,7 +16,8 @@ pnpm build         # tsc --noEmit + vite build
 ```
 
 Parámetros de URL: `?p=<slug>` selecciona producto (`asad`, `yara`, `club-de-nuit-intense-man-le`,
-`khamrah`); `?grey=1` arranca en formas grises; `?nowebgl` fuerza el fallback sin 3D.
+`khamrah`); `?grey=1` arranca en formas grises; `?templates=1` muestra las plantillas de
+caja; `?nowebgl` fuerza el fallback sin 3D.
 
 La barra de revisión muestra FPS, draw calls y triángulos. **Los FPS solo valen medidos en un
 dispositivo real** (en CI/headless el render es por software).
@@ -31,6 +32,7 @@ dispositivo real** (en CI/headless el render es por software).
 | `src/scene/` | `UnboxingScene`, `Box` (+ solapa con bisagra trasera), `Bottle`, `Stage`, `CameraRig` |
 | `src/scene/bottles/` | Geometría por arquetipo: `lathe-shoulder` (Asad, Yara), `rect-prism` (CDN LE), `square-glass` (Khamrah) |
 | `src/scene/projection.ts` | Proyección frontal del draft sobre la geometría, calibrada en px/mm |
+| `src/scene/Box.tsx` | Caja (base + tapa) con 3 aperturas y un material por cara: imagen, plantilla o color |
 | `src/ui/` | Panel HTML, controles de revisión, etiqueta DRAFT, fallback |
 
 ## Reglas que respeta
@@ -48,4 +50,9 @@ dispositivo real** (en CI/headless el render es por software).
 - **Accesibilidad:** con `prefers-reduced-motion` (real o simulado) se muestra el estado final
   sin animación. Sin WebGL, o si la escena falla, se muestra la imagen y el panel: la compra
   nunca depende del 3D.
+- **Cajas:** cada producto tiene su caja y su tipo de apertura (`top-flap`, `lift-lid`,
+  `hinged-lid`), con los mismos tiempos de S1. Las caras usan **referencias oficiales** de marca
+  (`pilot/assets-refs/`, uso interno, no publicables) hasta que haya **fotos propias**
+  (`pilot/kit/`). Las caras sin imagen llevan un color liso muestreado de la caja;
+  «Plantillas de caja» rotula esas caras para comprobar el mapeo. Medidas de caja ESTIMADAS.
 - **Mandarin Sky:** no se incluye (C-02, C-05). Entrada comentada en `products/mandarin-sky.ts`.

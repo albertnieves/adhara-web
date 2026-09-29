@@ -47,7 +47,16 @@ export const MotionSpecSchema = z.object({
   s1Open: z.object({
     duration: Seconds,
     ease: Ease,
+    /** Solapa o tapa con bisagra trasera (top-flap, hinged-lid). */
     flapAngleDeg: z.number().min(-180).max(0),
+    /** Tapa que se levanta (lift-lid): sube, retrocede y se inclina. */
+    liftLid: z.object({
+      /** Subida relativa a la altura del frasco. */
+      rise: z.number().min(0),
+      /** Retroceso relativo al fondo de la caja. */
+      back: z.number().min(0),
+      tiltDeg: z.number(),
+    }),
   }),
   /** S2 · ascenso: el frasco sube; la caja baja y se desvanece; la cámara pasa a frontal. */
   s2Rise: z.object({
@@ -94,7 +103,12 @@ export const motionSpec: MotionSpec = MotionSpecSchema.parse({
     camera: { azimuthDeg: 32, elevationDeg: 16, fill: 0.62 },
     autoplayDelay: 0.8,
   },
-  s1Open: { duration: 0.9, ease: 'easeOutCubic', flapAngleDeg: -115 },
+  s1Open: {
+    duration: 0.9,
+    ease: 'easeOutCubic',
+    flapAngleDeg: -115,
+    liftLid: { rise: 0.55, back: 0.9, tiltDeg: -18 },
+  },
   s2Rise: {
     duration: 1.2,
     ease: 'easeInOutCubic',

@@ -236,4 +236,28 @@ Proyecto aislado en `pilot/animation-prototype/` (Vite 8.3.1 + React 19.3.0 + th
 | 28/09/2026 | 4 · CDN Intense Man LE                           | Prisma gunmetal con bisel, collarín, cuello y tapón cuadrado. Cadena simplificada (9 eslabones toroidales) y medallón como disco con la textura proyectada. Frente del cuerpo y del tapón con el draft v2. **El fondo del prisma (42 mm) es una suposición**: el draft solo muestra el frente                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       | `GENERATED` · textura de prueba  |
 | 28/09/2026 | 5 · Khamrah                                      | Prisma de base cuadrada con `MeshPhysicalMaterial` (transmission 1, IOR 1,5), líquido ámbar interior y placa dorada plana con el recorte de la placa del draft 3/4 (no hay draft frontal). Normal map de estrías en espiga **provisional, generado en código**. La escena necesita fondo propio para que el vidrio no salga blanco opaco. Coste medido en S5 a 390 px: 9 draw calls y 3,7k triángulos (Asad: 9 y 9,8k). Con render por software, Khamrah va ≈11 % más lento que Asad (8,0 frente a 9,0 fps). **Falta medir los FPS en un móvil real**: objetivo 60 fps y mínimo 30 fps (§5)                                                                                                                                                                                                                                                                         | `GENERATED` · vidrio provisional |
 
+### Cajas personalizadas · estructura (29/09/2026)
+
+Decisión: el arte de cada caja saldrá de **fotos propias del kit de tienda** (no se generan caras). Mientras tanto:
+
+- La config de cada producto tiene un bloque `box`: medidas, `estimated`, tipo de apertura (`top-flap`), color del cartón e interior e imagen opcional por cara (`front`, `back`, `left`, `right`, `top`, `bottom`, `inside`) con su `origin`.
+- La caja 3D usa un material por cara. Sin foto, la cara es de cartón neutro o, con «Plantillas de caja», lleva una plantilla rotulada con su nombre, medidas, «↑ arriba» y una esquina roja de referencia.
+- Orientación verificada en las 7 caras con las plantillas. La convención de las fotos queda en `pilot/kit/README.md` (tapa con el borde frontal abajo; base volcada hacia atrás).
+- Pendiente: fotos y medidas de las 4 cajas y cómo se abre cada una. Si alguna no es de solapa superior, hay que ampliar la escena.
+
+### Cajas con referencias oficiales (29/09/2026)
+
+Con acceso a las tiendas oficiales (lattafa-usa.com, armaf.com, armaf.uk) se han estudiado las cajas. Imágenes y procedencia en `pilot/assets-refs/PROVENANCE.md`, **solo como referencia interna, no publicables**.
+
+| Producto | Caja y apertura (según las imágenes)                                                                                                                                              | Caras integradas                                          | Medidas (ESTIMADAS) |
+| -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------- | ------------------- |
+| Asad     | Cartón negro, medallón del león dorado. Apertura no visible: se supone `top-flap`                                                                                                 | Frontal                                                   | 92 × 158 × 90 mm    |
+| Yara     | Cartón rosa con flores plateadas. Apertura supuesta `top-flap`                                                                                                                    | Frontal y trasera                                         | 91 × 156 × 88 mm    |
+| Khamrah  | Tapa negra con marco dorado (81 %) sobre base con acabado de madera (19 %): **`lift-lid`**                                                                                        | Frontal y laterales (el izquierdo copia el derecho, liso) | 138 × 230 × 138 mm  |
+| CDN LE   | Estuche rígido negro horizontal con tapa de bisagra y frasco tumbado sobre terciopelo: **`hinged-lid`** + frasco `lying` (se endereza en S2). Sin funda exterior, gemelos ni paño | Tapa                                                      | 122 × 60 × 150 mm   |
+
+- **Medidas:** ninguna fuente publica las de la caja. Son proporciones respecto al frasco medidas en las imágenes (con error de perspectiva), sobre la altura supuesta de 140 mm del frasco.
+- **Coreografía:** los tiempos y curvas de S1 son comunes. Cambia solo el movimiento según el tipo de apertura: solapa o tapa con bisagra a −115°, o tapa que sube, retrocede y se inclina.
+- Las caras sin imagen llevan un color liso muestreado de la propia caja.
+
 **Pendiente:** medir FPS en un móvil real (sobre todo Khamrah); kit de tienda con medidas reales y fotos para sustituir texturas y normal map; revisar el medallón de Yara con la foto real. Descripciones y datos de producto: el catálogo (`CATALOGO global 2026`) no está en el repo; hasta que se aporte, el panel lleva placeholders.
