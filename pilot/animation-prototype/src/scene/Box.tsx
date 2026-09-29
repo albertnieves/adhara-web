@@ -1,6 +1,6 @@
 import { useTexture } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
-import { useEffect, useLayoutEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { MeshStandardMaterial, SRGBColorSpace, type Group, type Texture } from 'three';
 import { sample, type Timeline } from '../motion/timeline';
 import { BOX_FACES, type BoxConfig, type BoxFace } from '../products/schema';
@@ -9,6 +9,11 @@ import type { ProductDims } from './dims';
 import { deg } from './units';
 
 type FaceTextures = Partial<Record<BoxFace, Texture>>;
+interface LoadedImages {
+  color: FaceTextures;
+  /** Mapas de estampación (lineales, sin sRGB). */
+  foil: FaceTextures;
+}
 type V3 = [number, number, number];
 type Part = 'base' | 'lid';
 
@@ -34,28 +39,42 @@ interface Props {
  */
 export function Box(props: Props) {
   const hasImages = !props.grey && Object.keys(props.box.faces).length > 0;
-  return hasImages ? <BoxWithImages {...props} /> : <BoxMesh {...props} images={{}} />;
+  return hasImages ? (
+    <BoxWithImages {...props} />
+  ) : (
+    <BoxMesh {...props} images={{ color: {}, foil: {} }} />
+  );
 }
 
 /** Carga las imágenes de las caras (Suspense) y las pasa a la malla. */
 function BoxWithImages(props: Props) {
   const urls = useMemo(() => {
-    const out: Partial<Record<BoxFace, string>> = {};
+    const out: Record<string, string> = {};
     for (const f of BOX_FACES) {
       const img = props.box.faces[f];
       if (img) out[f] = img.src;
+      if (img?.foil) out[`${f}:foil`] = img.foil.src;
     }
-    return out as Record<string, string>;
+    return out;
   }, [props.box.faces]);
-  const images = useTexture(urls) as FaceTextures;
-  useLayoutEffect(() => {
-    for (const t of Object.values(images)) {
-      if (!t) continue;
-      t.colorSpace = SRGBColorSpace;
-      t.anisotropy = 8;
-      t.needsUpdate = true;
+  const loaded = useTexture(urls) as Record<string, Texture>;
+  const images = useMemo<LoadedImages>(() => {
+    const color: FaceTextures = {};
+    const foil: FaceTextures = {};
+    for (const [key, tex] of Object.entries(loaded)) {
+      const [face, kind] = key.split(':') as [BoxFace, string | undefined];
+      if (kind === 'foil') {
+        foil[face] = tex;
+      } else {
+        // Se marca aquí (antes de crear materiales y clones) para no perder el sRGB.
+        tex.colorSpace = SRGBColorSpace;
+        color[face] = tex;
+      }
+      tex.anisotropy = 8;
+      tex.needsUpdate = true;
     }
-  }, [images]);
+    return { color, foil };
+  }, [loaded]);
   return <BoxMesh {...props} images={images} />;
 }
 
@@ -67,7 +86,7 @@ function BoxMesh({
   greyColor,
   templates,
   images,
-}: Props & { images: FaceTextures }) {
+}: Props & { images: LoadedImages }) {
   const root = useRef<Group>(null);
   const lid = useRef<Group>(null);
   const { width: W, height: H, depth: D } = dims.box;
@@ -100,7 +119,7 @@ function BoxMesh({
     };
     const source = (f: BoxFace): Texture | undefined => {
       if (grey) return undefined;
-      return images[f] ?? (templates ? makeFaceTemplate(f, ...sizes[f]) : undefined);
+      return images.color[f] ?? (templates ? makeFaceTemplate(f, ...sizes[f]) : undefined);
     };
     const cache = new Map<string, MeshStandardMaterial>();
     /** Material de una cara para una parte; en las laterales recorta la franja de la parte. */
@@ -114,17 +133,37 @@ function BoxMesh({
         m = f === 'inside' ? inside : part === 'lid' ? lidPlain : basePlain;
       } else {
         const lateral = f !== 'top' && f !== 'bottom';
-        let map = tex;
-        if (lateral && lidH > 0) {
-          map = tex.clone();
-          // El clon se crea antes del efecto que marca sRGB en las texturas cargadas.
-          map.colorSpace = SRGBColorSpace;
+        const foil = images.foil[f];
+        /** En las cajas con tapa, cada parte usa su franja de la imagen de la cara. */
+        const band = (src: Texture) => {
+          if (!lateral || lidH <= 0) return src;
+          const c = src.clone();
           const [v0, v1] = part === 'base' ? [0, split] : [split, 1];
-          map.offset.set(0, v0);
-          map.repeat.set(1, v1 - v0);
-          map.needsUpdate = true;
-        }
-        m = make({ map });
+          c.offset.set(0, v0);
+          c.repeat.set(1, v1 - v0);
+          c.needsUpdate = true;
+          return c;
+        };
+        const orm = foil ? band(foil) : undefined;
+        // Estampación: el mapa modula rugosidad (G) y metalicidad (B), con valores base 1.
+        // Las fotos ya llevan su luz y su color: se reproducen casi tal cual (emisivo, sin
+        // tone mapping) y solo una parte responde a la luz de la escena, para no quemar ni
+        // desaturar los tonos (p. ej. el rosa pastel de Yara) y conservar el volumen.
+        const map = band(tex);
+        const photo = {
+          map,
+          color: '#707070',
+          emissiveMap: map,
+          emissive: '#ffffff',
+          emissiveIntensity: 0.6,
+          envMapIntensity: 0.5,
+          toneMapped: false,
+        };
+        m = make(
+          orm
+            ? { ...photo, roughnessMap: orm, metalnessMap: orm, roughness: 1, metalness: 1 }
+            : photo,
+        );
       }
       cache.set(key, m);
       return m;
@@ -134,11 +173,11 @@ function BoxMesh({
 
   useEffect(
     () => () => {
-      const loaded = new Set(Object.values(images).map((tex) => tex?.source));
+      const all = [...Object.values(images.color), ...Object.values(images.foil)];
       for (const m of mats.owned) {
-        // Plantillas y recortes (clones) son propios; las imágenes cargadas las gestiona drei.
-        if (m.map && !Object.values(images).includes(m.map)) {
-          if (!loaded.has(m.map.source)) m.map.dispose();
+        // Plantillas y franjas (clones) son propias; las imágenes cargadas las gestiona drei.
+        for (const tex of new Set([m.map, m.roughnessMap, m.metalnessMap])) {
+          if (tex && !all.includes(tex)) tex.dispose();
         }
         m.dispose();
       }

@@ -1,3 +1,4 @@
+import boxTopFoil from '@refs/club-de-nuit-intense-man-le/box_top_foil.png';
 import draftSrc from '@drafts/club-de-nuit-intense-man-le/cdn-le_bottle-front_nbpro_v2_DRAFT.png';
 import boxTop from '@refs/club-de-nuit-intense-man-le/box_top.jpg';
 import { PLACEHOLDER_DESCRIPTION } from './placeholders';
@@ -47,6 +48,10 @@ export const clubDeNuitIntenseManLE = ProductConfigSchema.parse({
         src: boxTop,
         file: 'pilot/assets-refs/club-de-nuit-intense-man-le/box_top.jpg',
         origin: 'OFFICIAL',
+        foil: {
+          src: boxTopFoil,
+          file: 'pilot/assets-refs/club-de-nuit-intense-man-le/box_top_foil.png',
+        },
       },
     },
   },

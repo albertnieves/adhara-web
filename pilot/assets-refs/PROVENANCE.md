@@ -6,8 +6,18 @@ interna del piloto: no publicables** y fuera de la tienda y de sus assets.
 
 - `official_*.jpg`: la imagen original, convertida a JPG sin otros cambios.
 - `box_*.jpg`: una cara de la caja **enderezada** (corrección de perspectiva con 4 esquinas) y
-  recortada. No se ha retocado ni añadido nada. Si una cara no aparece en ninguna imagen oficial,
-  no existe archivo y la escena usa un color liso muestreado de la propia caja.
+  recortada. Si una cara no aparece en ninguna imagen oficial, no existe archivo y la escena usa
+  un color liso muestreado de la propia caja.
+- `box_*_foil.png`: **mapa de estampación** derivado automáticamente de la misma cara (dorado o
+  plateado detectado por color): G = rugosidad, B = metalicidad. No añade dibujo, solo hace que
+  la estampación refleje la luz.
+- **Partes simuladas** (marcadas `simulated` en la config del producto):
+  - `asad/box_right.jpg`: el frasco tapa el ≈45 % derecho del lateral en la foto; esa zona se
+    funde al negro de la caja.
+  - `yara/box_right.jpg`: el frasco tapa el ≈46 % derecho; se completa en espejo con el
+    estampado visible.
+  - Laterales izquierdos de Asad, Yara y Khamrah: no aparecen en ninguna imagen; se usa el
+    derecho.
 
 Las **medidas no se publican** en ninguna de estas fuentes. Las de la config del prototipo son
 proporciones medidas sobre estas imágenes respecto al frasco y siguen siendo ESTIMADAS.

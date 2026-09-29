@@ -1,3 +1,4 @@
+import boxFrontFoil from '@refs/khamrah/box_front_foil.png';
 import draftSrc from '@drafts/khamrah/khamrah_bottle-34_nbpro_v2_DRAFT.png';
 import boxFront from '@refs/khamrah/box_front.jpg';
 import boxRight from '@refs/khamrah/box_right.jpg';
@@ -45,9 +46,19 @@ export const khamrah = ProductConfigSchema.parse({
     baseColor: '#cdbba7',
     insideColor: '#2a2622',
     faces: {
-      front: { src: boxFront, file: 'pilot/assets-refs/khamrah/box_front.jpg', origin: 'OFFICIAL' },
+      front: {
+        src: boxFront,
+        file: 'pilot/assets-refs/khamrah/box_front.jpg',
+        origin: 'OFFICIAL',
+        foil: { src: boxFrontFoil, file: 'pilot/assets-refs/khamrah/box_front_foil.png' },
+      },
       right: { src: boxRight, file: 'pilot/assets-refs/khamrah/box_right.jpg', origin: 'OFFICIAL' },
-      left: { src: boxRight, file: 'pilot/assets-refs/khamrah/box_right.jpg', origin: 'OFFICIAL' },
+      left: {
+        src: boxRight,
+        file: 'pilot/assets-refs/khamrah/box_right.jpg',
+        origin: 'OFFICIAL',
+        simulated: 'No aparece en ninguna imagen: copia del lateral derecho (liso).',
+      },
     },
   },
   scale: 1,

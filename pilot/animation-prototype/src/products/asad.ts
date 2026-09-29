@@ -1,3 +1,5 @@
+import boxFrontFoil from '@refs/asad/box_front_foil.png';
+import boxRight from '@refs/asad/box_right.jpg';
 import draftSrc from '@drafts/asad/asad_bottle-front_nbpro_v1_DRAFT.png';
 import boxFront from '@refs/asad/box_front.jpg';
 import { PLACEHOLDER_DESCRIPTION } from './placeholders';
@@ -61,7 +63,24 @@ export const asad = ProductConfigSchema.parse({
     color: '#252525',
     insideColor: '#1a1a1a',
     faces: {
-      front: { src: boxFront, file: 'pilot/assets-refs/asad/box_front.jpg', origin: 'OFFICIAL' },
+      front: {
+        src: boxFront,
+        file: 'pilot/assets-refs/asad/box_front.jpg',
+        origin: 'OFFICIAL',
+        foil: { src: boxFrontFoil, file: 'pilot/assets-refs/asad/box_front_foil.png' },
+      },
+      right: {
+        src: boxRight,
+        file: 'pilot/assets-refs/asad/box_right.jpg',
+        origin: 'OFFICIAL',
+        simulated: 'El frasco tapa el 45 % derecho: el relieve se funde al negro de la caja.',
+      },
+      left: {
+        src: boxRight,
+        file: 'pilot/assets-refs/asad/box_right.jpg',
+        origin: 'OFFICIAL',
+        simulated: 'No aparece en ninguna imagen: copia del lateral derecho.',
+      },
     },
   },
   scale: 1,
