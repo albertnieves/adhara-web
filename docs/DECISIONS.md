@@ -23,3 +23,6 @@
 16. El precio anterior tachado se valida con el criterio Ómnibus: no puede superar el PVP más bajo de los 30 días previos. Las excepciones legales (rebajas progresivas) quedan pendientes de asesoría.
 17. Esta sesión de Claude Code trabaja en la rama `claude/wizardly-ride-5ul3ai`, asignada por el entorno, en lugar del prefijo `codex/` de AGENTS.md. El cambio se revisa igualmente mediante PR.
 18. Vitest resuelve el alias `@/` para que los módulos se importen entre sí por su `index.ts`, igual que en Next.js.
+19. Proyecto `adhara-dev` creado el 29/09/2026 en la organización del usuario, región `eu-central-1`, a petición explícita. Migraciones aplicadas con el conector de Supabase y guardadas con la misma versión en `supabase/migrations/`.
+20. `public.record_audit_event` es `SECURITY DEFINER` ejecutable por `authenticated` de forma intencionada (aviso 0029 del asesor): es la única vía de escritura en `audit_log`, rechaza a quien no sea personal activo y fija el actor a `auth.uid()`.
+21. Sin Docker en la sesión, las pruebas pgTAP se validaron en un Postgres 16 local con una emulación mínima de `auth` y, además, contra `adhara-dev` dentro de una transacción revertida (22/22, sin restos). La emulación no se versiona.

@@ -50,6 +50,10 @@ Plan por fases en docs/ADMIN_PLAN.md. Implementada la fase A0, solo código de d
 
 Nota: el contenedor de la sesión trae Chromium 1194 y el repo fija Playwright 1.63 (Chromium 1243). Se ejecutó con una configuración temporal que apunta al ejecutable del sistema, sin cambiar la del repo. La CI instala el navegador correcto.
 
+## Base de datos — 29/09/2026
+
+Proyecto `adhara-dev` (Frankfurt) con tres migraciones: esquemas `internal`/`private`, personal, permisos por rol, auditoría de solo inserción y RLS. Pruebas pgTAP 22/22 en local y en `adhara-dev` (transacción revertida). Asesores de Supabase: solo el aviso intencionado sobre `record_audit_event` (docs/DECISIONS.md §20). Sin usuarios todavía; login y MFA pendientes (fase A1).
+
 ## Pendiente
 
 Verificar CI remoto y configurar las protecciones de main disponibles en el plan; Docker/Supabase local; migraciones y RLS; admin/MFA; validación de variables de servicios; SEO editorial; pruebas de fuga de costes; proyectos dev/prod y Vercel Preview. No se ha creado ni cobrado ningún servicio remoto. No existe catálogo ni datos ficticios.
