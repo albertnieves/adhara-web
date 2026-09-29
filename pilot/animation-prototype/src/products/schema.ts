@@ -128,6 +128,13 @@ const BoxFaceImage = z.object({
   origin: z.enum(['PHOTO', 'OFFICIAL', 'GENERATED']),
   /** URL de origen si no es foto propia. */
   sourceUrl: z.string().optional(),
+  /**
+   * Mapa de estampación (foil) derivado de la misma imagen: G = rugosidad, B = metalicidad.
+   * Hace que el dorado/plateado refleje la luz como en la caja real.
+   */
+  foil: z.object({ src: z.string(), file: z.string() }).optional(),
+  /** Parte de la cara reconstruida (no visible en la fuente). Se documenta en PROVENANCE. */
+  simulated: z.string().optional(),
 });
 
 export const BoxSchema = z.object({

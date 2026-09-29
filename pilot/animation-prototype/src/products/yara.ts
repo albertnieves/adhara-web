@@ -1,3 +1,7 @@
+import boxBackFoil from '@refs/yara/box_back_foil.png';
+import boxFrontFoil from '@refs/yara/box_front_foil.png';
+import boxRight from '@refs/yara/box_right.jpg';
+import boxRightFoil from '@refs/yara/box_right_foil.png';
 import draftSrc from '@drafts/yara/yara_bottle-front_nb_v1_DRAFT.png';
 import { LATTAFA_CYLINDER_PROFILE } from './asad';
 import boxBack from '@refs/yara/box_back.jpg';
@@ -43,8 +47,32 @@ export const yara = ProductConfigSchema.parse({
     color: '#e6c8d7',
     insideColor: '#d9bccb',
     faces: {
-      front: { src: boxFront, file: 'pilot/assets-refs/yara/box_front.jpg', origin: 'OFFICIAL' },
-      back: { src: boxBack, file: 'pilot/assets-refs/yara/box_back.jpg', origin: 'OFFICIAL' },
+      front: {
+        src: boxFront,
+        file: 'pilot/assets-refs/yara/box_front.jpg',
+        origin: 'OFFICIAL',
+        foil: { src: boxFrontFoil, file: 'pilot/assets-refs/yara/box_front_foil.png' },
+      },
+      back: {
+        src: boxBack,
+        file: 'pilot/assets-refs/yara/box_back.jpg',
+        origin: 'OFFICIAL',
+        foil: { src: boxBackFoil, file: 'pilot/assets-refs/yara/box_back_foil.png' },
+      },
+      right: {
+        src: boxRight,
+        file: 'pilot/assets-refs/yara/box_right.jpg',
+        origin: 'OFFICIAL',
+        foil: { src: boxRightFoil, file: 'pilot/assets-refs/yara/box_right_foil.png' },
+        simulated: 'El frasco tapa el 46 % derecho: completado en espejo con el estampado visible.',
+      },
+      left: {
+        src: boxRight,
+        file: 'pilot/assets-refs/yara/box_right.jpg',
+        origin: 'OFFICIAL',
+        foil: { src: boxRightFoil, file: 'pilot/assets-refs/yara/box_right_foil.png' },
+        simulated: 'No aparece en ninguna imagen: copia del lateral derecho.',
+      },
     },
   },
   scale: 1,

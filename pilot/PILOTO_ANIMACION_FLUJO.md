@@ -260,4 +260,12 @@ Con acceso a las tiendas oficiales (lattafa-usa.com, armaf.com, armaf.uk) se han
 - **Coreografía:** los tiempos y curvas de S1 son comunes. Cambia solo el movimiento según el tipo de apertura: solapa o tapa con bisagra a −115°, o tapa que sube, retrocede y se inclina.
 - Las caras sin imagen llevan un color liso muestreado de la propia caja.
 
+### Cajas más fieles al original (29/09/2026)
+
+- **Laterales:** Asad (león en relieve) y Yara (estampado floral) salen de las mismas fotos oficiales, enderezados. La parte que tapa el frasco (≈45 %) se funde al color de la caja (Asad) o se completa en espejo (Yara). Todo lo simulado queda marcado en la config (`simulated`) y en `PROVENANCE.md`.
+- **Estampación:** mapas de rugosidad y metalicidad derivados de cada cara, para que el dorado (Asad, Khamrah) y el plateado (Yara, tapa de CDN LE) reflejen la luz.
+- **Color fiel:** las caras con foto reproducen su color casi tal cual (emisivo y sin tone mapping), con una parte que responde a la luz de la escena para conservar el volumen. Antes el rosa de Yara salía quemado y desaturado.
+- **Yara:** el frontal pasa a la misma foto que el lateral (`official_yara-2`); la de `official_yara-3` lleva una pegatina holográfica y otro tono.
+- **Descartadas:** las fotos de los estuches regalo («Set», «Gift Set») y la edición V2 de CDN LE, porque son otras cajas.
+
 **Pendiente:** medir FPS en un móvil real (sobre todo Khamrah); kit de tienda con medidas reales y fotos para sustituir texturas y normal map; revisar el medallón de Yara con la foto real. Descripciones y datos de producto: el catálogo (`CATALOGO global 2026`) no está en el repo; hasta que se aporte, el panel lleva placeholders.
