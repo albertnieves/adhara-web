@@ -42,7 +42,7 @@ function MediaCard({
           alt={media.alt ?? ''}
           fill
           sizes="200px"
-          className="object-contain p-3 mix-blend-multiply"
+          className="object-contain p-3 mix-blend-multiply brightness-[1.04]"
         />
         {media.role === 'hero' && (
           <span className="bg-ink text-ivory absolute top-2 left-2 px-2 py-0.5 text-[0.5625rem] tracking-[0.16em] uppercase">
@@ -132,7 +132,7 @@ export function MediaManager({
                   alt={item.alt ?? ''}
                   fill
                   sizes="200px"
-                  className="object-contain p-3 mix-blend-multiply"
+                  className="object-contain p-3 mix-blend-multiply brightness-[1.04]"
                 />
               </li>
             ),

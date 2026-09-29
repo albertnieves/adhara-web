@@ -23,7 +23,7 @@ export function ProductCard({
   return (
     <Link
       href={{ pathname: '/perfume/[slug]', params: { slug: product.slug } }}
-      className="group block"
+      className="group block min-w-0"
     >
       <div className="bg-stage relative aspect-[4/5] overflow-hidden">
         <div className="absolute inset-6 transition-transform duration-[1.6s] ease-(--ease-luxe) group-hover:scale-[1.05]">
@@ -45,24 +45,22 @@ export function ProductCard({
           className="bg-gold absolute inset-x-0 bottom-0 h-px origin-left scale-x-0 transition-transform duration-700 ease-(--ease-luxe) group-hover:scale-x-100"
         />
       </div>
-      <div className="mt-5 flex items-start justify-between gap-4">
-        <div className="min-w-0">
-          <p className="eyebrow">{product.brand.name}</p>
-          <h3 className="font-display mt-1.5 truncate text-2xl leading-tight">
-            {product.name}
-          </h3>
-          <p className="text-smoke mt-1 text-xs">
-            {[
-              product.concentration
-                ? t(`concentration.${product.concentration}`)
-                : null,
-              sizes !== '—' ? sizes : null,
-            ]
-              .filter(Boolean)
-              .join(' · ')}
-          </p>
-        </div>
-        <p className="shrink-0 pt-5 text-sm tabular-nums">
+      <div className="mt-5 min-w-0">
+        <p className="eyebrow">{product.brand.name}</p>
+        <h3 className="font-display mt-1.5 line-clamp-2 text-2xl leading-tight">
+          {product.name}
+        </h3>
+        <p className="text-smoke mt-1 text-xs">
+          {[
+            product.concentration
+              ? t(`concentration.${product.concentration}`)
+              : null,
+            sizes !== '—' ? sizes : null,
+          ]
+            .filter(Boolean)
+            .join(' · ')}
+        </p>
+        <p className="mt-3 text-sm tabular-nums">
           {price === null
             ? t('product.pricePending')
             : priced.length > 1

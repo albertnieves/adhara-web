@@ -63,7 +63,12 @@ export default async function Home({
         ) : (
           <ul className="grid gap-x-6 gap-y-16 sm:grid-cols-2 lg:grid-cols-4">
             {featured.map((product, index) => (
-              <Reveal as="li" key={product.id} delay={index * 0.12}>
+              <Reveal
+                as="li"
+                key={product.id}
+                delay={index * 0.12}
+                className="min-w-0"
+              >
                 <ProductCard product={product} />
               </Reveal>
             ))}
@@ -93,7 +98,7 @@ export default async function Home({
                     alt=""
                     fill
                     sizes="(min-width: 1024px) 30vw, 70vw"
-                    className="object-contain mix-blend-multiply"
+                    className="object-contain mix-blend-multiply brightness-[1.04]"
                   />
                 </div>
               ) : (

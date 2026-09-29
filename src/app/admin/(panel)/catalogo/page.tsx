@@ -111,7 +111,7 @@ export default async function CatalogAdmin({
                           alt=""
                           fill
                           sizes="48px"
-                          className="object-contain p-1 mix-blend-multiply"
+                          className="object-contain p-1 mix-blend-multiply brightness-[1.04]"
                         />
                       )}
                     </div>

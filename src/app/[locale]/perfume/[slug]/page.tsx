@@ -138,7 +138,12 @@ export default async function ProductPage({ params }: { params: Params }) {
           </Reveal>
           <ul className="grid gap-x-6 gap-y-16 sm:grid-cols-2 lg:grid-cols-4">
             {related.map((item, index) => (
-              <Reveal as="li" key={item.id} delay={index * 0.1}>
+              <Reveal
+                as="li"
+                key={item.id}
+                delay={index * 0.1}
+                className="min-w-0"
+              >
                 <ProductCard product={item} />
               </Reveal>
             ))}

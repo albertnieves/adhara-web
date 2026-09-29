@@ -4,7 +4,8 @@ import { Star } from '@/modules/brand';
 
 /**
  * Imagen de producto sobre el fondo cálido de la tienda. Las fotos de estudio
- * con fondo claro se funden con multiply. Sin imagen: marca y estrella.
+ * traen fondo gris muy claro (246/255): un +4 % de brillo lo lleva a blanco y
+ * multiply lo funde con el fondo. Sin imagen: marca y estrella.
  */
 export function ProductImage({
   media,
@@ -40,7 +41,7 @@ export function ProductImage({
       fill
       sizes={sizes}
       priority={priority}
-      className={`object-contain mix-blend-multiply ${className}`}
+      className={`object-contain mix-blend-multiply brightness-[1.04] ${className}`}
     />
   );
 }

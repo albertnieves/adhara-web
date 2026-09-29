@@ -144,8 +144,8 @@ export function CatalogBrowser({
             className="field placeholder:text-mist"
           />
         </label>
-        <div className="flex items-center gap-6">
-          <p className="text-smoke text-xs tracking-[0.2em] uppercase tabular-nums">
+        <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
+          <p className="text-smoke text-xs tracking-[0.2em] whitespace-nowrap uppercase tabular-nums">
             {t('count', { count: visible.length })}
           </p>
           <label className="flex items-center gap-3">
@@ -193,6 +193,7 @@ export function CatalogBrowser({
             {visible.map((product, index) => (
               <motion.li
                 key={product.id}
+                className="min-w-0"
                 layout={!reduced}
                 initial={reduced ? false : { opacity: 0, y: 24 }}
                 animate={{ opacity: 1, y: 0 }}
