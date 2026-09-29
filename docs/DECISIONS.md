@@ -14,3 +14,12 @@
 11. Se usan `next dev --webpack` y `next build --webpack`: Turbopack no puede abrir el puerto de su proceso CSS en este entorno, incluso al solicitar ejecución ampliada. Webpack compiló correctamente. Revisar Turbopack cuando cambie el entorno.
 
 12. Los servidores locales se ligan a localhost para mantener el mismo origen que las reescrituras de Next.js. La prueba con 127.0.0.1 producía bucles en rutas traducidas; con localhost pasan las 12 pruebas. Incidencia similar documentada en https://github.com/vercel/next.js/issues/94342. Verificar por separado el despliegue real.
+
+## Panel de administración — 29/09/2026
+
+13. El panel se planifica en fases A0–A8 (docs/ADMIN_PLAN.md), enlazadas con el roadmap original. Se empieza por A0: reglas de dominio puras y probadas, sin servicios, dependencias nuevas ni pantallas. /admin sigue en 404 (decisión 9).
+14. La matriz de permisos amplía la de la Fase 0 §11 con pedidos, mensajes, compras y agente. Propuesta pendiente de confirmar: solo owner registra costes; owner y manager los ven con aal2.
+15. Agente de inventario en dos capas: vigilante determinista (`watchStock`) y asistente conversacional. Solo lee y propone; una persona con permiso aprueba y la propuesta se ejecuta por el caso de uso normal. Para el asistente se propone Claude API con el tool runner del SDK de TypeScript en nuestro servidor; `@anthropic-ai/sdk` no se instala hasta A4.2.
+16. El precio anterior tachado se valida con el criterio Ómnibus: no puede superar el PVP más bajo de los 30 días previos. Las excepciones legales (rebajas progresivas) quedan pendientes de asesoría.
+17. Esta sesión de Claude Code trabaja en la rama `claude/wizardly-ride-5ul3ai`, asignada por el entorno, en lugar del prefijo `codex/` de AGENTS.md. El cambio se revisa igualmente mediante PR.
+18. Vitest resuelve el alias `@/` para que los módulos se importen entre sí por su `index.ts`, igual que en Next.js.

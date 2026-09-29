@@ -31,8 +31,9 @@ pnpm format:check
 - Home y catálogo técnicos en español, catalán e inglés.
 - Endpoint /api/health y exclusión de indexación mientras se desarrolla.
 - Vitest, Playwright y workflow de GitHub Actions preparado.
+- Reglas de negocio del panel de administración (permisos, precios, inventario, vigilante de stock, pedidos y mensajes) probadas con Vitest, todavía sin pantallas ni base de datos. Plan por fases en [docs/ADMIN_PLAN.md](docs/ADMIN_PLAN.md).
 - Instrucciones para Codex en AGENTS.md y documentos originales preservados.
 
 ## Continuar con Codex
 
-Abrir esta carpeta como proyecto y pedir: «Lee AGENTS.md y docs/STATUS.md y continúa con el siguiente bloque de fundaciones». Consultar [desarrollo](docs/DEVELOPMENT.md), [habilidades](docs/SKILLS.md), [decisiones](docs/DECISIONS.md) y [estado](docs/STATUS.md).
+Abrir esta carpeta como proyecto y pedir: «Lee AGENTS.md y docs/STATUS.md y continúa con el siguiente bloque de fundaciones». Consultar [desarrollo](docs/DEVELOPMENT.md), [panel de administración](docs/ADMIN_PLAN.md), [habilidades](docs/SKILLS.md), [decisiones](docs/DECISIONS.md) y [estado](docs/STATUS.md).
