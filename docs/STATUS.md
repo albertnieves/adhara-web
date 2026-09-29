@@ -36,9 +36,9 @@ Vercel `adhara-web` (equipo SOAPBRXND, Hobby), funciones en París (cdg1), todos
 | Comprobación                                          | Resultado                                                                                   |
 | ----------------------------------------------------- | ------------------------------------------------------------------------------------------- |
 | Lint, typecheck, formato                              | Correctos                                                                                   |
-| Vitest                                                | 82 tests correctos (10 archivos), incluida la paridad SQL/TS de movimientos y permisos      |
+| Vitest                                                | 87 tests correctos (11 archivos), incluida la paridad SQL/TS de movimientos y permisos      |
 | Build de producción (Webpack)                         | Correcto                                                                                    |
-| Playwright (repo)                                     | 22/22 escritorio y móvil, con el Chromium del contenedor (nota de la sesión del PR #5)      |
+| Playwright (repo)                                     | 36/36 escritorio y móvil, con el Chromium del contenedor (nota de la sesión del PR #5)      |
 | pgTAP `02_catalog_inventory` en `adhara-dev`          | 33/33 en transacción revertida (`supabase/tests/tap_remote.py`)                             |
 | CI GitHub Actions (Quality)                           | Verde en todos los commits del PR #6                                                        |
 | Previews de Vercel                                    | READY en todos los commits del PR #6                                                        |
@@ -57,6 +57,8 @@ La revisión visual con perfumes se hizo en local con un Supabase simulado que d
 4. Revisar y fusionar el PR #6 (incluye el PR #5) para llevarlo a producción.
 
 ## Pendiente técnico
+
+- Activar en Supabase Auth la protección de contraseñas filtradas (aviso del asesor de seguridad; puede requerir plan de pago).
 
 - Importar el catálogo real (bloqueado por el PDF) y fijar PVP; publicar.
 - Configuración de Auth en Supabase (Site URL y Redirect URLs con la URL del despliegue; plantillas con `token_hash`) para invitaciones y recuperación por email.
