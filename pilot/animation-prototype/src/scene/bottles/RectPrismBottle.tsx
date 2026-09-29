@@ -16,6 +16,8 @@ export function rectPrismSize(s: Shape) {
     heightMm: s.body.heightMm + s.collar.heightMm + s.neck.heightMm + s.cap.heightMm,
     /** Anchura máxima durante el giro: la diagonal de la planta. */
     widthMm: Math.hypot(s.body.widthMm, s.body.depthMm),
+    /** Grosor de frente a espalda. */
+    depthMm: s.body.depthMm,
   };
 }
 

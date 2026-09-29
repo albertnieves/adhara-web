@@ -117,5 +117,6 @@ export function latheShoulderSize(s: Lathe) {
     heightMm: s.bodyHeightMm + s.neckHeightMm + s.capHeightMm,
     /** Anchura máxima durante el giro. */
     widthMm: 2 * Math.max(s.capRadiusMm, s.bodyTopRadiusMm),
+    depthMm: 2 * Math.max(s.capRadiusMm, s.bodyTopRadiusMm),
   };
 }

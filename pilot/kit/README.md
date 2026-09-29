@@ -1,7 +1,8 @@
 # Kit de tienda · fotos y medidas reales
 
 Aquí van las **fotos propias** de los productos físicos (plan §4, paso 1). Sustituyen a las
-medidas estimadas y, en la caja, son la única fuente de arte: no se generan ni se inventan caras.
+medidas estimadas y a las referencias oficiales provisionales de `pilot/assets-refs/` (no
+publicables). No se generan ni se inventan caras.
 
 ## Estructura
 
@@ -34,8 +35,9 @@ Nombres de las caras procesadas: `front`, `back`, `left`, `right`, `top`, `botto
 | `bottom`         | Volcada hacia atrás, de modo que la **frontal quede arriba** en la foto |
 | `inside`         | Interior de la solapa o de la caja, si lleva impresión                  |
 
-**Además:** cómo se abre la caja (solapa superior, tapa, cajón, estuche con imán…). La escena
-solo tiene solapa superior con bisagra trasera; otro tipo de apertura requiere ampliarla.
+**Además:** cómo se abre la caja. La escena admite `top-flap` (solapa superior), `lift-lid`
+(tapa que se levanta de una base) y `hinged-lid` (estuche rígido con tapa de bisagra, frasco
+tumbado). Hay que confirmar con la caja real la de Asad y Yara (supuesta `top-flap`).
 
 ## medidas.md
 

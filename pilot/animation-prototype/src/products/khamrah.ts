@@ -1,5 +1,7 @@
 import draftSrc from '@drafts/khamrah/khamrah_bottle-34_nbpro_v2_DRAFT.png';
-import { BOX_PLACEHOLDER, PLACEHOLDER_DESCRIPTION } from './placeholders';
+import boxFront from '@refs/khamrah/box_front.jpg';
+import boxRight from '@refs/khamrah/box_right.jpg';
+import { PLACEHOLDER_DESCRIPTION } from './placeholders';
 import { ProductConfigSchema } from './schema';
 
 /*
@@ -25,13 +27,28 @@ export const khamrah = ProductConfigSchema.parse({
     estimated: true,
     note: 'ESTIMADAS desde el draft 3/4 (altura supuesta 140 mm). Pendiente del kit de tienda.',
   },
+  /*
+   * Caja: referencia oficial (pilot/assets-refs/khamrah). Tapa negra que se levanta de una
+   * base con acabado de madera (81 % / 19 % de la altura). Proporciones ESTIMADAS respecto al
+   * frasco en official_khamrah-2.jpg (alto ≈ 1,65 × frasco). El lateral izquierdo no aparece:
+   * se usa el derecho (liso, negro y madera). Interior: color neutro (sin imagen).
+   */
   box: {
-    ...BOX_PLACEHOLDER,
-    widthMm: 94,
-    heightMm: 152,
-    depthMm: 94,
-    // Sin fotos todavía: se añaden en faces (front, back, left, right, top, bottom, inside).
-    faces: {},
+    widthMm: 138,
+    heightMm: 230,
+    depthMm: 138,
+    estimated: true,
+    opening: 'lift-lid',
+    lidFraction: 0.81,
+    bottlePose: 'standing',
+    color: '#1f1f1f',
+    baseColor: '#cdbba7',
+    insideColor: '#2a2622',
+    faces: {
+      front: { src: boxFront, file: 'pilot/assets-refs/khamrah/box_front.jpg', origin: 'OFFICIAL' },
+      right: { src: boxRight, file: 'pilot/assets-refs/khamrah/box_right.jpg', origin: 'OFFICIAL' },
+      left: { src: boxRight, file: 'pilot/assets-refs/khamrah/box_right.jpg', origin: 'OFFICIAL' },
+    },
   },
   scale: 1,
   bottle: {

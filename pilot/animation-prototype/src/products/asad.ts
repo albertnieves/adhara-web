@@ -1,5 +1,6 @@
 import draftSrc from '@drafts/asad/asad_bottle-front_nbpro_v1_DRAFT.png';
-import { BOX_PLACEHOLDER, PLACEHOLDER_DESCRIPTION } from './placeholders';
+import boxFront from '@refs/asad/box_front.jpg';
+import { PLACEHOLDER_DESCRIPTION } from './placeholders';
 import { ProductConfigSchema } from './schema';
 
 /*
@@ -44,13 +45,24 @@ export const asad = ProductConfigSchema.parse({
     estimated: true,
     note: 'ESTIMADAS desde el draft (altura supuesta 140 mm). Pendiente del kit de tienda.',
   },
+  /*
+   * Caja: referencia oficial (pilot/assets-refs/asad). Proporciones ESTIMADAS respecto al
+   * frasco en official_asad-2.jpg (alto ≈ 1,13 × frasco; frontal ≈ 0,59 ancho/alto; fondo ≈
+   * ancho). Apertura no visible: se supone estuche de cartón con solapa superior.
+   */
   box: {
-    ...BOX_PLACEHOLDER,
-    widthMm: 72,
-    heightMm: 152,
-    depthMm: 72,
-    // Sin fotos todavía: se añaden en faces (front, back, left, right, top, bottom, inside).
-    faces: {},
+    widthMm: 92,
+    heightMm: 158,
+    depthMm: 90,
+    estimated: true,
+    opening: 'top-flap',
+    lidFraction: 0,
+    bottlePose: 'standing',
+    color: '#252525',
+    insideColor: '#1a1a1a',
+    faces: {
+      front: { src: boxFront, file: 'pilot/assets-refs/asad/box_front.jpg', origin: 'OFFICIAL' },
+    },
   },
   scale: 1,
   bottle: {

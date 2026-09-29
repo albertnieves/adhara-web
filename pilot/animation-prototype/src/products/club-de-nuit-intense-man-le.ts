@@ -1,5 +1,6 @@
 import draftSrc from '@drafts/club-de-nuit-intense-man-le/cdn-le_bottle-front_nbpro_v2_DRAFT.png';
-import { BOX_PLACEHOLDER, PLACEHOLDER_DESCRIPTION } from './placeholders';
+import boxTop from '@refs/club-de-nuit-intense-man-le/box_top.jpg';
+import { PLACEHOLDER_DESCRIPTION } from './placeholders';
 import { ProductConfigSchema } from './schema';
 
 /*
@@ -24,13 +25,30 @@ export const clubDeNuitIntenseManLE = ProductConfigSchema.parse({
     estimated: true,
     note: 'ESTIMADAS desde el draft (altura supuesta 140 mm; fondo supuesto 42 mm).',
   },
+  /*
+   * Estuche: referencia oficial (pilot/assets-refs/club-de-nuit-intense-man-le). Estuche
+   * rígido negro, horizontal, con tapa de bisagra trasera; el frasco va tumbado boca arriba
+   * sobre terciopelo negro. Simplificaciones: sin funda exterior, sin gemelos ni paño y sin
+   * el frente inclinado de la base. Proporciones ESTIMADAS respecto al frasco en
+   * official_cdn-armaf-1.jpg (tapa ≈ 122 × 150 mm); alto supuesto 60 mm.
+   */
   box: {
-    ...BOX_PLACEHOLDER,
-    widthMm: 100,
-    heightMm: 152,
-    depthMm: 60,
-    // Sin fotos todavía: se añaden en faces (front, back, left, right, top, bottom, inside).
-    faces: {},
+    widthMm: 122,
+    heightMm: 60,
+    depthMm: 150,
+    estimated: true,
+    opening: 'hinged-lid',
+    lidFraction: 0.45,
+    bottlePose: 'lying',
+    color: '#212121',
+    insideColor: '#141414',
+    faces: {
+      top: {
+        src: boxTop,
+        file: 'pilot/assets-refs/club-de-nuit-intense-man-le/box_top.jpg',
+        origin: 'OFFICIAL',
+      },
+    },
   },
   scale: 1,
   bottle: {

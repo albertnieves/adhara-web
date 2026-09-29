@@ -6,9 +6,11 @@ import { sample, type Timeline } from '../motion/timeline';
 import { BOX_FACES, type BoxConfig, type BoxFace } from '../products/schema';
 import { makeFaceTemplate } from './boxTemplates';
 import type { ProductDims } from './dims';
+import { deg } from './units';
 
 type FaceTextures = Partial<Record<BoxFace, Texture>>;
 type V3 = [number, number, number];
+type Part = 'base' | 'lid';
 
 interface Props {
   box: BoxConfig;
@@ -22,17 +24,21 @@ interface Props {
 }
 
 /**
- * Caja procedural: fondo + 4 paredes (abierta por arriba) y una solapa superior
- * con bisagra en el canto trasero (grupo pivotado). Cada cara exterior lleva su
- * imagen (foto del kit) o, si falta, el color del cartón o una plantilla.
+ * Caja procedural con tres tipos de apertura (mismos tiempos, S1):
+ * - top-flap: fondo + 4 paredes y una solapa superior con bisagra trasera;
+ * - lift-lid: base baja y tapa alta que se levanta y se aparta;
+ * - hinged-lid: base y tapa con paredes, unidas por una bisagra trasera.
+ * Cada cara exterior lleva su imagen (foto del kit u oficial de referencia) o,
+ * si falta, el color de la tapa/base o una plantilla. En las cajas con tapa la
+ * imagen de una cara lateral se reparte entre base y tapa según `lidFraction`.
  */
 export function Box(props: Props) {
-  const hasPhotos = !props.grey && Object.keys(props.box.faces).length > 0;
-  return hasPhotos ? <BoxWithPhotos {...props} /> : <BoxMesh {...props} photos={{}} />;
+  const hasImages = !props.grey && Object.keys(props.box.faces).length > 0;
+  return hasImages ? <BoxWithImages {...props} /> : <BoxMesh {...props} images={{}} />;
 }
 
-/** Carga las fotos de las caras (Suspense) y las pasa a la malla. */
-function BoxWithPhotos(props: Props) {
+/** Carga las imágenes de las caras (Suspense) y las pasa a la malla. */
+function BoxWithImages(props: Props) {
   const urls = useMemo(() => {
     const out: Partial<Record<BoxFace, string>> = {};
     for (const f of BOX_FACES) {
@@ -41,16 +47,16 @@ function BoxWithPhotos(props: Props) {
     }
     return out as Record<string, string>;
   }, [props.box.faces]);
-  const photos = useTexture(urls) as FaceTextures;
+  const images = useTexture(urls) as FaceTextures;
   useLayoutEffect(() => {
-    for (const t of Object.values(photos)) {
+    for (const t of Object.values(images)) {
       if (!t) continue;
       t.colorSpace = SRGBColorSpace;
       t.anisotropy = 8;
       t.needsUpdate = true;
     }
-  }, [photos]);
-  return <BoxMesh {...props} photos={photos} />;
+  }, [images]);
+  return <BoxMesh {...props} images={images} />;
 }
 
 function BoxMesh({
@@ -60,19 +66,29 @@ function BoxMesh({
   grey,
   greyColor,
   templates,
-  photos,
-}: Props & { photos: FaceTextures }) {
+  images,
+}: Props & { images: FaceTextures }) {
   const root = useRef<Group>(null);
-  const flap = useRef<Group>(null);
+  const lid = useRef<Group>(null);
   const { width: W, height: H, depth: D } = dims.box;
   const t = dims.wall;
+  const flap = box.opening === 'top-flap';
+  // Altura de la tapa (con paredes) y de la base. La solapa es solo un panel.
+  const lidH = flap ? 0 : H * box.lidFraction;
+  const baseH = H - lidH;
+  /** Parte de la altura (0–1, desde abajo) donde empieza la tapa. */
+  const split = baseH / H;
 
-  // Un material por cara con imagen + uno para el cartón y otro para el interior.
   const mats = useMemo(() => {
-    const plain = (color: string) =>
-      new MeshStandardMaterial({ color, roughness: 0.9, metalness: 0 });
-    const base = plain(grey ? greyColor : box.color);
-    const insidePlain = plain(grey ? greyColor : box.insideColor);
+    const owned: MeshStandardMaterial[] = [];
+    const make = (opts: ConstructorParameters<typeof MeshStandardMaterial>[0]) => {
+      const m = new MeshStandardMaterial({ roughness: 0.85, metalness: 0, ...opts });
+      owned.push(m);
+      return m;
+    };
+    const lidPlain = make({ color: grey ? greyColor : box.color });
+    const basePlain = make({ color: grey ? greyColor : (box.baseColor ?? box.color) });
+    const inside = make({ color: grey ? greyColor : box.insideColor });
     const sizes: Record<BoxFace, [number, number]> = {
       front: [box.widthMm, box.heightMm],
       back: [box.widthMm, box.heightMm],
@@ -82,40 +98,71 @@ function BoxMesh({
       bottom: [box.widthMm, box.depthMm],
       inside: [box.widthMm, box.heightMm],
     };
-    const face = {} as Record<BoxFace, MeshStandardMaterial>;
-    const owned: MeshStandardMaterial[] = [base, insidePlain];
-    for (const f of BOX_FACES) {
-      const photo = grey ? undefined : photos[f];
-      const tex = photo ?? (!grey && templates ? makeFaceTemplate(f, ...sizes[f]) : undefined);
-      if (tex) {
-        const m = new MeshStandardMaterial({ map: tex, roughness: 0.85, metalness: 0 });
-        face[f] = m;
-        owned.push(m);
+    const source = (f: BoxFace): Texture | undefined => {
+      if (grey) return undefined;
+      return images[f] ?? (templates ? makeFaceTemplate(f, ...sizes[f]) : undefined);
+    };
+    const cache = new Map<string, MeshStandardMaterial>();
+    /** Material de una cara para una parte; en las laterales recorta la franja de la parte. */
+    const face = (f: BoxFace, part: Part): MeshStandardMaterial => {
+      const key = `${f}:${part}`;
+      const hit = cache.get(key);
+      if (hit) return hit;
+      const tex = source(f);
+      let m: MeshStandardMaterial;
+      if (!tex) {
+        m = f === 'inside' ? inside : part === 'lid' ? lidPlain : basePlain;
       } else {
-        face[f] = f === 'inside' ? insidePlain : base;
+        const lateral = f !== 'top' && f !== 'bottom';
+        let map = tex;
+        if (lateral && lidH > 0) {
+          map = tex.clone();
+          // El clon se crea antes del efecto que marca sRGB en las texturas cargadas.
+          map.colorSpace = SRGBColorSpace;
+          const [v0, v1] = part === 'base' ? [0, split] : [split, 1];
+          map.offset.set(0, v0);
+          map.repeat.set(1, v1 - v0);
+          map.needsUpdate = true;
+        }
+        m = make({ map });
       }
-    }
-    return { base, face, owned };
-  }, [box, grey, greyColor, templates, photos]);
+      cache.set(key, m);
+      return m;
+    };
+    return { owned, face, inside, lidPlain, basePlain };
+  }, [box, grey, greyColor, templates, images, lidH, split]);
 
   useEffect(
     () => () => {
+      const loaded = new Set(Object.values(images).map((tex) => tex?.source));
       for (const m of mats.owned) {
-        // Las plantillas son CanvasTexture propias; las fotos las gestiona la caché de drei.
-        if (m.map && !Object.values(photos).includes(m.map)) m.map.dispose();
+        // Plantillas y recortes (clones) son propios; las imágenes cargadas las gestiona drei.
+        if (m.map && !Object.values(images).includes(m.map)) {
+          if (!loaded.has(m.map.source)) m.map.dispose();
+        }
         m.dispose();
       }
     },
-    [mats, photos],
+    [mats, images],
   );
 
+  const bottleH = dims.bottle.height;
   useFrame(() => {
     const s = sample(timeline.spec, timeline.t);
     if (root.current) {
       root.current.position.y = -s.boxDrop * timeline.spec.s2Rise.boxDrop * H;
       root.current.visible = s.boxOpacity > 0.002;
     }
-    if (flap.current) flap.current.rotation.x = s.flapAngle;
+    const g = lid.current;
+    if (g) {
+      if (box.opening === 'lift-lid') {
+        const p = timeline.spec.s1Open.liftLid;
+        g.position.set(0, baseH + s.open * p.rise * bottleH, -s.open * s.open * p.back * D);
+        g.rotation.x = deg(p.tiltDeg) * s.open;
+      } else {
+        g.rotation.x = s.flapAngle;
+      }
+    }
     // El fundido es uno solo para todas las caras.
     const fading = s.boxOpacity < 0.999;
     for (const m of mats.owned) {
@@ -128,38 +175,58 @@ function BoxMesh({
     }
   });
 
-  const { base, face } = mats;
-  const inside = face.inside;
+  const { face, inside } = mats;
   // Orden de materiales de BoxGeometry: +x, -x, +y, -y, +z, -z.
-  const panel = (size: V3, pos: V3, materials: MeshStandardMaterial[]) => (
-    <mesh position={pos} material={materials} castShadow>
+  const panel = (size: V3, pos: V3, materials: MeshStandardMaterial[], key?: string) => (
+    <mesh key={key} position={pos} material={materials} castShadow>
       <boxGeometry args={size} />
     </mesh>
   );
+  const edge = (part: Part) => (part === 'lid' ? mats.lidPlain : mats.basePlain);
+
+  /** Cuatro paredes de altura h, con el borde inferior en y0 y centradas en z = zc. */
+  const walls = (part: Part, h: number, y0: number, zc: number) => {
+    const e = edge(part);
+    const y = y0 + h / 2;
+    return [
+      panel([W, h, t], [0, y, zc + D / 2 - t / 2], [e, e, e, e, face('front', part), inside], `f${part}`),
+      panel([W, h, t], [0, y, zc - D / 2 + t / 2], [e, e, e, e, inside, face('back', part)], `b${part}`),
+      panel([t, h, D - 2 * t], [-W / 2 + t / 2, y, zc], [inside, face('left', part), e, e, e, e], `l${part}`),
+      panel([t, h, D - 2 * t], [W / 2 - t / 2, y, zc], [face('right', part), inside, e, e, e, e], `r${part}`),
+    ];
+  };
+  const base = edge('base');
+  const lidE = edge('lid');
 
   return (
     <group ref={root} name="box">
-      {/* Fondo: base por fuera (-y), interior por dentro (+y). */}
-      {panel([W, t, D], [0, t / 2, 0], [base, base, inside, face.bottom, base, base])}
-      {/* Frontal (+z) y trasera (-z). */}
-      {panel([W, H, t], [0, H / 2, D / 2 - t / 2], [base, base, base, base, face.front, inside])}
-      {panel([W, H, t], [0, H / 2, -D / 2 + t / 2], [base, base, base, base, inside, face.back])}
-      {/* Laterales: izquierdo (-x) y derecho (+x) mirando la frontal. */}
-      {panel([t, H, D - 2 * t], [-W / 2 + t / 2, H / 2, 0], [inside, face.left, base, base, base, base])}
-      {panel([t, H, D - 2 * t], [W / 2 - t / 2, H / 2, 0], [face.right, inside, base, base, base, base])}
-      <group ref={flap} position={[0, H, -D / 2]}>
-        {/* Solapa: tapa por fuera (+y), interior por dentro (-y). */}
-        {panel([W, t, D], [0, t / 2, D / 2], [base, base, face.top, inside, base, base])}
-        {/* Lengüeta que se mete por dentro de la pared frontal. */}
-        {panel([W - 3 * t, D * 0.16, t], [0, -D * 0.08 + t, D - 2 * t], [
-          inside,
-          inside,
-          inside,
-          inside,
-          inside,
-          inside,
-        ])}
-      </group>
+      {/* Base: fondo (base por fuera, interior por dentro) y paredes. */}
+      {panel([W, t, D], [0, t / 2, 0], [base, base, inside, face('bottom', 'base'), base, base])}
+      {walls('base', baseH, 0, 0)}
+
+      {flap && (
+        <group ref={lid} position={[0, H, -D / 2]}>
+          {/* Solapa: tapa por fuera (+y), interior por dentro (-y). */}
+          {panel([W, t, D], [0, t / 2, D / 2], [lidE, lidE, face('top', 'lid'), inside, lidE, lidE])}
+          {/* Lengüeta que se mete por dentro de la pared frontal. */}
+          {panel([W - 3 * t, D * 0.16, t], [0, -D * 0.08 + t, D - 2 * t], Array(6).fill(inside))}
+        </group>
+      )}
+
+      {box.opening === 'hinged-lid' && (
+        // Bisagra en el canto superior trasero de la base.
+        <group ref={lid} position={[0, baseH, -D / 2]}>
+          {panel([W, t, D], [0, lidH - t / 2, D / 2], [lidE, lidE, face('top', 'lid'), inside, lidE, lidE])}
+          {walls('lid', lidH, 0, D / 2)}
+        </group>
+      )}
+
+      {box.opening === 'lift-lid' && (
+        <group ref={lid} position={[0, baseH, 0]}>
+          {panel([W, t, D], [0, lidH - t / 2, 0], [lidE, lidE, face('top', 'lid'), inside, lidE, lidE])}
+          {walls('lid', lidH, 0, 0)}
+        </group>
+      )}
     </group>
   );
 }

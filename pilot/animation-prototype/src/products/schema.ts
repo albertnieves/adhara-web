@@ -118,13 +118,16 @@ export type BoxFace = (typeof BOX_FACES)[number];
 
 /**
  * Imagen de una cara ya enderezada y recortada al tamaño de la cara.
- * `origin` preserva la procedencia: PHOTO = foto propia del kit de tienda.
+ * `origin` preserva la procedencia: PHOTO = foto propia del kit de tienda;
+ * OFFICIAL = imagen oficial de la marca, solo como referencia interna (no publicable).
  */
 const BoxFaceImage = z.object({
   src: z.string(),
-  /** Ruta relativa al repo (p. ej. pilot/kit/asad/box/front.jpg). */
+  /** Ruta relativa al repo (p. ej. pilot/assets-refs/asad/box_front.jpg). */
   file: z.string(),
-  origin: z.enum(['PHOTO', 'GENERATED']),
+  origin: z.enum(['PHOTO', 'OFFICIAL', 'GENERATED']),
+  /** URL de origen si no es foto propia. */
+  sourceUrl: z.string().optional(),
 });
 
 export const BoxSchema = z.object({
@@ -134,12 +137,20 @@ export const BoxSchema = z.object({
   /** false cuando las medidas vienen del kit de tienda. */
   estimated: z.boolean(),
   /**
-   * Tipo de apertura. Solo existe la solapa superior con bisagra trasera (la
-   * coreografía actual); otros tipos (tapa, cajón…) se añaden al ver las cajas reales.
+   * Tipo de apertura (mismos tiempos para todos, S1):
+   * - top-flap: estuche de cartón con solapa superior y bisagra trasera;
+   * - lift-lid: tapa que se levanta y se aparta de una base (Khamrah);
+   * - hinged-lid: estuche rígido con tapa de bisagra trasera (CDN LE).
    */
-  opening: z.enum(['top-flap']),
-  /** Color del cartón donde no hay imagen. PLACEHOLDER neutro hasta tener fotos. */
+  opening: z.enum(['top-flap', 'lift-lid', 'hinged-lid']),
+  /** Parte de la altura que corresponde a la tapa (lift-lid, hinged-lid). */
+  lidFraction: z.number().min(0).max(1),
+  /** Posición del frasco dentro de la caja: de pie o tumbado boca arriba (se endereza en S2). */
+  bottlePose: z.enum(['standing', 'lying']),
+  /** Color de la tapa/cartón donde no hay imagen. */
   color: Hex,
+  /** Color de la base si difiere (p. ej. la base de madera de Khamrah). */
+  baseColor: Hex.optional(),
   /** Color del interior si no hay imagen «inside». */
   insideColor: Hex,
   faces: z.partialRecord(z.enum(BOX_FACES), BoxFaceImage),
