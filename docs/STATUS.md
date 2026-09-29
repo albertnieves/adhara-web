@@ -1,73 +1,74 @@
-# Estado real — 29/09/2026
+# Estado real — 30/09/2026
 
-**Arranque local y despliegue en Vercel verificados. Panel de administración: fases A0 y A1 implementadas. La Fase 1 completa sigue pendiente.**
+**Tienda visual (es/ca/en) y panel de administración operativos sobre `adhara-dev`, verificados en local y desplegados como Preview privada de Vercel (PR #6). La Fase 1 completa sigue pendiente: falta el catálogo real (PDF), las cuentas del personal y los criterios de la Fase 1 que se listan al final.**
 
-## Preparado
+## Qué funciona
 
-- Base Next.js 16.3.6, React 19.3.0, TypeScript 6.0.3, Tailwind 4.3.3 y next-intl 4.14.7; lockfile y versiones fijadas.
-- Home y catálogo técnicos en es/ca/en, negociación de idioma, robots de desarrollo y health check.
-- Instrucciones para Codex, documentación de decisiones y copias intactas de los documentos aportados.
-- Seis habilidades instaladas en Codex: React Best Practices, Web Design Guidelines, Supabase Postgres Best Practices, Security Best Practices, GH Fix CI y Vercel Deploy.
-- Workflow de calidad preparado para GitHub Actions, todavía sin run remoto.
-- Repositorio privado en https://github.com/albertnieves/adhara-web. Acceso de lectura y escritura confirmado mediante el conector de Codex. Publicación inicial mediante la API de GitHub; Git local sigue sin credenciales.
-- Vercel: proyecto `adhara-web` en el equipo SOAPBRXND (plan Hobby) de la cuenta albertnieves, conectado a GitHub. Cada push a `main` despliega a producción en https://adhara-web.vercel.app; ramas y PR generan previews. Todos los despliegues, producción incluida, exigen iniciar sesión en Vercel (Vercel Authentication para todos los despliegues). Build con pnpm 11.19.0, Node 24.x y Webpack. Funciones en París (cdg1).
+### Tienda
 
-## Validación del arranque — 28/09/2026
+- Home con hero animado (cielo, estrella de Adhara con parallax, titular por palabras), destacados, sección «La experiencia», casas en bucle y la tienda de Castelldefels.
+- Colección con búsqueda sin tildes, filtros por casa y público, orden (destacados, precio, nombre) y rejilla animada.
+- Ficha de perfume con la **escena 3D de unboxing** del piloto para Asad, Yara, Khamrah y Club de Nuit Intense Man LE (caja que se abre, frasco que sube y gira, giro libre al final); galería de imágenes para el resto; formato, PVP con IVA, disponibilidad (disponible / últimas unidades / agotado, nunca unidades) y compra online marcada como próxima.
+- Con `prefers-reduced-motion` las animaciones se sustituyen por el estado final; sin WebGL se muestra la imagen.
+- Textos en es/ca/en con prueba de claves completas. Sin desbordamiento horizontal a 360, 390, 768 y 1024 px.
+- Logotipo **provisional** tipográfico con la estrella e icono de la app.
 
-| Comprobación                            | Resultado                                     |
-| --------------------------------------- | --------------------------------------------- |
-| Lint                                    | Correcto, sin warnings                        |
-| Typecheck                               | Correcto                                      |
-| Vitest                                  | 3 tests correctos                             |
-| Build de producción con Webpack         | Correcto, 10 páginas generadas                |
-| Playwright                              | 12 tests correctos, escritorio y móvil        |
-| Formato                                 | Correcto                                      |
-| Dependencias pares                      | Sin incompatibilidades                        |
-| Auditoría de dependencias de producción | Sin vulnerabilidades conocidas en la consulta |
-| Documentos originales                   | Copias idénticas a los aportados              |
-| Despliegue Vercel (commit 5a444ce)      | Build correcto; rutas verificadas en la URL   |
+### Panel (`/admin`, solo personal con verificación en dos pasos)
 
-Las pruebas de navegador cubren redirección inicial, preferencia por cookie, rutas traducidas, html lang, noindex y 404 para admin/no soportado. No son pruebas de ecommerce, auth ni base de datos.
+- Inicio con indicadores (publicados, borradores, sin PVP completo, stock bajo) y últimos movimientos.
+- Catálogo: listado con filtros, alta (marca nueva o existente), edición, formatos, **PVP con revisión Ómnibus** y confirmación de cambios grandes, imágenes con procedencia (bucket `product-media`, hasta 4 MB), textos es/ca/en, publicar / retirar / archivar / borrar borradores y **vista previa** de la ficha (también de borradores, con la escena 3D).
+- Inventario de la tienda de Castelldefels: recepción, venta en tienda, devoluciones, ajustes con motivo, mermas, probadores, traslados, recuento y punto de pedido según el permiso de cada rol; historial de movimientos de solo lectura.
+- Equipo: listar personal y dar o retirar acceso por email a cuentas ya creadas en Supabase Auth.
+- Pantallas de acceso, alta y verificación de MFA y contraseña con el nuevo diseño.
 
-En Vercel se comprobaron contra https://adhara-web.vercel.app, antes de hacerla privada, las aserciones de Playwright: redirección e idioma por cabecera y cookie, 404 de admin y locale no soportado, estado 200, noindex, html lang y h1 en las tres rutas del catálogo, y /api/health. Las tres pruebas de navegador no pudieron ejecutarse en Chromium desde el entorno cloud por el proxy TLS; sus aserciones se verificaron por HTTP.
+### Base de datos (`adhara-dev`, Frankfurt)
 
-## Panel de administración — 29/09/2026
+Siete migraciones en `supabase/migrations/` (detalle en supabase/README.md): personal y permisos (PR #5), catálogo, inventario, gestión del personal y borrado de niveles con su formato. RLS en todas las tablas públicas; costes fuera de la API (`internal`); historial de PVP, movimientos y auditoría de solo inserción.
 
-Plan por fases en docs/ADMIN_PLAN.md. Implementada la fase A0, solo código de dominio sin I/O ni dependencias nuevas:
+Datos cargados: los 4 perfumes del piloto como **borradores sin PVP** (`supabase/data/20260929_pilot_products.sql`), con marca, concentración y formato solo cuando constan en la caja o la ficha oficial (Khamrah sin formato), e imágenes oficiales de marca marcadas como provisionales. Ubicación: Tienda de Castelldefels. **Sin usuarios del personal** todavía.
 
-- `src/lib/money.ts`: céntimos, IVA en puntos básicos, redondeo half-even y lectura de importes.
-- `modules/auth`: matriz rol → permiso y permisos que exigen aal2.
-- `modules/pricing`: margen, referencia Ómnibus de 30 días, revisión de cambios de PVP y ajustes masivos.
-- `modules/inventory`: movimientos, invariantes, recuentos y vigilante de stock (capa determinista del agente).
-- `modules/orders`: estados del pedido con permiso y efecto de inventario por transición.
-- `modules/messaging`: estados de conversación, plazo de respuesta y revisión de borradores del agente.
+### Despliegue
 
-`/admin` sigue devolviendo 404. No hay tablas, sesiones, pantallas ni llamadas a modelos de IA.
+Vercel `adhara-web` (equipo SOAPBRXND, Hobby), funciones en París (cdg1), todos los despliegues protegidos con Vercel Authentication. Variables públicas de Supabase (`adhara-dev`) configuradas para Preview, Production y Development. `main` (producción) sigue en el commit 5a444ce: el trabajo nuevo está en la Preview del PR #6 hasta que se fusione.
 
-| Comprobación (sesión Claude Code, Node 24.16.0) | Resultado                                                 |
-| ----------------------------------------------- | --------------------------------------------------------- |
-| Lint y typecheck                                | Correctos                                                 |
-| Vitest                                          | 67 tests correctos (7 archivos)                           |
-| Build de producción con Webpack                 | Correcto, 10 páginas generadas                            |
-| Formato                                         | Correcto                                                  |
-| Playwright                                      | 12 tests correctos con el Chromium del sistema (ver nota) |
+## Validación ejecutada (29–30/09/2026)
 
-Nota: el contenedor de la sesión trae Chromium 1194 y el repo fija Playwright 1.63 (Chromium 1243). Se ejecutó con una configuración temporal que apunta al ejecutable del sistema, sin cambiar la del repo. La CI instala el navegador correcto.
+| Comprobación                                          | Resultado                                                                                   |
+| ----------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| Lint, typecheck, formato                              | Correctos                                                                                   |
+| Vitest                                                | 82 tests correctos (10 archivos), incluida la paridad SQL/TS de movimientos y permisos      |
+| Build de producción (Webpack)                         | Correcto                                                                                    |
+| Playwright (repo)                                     | 22/22 escritorio y móvil, con el Chromium del contenedor (nota de la sesión del PR #5)      |
+| pgTAP `02_catalog_inventory` en `adhara-dev`          | 33/33 en transacción revertida (`supabase/tests/tap_remote.py`)                             |
+| CI GitHub Actions (Quality)                           | Verde en todos los commits del PR #6                                                        |
+| Previews de Vercel                                    | READY en todos los commits del PR #6                                                        |
+| Recorrido completo del panel con navegador (ver nota) | Acceso, alta de MFA, catálogo, PVP, Ómnibus, publicar, tienda, imágenes, inventario, equipo |
+| Revisión visual con datos del piloto                  | Home, colección y fichas con escena 3D en escritorio y móvil                                |
 
-## Base de datos — 29/09/2026
+Nota sobre el recorrido del panel: se hizo con una **cuenta temporal** (`prueba-e2e@adhara.invalid`, rol system_admin) y un perfume de prueba que se publicó, se vio en la tienda en es y ca, se retiró y se borró. La cuenta no se puede borrar de Auth porque la auditoría es de solo inserción (DECISIONS §39): quedó **sin rol, bloqueada y sin sesiones**. Quedan como rastro 8 entradas de auditoría y 2 filas del historial de PVP del formato de prueba borrado; no hubo movimientos de stock. La prueba encontró y corrigió un fallo real (un recuento que cuadra impedía borrar un borrador).
 
-Proyecto `adhara-dev` (Frankfurt) con tres migraciones: esquemas `internal`/`private`, personal, permisos por rol, auditoría de solo inserción y RLS. Pruebas pgTAP 22/22 en local y en `adhara-dev` (transacción revertida). Asesores de Supabase: solo el aviso intencionado sobre `record_audit_event` (docs/DECISIONS.md §20). Sin usuarios todavía; login y MFA pendientes (fase A1).
+La revisión visual con perfumes se hizo en local con un Supabase simulado que devolvía los 4 perfumes del piloto como publicados y **sin precio**; no se modificó la base de datos.
 
-## Acceso al panel — 29/09/2026
+## Pendiente del usuario
 
-Implementado: login con email y contraseña, alta y verificación obligatoria de MFA (TOTP), fijar contraseña desde invitación (`/auth/confirm`), cierre de sesión, guardas de servidor y estructura del panel con navegación. Auditoría de login, logout, MFA y contraseña. `/admin` y subrutas con `noindex` y `Cache-Control: private, no-store`.
+1. Crear en Supabase (`adhara-dev` → Authentication → Users → Add user → Create new user, con «Auto Confirm User») las cuentas `anievesd840@gmail.com` (administrador del sistema) y `Pecora.agus14@icloud.com` (administrador de la tienda, Agustín). Después se asignan los roles (el primero por SQL; los siguientes desde Equipo).
+2. Subir el catálogo «CATALOGO global 2026» (adjunto en el chat o en `docs/source/catalogo/` de esta rama) para importar perfumes, formatos y PVP.
+3. Decidir cuándo abrir la web a Agustín: con Vercel Authentication para todo, solo entra quien tiene cuenta en el equipo de Vercel (en Hobby, solo el titular).
+4. Revisar y fusionar el PR #6 (incluye el PR #5) para llevarlo a producción.
 
-Verificado: 76 tests unitarios, build y 22 pruebas E2E (sin sesión → acceso; enlaces inválidos rechazados; cabeceras). Contra `adhara-dev`: la API REST rechaza a anon en todas las tablas y la RPC de auditoría, `internal` no está expuesto, y un login con credenciales falsas muestra el error genérico.
+## Pendiente técnico
 
-Falta para cerrar A1: alta del primer administrador (`pnpm bootstrap:owner`, requiere la clave secreta en el entorno de la sesión), plantillas de email con `token_hash`, URL del despliegue (Preview de Vercel) y E2E con un usuario de prueba con MFA.
+- Importar el catálogo real (bloqueado por el PDF) y fijar PVP; publicar.
+- Configuración de Auth en Supabase (Site URL y Redirect URLs con la URL del despliegue; plantillas con `token_hash`) para invitaciones y recuperación por email.
+- Fase 1 sin cerrar: Supabase local y pgTAP en CI (sin Docker en la sesión), costes internos y proveedores (`internal`), taxonomía de notas y familias, procedencia del research, `buildAlternates` y SEO editorial, `cost-leak.spec.ts`, escaneo de secretos en CI, proyecto `adhara-prod`, protección de `main`.
+- Fotos propias y derechos de las imágenes oficiales antes de abrir al público; logotipo definitivo.
+- Escenas 3D para el resto del catálogo (hoy solo las 4 del piloto); medidas reales del kit de tienda.
+- Checkout, pedidos, clientes y mensajes (fases A5–A7 del panel; F10–F14).
 
-## Pendiente
+## Historial
 
-Verificar CI remoto y configurar las protecciones de main disponibles en el plan; Docker/Supabase local; migraciones y RLS; admin/MFA; validación de variables de servicios; SEO editorial; pruebas de fuga de costes; entornos dev/prod separados y variables en Vercel cuando exista Supabase; pruebas E2E contra despliegues protegidos (requieren bypass de automatización). Servicios remotos creados: proyecto de Vercel (plan Hobby) y proyecto `adhara-dev` de Supabase, ambos sin cargos. No existe catálogo ni datos ficticios.
+- 28/09: arranque técnico verificado (lint, typecheck, build, 12 E2E; detalle en el historial de Git de este archivo).
+- 29/09: despliegue en Vercel verificado; producción privada y en París. Sesión del PR #5: reglas de dominio del panel (A0), `adhara-dev`, personal, permisos, auditoría y acceso con MFA (A1), 22/22 pgTAP y 22 E2E.
+- 29–30/09: esta sesión (PR #6): sistema visual, tienda animada con 3D, catálogo, precios, inventario y equipo en el panel.
 
-Ver docs/DEVELOPMENT.md para continuar. Los problemas de compatibilidad y el ajuste de servidor local están en docs/DECISIONS.md.
+Ver docs/DEVELOPMENT.md para continuar y docs/DECISIONS.md para las decisiones.

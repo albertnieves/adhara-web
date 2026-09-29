@@ -30,3 +30,24 @@
 23. Los textos del panel están en español dentro de sus componentes, fuera de next-intl: el panel no se traduce y así los mensajes públicos mantienen las mismas claves en es/ca/en.
 24. Sin variables de Supabase el panel queda cerrado (se comporta como sin sesión). Las variables `NEXT_PUBLIC_*` se incrustan en el build: deben existir también al compilar en Vercel.
 25. Invitaciones y recuperación usan `/auth/confirm` con `token_hash` (flujo de servidor). Requiere cambiar las plantillas de email de Supabase (supabase/README.md).
+
+## Tienda visual, catálogo e inventario — 29–30/09/2026 (PR #6)
+
+26. Esta sesión trabaja en la rama asignada `claude/magical-brahmagupta-1hjjko` (PR #6) e incorpora el PR #5 por fusión; el PR #5 queda cubierto por el #6.
+27. El usuario pidió el 29/09 una fase avanzada, visual y animada. Se instalan ya three 0.186.1, @react-three/fiber 9.8.1, @react-three/drei 10.7.9 y motion 13.4.4 (versiones exactas). Deja de ser «por anticipación» (AGENTS.md). motion se fija en 13.4.4 porque 13.4.6 no cumplía la antigüedad mínima de pnpm; no se añaden excepciones a esa política.
+28. Respuestas del usuario (29/09): los precios del PDF «CATALOGO global 2026» son **PVP**; mientras no haya fotos propias se pueden usar las del PDF y las oficiales de marca en la web privada, **marcadas como provisionales** (`product_media.provisional`) y con su procedencia; la web sigue privada hasta revisarla.
+29. Logotipo **provisional**: wordmark tipográfico «ADHARA» con una estrella de cuatro puntas (Adhara es ε Canis Majoris). Paleta marfil / tinta / dorado, Cormorant Garamond + Manrope (next/font/google, autoalojadas en el build).
+30. Esquema de catálogo simplificado respecto a las migraciones 0004–0009 del plan: marcas, perfumes, formatos, textos por idioma e imágenes. Sin taxonomía de notas y familias ni tablas de research: la procedencia se guarda en `products.source_ref` y en `product_media.origin/source`. Se ampliará con la importación del catálogo.
+31. Publicar exige `catalog.publish` y al menos un formato activo con PVP (trigger). Cambiar PVP o precio anterior exige `pricing.edit_retail` (aal2), comprobado también en un trigger; cada cambio queda en `internal.price_change_log` (solo inserción). La regla Ómnibus se aplica en servidor con ese historial.
+32. Política de precios **provisional** hasta que la fije el negocio: sin costes el margen es desconocido; un cambio de PVP del 20 % o más pide confirmación; IVA general 21 % (pendiente de asesoría).
+33. Stock: solo cambia mediante `admin_record_inventory_movement` y `admin_record_stocktake` (SECURITY DEFINER, bloqueo de fila, auditoría). Tipos, efectos, permisos y motivos obligatorios están en SQL y en `modules/inventory`; `tests/unit/inventory-sql.test.ts` falla si divergen. Ventas online y reservas no se registran a mano (fase A5).
+34. La tienda nunca ve unidades: `storefront_availability` devuelve disponible, últimas unidades (≤ 3, umbral provisional) o agotado.
+35. Avisos del asesor de Supabase por funciones SECURITY DEFINER ejecutables (`admin_*`, `storefront_availability`): intencionados como en §20; cada función comprueba el permiso o solo devuelve datos públicos.
+36. La tienda lee con un cliente anónimo sin cookies para poder generar páginas estáticas (ISR de 5 min); el panel revalida la tienda al guardar.
+37. Página 404: la ruta comodín `[locale]/[...rest]` provocaba un bucle de prefetch en las rutas traducidas (`/ca/cataleg`, `/en/catalog`), el mismo problema que §12. Se elimina: las URL desconocidas usan el 404 por defecto de Next y los perfumes inexistentes el 404 con diseño.
+38. Formularios del panel con `useAdminAction`: evita el reinicio automático de React 19 al terminar una acción, que borraba lo escrito al mostrar un error o pedir una confirmación de precio.
+39. El personal con historial no se borra de Auth: la auditoría y los movimientos son de solo inserción y su clave `on delete set null` lo impide. Se desactiva desde Equipo (y, si hace falta, se bloquea la cuenta). Así se hizo con la cuenta temporal de la prueba de extremo a extremo.
+40. `inventory_levels` se borra en cascada con su formato (migración 20260929230737); los movimientos siguen con `restrict`, así que un formato con historial no se puede borrar.
+41. Imágenes subidas desde el panel: hasta 4 MB (Vercel limita el cuerpo de la petición a 4,5 MB). Las fotos de estudio con fondo gris claro se funden con el fondo mediante brillo +4 % y `multiply`.
+42. La escena de unboxing se porta del piloto a `src/modules/unboxing` e importa las texturas desde `pilot/` con alias (sin duplicarlas). Para las imágenes de producto se copian 7 fotos oficiales a `public/media/pilot/` (1,1 MB) con su procedencia.
+43. Vercel: `NEXT_PUBLIC_SUPABASE_URL` y `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` de `adhara-dev` en Preview, Production y Development hasta que exista `adhara-prod`. Son valores públicos; no hay claves secretas en Vercel ni en el repositorio.

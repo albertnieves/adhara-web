@@ -1,6 +1,6 @@
 # Panel de administración — plan por fases
 
-Estado: **Fase A0 implementada; A1 en adelante pendientes** · 29/09/2026
+Estado: **A0 y A1 implementadas; A2 (catálogo y precios, sin costes) y A3 (inventario, sin compras ni TPV) en versión base** · 30/09/2026
 
 Este documento concreta el back-office de ADHARA sobre la arquitectura de docs/source (Fase 0 §10–§11 y plan de Fase 1). No sustituye esos documentos. Cada fase A se corresponde con fases del roadmap original (F1…F17), indicadas entre paréntesis.
 

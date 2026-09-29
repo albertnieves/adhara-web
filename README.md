@@ -1,6 +1,6 @@
 # ADHARA · adhara-web
 
-Base de desarrollo para el ecommerce de perfumería árabe ADHARA. **Preparación inicial; Fase 1 todavía incompleta.** No contiene productos, checkout, autenticación ni base de datos conectada.
+Ecommerce de perfumería árabe ADHARA. **En desarrollo; Fase 1 todavía incompleta.** Tienda visual en es/ca/en con escena 3D de unboxing y panel de administración con catálogo, precios, inventario y equipo sobre Supabase (`adhara-dev`). Sin checkout ni catálogo real todavía (docs/STATUS.md).
 
 ## Arranque
 
@@ -12,7 +12,7 @@ pnpm install --frozen-lockfile
 pnpm dev
 ```
 
-Abrir http://localhost:3000. El arranque técnico no necesita claves ni cuentas externas. Las variables futuras están en .env.example; cuando hagan falta, copiarlas a .env.local sin subirlo a Git.
+Abrir http://localhost:3000. Sin variables de Supabase la tienda muestra la colección vacía y el panel queda cerrado. Para conectar `adhara-dev`, copiar `.env.example` a `.env.local` y rellenar las dos variables públicas de Supabase (no subir `.env.local` a Git).
 
 ## Comprobaciones
 
@@ -23,15 +23,16 @@ pnpm test:e2e
 pnpm format:check
 ```
 
-`check` ejecuta lint, tipado, tests unitarios y build. E2E arranca el build de producción en el puerto 3000, que debe estar libre. Comprueba rutas e idioma en móvil y escritorio. No verifica auth ni RLS: aún no existen.
+`check` ejecuta lint, tipado, tests unitarios y build. E2E arranca el build de producción en el puerto 3000, que debe estar libre. Comprueba rutas, idioma y el acceso al panel en móvil y escritorio. Las pruebas de base de datos (pgTAP) están en `supabase/tests` (ver supabase/README.md).
 
 ## Qué hay
 
-- Next.js, React, TypeScript, Tailwind y next-intl.
-- Home y catálogo técnicos en español, catalán e inglés.
+- Next.js, React, TypeScript, Tailwind, next-intl, motion y three.js (React Three Fiber).
+- Tienda en español, catalán e inglés: home animada, colección con filtros y fichas con escena 3D de unboxing (perfumes del piloto) o galería.
+- Panel `/admin` con verificación en dos pasos: catálogo, PVP con regla Ómnibus, imágenes, textos, inventario de la tienda, movimientos y equipo. Plan por fases en [docs/ADMIN_PLAN.md](docs/ADMIN_PLAN.md).
+- Supabase con RLS en todas las tablas públicas, costes fuera de la API y registros de solo inserción; migraciones y pruebas pgTAP en `supabase/`.
 - Endpoint /api/health y exclusión de indexación mientras se desarrolla.
-- Vitest, Playwright y workflow de GitHub Actions preparado.
-- Reglas de negocio del panel de administración (permisos, precios, inventario, vigilante de stock, pedidos y mensajes) probadas con Vitest, todavía sin pantallas ni base de datos. Plan por fases en [docs/ADMIN_PLAN.md](docs/ADMIN_PLAN.md).
+- Vitest, Playwright y workflow de GitHub Actions.
 - Instrucciones para Codex en AGENTS.md y documentos originales preservados.
 
 ## Continuar con Codex
