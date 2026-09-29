@@ -26,3 +26,7 @@
 19. Proyecto `adhara-dev` creado el 29/09/2026 en la organización del usuario, región `eu-central-1`, a petición explícita. Migraciones aplicadas con el conector de Supabase y guardadas con la misma versión en `supabase/migrations/`.
 20. `public.record_audit_event` es `SECURITY DEFINER` ejecutable por `authenticated` de forma intencionada (aviso 0029 del asesor): es la única vía de escritura en `audit_log`, rechaza a quien no sea personal activo y fija el actor a `auth.uid()`.
 21. Sin Docker en la sesión, las pruebas pgTAP se validaron en un Postgres 16 local con una emulación mínima de `auth` y, además, contra `adhara-dev` dentro de una transacción revertida (22/22, sin restos). La emulación no se versiona.
+22. Sustituye a la decisión 9: con sesión, roles, MFA y RLS implementados juntos, `/admin` sin sesión redirige a `/admin/acceso`; con sesión pero sin ficha de personal activa responde 404; sin MFA lleva a `/admin/mfa`. La decisión se toma en servidor con `getUser()` (validado contra Supabase Auth), no solo con la cookie.
+23. Los textos del panel están en español dentro de sus componentes, fuera de next-intl: el panel no se traduce y así los mensajes públicos mantienen las mismas claves en es/ca/en.
+24. Sin variables de Supabase el panel queda cerrado (se comporta como sin sesión). Las variables `NEXT_PUBLIC_*` se incrustan en el build: deben existir también al compilar en Vercel.
+25. Invitaciones y recuperación usan `/auth/confirm` con `token_hash` (flujo de servidor). Requiere cambiar las plantillas de email de Supabase (supabase/README.md).

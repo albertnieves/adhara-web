@@ -13,3 +13,6 @@ export type {
   StaffRole,
   StaffSession,
 } from './domain/permissions';
+export { decideAdminAccess } from './domain/access';
+export type { AdminAccess, AdminAccessInput } from './domain/access';
+export { ROLE_LABELS } from './domain/labels';

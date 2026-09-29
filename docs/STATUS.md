@@ -54,6 +54,14 @@ Nota: el contenedor de la sesión trae Chromium 1194 y el repo fija Playwright 1
 
 Proyecto `adhara-dev` (Frankfurt) con tres migraciones: esquemas `internal`/`private`, personal, permisos por rol, auditoría de solo inserción y RLS. Pruebas pgTAP 22/22 en local y en `adhara-dev` (transacción revertida). Asesores de Supabase: solo el aviso intencionado sobre `record_audit_event` (docs/DECISIONS.md §20). Sin usuarios todavía; login y MFA pendientes (fase A1).
 
+## Acceso al panel — 29/09/2026
+
+Implementado: login con email y contraseña, alta y verificación obligatoria de MFA (TOTP), fijar contraseña desde invitación (`/auth/confirm`), cierre de sesión, guardas de servidor y estructura del panel con navegación. Auditoría de login, logout, MFA y contraseña. `/admin` y subrutas con `noindex` y `Cache-Control: private, no-store`.
+
+Verificado: 76 tests unitarios, build y 22 pruebas E2E (sin sesión → acceso; enlaces inválidos rechazados; cabeceras). Contra `adhara-dev`: la API REST rechaza a anon en todas las tablas y la RPC de auditoría, `internal` no está expuesto, y un login con credenciales falsas muestra el error genérico.
+
+Falta para cerrar A1: alta del primer administrador (`pnpm bootstrap:owner`, requiere la clave secreta en el entorno de la sesión), plantillas de email con `token_hash`, URL del despliegue (Preview de Vercel) y E2E con un usuario de prueba con MFA.
+
 ## Pendiente
 
 Verificar CI remoto y configurar las protecciones de main disponibles en el plan; Docker/Supabase local; migraciones y RLS; admin/MFA; validación de variables de servicios; SEO editorial; pruebas de fuga de costes; proyectos dev/prod y Vercel Preview. No se ha creado ni cobrado ningún servicio remoto. No existe catálogo ni datos ficticios.

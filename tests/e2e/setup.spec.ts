@@ -32,7 +32,6 @@ for (const [locale, path] of [
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
   });
 }
-test('rutas no implementadas permanecen inaccesibles', async ({ request }) => {
-  expect((await request.get('/admin')).status()).toBe(404);
+test('rutas no soportadas devuelven 404', async ({ request }) => {
   expect((await request.get('/xx')).status()).toBe(404);
 });

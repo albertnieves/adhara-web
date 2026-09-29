@@ -18,8 +18,16 @@ La matriz de permisos se genera desde `src/modules/auth/domain/permissions.ts`; 
 
 `tests/database/*.test.sql` son pruebas pgTAP para `supabase test db`. Crean usuarios ficticios dentro de una transacción que se revierte. Cubren anon, usuario sin personal (cliente), `viewer`, `store_admin` y `system_admin`, con y sin MFA (aal2), y la auditoría de solo inserción.
 
+## Configuración de Auth (panel de Supabase)
+
+- Registro público desactivado (hecho por el usuario el 29/09/2026).
+- **URL Configuration:** Site URL = URL del despliegue (Preview de Vercel mientras no haya producción); añadirla también en Redirect URLs.
+- **Email Templates:** en _Invite user_ y _Reset password_, el enlace debe ser
+  `{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=invite` y
+  `{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=recovery` respectivamente.
+- Alta del primer administrador: `pnpm bootstrap:owner` con `BOOTSTRAP_OWNER_EMAIL`, `SUPABASE_SECRET_KEY` y `NEXT_PUBLIC_SUPABASE_URL` en el entorno.
+
 ## Pendiente
 
 - `config.toml` y Supabase local con la CLI cuando haya Docker disponible; añadir las pruebas pgTAP a la CI.
-- Auth: desactivar el registro público, limitar las URLs de redirección y alta del primer administrador (fase A1).
 - Resto de migraciones de la Fase 1 (catálogo, precios internos, publicación, storage).
