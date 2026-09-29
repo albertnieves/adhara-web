@@ -14,7 +14,7 @@
 - GitHub: repositorio privado albertnieves/adhara-web conectado a Codex con lectura y escritura. Git local continúa sin autenticar; GitHub CLI no instalada. Las operaciones remotas se realizan mediante el conector.
 - Docker: no encontrado; necesario para Supabase local y pgTAP.
 - Supabase: organización, proyecto dev en región UE y configuración. No hay conector Supabase disponible en las herramientas de esta sesión, aunque el documento original lo afirma.
-- Vercel: proyecto `adhara-web` conectado a GitHub. Falta configurar variables por entorno cuando exista Supabase y elegir región de funciones en la UE.
+- Vercel: proyecto `adhara-web` conectado a GitHub. Funciones en París (cdg1) y todos los despliegues protegidos con Vercel Authentication. Falta configurar variables por entorno cuando exista Supabase.
 - Catálogo PDF y logo: mencionados por la arquitectura, pero no recibidos en esta carpeta. Necesarios en las fases correspondientes.
 
 ## Flujo de trabajo
