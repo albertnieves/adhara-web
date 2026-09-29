@@ -1,3 +1,5 @@
+import type { Permission } from '@/modules/auth';
+
 /**
  * Niveles por variante y ubicación: available = on_hand − reserved (Fase 0 §9).
  * Los movimientos son de solo inserción; aquí se definen sus efectos y las
@@ -40,9 +42,8 @@ const REASON_REQUIRED: ReadonlySet<MovementType> = new Set([
   'RETURN_DAMAGED',
 ]);
 
-const EFFECTS: Record<
-  MovementType,
-  { onHand: -1 | 0 | 1; reserved: -1 | 0 | 1 }
+export const MOVEMENT_EFFECTS: Readonly<
+  Record<MovementType, { onHand: -1 | 0 | 1; reserved: -1 | 0 | 1 }>
 > = {
   PURCHASE_RECEIPT: { onHand: 1, reserved: 0 },
   SALE_STORE: { onHand: -1, reserved: 0 },
@@ -59,6 +60,37 @@ const EFFECTS: Record<
   TRANSFER_IN: { onHand: 1, reserved: 0 },
   TESTER_ALLOCATION: { onHand: -1, reserved: 0 },
 };
+
+/**
+ * Permiso para registrar cada tipo desde el panel. null: solo lo genera el
+ * flujo de pedidos (ventas online, reservas y liberaciones, fase A5).
+ */
+export const MOVEMENT_PERMISSIONS: Readonly<
+  Record<MovementType, Permission | null>
+> = {
+  PURCHASE_RECEIPT: 'inventory.receive',
+  SALE_STORE: 'inventory.sell_in_store',
+  SALE_ONLINE: null,
+  SALE_CLICK_COLLECT: null,
+  RESERVATION: null,
+  RESERVATION_RELEASE: null,
+  RETURN: 'inventory.sell_in_store',
+  RETURN_DAMAGED: 'inventory.adjust',
+  STOCKTAKE_ADJUSTMENT: 'inventory.stocktake',
+  MANUAL_ADJUSTMENT: 'inventory.adjust',
+  DAMAGE_LOSS: 'inventory.adjust',
+  TRANSFER_OUT: 'inventory.adjust',
+  TRANSFER_IN: 'inventory.receive',
+  TESTER_ALLOCATION: 'inventory.adjust',
+};
+
+export function isSignedMovement(type: MovementType): boolean {
+  return SIGNED.has(type);
+}
+
+export function requiresReason(type: MovementType): boolean {
+  return REASON_REQUIRED.has(type);
+}
 
 export type MovementInput = {
   type: MovementType;
@@ -93,7 +125,7 @@ export function applyMovement(
   if (REASON_REQUIRED.has(type) && !movement.reason?.trim()) {
     return { ok: false, error: 'reason_required' };
   }
-  const effect = EFFECTS[type];
+  const effect = MOVEMENT_EFFECTS[type];
   const delta = {
     onHand: effect.onHand * quantity,
     reserved: effect.reserved * quantity,

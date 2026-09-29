@@ -1,6 +1,10 @@
 export {
+  MOVEMENT_EFFECTS,
+  MOVEMENT_PERMISSIONS,
   MOVEMENT_TYPES,
   applyMovement,
+  isSignedMovement,
+  requiresReason,
   availableUnits,
   stocktakeMovement,
 } from './domain/movements';
