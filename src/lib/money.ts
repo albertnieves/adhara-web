@@ -52,3 +52,23 @@ export function parseEuros(input: string): Cents | null {
   const [, euros = '0', decimals = ''] = match;
   return Number(euros) * 100 + Number(decimals.padEnd(2, '0'));
 }
+
+const LOCALE_TAGS: Record<string, string> = {
+  es: 'es-ES',
+  ca: 'ca-ES',
+  en: 'en-GB',
+};
+
+/** 4990 → «49,90 €» (es/ca) o «€49.90» (en). Importes redondos sin decimales. */
+export function formatEuros(cents: Cents, locale: string): string {
+  if (!Number.isSafeInteger(cents)) {
+    throw new RangeError('formatEuros requiere céntimos enteros');
+  }
+  const whole = cents % 100 === 0;
+  return new Intl.NumberFormat(LOCALE_TAGS[locale] ?? locale, {
+    style: 'currency',
+    currency: 'EUR',
+    minimumFractionDigits: whole ? 0 : 2,
+    maximumFractionDigits: whole ? 0 : 2,
+  }).format(cents / 100);
+}

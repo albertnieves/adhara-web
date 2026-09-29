@@ -1,4 +1,20 @@
+import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
+import { listPublishedProducts } from '@/modules/catalog/server';
+import { CatalogBrowser, Reveal } from '@/modules/storefront';
+
+export const revalidate = 300;
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: 'catalog' });
+  return { title: t('title') };
+}
+
 export default async function Catalog({
   params,
 }: {
@@ -6,11 +22,19 @@ export default async function Catalog({
 }) {
   const { locale } = await params;
   setRequestLocale(locale);
-  const t = await getTranslations('setup');
+  const [t, products] = await Promise.all([
+    getTranslations('catalog'),
+    listPublishedProducts(locale),
+  ]);
   return (
-    <main>
-      <h1>{t('catalog')}</h1>
-      <p>{t('empty')}</p>
+    <main className="mx-auto max-w-[90rem] px-5 pt-36 pb-32 sm:px-10 sm:pt-44">
+      <Reveal className="mb-14 max-w-3xl">
+        <p className="eyebrow">{t('eyebrow')}</p>
+        <h1 className="mt-4 text-6xl leading-none font-light sm:text-8xl">
+          {t('title')}
+        </h1>
+      </Reveal>
+      <CatalogBrowser products={products} />
     </main>
   );
 }

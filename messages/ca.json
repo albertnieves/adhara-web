@@ -1,7 +1,100 @@
 {
-  "setup": {
-    "status": "Entorn de desenvolupament preparat.",
-    "catalog": "Catàleg",
-    "empty": "El catàleg s’incorporarà amb dades verificades."
+  "meta": {
+    "title": "ADHARA · Perfumeria àrab",
+    "description": "Perfumeria àrab a Castelldefels. Web en desenvolupament."
+  },
+  "nav": {
+    "collection": "Col·lecció",
+    "experience": "L’experiència",
+    "menu": "Menú",
+    "close": "Tanca",
+    "language": "Idioma",
+    "skip": "Salta al contingut",
+    "home": "Inici"
+  },
+  "home": {
+    "heroEyebrow": "Perfumeria àrab · Castelldefels",
+    "heroTitle": "El llenguatge del perfum àrab",
+    "heroLead": "Una selecció de fragàncies de les cases de l’Orient Mitjà, presentada amb la calma que es mereixen.",
+    "heroCta": "Descobreix la col·lecció",
+    "scroll": "Desplaça’t",
+    "featuredEyebrow": "Selecció",
+    "featuredTitle": "Fragàncies destacades",
+    "featuredCta": "Veure tota la col·lecció",
+    "featuredEmpty": "La col·lecció s’està preparant. Ben aviat la podràs descobrir aquí.",
+    "experienceEyebrow": "L’experiència",
+    "experienceTitle": "Obrir la capsa és part del perfum",
+    "experienceBody": "Cada fragància es presenta com a la botiga: la capsa s’obre, el flascó s’eleva i gira davant teu. Després, és teu per mirar-lo des de qualsevol angle.",
+    "experienceCta": "Viu-ho amb {name}",
+    "brandsEyebrow": "Cases",
+    "storeEyebrow": "La botiga",
+    "storeTitle": "Castelldefels",
+    "storeBody": "Vine a descobrir les fragàncies en persona. La compra en línia arribarà molt aviat."
+  },
+  "catalog": {
+    "eyebrow": "Col·lecció",
+    "title": "Totes les fragàncies",
+    "count": "{count, plural, =0 {Cap perfum} one {# perfum} other {# perfums}}",
+    "search": "Cerca per nom o casa",
+    "brand": "Casa",
+    "allBrands": "Totes les cases",
+    "audience": "Per a",
+    "allAudiences": "Tots",
+    "sort": "Ordena",
+    "sortFeatured": "Destacats",
+    "sortPriceAsc": "Preu: de menor a major",
+    "sortPriceDesc": "Preu: de major a menor",
+    "sortName": "Nom",
+    "empty": "La col·lecció s’està preparant amb dades verificades. Torna aviat.",
+    "emptyFiltered": "Cap perfum coincideix amb la teva cerca.",
+    "clear": "Neteja els filtres"
+  },
+  "audience": {
+    "women": "Dona",
+    "men": "Home",
+    "unisex": "Unisex"
+  },
+  "concentration": {
+    "EDC": "Eau de Cologne",
+    "EDT": "Eau de Toilette",
+    "EDP": "Eau de Parfum",
+    "PARFUM": "Parfum",
+    "EXTRAIT": "Extrait de Parfum",
+    "OIL": "Oli perfumat",
+    "OTHER": "Fragància"
+  },
+  "product": {
+    "back": "Torna a la col·lecció",
+    "size": "Format",
+    "pricePending": "Preu aviat",
+    "from": "Des de {price}",
+    "vat": "IVA inclòs",
+    "inStock": "Disponible",
+    "lowStock": "Últimes unitats",
+    "outOfStock": "Esgotat",
+    "buySoon": "Compra en línia properament",
+    "storeNote": "Visita’ns a la botiga de Castelldefels per descobrir-lo en persona.",
+    "description": "Descripció",
+    "details": "Detalls",
+    "brand": "Casa",
+    "concentration": "Concentració",
+    "provisionalImage": "Imatge provisional",
+    "noImage": "Imatge aviat",
+    "scene": "Animació 3D de {name}",
+    "sceneReplay": "Repeteix",
+    "sceneDrag": "Arrossega per girar",
+    "sceneProvisional": "Vista 3D provisional",
+    "related": "També de {brand}"
+  },
+  "footer": {
+    "tagline": "Perfumeria àrab a Castelldefels.",
+    "shop": "Botiga",
+    "info": "Informació",
+    "dev": "Web en desenvolupament: continguts i imatges provisionals.",
+    "rights": "© {year} ADHARA"
+  },
+  "notFound": {
+    "title": "Aquesta pàgina no existeix",
+    "cta": "Torna a l’inici"
   }
 }

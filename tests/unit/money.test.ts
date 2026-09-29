@@ -55,3 +55,15 @@ describe('dinero en céntimos', () => {
     },
   );
 });
+
+describe('formato de precios', () => {
+  // Intl separa importe y símbolo con espacio de no separación (U+00A0).
+  it('muestra euros por idioma sin decimales si el importe es redondo', async () => {
+    const { formatEuros } = await import('@/lib/money');
+    expect(formatEuros(4990, 'es')).toBe('49,90\u00a0€');
+    expect(formatEuros(5000, 'es')).toBe('50\u00a0€');
+    expect(formatEuros(129995, 'ca')).toBe('1.299,95\u00a0€');
+    expect(formatEuros(4990, 'en')).toBe('€49.90');
+    expect(() => formatEuros(49.9, 'es')).toThrow(RangeError);
+  });
+});

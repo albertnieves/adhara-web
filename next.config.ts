@@ -4,6 +4,16 @@ const withNextIntl = createNextIntlPlugin('./src/modules/i18n/request.ts');
 const config: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
+  images: {
+    // Imágenes subidas desde el panel al bucket público product-media.
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '*.supabase.co',
+        pathname: '/storage/v1/object/public/product-media/**',
+      },
+    ],
+  },
   async headers() {
     return [
       {

@@ -20,13 +20,17 @@
     "bootstrap:owner": "node scripts/bootstrap-owner.ts"
   },
   "dependencies": {
+    "@react-three/drei": "10.7.9",
+    "@react-three/fiber": "9.8.1",
     "@supabase/ssr": "0.12.7",
     "@supabase/supabase-js": "2.117.2",
+    "motion": "13.4.4",
     "next": "16.3.6",
     "next-intl": "4.14.7",
     "react": "19.3.0",
     "react-dom": "19.3.0",
     "server-only": "0.0.1",
+    "three": "0.186.1",
     "zod": "4.6.5"
   },
   "devDependencies": {
@@ -35,6 +39,7 @@
     "@types/node": "24.19.0",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
+    "@types/three": "0.186.0",
     "eslint": "9.39.5",
     "eslint-config-next": "16.3.6",
     "prettier": "3.9.9",

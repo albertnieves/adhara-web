@@ -1,7 +1,100 @@
 {
-  "setup": {
-    "status": "Development environment ready.",
-    "catalog": "Catalog",
-    "empty": "The catalog will be added using verified data."
+  "meta": {
+    "title": "ADHARA · Arabian perfumery",
+    "description": "Arabian perfumery in Castelldefels. Website in development."
+  },
+  "nav": {
+    "collection": "Collection",
+    "experience": "The experience",
+    "menu": "Menu",
+    "close": "Close",
+    "language": "Language",
+    "skip": "Skip to content",
+    "home": "Home"
+  },
+  "home": {
+    "heroEyebrow": "Arabian perfumery · Castelldefels",
+    "heroTitle": "The language of Arabian perfume",
+    "heroLead": "A selection of fragrances from the perfume houses of the Middle East, presented with the calm they deserve.",
+    "heroCta": "Discover the collection",
+    "scroll": "Scroll",
+    "featuredEyebrow": "Selection",
+    "featuredTitle": "Featured fragrances",
+    "featuredCta": "View the full collection",
+    "featuredEmpty": "The collection is being prepared. You will be able to discover it here very soon.",
+    "experienceEyebrow": "The experience",
+    "experienceTitle": "Opening the box is part of the perfume",
+    "experienceBody": "Each fragrance is presented as it is in store: the box opens, the bottle rises and turns before you. Then it is yours to explore from any angle.",
+    "experienceCta": "Experience it with {name}",
+    "brandsEyebrow": "Houses",
+    "storeEyebrow": "The boutique",
+    "storeTitle": "Castelldefels",
+    "storeBody": "Come and discover the fragrances in person. Online shopping is coming very soon."
+  },
+  "catalog": {
+    "eyebrow": "Collection",
+    "title": "All fragrances",
+    "count": "{count, plural, =0 {No fragrances} one {# fragrance} other {# fragrances}}",
+    "search": "Search by name or house",
+    "brand": "House",
+    "allBrands": "All houses",
+    "audience": "For",
+    "allAudiences": "Everyone",
+    "sort": "Sort",
+    "sortFeatured": "Featured",
+    "sortPriceAsc": "Price: low to high",
+    "sortPriceDesc": "Price: high to low",
+    "sortName": "Name",
+    "empty": "The collection is being prepared with verified data. Please come back soon.",
+    "emptyFiltered": "No fragrance matches your search.",
+    "clear": "Clear filters"
+  },
+  "audience": {
+    "women": "Women",
+    "men": "Men",
+    "unisex": "Unisex"
+  },
+  "concentration": {
+    "EDC": "Eau de Cologne",
+    "EDT": "Eau de Toilette",
+    "EDP": "Eau de Parfum",
+    "PARFUM": "Parfum",
+    "EXTRAIT": "Extrait de Parfum",
+    "OIL": "Perfume oil",
+    "OTHER": "Fragrance"
+  },
+  "product": {
+    "back": "Back to the collection",
+    "size": "Size",
+    "pricePending": "Price coming soon",
+    "from": "From {price}",
+    "vat": "VAT included",
+    "inStock": "In stock",
+    "lowStock": "Last units",
+    "outOfStock": "Sold out",
+    "buySoon": "Online purchase coming soon",
+    "storeNote": "Visit our Castelldefels boutique to discover it in person.",
+    "description": "Description",
+    "details": "Details",
+    "brand": "House",
+    "concentration": "Concentration",
+    "provisionalImage": "Provisional image",
+    "noImage": "Image coming soon",
+    "scene": "3D animation of {name}",
+    "sceneReplay": "Replay",
+    "sceneDrag": "Drag to rotate",
+    "sceneProvisional": "Provisional 3D view",
+    "related": "More from {brand}"
+  },
+  "footer": {
+    "tagline": "Arabian perfumery in Castelldefels.",
+    "shop": "Shop",
+    "info": "Information",
+    "dev": "Website in development: provisional content and images.",
+    "rights": "© {year} ADHARA"
+  },
+  "notFound": {
+    "title": "This page does not exist",
+    "cta": "Back to home"
   }
 }
