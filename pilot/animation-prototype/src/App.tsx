@@ -26,6 +26,9 @@ export function App() {
   const [grey, setGrey] = useState(
     () => new URLSearchParams(window.location.search).get('grey') === '1',
   );
+  const [boxTemplates, setBoxTemplates] = useState(
+    () => new URLSearchParams(window.location.search).get('templates') === '1',
+  );
   const [simReduced, setSimReduced] = useState(false);
   const realReduced = usePrefersReducedMotion();
   const reduced = realReduced || simReduced;
@@ -105,6 +108,8 @@ export function App() {
         onSpeed={setSpeed}
         grey={grey}
         onGrey={setGrey}
+        boxTemplates={boxTemplates}
+        onBoxTemplates={setBoxTemplates}
         simReduced={simReduced}
         onSimReduced={setSimReduced}
         realReduced={realReduced}
@@ -125,6 +130,7 @@ export function App() {
                 product={product}
                 timeline={timeline}
                 grey={grey}
+                boxTemplates={boxTemplates}
                 free={phase === 'S5'}
                 onFps={onFps}
               />

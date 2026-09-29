@@ -1,6 +1,6 @@
 import draftSrc from '@drafts/yara/yara_bottle-front_nb_v1_DRAFT.png';
 import { LATTAFA_CYLINDER_PROFILE } from './asad';
-import { PLACEHOLDER_DESCRIPTION } from './placeholders';
+import { BOX_PLACEHOLDER, PLACEHOLDER_DESCRIPTION } from './placeholders';
 import { ProductConfigSchema } from './schema';
 
 /*
@@ -24,7 +24,14 @@ export const yara = ProductConfigSchema.parse({
   measurements: {
     estimated: true,
     note: 'ESTIMADAS: perfil de Asad, pendiente de confirmar con el kit de tienda.',
-    box: { widthMm: 72, heightMm: 152, depthMm: 72 },
+  },
+  box: {
+    ...BOX_PLACEHOLDER,
+    widthMm: 72,
+    heightMm: 152,
+    depthMm: 72,
+    // Sin fotos todavía: se añaden en faces (front, back, left, right, top, bottom, inside).
+    faces: {},
   },
   scale: 1,
   bottle: {
@@ -37,7 +44,6 @@ export const yara = ProductConfigSchema.parse({
     cap: { color: '#e9b9c3', roughness: 0.45, metalness: 0 },
     accent: { color: '#dcdde0', roughness: 0.14, metalness: 1 },
   },
-  boxColor: '#e2dbd0',
   draftImage: { src: DRAFT.src, file: DRAFT.file },
   // Frasco de y=187 a y=822 px (sin la sombra), centro en x=510,5.
   frontTexture: { ...DRAFT, centerXPx: 510.5, baseYPx: 822, pxPerMm: 635 / 140 },

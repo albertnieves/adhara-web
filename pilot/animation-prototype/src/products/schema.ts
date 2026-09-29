@@ -112,6 +112,40 @@ const SquareGlass = z.object({
   }).nullable(),
 });
 
+/** Caras de la caja. «left»/«right» = izquierda/derecha mirando la cara frontal. */
+export const BOX_FACES = ['front', 'back', 'left', 'right', 'top', 'bottom', 'inside'] as const;
+export type BoxFace = (typeof BOX_FACES)[number];
+
+/**
+ * Imagen de una cara ya enderezada y recortada al tamaño de la cara.
+ * `origin` preserva la procedencia: PHOTO = foto propia del kit de tienda.
+ */
+const BoxFaceImage = z.object({
+  src: z.string(),
+  /** Ruta relativa al repo (p. ej. pilot/kit/asad/box/front.jpg). */
+  file: z.string(),
+  origin: z.enum(['PHOTO', 'GENERATED']),
+});
+
+export const BoxSchema = z.object({
+  widthMm: Mm,
+  heightMm: Mm,
+  depthMm: Mm,
+  /** false cuando las medidas vienen del kit de tienda. */
+  estimated: z.boolean(),
+  /**
+   * Tipo de apertura. Solo existe la solapa superior con bisagra trasera (la
+   * coreografía actual); otros tipos (tapa, cajón…) se añaden al ver las cajas reales.
+   */
+  opening: z.enum(['top-flap']),
+  /** Color del cartón donde no hay imagen. PLACEHOLDER neutro hasta tener fotos. */
+  color: Hex,
+  /** Color del interior si no hay imagen «inside». */
+  insideColor: Hex,
+  faces: z.partialRecord(z.enum(BOX_FACES), BoxFaceImage),
+});
+export type BoxConfig = z.infer<typeof BoxSchema>;
+
 export const BottleShapeSchema = z.discriminatedUnion('archetype', [
   LatheShoulder,
   RectPrism,
@@ -130,8 +164,8 @@ export const ProductConfigSchema = z.object({
     /** true mientras no haya medidas del kit de tienda (§4 paso 1). */
     estimated: z.boolean(),
     note: z.string(),
-    box: z.object({ widthMm: Mm, heightMm: Mm, depthMm: Mm }),
   }),
+  box: BoxSchema,
   /** Escala global del producto (frasco + caja) para ajustar cuando lleguen medidas reales. */
   scale: z.number().positive(),
   bottle: BottleShapeSchema,
@@ -141,8 +175,6 @@ export const ProductConfigSchema = z.object({
     accent: MaterialSchema,
     liquid: MaterialSchema.optional(),
   }),
-  /** Color de la caja: PLACEHOLDER neutro (no hay arte de caja aprobado). */
-  boxColor: Hex,
   /** Imagen GENERATED/DRAFT del fallback sin WebGL. Nunca publicable. */
   draftImage: z.object({ src: z.string(), file: z.string() }),
   /** Textura de prueba proyectada en el frente (GENERATED/DRAFT). null = sin textura frontal. */

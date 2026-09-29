@@ -22,6 +22,8 @@ interface Props {
   onSpeed: (v: number) => void;
   grey: boolean;
   onGrey: (v: boolean) => void;
+  boxTemplates: boolean;
+  onBoxTemplates: (v: boolean) => void;
   simReduced: boolean;
   onSimReduced: (v: boolean) => void;
   realReduced: boolean;
@@ -93,6 +95,14 @@ export function DebugDock(p: Props) {
           <label className="check">
             <input type="checkbox" checked={p.grey} onChange={(e) => p.onGrey(e.target.checked)} />
             Formas grises
+          </label>
+          <label className="check">
+            <input
+              type="checkbox"
+              checked={p.boxTemplates}
+              onChange={(e) => p.onBoxTemplates(e.target.checked)}
+            />
+            Plantillas de caja
           </label>
           <label className="check">
             <input

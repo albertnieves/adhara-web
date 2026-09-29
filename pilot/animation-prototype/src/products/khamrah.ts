@@ -1,5 +1,5 @@
 import draftSrc from '@drafts/khamrah/khamrah_bottle-34_nbpro_v2_DRAFT.png';
-import { PLACEHOLDER_DESCRIPTION } from './placeholders';
+import { BOX_PLACEHOLDER, PLACEHOLDER_DESCRIPTION } from './placeholders';
 import { ProductConfigSchema } from './schema';
 
 /*
@@ -24,7 +24,14 @@ export const khamrah = ProductConfigSchema.parse({
   measurements: {
     estimated: true,
     note: 'ESTIMADAS desde el draft 3/4 (altura supuesta 140 mm). Pendiente del kit de tienda.',
-    box: { widthMm: 94, heightMm: 152, depthMm: 94 },
+  },
+  box: {
+    ...BOX_PLACEHOLDER,
+    widthMm: 94,
+    heightMm: 152,
+    depthMm: 94,
+    // Sin fotos todavía: se añaden en faces (front, back, left, right, top, bottom, inside).
+    faces: {},
   },
   scale: 1,
   bottle: {
@@ -50,7 +57,6 @@ export const khamrah = ProductConfigSchema.parse({
     accent: { color: '#e2c56b', roughness: 0.35, metalness: 0.9 },
     liquid: { color: '#9a4a14', roughness: 0.2, metalness: 0 },
   },
-  boxColor: '#e2dbd0',
   draftImage: { src: DRAFT.src, file: DRAFT.file },
   frontTexture: null,
   panel: { priceLabel: '— €', description: PLACEHOLDER_DESCRIPTION },

@@ -1,5 +1,5 @@
 import draftSrc from '@drafts/asad/asad_bottle-front_nbpro_v1_DRAFT.png';
-import { PLACEHOLDER_DESCRIPTION } from './placeholders';
+import { BOX_PLACEHOLDER, PLACEHOLDER_DESCRIPTION } from './placeholders';
 import { ProductConfigSchema } from './schema';
 
 /*
@@ -43,7 +43,14 @@ export const asad = ProductConfigSchema.parse({
   measurements: {
     estimated: true,
     note: 'ESTIMADAS desde el draft (altura supuesta 140 mm). Pendiente del kit de tienda.',
-    box: { widthMm: 72, heightMm: 152, depthMm: 72 },
+  },
+  box: {
+    ...BOX_PLACEHOLDER,
+    widthMm: 72,
+    heightMm: 152,
+    depthMm: 72,
+    // Sin fotos todavía: se añaden en faces (front, back, left, right, top, bottom, inside).
+    faces: {},
   },
   scale: 1,
   bottle: {
@@ -56,7 +63,6 @@ export const asad = ProductConfigSchema.parse({
     cap: { color: '#121212', roughness: 0.8, metalness: 0 },
     accent: { color: '#c9a24a', roughness: 0.18, metalness: 1 },
   },
-  boxColor: '#e2dbd0',
   draftImage: { src: ASAD_DRAFT.src, file: ASAD_DRAFT.file },
   frontTexture: { ...ASAD_DRAFT, centerXPx: 447.5, baseYPx: 982, pxPerMm: 761 / 140 },
   panel: { priceLabel: '— €', description: PLACEHOLDER_DESCRIPTION },

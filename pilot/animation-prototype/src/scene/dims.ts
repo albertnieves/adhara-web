@@ -17,7 +17,7 @@ export function productDims(p: ProductConfig) {
         return squareGlassSize(p.bottle);
     }
   })();
-  const box = p.measurements.box;
+  const box = p.box;
   return {
     k,
     bottle: { height: bottle.heightMm * k, width: bottle.widthMm * k },

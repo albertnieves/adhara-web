@@ -36,7 +36,7 @@ export function Bottle({ product, dims, timeline, grey }: Props) {
   const shape = product.bottle;
 
   return (
-    <group ref={ref} position-y={start}>
+    <group ref={ref} position-y={start} name="bottle">
       <group scale={dims.k}>
         {shape.archetype === 'lathe-shoulder' && <LatheBottle shape={shape} m={m} front={front} />}
         {shape.archetype === 'rect-prism' && <RectPrismBottle shape={shape} m={m} front={front} />}

@@ -1,5 +1,5 @@
 import draftSrc from '@drafts/club-de-nuit-intense-man-le/cdn-le_bottle-front_nbpro_v2_DRAFT.png';
-import { PLACEHOLDER_DESCRIPTION } from './placeholders';
+import { BOX_PLACEHOLDER, PLACEHOLDER_DESCRIPTION } from './placeholders';
 import { ProductConfigSchema } from './schema';
 
 /*
@@ -23,7 +23,14 @@ export const clubDeNuitIntenseManLE = ProductConfigSchema.parse({
   measurements: {
     estimated: true,
     note: 'ESTIMADAS desde el draft (altura supuesta 140 mm; fondo supuesto 42 mm).',
-    box: { widthMm: 100, heightMm: 152, depthMm: 60 },
+  },
+  box: {
+    ...BOX_PLACEHOLDER,
+    widthMm: 100,
+    heightMm: 152,
+    depthMm: 60,
+    // Sin fotos todavía: se añaden en faces (front, back, left, right, top, bottom, inside).
+    faces: {},
   },
   scale: 1,
   bottle: {
@@ -39,7 +46,6 @@ export const clubDeNuitIntenseManLE = ProductConfigSchema.parse({
     cap: { color: '#3d3c41', roughness: 0.28, metalness: 0.8 },
     accent: { color: '#2f2e33', roughness: 0.3, metalness: 0.9 },
   },
-  boxColor: '#e2dbd0',
   draftImage: { src: DRAFT.src, file: DRAFT.file },
   frontTexture: { ...DRAFT, centerXPx: 452, baseYPx: 1028, pxPerMm: 862 / 140 },
   panel: { priceLabel: '— €', description: PLACEHOLDER_DESCRIPTION },
