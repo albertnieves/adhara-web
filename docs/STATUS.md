@@ -1,18 +1,18 @@
 # Estado real — 30/09/2026
 
-**Tienda visual (es/ca/en) y panel de administración operativos sobre `adhara-dev`, verificados en local y desplegados como Preview privada de Vercel (PR #6). La Fase 1 completa sigue pendiente: los 424 perfumes del catálogo real ya están cargados como borradores con foto, pero falta importar sus formatos y costes (el CSV ya está preparado), la verificación en dos pasos de las cuentas del personal y los criterios de la Fase 1 que se listan al final.**
+**Tienda visual (es/ca/en) y panel de administración operativos sobre `adhara-dev`, verificados en local y fusionados en `main` el 30/09 (PR #6) y desplegados en Vercel, que sigue siendo privado (Vercel Authentication). La Fase 1 completa sigue pendiente: los 424 perfumes del catálogo real ya están cargados como borradores con foto, pero falta importar sus formatos y costes (el CSV ya está preparado), la verificación en dos pasos de las cuentas del personal y los criterios de la Fase 1 que se listan al final.**
 
 ## Qué funciona
 
 ### Tienda
 
-- Home con hero animado (cielo, estrella de Adhara con parallax, titular por palabras), destacados, sección «La experiencia», casas en bucle y la tienda de Castelldefels.
+- Home con hero animado (cielo, estrella del emblema con parallax, titular por palabras), destacados, sección «La experiencia», casas en bucle y la tienda de Castelldefels.
 - Colección con búsqueda sin tildes, filtros por casa y público, orden (destacados, precio, nombre) y rejilla animada.
 - Ficha de perfume con la **escena 3D de unboxing** del piloto para Asad, Yara, Khamrah y Club de Nuit Intense Man LE (caja que se abre, frasco que sube y gira, giro libre al final); galería de imágenes para el resto; formato, PVP con IVA, disponibilidad (disponible / últimas unidades / agotado, nunca unidades) y compra online marcada como próxima.
 - Con `prefers-reduced-motion` las animaciones se sustituyen por el estado final; sin WebGL se muestra la imagen.
 - **Vista previa con borradores** para el personal: desde el panel («Ver tienda con borradores» en Catálogo, en la ficha de cada perfume o en el menú lateral) se ve la tienda completa con los borradores y un aviso fijo con «Salir». El público y la caché no cambian.
 - Textos en es/ca/en con prueba de claves completas. Sin desbordamiento horizontal a 360, 390, 768 y 1024 px.
-- Logotipo **provisional** tipográfico con la estrella e icono de la app.
+- Identidad **definitiva** desde el 30/09: nombre **L’Atelier du Désert** y logotipo del usuario, vectorizado del original (`docs/brand/logo-original.png` → `public/brand/logo.svg`). Emblema y nombre en una línea en la cabecera y el panel; composición completa con «Haute Parfumerie Orientale» en el pie y el acceso; icono de pestaña y de iOS con el emblema. La estrella decorativa es la del emblema.
 
 ### Panel (`/admin`, solo personal con verificación en dos pasos)
 
@@ -90,7 +90,7 @@ La revisión visual con perfumes se hizo en local con un Supabase simulado que d
 - Configuración de Auth en Supabase (Site URL y Redirect URLs con la URL del despliegue; plantillas con `token_hash`) para invitaciones y recuperación por email.
 - Fase 1 sin cerrar. Ya cumplidos o cubiertos (docs/source/FASE_1_PLAN.md §16): 1 (lint, typecheck, tests y build), 3 (Preview de Vercel), 4–6 (i18n), 7 (`buildAlternates` con los 4 casos, en uso en home, colección y fichas), 10 (`internal` no está expuesto: la API responde «Only the following schemas are exposed: public, graphql_public»), 11 (`cost-leak.spec.ts`), 13 (`pnpm scan:secrets` en CI), 14 y 16 (acceso al panel y cabeceras de seguridad en E2E). Pendientes: 2 (tres workflows; hoy hay uno), 8, 9 y 12 (Supabase local, pgTAP en CI y diff de tipos: sin Docker en la sesión; pgTAP se ejecuta contra `adhara-dev`), 15 (cuenta real del administrador con MFA), 17 y 19 (docs y REPORT), además de proveedores (`internal`), taxonomía de notas y familias, procedencia del research, proyecto `adhara-prod` y protección de `main`. El criterio 18 (sin datos de producto) queda superado por decisión del usuario: se cargaron los perfumes del piloto.
 - Panel: precio del PDF como referencia (A2); compras y proveedores (A3). Confirmar con la asesoría qué debe llevar la etiqueta de estante (precio por unidad de medida, etc.).
-- Fotos propias y derechos de las imágenes oficiales antes de abrir al público; logotipo definitivo.
+- Fotos propias y derechos de las imágenes oficiales antes de abrir al público.
 - Escenas 3D para el resto del catálogo (hoy solo las 4 del piloto); medidas reales del kit de tienda.
 - Checkout, pedidos, clientes y mensajes (fases A5–A7 del panel; F10–F14).
 

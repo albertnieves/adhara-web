@@ -1,6 +1,6 @@
 {
   "meta": {
-    "title": "ADHARA · Perfumería árabe",
+    "title": "L’Atelier du Désert · Perfumería árabe",
     "description": "Perfumería árabe en Castelldefels. Web en desarrollo."
   },
   "nav": {
@@ -91,7 +91,7 @@
     "shop": "Tienda",
     "info": "Información",
     "dev": "Web en desarrollo: contenidos e imágenes provisionales.",
-    "rights": "© {year} ADHARA"
+    "rights": "© {year} L’Atelier du Désert"
   },
   "notFound": {
     "title": "Esta página no existe",
