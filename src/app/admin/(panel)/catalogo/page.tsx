@@ -6,6 +6,7 @@ import { PageHeader, StatusBadge } from '@/modules/admin';
 import { isAllowed } from '@/modules/auth';
 import { requirePermission } from '@/modules/auth/server';
 import { listAdminProducts } from '@/modules/catalog/server/admin';
+import { enterStorefrontPreview } from '@/modules/storefront/server/preview';
 
 export const metadata: Metadata = { title: 'Catálogo' };
 
@@ -42,6 +43,14 @@ export default async function CatalogAdmin({
   return (
     <main>
       <PageHeader eyebrow="Catálogo" title="Perfumes">
+        <form action={enterStorefrontPreview}>
+          <button
+            type="submit"
+            className="border-line hover:border-ink inline-flex min-h-11 items-center border px-5 text-xs font-semibold tracking-[0.18em] uppercase transition-colors"
+          >
+            Ver tienda con borradores
+          </button>
+        </form>
         <Link
           href="/admin/catalogo/etiquetas"
           className="border-ink hover:bg-ink hover:text-ivory inline-flex min-h-11 items-center border px-5 text-xs font-semibold tracking-[0.18em] uppercase transition-colors"

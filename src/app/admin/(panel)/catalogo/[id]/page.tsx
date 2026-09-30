@@ -18,6 +18,7 @@ import {
   TranslationEditor,
   VariantEditor,
 } from '@/modules/catalog/ui';
+import { enterStorefrontPreview } from '@/modules/storefront/server/preview';
 
 export const metadata: Metadata = { title: 'Editar perfume' };
 
@@ -112,6 +113,18 @@ export default async function EditProduct({
           >
             Ver en la tienda ↗
           </Link>
+        )}
+        {product.status !== 'archived' && (
+          <form action={enterStorefrontPreview}>
+            <input
+              type="hidden"
+              name="path"
+              value={`/es/perfume/${product.slug}`}
+            />
+            <button type="submit" className="link-underline">
+              Ver en la tienda con borradores
+            </button>
+          </form>
         )}
         <span className="text-mist">/{product.slug}</span>
       </div>

@@ -6,6 +6,7 @@ import { ROLE_LABELS, isAllowed } from '@/modules/auth';
 import type { Permission } from '@/modules/auth';
 import { requireStaff, signOut } from '@/modules/auth/server';
 import { Logo } from '@/modules/brand';
+import { enterStorefrontPreview } from '@/modules/storefront/server/preview';
 
 const SECTIONS: (NavItem & { permission?: Permission })[] = [
   { href: '/admin', label: 'Inicio' },
@@ -37,6 +38,10 @@ export default async function PanelLayout({
       !s.permission ||
       isAllowed({ role: staff.role, aal: 'aal2' }, s.permission),
   ).map(({ href, label, soon }) => ({ href, label, soon }));
+  const canPreview = isAllowed(
+    { role: staff.role, aal: 'aal2' },
+    'catalog.edit',
+  );
 
   return (
     <div className="min-h-screen lg:grid lg:grid-cols-[15rem_1fr] print:block print:min-h-0">
@@ -45,13 +50,23 @@ export default async function PanelLayout({
           <Logo />
         </Link>
         <PanelNav items={items} />
-        <div className="hidden lg:mt-auto lg:block lg:px-3">
+        <div className="hidden lg:mt-auto lg:flex lg:flex-col lg:items-start lg:gap-3 lg:px-3">
+          {canPreview && (
+            <form action={enterStorefrontPreview}>
+              <button
+                type="submit"
+                className="text-ivory/60 hover:text-ivory text-left text-xs tracking-[0.16em] uppercase"
+              >
+                Vista previa con borradores
+              </button>
+            </form>
+          )}
           <Link
             href="/es"
             className="text-ivory/60 hover:text-ivory text-xs tracking-[0.16em] uppercase"
             target="_blank"
           >
-            Ver la tienda ↗
+            Tienda pública ↗
           </Link>
         </div>
       </aside>

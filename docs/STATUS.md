@@ -10,6 +10,7 @@
 - Colección con búsqueda sin tildes, filtros por casa y público, orden (destacados, precio, nombre) y rejilla animada.
 - Ficha de perfume con la **escena 3D de unboxing** del piloto para Asad, Yara, Khamrah y Club de Nuit Intense Man LE (caja que se abre, frasco que sube y gira, giro libre al final); galería de imágenes para el resto; formato, PVP con IVA, disponibilidad (disponible / últimas unidades / agotado, nunca unidades) y compra online marcada como próxima.
 - Con `prefers-reduced-motion` las animaciones se sustituyen por el estado final; sin WebGL se muestra la imagen.
+- **Vista previa con borradores** para el personal: desde el panel («Ver tienda con borradores» en Catálogo, en la ficha de cada perfume o en el menú lateral) se ve la tienda completa con los borradores y un aviso fijo con «Salir». El público y la caché no cambian.
 - Textos en es/ca/en con prueba de claves completas. Sin desbordamiento horizontal a 360, 390, 768 y 1024 px.
 - Logotipo **provisional** tipográfico con la estrella e icono de la app.
 
@@ -34,19 +35,20 @@ Vercel `adhara-web` (equipo SOAPBRXND, Hobby), funciones en París (cdg1), todos
 
 ## Validación ejecutada (29–30/09/2026)
 
-| Comprobación                                          | Resultado                                                                                         |
-| ----------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
-| Lint, typecheck, formato                              | Correctos                                                                                         |
-| Vitest                                                | 90 tests correctos (12 archivos): paridad SQL/TS de movimientos y permisos, aislamiento de costes |
-| Build de producción (Webpack)                         | Correcto                                                                                          |
-| Playwright (repo)                                     | 56/56 escritorio y móvil con el Chromium del contenedor, incluido `cost-leak.spec.ts`             |
-| pgTAP en `adhara-dev`                                 | `02_catalog_inventory` 33/33 y `03_costs` 24/24, en transacción revertida (`tap_remote.py`)       |
-| CI GitHub Actions (Quality)                           | Verde en todos los commits del PR #6                                                              |
-| Previews de Vercel                                    | READY en todos los commits del PR #6                                                              |
-| Recorrido completo del panel con navegador (ver nota) | Acceso, alta de MFA, catálogo, PVP, Ómnibus, publicar, tienda, imágenes, inventario, equipo       |
-| Revisión visual con datos del piloto                  | Home, colección y fichas con escena 3D en escritorio y móvil                                      |
-| Revisión visual de coste y margen                     | Página local temporal con datos ficticios (sin escribir en la base), 1280 y 390 px                |
-| Etiquetas de precio                                   | Página local temporal con datos ficticios: pantalla, móvil y PDF A4 (21 por hoja, 3 × 7)          |
+| Comprobación                                          | Resultado                                                                                                                                                                             |
+| ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Lint, typecheck, formato                              | Correctos                                                                                                                                                                             |
+| Vitest                                                | 101 tests correctos (13 archivos): paridad SQL/TS de movimientos y permisos, aislamiento de costes, destino de la vista previa                                                        |
+| Build de producción (Webpack)                         | Correcto                                                                                                                                                                              |
+| Playwright (repo)                                     | 58/58 escritorio y móvil con el Chromium del contenedor, incluidos `cost-leak.spec.ts` y `preview.spec.ts`                                                                            |
+| pgTAP en `adhara-dev`                                 | `02_catalog_inventory` 33/33 y `03_costs` 24/24, en transacción revertida (`tap_remote.py`)                                                                                           |
+| CI GitHub Actions (Quality)                           | Verde en todos los commits del PR #6                                                                                                                                                  |
+| Previews de Vercel                                    | READY en todos los commits del PR #6                                                                                                                                                  |
+| Recorrido completo del panel con navegador (ver nota) | Acceso, alta de MFA, catálogo, PVP, Ómnibus, publicar, tienda, imágenes, inventario, equipo                                                                                           |
+| Revisión visual con datos del piloto                  | Home, colección y fichas con escena 3D en escritorio y móvil                                                                                                                          |
+| Revisión visual de coste y margen                     | Página local temporal con datos ficticios (sin escribir en la base), 1280 y 390 px                                                                                                    |
+| Etiquetas de precio                                   | Página local temporal con datos ficticios: pantalla, móvil y PDF A4 (21 por hoja, 3 × 7)                                                                                              |
+| Vista previa de la tienda                             | Build local: cookie válida sin sesión muestra el aviso pero no borradores (RLS); cookie falsa no cambia nada; con Supabase simulado se piden `draft,published` y «Salir» la desactiva |
 
 Nota sobre el recorrido del panel: se hizo con una **cuenta temporal** (`prueba-e2e@adhara.invalid`, rol system_admin) y un perfume de prueba que se publicó, se vio en la tienda en es y ca, se retiró y se borró. La cuenta no se puede borrar de Auth porque la auditoría es de solo inserción (DECISIONS §39): quedó **sin rol, bloqueada y sin sesiones**. Quedan como rastro 8 entradas de auditoría y 2 filas del historial de PVP del formato de prueba borrado; no hubo movimientos de stock. La prueba encontró y corrigió un fallo real (un recuento que cuadra impedía borrar un borrador).
 
@@ -54,7 +56,7 @@ La revisión visual con perfumes se hizo en local con un Supabase simulado que d
 
 ## Pendiente del usuario
 
-1. Crear en Supabase (`adhara-dev` → Authentication → Users → Add user → Create new user, con «Auto Confirm User») las cuentas del administrador del sistema y del administrador de la tienda. **Sus roles ya están preasignados** en `adhara-dev`: al crearlas reciben el rol automáticamente y el primer acceso pide configurar la verificación en dos pasos.
+1. Crear en Supabase (`adhara-dev` → Authentication → Users → Add user → Create new user, con «Auto Confirm User») las cuentas del administrador del sistema y del administrador de la tienda. **Sus roles ya están preasignados** en `adhara-dev`: al crearlas reciben el rol automáticamente y el primer acceso pide configurar la verificación en dos pasos. Después, «Ver tienda con borradores» en el panel muestra la tienda con los 4 perfumes del piloto.
 2. Subir el catálogo «CATALOGO global 2026» (adjunto en el chat o en `docs/source/catalogo/` de esta rama) para importar perfumes, formatos y PVP.
 3. Decidir cuándo abrir la web a Agustín: con Vercel Authentication para todo, solo entra quien tiene cuenta en el equipo de Vercel (en Hobby, solo el titular).
 4. Revisar y fusionar el PR #6 (incluye el PR #5) para llevarlo a producción.

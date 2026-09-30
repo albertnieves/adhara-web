@@ -2,6 +2,6 @@ import 'server-only';
 
 export {
   getAvailability,
-  getPublishedProduct,
-  listPublishedProducts,
+  getStorefrontProduct,
+  listStorefrontProducts,
 } from './server/storefront';

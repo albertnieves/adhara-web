@@ -2,7 +2,7 @@ import Image from 'next/image';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { Star } from '@/modules/brand';
 import { heroMedia } from '@/modules/catalog';
-import { listPublishedProducts } from '@/modules/catalog/server';
+import { listStorefrontProducts } from '@/modules/catalog/server';
 import { Link } from '@/modules/i18n';
 import { BrandMarquee, Hero, ProductCard, Reveal } from '@/modules/storefront';
 
@@ -18,7 +18,7 @@ export default async function Home({
   setRequestLocale(locale);
   const [t, products] = await Promise.all([
     getTranslations('home'),
-    listPublishedProducts(locale),
+    listStorefrontProducts(locale),
   ]);
   const featured = (
     products.some((p) => p.featured)

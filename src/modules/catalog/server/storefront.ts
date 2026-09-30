@@ -1,6 +1,8 @@
 import 'server-only';
+import { draftMode } from 'next/headers';
 import { cache } from 'react';
 import { createSupabasePublicClient } from '@/lib/supabase/public';
+import { createSupabaseServerClient } from '@/lib/supabase/server';
 import type { Availability, StorefrontProduct } from '../domain/product';
 import { AVAILABILITY, isAudience, isConcentration } from '../domain/product';
 
@@ -8,6 +10,11 @@ import { AVAILABILITY, isAudience, isConcentration } from '../domain/product';
  * Lecturas de la tienda con el cliente anónimo: RLS solo devuelve perfumes
  * publicados, sus formatos activos, textos e imágenes. Sin Supabase configurado
  * (CI, local sin .env) la tienda muestra la colección vacía.
+ *
+ * Vista previa del personal (Draft Mode, activada desde el panel): se lee con
+ * la sesión del usuario y se piden también los borradores; RLS decide qué
+ * devuelve, así que sin sesión de personal solo llega lo publicado. Next no
+ * guarda estas páginas en la caché ISR.
  */
 
 const PRODUCT_SELECT =
@@ -91,14 +98,28 @@ function byCollectionOrder(a: StorefrontProduct, b: StorefrontProduct) {
   return a.name.localeCompare(b.name, 'es');
 }
 
-export const listPublishedProducts = cache(
+const PUBLIC_STATUSES = ['published'];
+const PREVIEW_STATUSES = ['draft', 'published'];
+
+async function storefrontSource() {
+  if ((await draftMode()).isEnabled) {
+    const supabase = await createSupabaseServerClient();
+    if (supabase) return { supabase, statuses: PREVIEW_STATUSES };
+  }
+  const supabase = createSupabasePublicClient();
+  return supabase ? { supabase, statuses: PUBLIC_STATUSES } : null;
+}
+
+export const listStorefrontProducts = cache(
   async (locale: string): Promise<StorefrontProduct[]> => {
-    const supabase = createSupabasePublicClient();
-    if (!supabase) return [];
-    const { data, error } = await supabase
+    const source = await storefrontSource();
+    if (!source) return [];
+    const { data, error } = await source.supabase
       .from('products')
       .select(PRODUCT_SELECT)
-      .eq('status', 'published');
+      .in('status', source.statuses)
+      // RLS ya lo limita para el público; en vista previa el personal ve todo.
+      .eq('variants.active', true);
     if (error) {
       console.error('[catalog] no se pudo leer la colección', error.message);
       return [];
@@ -107,14 +128,16 @@ export const listPublishedProducts = cache(
   },
 );
 
-export const getPublishedProduct = cache(
+export const getStorefrontProduct = cache(
   async (slug: string, locale: string): Promise<StorefrontProduct | null> => {
-    const supabase = createSupabasePublicClient();
-    if (!supabase) return null;
-    const { data, error } = await supabase
+    const source = await storefrontSource();
+    if (!source) return null;
+    const { data, error } = await source.supabase
       .from('products')
       .select(PRODUCT_SELECT)
-      .eq('status', 'published')
+      .in('status', source.statuses)
+      // RLS ya lo limita para el público; en vista previa el personal ve todo.
+      .eq('variants.active', true)
       .eq('slug', slug)
       .maybeSingle();
     if (error) {

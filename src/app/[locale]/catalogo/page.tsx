@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
-import { listPublishedProducts } from '@/modules/catalog/server';
+import { listStorefrontProducts } from '@/modules/catalog/server';
 import { CatalogBrowser, Reveal } from '@/modules/storefront';
 
 export const revalidate = 300;
@@ -24,7 +24,7 @@ export default async function Catalog({
   setRequestLocale(locale);
   const [t, products] = await Promise.all([
     getTranslations('catalog'),
-    listPublishedProducts(locale),
+    listStorefrontProducts(locale),
   ]);
   return (
     <main className="mx-auto max-w-[90rem] px-5 pt-36 pb-32 sm:px-10 sm:pt-44">

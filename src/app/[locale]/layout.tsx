@@ -6,9 +6,10 @@ import {
   getTranslations,
   setRequestLocale,
 } from 'next-intl/server';
+import { draftMode } from 'next/headers';
 import { notFound } from 'next/navigation';
 import { routing } from '@/modules/i18n';
-import { Footer, Header } from '@/modules/storefront';
+import { Footer, Header, PreviewBanner } from '@/modules/storefront';
 import { fontVariables } from '../fonts';
 import '../globals.css';
 
@@ -40,9 +41,10 @@ export default async function LocaleLayout({
   const { locale } = await params;
   if (!hasLocale(routing.locales, locale)) notFound();
   setRequestLocale(locale);
-  const [messages, t] = await Promise.all([
+  const [messages, t, draft] = await Promise.all([
     getMessages(),
     getTranslations('nav'),
+    draftMode(),
   ]);
   return (
     <html lang={locale} className={fontVariables}>
@@ -57,6 +59,7 @@ export default async function LocaleLayout({
           <Header />
           <div id="contenido">{children}</div>
           <Footer />
+          {draft.isEnabled && <PreviewBanner />}
         </NextIntlClientProvider>
       </body>
     </html>

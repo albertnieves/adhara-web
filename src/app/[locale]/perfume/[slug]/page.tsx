@@ -4,8 +4,8 @@ import { notFound } from 'next/navigation';
 import { variantLabel } from '@/modules/catalog';
 import {
   getAvailability,
-  getPublishedProduct,
-  listPublishedProducts,
+  getStorefrontProduct,
+  listStorefrontProducts,
 } from '@/modules/catalog/server';
 import { Link } from '@/modules/i18n';
 import { findSceneSlug } from '@/modules/unboxing';
@@ -31,7 +31,7 @@ export async function generateMetadata({
   params: Params;
 }): Promise<Metadata> {
   const { locale, slug } = await params;
-  const product = await getPublishedProduct(slug, locale);
+  const product = await getStorefrontProduct(slug, locale);
   if (!product) return {};
   return {
     title: `${product.name} · ${product.brand.name}`,
@@ -42,13 +42,13 @@ export async function generateMetadata({
 export default async function ProductPage({ params }: { params: Params }) {
   const { locale, slug } = await params;
   setRequestLocale(locale);
-  const product = await getPublishedProduct(slug, locale);
+  const product = await getStorefrontProduct(slug, locale);
   if (!product) notFound();
 
   const [t, availability, all] = await Promise.all([
     getTranslations(),
     getAvailability([product.id]),
-    listPublishedProducts(locale),
+    listStorefrontProducts(locale),
   ]);
   const related = all
     .filter((p) => p.brand.slug === product.brand.slug && p.id !== product.id)
