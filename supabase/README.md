@@ -17,6 +17,7 @@ Proyecto de desarrollo: **`adhara-dev`** (ref `xgpsislololgbakzcmad`), región `
 | 20260929230737 | Un nivel de stock se borra con su formato; el historial de movimientos sigue impidiendo borrar formatos con movimientos                                                                                                 |
 | 20260929232007 | Roles preasignados por email (`private.pending_staff_grants`): al crear y confirmar la cuenta en Auth recibe su rol automáticamente                                                                                     |
 | 20260930045615 | Costes: `internal.variant_cost_records` (solo inserción, fuera de la API) y funciones `admin_variant_costs` (pricing.view_cost) y `admin_record_variant_cost` (pricing.edit_cost), ambas con MFA                        |
+| 20260930083657 | `admin_record_variant_costs`: registro de costes por lotes para la importación (hasta 2000, todo o nada), auditado con el número de filas y sin importes                                                                |
 
 La matriz de permisos se genera desde `src/modules/auth/domain/permissions.ts`; `tests/unit/permissions-sql.test.ts` falla si ambas divergen. Del mismo modo, `tests/unit/inventory-sql.test.ts` compara tipos, efectos, permisos y motivos de los movimientos con `src/modules/inventory/domain/movements.ts`.
 
@@ -24,7 +25,7 @@ Los tipos de `src/lib/supabase/database.types.ts` se generan desde `adhara-dev` 
 
 ## Pruebas de base de datos
 
-Sin Docker, las pruebas se ejecutan contra `adhara-dev` con `tests/tap_remote.py`, que revierte todo al terminar. Resultados: `01_staff_permissions` 22/22 (29/09, sesión del PR #5), `02_catalog_inventory` 33/33 (29/09) y `03_costs` 24/24 (30/09).
+Sin Docker, las pruebas se ejecutan contra `adhara-dev` con `tests/tap_remote.py`, que revierte todo al terminar. Resultados: `01_staff_permissions` 22/22 (29/09, sesión del PR #5), `02_catalog_inventory` 33/33 (29/09) y `03_costs` 33/33 (30/09, con el registro por lotes).
 
 `tests/database/*.test.sql` son pruebas pgTAP para `supabase test db`. Crean usuarios ficticios dentro de una transacción que se revierte. Cubren anon, usuario sin personal (cliente), `viewer`, `store_admin` y `system_admin`, con y sin MFA (aal2), y la auditoría de solo inserción. `03_costs` comprueba además que ninguna tabla pública tiene columnas de coste y que anon no ejecuta ninguna función que los devuelva.
 

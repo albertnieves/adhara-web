@@ -1,5 +1,5 @@
-import type { Cents } from '@/lib/money';
-import { parseEuros } from '@/lib/money';
+import type { BasisPoints, Cents } from '@/lib/money';
+import { BASIS_POINTS, divideHalfEven, parseEuros } from '@/lib/money';
 import type { Audience, Concentration } from './product';
 import { slugify } from './product';
 
@@ -80,6 +80,7 @@ export const IMPORT_COLUMNS = [
   'ml',
   'formato',
   'pvp',
+  'coste',
   'sku',
   'ean',
   'publico',
@@ -119,6 +120,13 @@ const COLUMN_ALIASES: Record<string, ImportColumn> = {
   precio: 'pvp',
   'precio venta publico': 'pvp',
   price: 'pvp',
+  coste: 'coste',
+  cost: 'coste',
+  'precio coste': 'coste',
+  'precio compra': 'coste',
+  compra: 'coste',
+  mayorista: 'coste',
+  'precio mayorista': 'coste',
   sku: 'sku',
   referencia: 'sku',
   ref: 'sku',
@@ -189,6 +197,8 @@ export type ImportRow = {
   sizeMl: number | null;
   label: string | null;
   priceCents: Cents | null;
+  /** Coste neto (sin IVA); si el archivo lo trae con IVA, ya convertido. */
+  costCents: Cents | null;
   sku: string | null;
   ean: string | null;
   audience: Audience | null;
@@ -205,10 +215,14 @@ export type ReadResult = {
   unknownColumns: string[];
 };
 
-/** Lee el CSV con cabecera; «origen» por defecto para filas sin él. */
+/**
+ * Lee el CSV con cabecera; «origen» por defecto para filas sin él. Si los
+ * costes del archivo incluyen IVA (`costVatBp` > 0), se pasan a netos.
+ */
 export function readImportRows(
   csv: string,
   defaultSource: string | null = null,
+  { costVatBp = 0 }: { costVatBp?: BasisPoints } = {},
 ): ReadResult {
   const table = parseCsv(csv);
   const empty = { rows: [], errors: [], unknownColumns: [] };
@@ -265,6 +279,17 @@ export function readImportRows(
     if (priceText && (priceCents === null || priceCents <= 0)) {
       problems.push(`PVP no válido «${priceText}»`);
     }
+    const costText = get('coste');
+    const costGross = costText ? parsePrice(costText) : null;
+    if (costText && costGross === null) {
+      problems.push(`coste no válido «${costText}»`);
+    }
+    const costCents =
+      costGross === null
+        ? null
+        : costVatBp > 0
+          ? divideHalfEven(costGross * BASIS_POINTS, BASIS_POINTS + costVatBp)
+          : costGross;
     const ean = get('ean').replace(/\s/g, '');
     if (ean && !/^\d{8,14}$/.test(ean)) problems.push(`EAN no válido «${ean}»`);
     const audienceText = get('publico');
@@ -292,6 +317,7 @@ export function readImportRows(
       sizeMl,
       label: label || null,
       priceCents,
+      costCents,
       sku: sku || null,
       ean: ean || null,
       audience,
@@ -309,6 +335,8 @@ export type ExistingVariant = {
   label: string | null;
   sku: string | null;
   priceCents: Cents | null;
+  /** Coste vigente; undefined si no se conoce (sin permiso de costes). */
+  costCents?: Cents | null;
   position: number;
 };
 
@@ -333,6 +361,9 @@ export type PriceAction =
   | { kind: 'set'; cents: Cents }
   | { kind: 'same' }
   | { kind: 'conflict'; currentCents: Cents; proposedCents: Cents };
+
+export type CostAction =
+  { kind: 'none' } | { kind: 'record'; cents: Cents } | { kind: 'same' };
 
 export type PlannedRow = {
   line: number;
@@ -359,6 +390,7 @@ export type PlannedRow = {
     position: number;
   };
   price: PriceAction;
+  cost: CostAction;
   row: ImportRow;
 };
 
@@ -372,6 +404,7 @@ export type ImportPlan = {
     newVariants: number;
     pricesToSet: number;
     priceConflicts: number;
+    costsToRecord: number;
     unchanged: number;
     errors: number;
   };
@@ -447,12 +480,17 @@ export function planImport(
     }
     seenVariants.add(`${productKey}#${key}`);
 
+    // Una fila sin ml, etiqueta ni SKU es «el formato» del perfume: si ya
+    // tiene uno solo, se usa ese en lugar de crear otro sin tamaño.
+    const bare = !row.sizeMl && !row.label && !row.sku;
     const variant =
       product?.variants.find(
         (v) =>
           (row.sku && v.sku?.toLowerCase() === row.sku.toLowerCase()) ||
           variantKey(v.sizeMl, v.label) === key,
-      ) ?? null;
+      ) ??
+      (bare && product?.variants.length === 1 ? product.variants[0] : null) ??
+      null;
 
     let position = variant?.position ?? 0;
     if (!variant) {
@@ -502,6 +540,14 @@ export function planImport(
         };
     }
 
+    let cost: CostAction = { kind: 'none' };
+    if (row.costCents !== null) {
+      cost =
+        variant?.costCents === row.costCents
+          ? { kind: 'same' }
+          : { kind: 'record', cents: row.costCents };
+    }
+
     if (product && Object.keys(fill).length > 0 && !filled.has(product.id)) {
       filled.add(product.id);
     } else if (product && filled.has(product.id)) {
@@ -534,6 +580,7 @@ export function planImport(
         position,
       },
       price,
+      cost,
       row,
     });
   }
@@ -554,11 +601,13 @@ export function planImport(
       newVariants: planned.filter((r) => !r.variant.existingId).length,
       pricesToSet: planned.filter((r) => r.price.kind === 'set').length,
       priceConflicts: planned.filter((r) => r.price.kind === 'conflict').length,
+      costsToRecord: planned.filter((r) => r.cost.kind === 'record').length,
       unchanged: planned.filter(
         (r) =>
           r.variant.existingId &&
           r.price.kind !== 'set' &&
           r.price.kind !== 'conflict' &&
+          r.cost.kind !== 'record' &&
           Object.keys(r.product.fill).length === 0,
       ).length,
       errors: errors.length,

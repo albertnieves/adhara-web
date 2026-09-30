@@ -54,11 +54,15 @@ describe('aislamiento de costes', () => {
       'lib/supabase/database.types.ts',
       'modules/catalog/server/actions.ts',
       'modules/catalog/server/admin.ts',
+      'modules/catalog/server/import.ts',
     ]);
     expect(read('src/modules/catalog/server/admin.ts')).toMatch(
       /^import 'server-only';/,
     );
     expect(read('src/modules/catalog/server/actions.ts')).toMatch(
+      /^'use server';/,
+    );
+    expect(read('src/modules/catalog/server/import.ts')).toMatch(
       /^'use server';/,
     );
   });

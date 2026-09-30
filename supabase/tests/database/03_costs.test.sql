@@ -5,7 +5,7 @@ begin;
 create extension if not exists pgtap with schema extensions;
 set search_path = public, extensions;
 
-select plan(24);
+select plan(33);
 
 insert into auth.users (id, email) values
   ('00000000-0000-4000-8000-000000000021', 'sistema-costes@test.invalid'),
@@ -145,8 +145,52 @@ select is(
      and after - 'cost_record_id' = '{}'::jsonb),
   2, 'la auditoría registra cada coste sin el importe');
 
+-- Registro por lotes (importación de catálogo)
+set local role authenticated;
+select pg_temp.act_as('00000000-0000-4000-8000-000000000023', 'aal2');
+select throws_ok(
+  $$select public.admin_record_variant_costs(
+    '[{"variant_id": "00000000-0000-4000-8000-0000000000c3", "cost_net_cents": 1500}]')$$,
+  '42501', 'forbidden', 'el encargado no registra costes por lotes');
+select pg_temp.act_as('00000000-0000-4000-8000-000000000022', 'aal1');
+select throws_ok(
+  $$select public.admin_record_variant_costs(
+    '[{"variant_id": "00000000-0000-4000-8000-0000000000c3", "cost_net_cents": 1500}]')$$,
+  '42501', 'forbidden', 'sin MFA no se registran costes por lotes');
+select pg_temp.act_as('00000000-0000-4000-8000-000000000022', 'aal2');
+select throws_ok(
+  $$select public.admin_record_variant_costs(
+    '[{"variant_id": "00000000-0000-4000-8000-0000000000c3", "cost_net_cents": "x"}]')$$,
+  '22023', 'invalid_amount', 'un coste no numérico se rechaza');
+select throws_ok(
+  $$select public.admin_record_variant_costs(
+    '[{"variant_id": "00000000-0000-4000-8000-0000000000c3", "cost_net_cents": 12.5}]')$$,
+  '22023', 'invalid_amount', 'un coste con fracción de céntimo se rechaza');
+select throws_ok(
+  $$select public.admin_record_variant_costs(
+    '[{"variant_id": "00000000-0000-4000-8000-0000000000c3", "cost_net_cents": 1500},
+      {"variant_id": "00000000-0000-4000-8000-0000000000ff", "cost_net_cents": 1}]')$$,
+  '22023', 'unknown_variant', 'un formato inexistente anula todo el lote');
+select is(
+  (select public.admin_record_variant_costs(
+    '[{"variant_id": "00000000-0000-4000-8000-0000000000c3", "cost_net_cents": 1500, "note": "Catálogo p. 4"}]')),
+  1, 'store_admin con MFA registra un lote');
+select is(
+  (select cost_net_cents from public.admin_variant_costs(
+    array['00000000-0000-4000-8000-0000000000c3'::uuid])),
+  1500, 'el lote deja el coste vigente');
+reset role;
+select is(
+  (select count(*)::int from public.audit_log
+   where action = 'pricing.costs_recorded' and after = '{"count": 1}'::jsonb),
+  1, 'el lote se audita con el número, sin importes');
+
 -- Un borrador con coste no aparece en la tienda.
 set local role anon;
+select throws_ok(
+  $$select public.admin_record_variant_costs(
+    '[{"variant_id": "00000000-0000-4000-8000-0000000000c3", "cost_net_cents": 1}]')$$,
+  '42501', null, 'anon no registra costes por lotes');
 select is_empty(
   $$select * from public.product_variants
     where id = '00000000-0000-4000-8000-0000000000c3'$$,

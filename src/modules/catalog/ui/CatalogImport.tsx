@@ -59,9 +59,11 @@ function Chip({
 function RowOutcome({
   row,
   canSetPrices,
+  canRecordCosts,
 }: {
   row: PlannedRow;
   canSetPrices: boolean;
+  canRecordCosts: boolean;
 }) {
   const fill = Object.keys(row.product.fill).map(
     (field) =>
@@ -90,6 +92,12 @@ function RowOutcome({
           PVP actual {formatEuros(row.price.currentCents, 'es')}: no se cambia
         </Chip>
       )}
+      {row.cost.kind === 'record' && (
+        <Chip tone={canRecordCosts ? 'new' : 'muted'}>
+          {canRecordCosts ? 'Registra coste' : 'Coste sin permiso'}
+        </Chip>
+      )}
+      {row.cost.kind === 'same' && <Chip tone="muted">Coste igual</Chip>}
       {row.product.warnings.map((warning) => (
         <Chip key={warning} tone="warn">
           {warning}
@@ -103,10 +111,11 @@ export function CatalogImport({ canSetPrices }: { canSetPrices: boolean }) {
   const [state, dispatch, pending] = useActionState(importCatalog, IDLE);
   const [csv, setCsv] = useState('');
   const [source, setSource] = useState('');
+  const [costVat, setCostVat] = useState('net');
   const [fileName, setFileName] = useState<string | null>(null);
   const [reviewed, setReviewed] = useState<string | null>(null);
   const [confirmed, setConfirmed] = useState(false);
-  const current = `${source}\n${csv}`;
+  const current = `${source}\n${costVat}\n${csv}`;
   const upToDate = state.status === 'review' && reviewed === current;
 
   function onSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -183,6 +192,20 @@ export function CatalogImport({ canSetPrices }: { canSetPrices: boolean }) {
             className="input"
           />
         </Field>
+        <Field
+          label="Costes del archivo"
+          hint="Solo si el CSV trae la columna «coste». Se guardan netos, sin IVA, y solo los ve quien tiene permiso de costes."
+        >
+          <select
+            name="costVat"
+            value={costVat}
+            onChange={(event) => setCostVat(event.target.value)}
+            className="input"
+          >
+            <option value="net">Sin IVA (netos)</option>
+            <option value="gross">Con IVA del 21 % (se pasan a netos)</option>
+          </select>
+        </Field>
         <div className="flex flex-wrap items-center gap-4">
           <SubmitButton
             name="intent"
@@ -219,6 +242,12 @@ export function CatalogImport({ canSetPrices }: { canSetPrices: boolean }) {
               cambiar precios.
             </p>
           )}
+          {state.costsSkipped > 0 && (
+            <p className="text-sm">
+              {state.costsSkipped} costes no se han registrado porque tu rol no
+              puede registrar costes.
+            </p>
+          )}
           {state.failures.length > 0 && (
             <p className="text-sm">
               {state.failures.length} filas con errores no se importaron.
@@ -240,12 +269,13 @@ export function CatalogImport({ canSetPrices }: { canSetPrices: boolean }) {
               <p className="eyebrow">2 · Revisión</p>
               {!upToDate && (
                 <p className="text-danger mt-2 text-sm">
-                  Has cambiado el CSV o el origen: vuelve a revisarlo.
+                  Has cambiado el CSV, el origen o los costes: vuelve a
+                  revisarlo.
                 </p>
               )}
             </div>
           </div>
-          <dl className="grid grid-cols-2 gap-3 sm:grid-cols-4 xl:grid-cols-8">
+          <dl className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-9">
             {(
               [
                 ['Marcas nuevas', plan.summary.newBrands],
@@ -254,6 +284,7 @@ export function CatalogImport({ canSetPrices }: { canSetPrices: boolean }) {
                 ['Formatos nuevos', plan.summary.newVariants],
                 ['PVP a fijar', plan.summary.pricesToSet],
                 ['PVP en conflicto', plan.summary.priceConflicts],
+                ['Costes a registrar', plan.summary.costsToRecord],
                 ['Sin cambios', plan.summary.unchanged],
                 ['Filas con error', plan.summary.errors],
               ] as const
@@ -307,6 +338,7 @@ export function CatalogImport({ canSetPrices }: { canSetPrices: boolean }) {
                     <th>Perfume</th>
                     <th>Formato</th>
                     <th>PVP</th>
+                    <th>Coste</th>
                     <th>Resultado</th>
                   </tr>
                 </thead>
@@ -335,11 +367,19 @@ export function CatalogImport({ canSetPrices }: { canSetPrices: boolean }) {
                           ? '—'
                           : formatEuros(row.row.priceCents, 'es')}
                       </td>
+                      <td className="whitespace-nowrap tabular-nums">
+                        {row.row.costCents === null
+                          ? '—'
+                          : formatEuros(row.row.costCents, 'es')}
+                      </td>
                       <td>
                         <RowOutcome
                           row={row}
                           canSetPrices={
                             state.status === 'review' && state.canSetPrices
+                          }
+                          canRecordCosts={
+                            state.status === 'review' && state.canRecordCosts
                           }
                         />
                       </td>

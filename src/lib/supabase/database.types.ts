@@ -553,6 +553,10 @@ export type Database = {
         };
         Returns: string;
       };
+      admin_record_variant_costs: {
+        Args: { p_items: Json };
+        Returns: number;
+      };
       admin_set_reorder_point: {
         Args: {
           p_location_id: string;

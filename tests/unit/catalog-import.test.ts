@@ -220,3 +220,104 @@ describe('plan de importación', () => {
     ]);
   });
 });
+
+describe('costes en la importación', () => {
+  it('lee la columna coste y la pasa a neto si trae IVA', () => {
+    const csv = 'marca;nombre;precio compra\nA;B;12,10\nA;C;x';
+    const net = readImportRows(csv);
+    expect(net.rows[0]?.costCents).toBe(1210);
+    expect(net.errors).toEqual([{ line: 3, message: 'coste no válido «x»' }]);
+    expect(
+      readImportRows(csv, null, { costVatBp: 2100 }).rows[0]?.costCents,
+    ).toBe(1000);
+  });
+
+  it('una fila sin ml usa el único formato del perfume y compara el coste', () => {
+    const existing: ExistingCatalog = {
+      brands: [{ id: 'b', slug: 'lattafa', name: 'Lattafa' }],
+      products: [
+        {
+          id: 'p',
+          brandId: 'b',
+          slug: 'asad',
+          name: 'Asad',
+          concentration: 'EDP',
+          audience: null,
+          sourceRef: 'caja',
+          variants: [
+            {
+              id: 'v',
+              sizeMl: 100,
+              label: null,
+              sku: null,
+              priceCents: null,
+              costCents: 1600,
+              position: 0,
+            },
+          ],
+        },
+      ],
+    };
+    const same = planImport(
+      readImportRows('marca;nombre;coste\nLattafa;Asad;16').rows,
+      existing,
+    );
+    expect(same.rows[0]?.variant.existingId).toBe('v');
+    expect(same.rows[0]?.cost).toEqual({ kind: 'same' });
+    expect(same.summary).toMatchObject({
+      newVariants: 0,
+      costsToRecord: 0,
+      unchanged: 1,
+    });
+
+    const changed = planImport(
+      readImportRows('marca;nombre;coste\nLattafa;Asad;17').rows,
+      existing,
+    );
+    expect(changed.rows[0]?.cost).toEqual({ kind: 'record', cents: 1700 });
+    expect(changed.summary.costsToRecord).toBe(1);
+  });
+
+  it('con varios formatos, una fila sin ml no elige ninguno', () => {
+    const existing: ExistingCatalog = {
+      brands: [{ id: 'b', slug: 'lattafa', name: 'Lattafa' }],
+      products: [
+        {
+          id: 'p',
+          brandId: 'b',
+          slug: 'yara',
+          name: 'Yara',
+          concentration: null,
+          audience: null,
+          sourceRef: null,
+          variants: [
+            {
+              id: 'v1',
+              sizeMl: 100,
+              label: null,
+              sku: null,
+              priceCents: null,
+              position: 0,
+            },
+            {
+              id: 'v2',
+              sizeMl: 50,
+              label: null,
+              sku: null,
+              priceCents: null,
+              position: 1,
+            },
+          ],
+        },
+      ],
+    };
+    const plan = planImport(
+      readImportRows('marca;nombre\nLattafa;Yara').rows,
+      existing,
+    );
+    expect(plan.rows[0]?.variant).toMatchObject({
+      existingId: null,
+      position: 2,
+    });
+  });
+});

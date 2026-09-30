@@ -6,6 +6,7 @@ import { describeDbError } from '@/modules/admin';
 import { isAllowed } from '@/modules/auth';
 import type { StaffContext } from '@/modules/auth/server';
 import { requirePermission } from '@/modules/auth/server';
+import { VAT_GENERAL_BP } from '@/modules/pricing';
 import type {
   ExistingCatalog,
   ImportPlan,
@@ -13,6 +14,7 @@ import type {
   RowError,
 } from '../domain/import';
 import { planImport, readImportRows } from '../domain/import';
+import { getVariantCosts } from './admin';
 
 /*
  * Importación de catálogo: «review» devuelve el plan; «apply» vuelve a leer el
@@ -28,6 +30,7 @@ export type ImportState =
       status: 'review';
       plan: ImportPlan;
       canSetPrices: boolean;
+      canRecordCosts: boolean;
       unknownColumns: string[];
     }
   | {
@@ -36,6 +39,7 @@ export type ImportState =
       failures: RowError[];
       pricesSkipped: number;
       priceConflicts: number;
+      costsSkipped: number;
     };
 
 type Supabase = StaffContext['supabase'];
@@ -44,7 +48,10 @@ const MAX_CSV_BYTES = 1024 * 1024;
 const PAGE = 1000;
 const BATCH = 500;
 
-async function loadCatalog(supabase: Supabase): Promise<ExistingCatalog> {
+async function loadCatalog(
+  supabase: Supabase,
+  withCosts: boolean,
+): Promise<ExistingCatalog> {
   const brands = await fetchAll((from, to) =>
     supabase
       .from('brands')
@@ -84,6 +91,19 @@ async function loadCatalog(supabase: Supabase): Promise<ExistingCatalog> {
     }
     if (data.length < PAGE) break;
   }
+  // Coste vigente de cada formato, solo con pricing.view_cost (para no
+  // registrar otra vez el mismo coste).
+  if (withCosts) {
+    const costs = await getVariantCosts(
+      supabase,
+      products.flatMap((p) => p.variants.map((v) => v.id)),
+    );
+    for (const product of products) {
+      for (const variant of product.variants) {
+        variant.costCents = costs.get(variant.id)?.costNetCents ?? null;
+      }
+    }
+  }
   return { brands, products };
 }
 
@@ -107,8 +127,16 @@ async function apply(
   plan: ImportPlan,
   existing: ExistingCatalog,
   canSetPrices: boolean,
+  cost: { allowed: boolean; note: string },
 ) {
-  const done = { brands: 0, products: 0, filled: 0, variants: 0, prices: 0 };
+  const done = {
+    brands: 0,
+    products: 0,
+    filled: 0,
+    variants: 0,
+    prices: 0,
+    costs: 0,
+  };
 
   // 1. Marcas nuevas, con nombre web único.
   const brandIds = new Map<string, string>();
@@ -188,6 +216,7 @@ async function apply(
   }
 
   // 4. Formatos nuevos, con PVP si hay permiso (el trigger lo registra).
+  const variantIds = new Map<PlannedRow, string>();
   const newVariants = plan.rows.filter((r) => !r.variant.existingId);
   for (const batch of chunks(newVariants)) {
     const rows = batch.flatMap((row) => {
@@ -197,19 +226,30 @@ async function apply(
     if (rows.length !== batch.length) {
       return { done, error: 'No se pudo resolver un perfume.' };
     }
-    const { error } = await supabase.from('product_variants').insert(
-      rows.map(({ row, productId }) => ({
-        product_id: productId,
-        size_ml: row.variant.sizeMl,
-        label: row.variant.label,
-        sku: row.variant.sku,
-        ean: row.variant.ean,
-        position: row.variant.position,
-        retail_price_cents:
-          canSetPrices && row.price.kind === 'set' ? row.price.cents : null,
-      })),
-    );
+    const { data, error } = await supabase
+      .from('product_variants')
+      .insert(
+        rows.map(({ row, productId }) => ({
+          product_id: productId,
+          size_ml: row.variant.sizeMl,
+          label: row.variant.label,
+          sku: row.variant.sku,
+          ean: row.variant.ean,
+          position: row.variant.position,
+          retail_price_cents:
+            canSetPrices && row.price.kind === 'set' ? row.price.cents : null,
+        })),
+      )
+      .select('id, product_id, position');
     if (error) return { done, error: describeDbError(error) };
+    // Cada formato nuevo es único por perfume y posición.
+    const inserted = new Map(
+      data.map((v) => [`${v.product_id}|${v.position}`, v.id]),
+    );
+    for (const { row, productId } of rows) {
+      const id = inserted.get(`${productId}|${row.variant.position}`);
+      if (id) variantIds.set(row, id);
+    }
     done.variants += batch.length;
     if (canSetPrices) {
       done.prices += batch.filter((r) => r.price.kind === 'set').length;
@@ -229,6 +269,29 @@ async function apply(
       done.prices += 1;
     }
   }
+
+  // 6. Costes (internal), en lotes con una sola función SQL.
+  if (cost.allowed) {
+    const items = plan.rows.flatMap((row) => {
+      const id = row.variant.existingId ?? variantIds.get(row);
+      return row.cost.kind === 'record' && id
+        ? [
+            {
+              variant_id: id,
+              cost_net_cents: row.cost.cents,
+              note: [row.row.source, cost.note].filter(Boolean).join(' · '),
+            },
+          ]
+        : [];
+    });
+    for (const batch of chunks(items)) {
+      const { data, error } = await supabase.rpc('admin_record_variant_costs', {
+        p_items: batch,
+      });
+      if (error) return { done, error: describeDbError(error) };
+      done.costs += data;
+    }
+  }
   return { done, error: null };
 }
 
@@ -238,6 +301,10 @@ export async function importCatalog(
 ): Promise<ImportState> {
   const { supabase, role } = await requirePermission('catalog.edit');
   const canSetPrices = isAllowed({ role, aal: 'aal2' }, 'pricing.edit_retail');
+  const canViewCosts = isAllowed({ role, aal: 'aal2' }, 'pricing.view_cost');
+  const canRecordCosts =
+    canViewCosts && isAllowed({ role, aal: 'aal2' }, 'pricing.edit_cost');
+  const costWithVat = formData.get('costVat') === 'gross';
   const csv = formData.get('csv');
   const source = String(formData.get('source') ?? '').trim() || null;
   if (typeof csv !== 'string' || !csv.trim()) {
@@ -246,12 +313,14 @@ export async function importCatalog(
   if (new TextEncoder().encode(csv).length > MAX_CSV_BYTES) {
     return { status: 'error', message: 'El CSV supera 1 MB.' };
   }
-  const read = readImportRows(csv, source);
+  const read = readImportRows(csv, source, {
+    costVatBp: costWithVat ? VAT_GENERAL_BP : 0,
+  });
   if (read.fatal) return { status: 'error', message: read.fatal };
 
   let existing: ExistingCatalog;
   try {
-    existing = await loadCatalog(supabase);
+    existing = await loadCatalog(supabase, canViewCosts);
   } catch {
     return { status: 'error', message: 'No se pudo leer el catálogo actual.' };
   }
@@ -262,6 +331,7 @@ export async function importCatalog(
       status: 'review',
       plan,
       canSetPrices,
+      canRecordCosts,
       unknownColumns: read.unknownColumns,
     };
   }
@@ -272,8 +342,14 @@ export async function importCatalog(
     return { status: 'error', message: 'No hay filas válidas que importar.' };
   }
 
-  const { done, error } = await apply(supabase, plan, existing, canSetPrices);
+  const { done, error } = await apply(supabase, plan, existing, canSetPrices, {
+    allowed: canRecordCosts,
+    note: costWithVat
+      ? 'coste importado con IVA, pasado a neto'
+      : 'coste importado (neto)',
+  });
   const pricesSkipped = canSetPrices ? 0 : plan.summary.pricesToSet;
+  const costsSkipped = canRecordCosts ? 0 : plan.summary.costsToRecord;
   await supabase.rpc('record_audit_event', {
     action: 'catalog.imported',
     entity: 'catalog',
@@ -284,6 +360,8 @@ export async function importCatalog(
       ...done,
       price_conflicts: plan.summary.priceConflicts,
       prices_skipped: pricesSkipped,
+      costs_skipped: costsSkipped,
+      cost_with_vat: costWithVat,
       failed: error,
     },
   });
@@ -297,6 +375,7 @@ export async function importCatalog(
     count(done.products, 'perfume', 'perfumes'),
     count(done.variants, 'formato', 'formatos'),
     `${done.prices} PVP`,
+    count(done.costs, 'coste', 'costes'),
   ].join(', ');
   if (error) {
     return {
@@ -310,5 +389,6 @@ export async function importCatalog(
     failures: plan.errors,
     pricesSkipped,
     priceConflicts: plan.summary.priceConflicts,
+    costsSkipped,
   };
 }
