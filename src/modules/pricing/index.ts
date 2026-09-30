@@ -17,3 +17,11 @@ export type {
 export { adjustRetailPrice } from './domain/adjustment';
 export type { PriceAdjustment, PriceEnding } from './domain/adjustment';
 export { PROVISIONAL_PRICING_POLICY, VAT_GENERAL_BP } from './domain/policy';
+export { PRICE_ISSUE_LABELS } from './domain/labels';
+export {
+  MAX_BULK_ROWS,
+  parsePercent,
+  parseSignedEuros,
+  planBulkPriceChange,
+} from './domain/bulk';
+export type { BulkRow, BulkVariant } from './domain/bulk';

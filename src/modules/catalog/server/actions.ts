@@ -10,6 +10,7 @@ import { isAllowed } from '@/modules/auth';
 import { requirePermission } from '@/modules/auth/server';
 import type { PricePeriod, PriceIssue } from '@/modules/pricing';
 import {
+  PRICE_ISSUE_LABELS,
   PROVISIONAL_PRICING_POLICY,
   VAT_GENERAL_BP,
   hasBlockingIssues,
@@ -347,18 +348,7 @@ export async function deleteVariant(
   return ok('Formato eliminado.');
 }
 
-const ISSUE_LABELS: Record<PriceIssue['code'], string> = {
-  invalid_amount: 'El importe no es válido.',
-  compare_at_not_higher: 'El precio anterior debe ser mayor que el nuevo PVP.',
-  omnibus_no_history:
-    'No hay historial de 30 días: no se puede anunciar una rebaja todavía (Ómnibus).',
-  omnibus_reference_exceeded:
-    'El precio anterior supera el PVP más bajo de los últimos 30 días (Ómnibus).',
-  below_cost: 'El PVP queda por debajo del coste.',
-  below_min_margin: 'El margen queda por debajo del mínimo.',
-  large_change: 'Es un cambio de precio grande (20 % o más).',
-  margin_unknown: 'Sin coste registrado: el margen no se puede calcular.',
-};
+const ISSUE_LABELS = PRICE_ISSUE_LABELS;
 
 const priceInput = z.object({
   id: z.uuid(),

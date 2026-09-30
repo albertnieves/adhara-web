@@ -32,6 +32,10 @@ export default async function CatalogAdmin({
     { role: staff.role, aal: 'aal2' },
     'inventory.view',
   );
+  const canPrice = isAllowed(
+    { role: staff.role, aal: 'aal2' },
+    'pricing.edit_retail',
+  );
   const all = await listAdminProducts(staff.supabase, canStock);
   const needle = normalize(q.trim());
   const products = all
@@ -51,6 +55,14 @@ export default async function CatalogAdmin({
             Ver tienda con borradores
           </button>
         </form>
+        {canPrice && (
+          <Link
+            href="/admin/catalogo/precios"
+            className="border-line hover:border-ink inline-flex min-h-11 items-center border px-5 text-xs font-semibold tracking-[0.18em] uppercase transition-colors"
+          >
+            Cambiar precios
+          </Link>
+        )}
         <Link
           href="/admin/catalogo/importar"
           className="border-line hover:border-ink inline-flex min-h-11 items-center border px-5 text-xs font-semibold tracking-[0.18em] uppercase transition-colors"

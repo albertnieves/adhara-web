@@ -6,3 +6,4 @@ export { VariantEditor } from './VariantEditor';
 export { DeleteProductButton } from './DeleteProductButton';
 export { PriceLabelCard } from './PriceLabelCard';
 export { CatalogImport } from './CatalogImport';
+export { BulkPricing } from './BulkPricing';
