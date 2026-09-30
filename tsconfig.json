@@ -23,7 +23,9 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@pilot-refs/*": ["./pilot/assets-refs/*"],
+      "@pilot-drafts/*": ["./pilot/assets-drafts/*"]
     }
   },
   "include": [

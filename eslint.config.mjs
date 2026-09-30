@@ -11,6 +11,13 @@ export default defineConfig([
       '@typescript-eslint/consistent-type-imports': 'error',
     },
   },
+  {
+    // Escena three.js: sus objetos (texturas, materiales, grupos) se mutan en
+    // useFrame y efectos por diseño de React Three Fiber; la regla del compilador
+    // de React los trata como estado inmutable y da falsos positivos.
+    files: ['src/modules/unboxing/scene/**/*.tsx'],
+    rules: { 'react-hooks/immutability': 'off' },
+  },
   globalIgnores([
     '.next/**',
     'next-env.d.ts',

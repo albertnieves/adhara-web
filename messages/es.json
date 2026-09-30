@@ -1,7 +1,100 @@
 {
-  "setup": {
-    "status": "Entorno de desarrollo preparado.",
-    "catalog": "Catálogo",
-    "empty": "El catálogo se incorporará con datos verificados."
+  "meta": {
+    "title": "ADHARA · Perfumería árabe",
+    "description": "Perfumería árabe en Castelldefels. Web en desarrollo."
+  },
+  "nav": {
+    "collection": "Colección",
+    "experience": "La experiencia",
+    "menu": "Menú",
+    "close": "Cerrar",
+    "language": "Idioma",
+    "skip": "Saltar al contenido",
+    "home": "Inicio"
+  },
+  "home": {
+    "heroEyebrow": "Perfumería árabe · Castelldefels",
+    "heroTitle": "El lenguaje del perfume árabe",
+    "heroLead": "Una selección de fragancias de las casas de Oriente Medio, presentada con la calma que merecen.",
+    "heroCta": "Descubrir la colección",
+    "scroll": "Desplázate",
+    "featuredEyebrow": "Selección",
+    "featuredTitle": "Fragancias destacadas",
+    "featuredCta": "Ver toda la colección",
+    "featuredEmpty": "La colección se está preparando. Muy pronto podrás descubrirla aquí.",
+    "experienceEyebrow": "La experiencia",
+    "experienceTitle": "Abrir la caja es parte del perfume",
+    "experienceBody": "Cada fragancia se presenta como en la tienda: la caja se abre, el frasco se eleva y gira ante ti. Después, es tuyo para mirarlo desde cualquier ángulo.",
+    "experienceCta": "Vivirlo con {name}",
+    "brandsEyebrow": "Casas",
+    "storeEyebrow": "La tienda",
+    "storeTitle": "Castelldefels",
+    "storeBody": "Ven a descubrir las fragancias en persona. La compra online llegará muy pronto."
+  },
+  "catalog": {
+    "eyebrow": "Colección",
+    "title": "Todas las fragancias",
+    "count": "{count, plural, =0 {Ningún perfume} one {# perfume} other {# perfumes}}",
+    "search": "Buscar por nombre o casa",
+    "brand": "Casa",
+    "allBrands": "Todas las casas",
+    "audience": "Para",
+    "allAudiences": "Todos",
+    "sort": "Ordenar",
+    "sortFeatured": "Destacados",
+    "sortPriceAsc": "Precio: de menor a mayor",
+    "sortPriceDesc": "Precio: de mayor a menor",
+    "sortName": "Nombre",
+    "empty": "La colección se está preparando con datos verificados. Vuelve pronto.",
+    "emptyFiltered": "Ningún perfume coincide con tu búsqueda.",
+    "clear": "Limpiar filtros"
+  },
+  "audience": {
+    "women": "Mujer",
+    "men": "Hombre",
+    "unisex": "Unisex"
+  },
+  "concentration": {
+    "EDC": "Eau de Cologne",
+    "EDT": "Eau de Toilette",
+    "EDP": "Eau de Parfum",
+    "PARFUM": "Parfum",
+    "EXTRAIT": "Extrait de Parfum",
+    "OIL": "Aceite perfumado",
+    "OTHER": "Fragancia"
+  },
+  "product": {
+    "back": "Volver a la colección",
+    "size": "Formato",
+    "pricePending": "Precio próximamente",
+    "from": "Desde {price}",
+    "vat": "IVA incluido",
+    "inStock": "Disponible",
+    "lowStock": "Últimas unidades",
+    "outOfStock": "Agotado",
+    "buySoon": "Compra online próximamente",
+    "storeNote": "Visítanos en la tienda de Castelldefels para descubrirlo en persona.",
+    "description": "Descripción",
+    "details": "Detalles",
+    "brand": "Casa",
+    "concentration": "Concentración",
+    "provisionalImage": "Imagen provisional",
+    "noImage": "Imagen próximamente",
+    "scene": "Animación 3D de {name}",
+    "sceneReplay": "Repetir",
+    "sceneDrag": "Arrastra para girar",
+    "sceneProvisional": "Vista 3D provisional",
+    "related": "También de {brand}"
+  },
+  "footer": {
+    "tagline": "Perfumería árabe en Castelldefels.",
+    "shop": "Tienda",
+    "info": "Información",
+    "dev": "Web en desarrollo: contenidos e imágenes provisionales.",
+    "rights": "© {year} ADHARA"
+  },
+  "notFound": {
+    "title": "Esta página no existe",
+    "cta": "Volver al inicio"
   }
 }
