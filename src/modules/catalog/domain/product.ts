@@ -70,6 +70,8 @@ export type StorefrontProduct = {
   unboxingScene: string | null;
   tagline: string | null;
   description: string | null;
+  /** Idiomas con texto propio (frase o descripción). */
+  translatedLocales: string[];
   variants: ProductVariant[];
   media: ProductMedia[];
 };

@@ -8,6 +8,7 @@ import {
   listStorefrontProducts,
 } from '@/modules/catalog/server';
 import { Link } from '@/modules/i18n';
+import { alternatesMetadata } from '@/modules/i18n/metadata';
 import { findSceneSlug } from '@/modules/unboxing';
 import {
   ProductCard,
@@ -33,9 +34,16 @@ export async function generateMetadata({
   const { locale, slug } = await params;
   const product = await getStorefrontProduct(slug, locale);
   if (!product) return {};
+  // El español es la base (nombre, marca, precio); ca y en cuentan como
+  // publicados cuando tienen texto propio.
   return {
     title: `${product.name} · ${product.brand.name}`,
     description: product.tagline ?? undefined,
+    ...alternatesMetadata(
+      { pathname: '/perfume/[slug]', params: { slug } },
+      locale,
+      ['es', ...product.translatedLocales],
+    ),
   };
 }
 

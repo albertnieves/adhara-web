@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { listStorefrontProducts } from '@/modules/catalog/server';
 import { CatalogBrowser, Reveal } from '@/modules/storefront';
+import { alternatesMetadata } from '@/modules/i18n/metadata';
 
 export const revalidate = 300;
 
@@ -12,7 +13,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'catalog' });
-  return { title: t('title') };
+  return { title: t('title'), ...alternatesMetadata('/catalogo', locale) };
 }
 
 export default async function Catalog({

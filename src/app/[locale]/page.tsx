@@ -3,11 +3,22 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { Star } from '@/modules/brand';
 import { heroMedia } from '@/modules/catalog';
 import { listStorefrontProducts } from '@/modules/catalog/server';
+import type { Metadata } from 'next';
 import { Link } from '@/modules/i18n';
+import { alternatesMetadata } from '@/modules/i18n/metadata';
 import { BrandMarquee, Hero, ProductCard, Reveal } from '@/modules/storefront';
 
 /** La tienda se regenera cada 5 minutos o al publicar desde el panel. */
 export const revalidate = 300;
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  return alternatesMetadata('/', locale);
+}
 
 export default async function Home({
   params,

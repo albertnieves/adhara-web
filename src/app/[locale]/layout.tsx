@@ -9,6 +9,7 @@ import {
 import { draftMode } from 'next/headers';
 import { notFound } from 'next/navigation';
 import { routing } from '@/modules/i18n';
+import { siteUrl } from '@/modules/i18n/seo';
 import { Footer, Header, PreviewBanner } from '@/modules/storefront';
 import { fontVariables } from '../fonts';
 import '../globals.css';
@@ -21,6 +22,7 @@ export async function generateMetadata({
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'meta' });
   return {
+    metadataBase: siteUrl(),
     title: { default: t('title'), template: `%s · ADHARA` },
     description: t('description'),
     robots: { index: false, follow: false },

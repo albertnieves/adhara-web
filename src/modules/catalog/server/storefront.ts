@@ -69,6 +69,9 @@ function toProduct(row: Row, locale: string): StorefrontProduct {
     unboxingScene: row.unboxing_scene,
     tagline: text?.tagline ?? null,
     description: text?.description ?? null,
+    translatedLocales: row.translations
+      .filter((t) => t.tagline || t.description)
+      .map((t) => t.locale),
     variants: row.variants
       .map((v) => ({
         id: v.id,

@@ -20,6 +20,7 @@ const base: StorefrontProduct = {
   unboxingScene: null,
   tagline: null,
   description: null,
+  translatedLocales: [],
   variants: [],
   media: [],
 };

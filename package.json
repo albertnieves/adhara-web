@@ -17,7 +17,8 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "check": "pnpm lint && pnpm typecheck && pnpm test:unit && pnpm build",
-    "bootstrap:owner": "node scripts/bootstrap-owner.ts"
+    "bootstrap:owner": "node scripts/bootstrap-owner.ts",
+    "scan:secrets": "node scripts/scan-secrets.ts"
   },
   "dependencies": {
     "@react-three/drei": "10.7.9",

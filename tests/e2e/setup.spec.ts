@@ -53,3 +53,25 @@ test('la colección en inglés responde con su título', async ({ page }) => {
     'All fragrances',
   );
 });
+
+for (const path of ['/es', '/es/catalogo', '/admin/acceso']) {
+  test(`cabeceras de seguridad en ${path}`, async ({ request }) => {
+    const headers = (await request.get(path)).headers();
+    expect(headers['x-content-type-options']).toBe('nosniff');
+    expect(headers['x-frame-options']).toBe('DENY');
+    expect(headers['referrer-policy']).toBe('strict-origin-when-cross-origin');
+    expect(headers['permissions-policy']).toContain('camera=()');
+    expect(headers['x-robots-tag']).toBe('noindex, nofollow');
+    expect(headers['x-powered-by']).toBeUndefined();
+  });
+}
+
+test('canonical y hreflang de la colección en catalán', async ({ page }) => {
+  await page.goto('/ca/cataleg');
+  const href = (selector: string) =>
+    page.locator(selector).getAttribute('href');
+  expect(await href('link[rel="canonical"]')).toMatch(/\/ca\/cataleg$/);
+  expect(await href('link[hreflang="es"]')).toMatch(/\/es\/catalogo$/);
+  expect(await href('link[hreflang="en"]')).toMatch(/\/en\/catalog$/);
+  expect(await href('link[hreflang="x-default"]')).toMatch(/\/es\/catalogo$/);
+});
