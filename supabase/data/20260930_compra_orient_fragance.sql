@@ -228,3 +228,19 @@ from (values
 ) as v(id, slug, path, alt, pos, source)
 join public.products p on p.slug = v.slug
 on conflict (id) do nothing;
+
+-- Después, el mismo 30/09: el usuario fija 49,50 € para los tres perfumes que la tienda
+-- oficial no vende (Yara Aceite Concentrado, Pharaoh Ramesses II y Game of Spades Blind Bid),
+-- que se publican.
+update public.product_variants v set retail_price_cents = 4950
+from public.products p
+where v.product_id = p.id
+  and p.slug in ('yara-aceite-concentrado', 'pharaoh-ramesses-ii', 'game-of-spades-blind-bid')
+  and v.retail_price_cents is null;
+
+update public.products p
+set source_ref = replace(p.source_ref, 'la tienda oficial no lo vende: PVP pendiente',
+                         'la tienda oficial no lo vende: PVP 49,50 € fijado por el usuario (30/09)'),
+    status = 'published'
+where p.slug in ('yara-aceite-concentrado', 'pharaoh-ramesses-ii', 'game-of-spades-blind-bid')
+  and p.status = 'draft';

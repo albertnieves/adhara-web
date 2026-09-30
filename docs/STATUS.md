@@ -1,6 +1,6 @@
 # Estado real — 30/09/2026
 
-**Tienda visual (es/ca/en) y panel de administración operativos sobre `adhara-dev`, verificados en local y fusionados en `main` el 30/09 (PR #6) y desplegados en Vercel, que sigue siendo privado (Vercel Authentication). Desde el 30/09 la tienda muestra **47 perfumes publicados con PVP**: los 4 del piloto con su escena 3D y 43 de la compra a Orient Fragance, con 20 uds de cada uno en inventario. La Fase 1 completa sigue pendiente: falta importar los formatos y costes del resto del catálogo (el CSV ya está preparado), la verificación en dos pasos de las cuentas del personal y los criterios de la Fase 1 que se listan al final.**
+**Tienda visual (es/ca/en) y panel de administración operativos sobre `adhara-dev`, verificados en local y fusionados en `main` el 30/09 (PR #6) y desplegados en Vercel, que sigue siendo privado (Vercel Authentication). Desde el 30/09 la tienda muestra **50 perfumes publicados con PVP**: los 4 del piloto con su escena 3D y 46 de la compra a Orient Fragance, con 20 uds de cada uno en inventario. La Fase 1 completa sigue pendiente: falta importar los formatos y costes del resto del catálogo (el CSV ya está preparado), la verificación en dos pasos de las cuentas del personal y los criterios de la Fase 1 que se listan al final.**
 
 ## Qué funciona
 
@@ -47,7 +47,7 @@ Publicados el 30/09, a petición del usuario:
   - Los Yara de 20 ml son «aceite concentrado» y van como perfumes aparte, igual que en la tienda oficial.
   - La línea «Odyssey Revolution» es la Ultra Edition que ya estaba en el catálogo, según la foto de la tienda oficial.
   - Stock: recepción de 20 uds por formato en la Tienda de Castelldefels (46 recepciones, 920 uds), registrada como carga sin actor con la referencia `compra-orient-fragance-2026-09-30`.
-  - Publicados: 43. En borrador sin PVP, porque la tienda oficial no los vende: Yara Aceite Concentrado (Yara Rosa 20 ml), Pharaoh Ramesses II (la tienda oficial solo vende el I) y Game of Spades Blind Bid.
+  - Publicados: los 46. La tienda oficial no vende tres de ellos: Yara Aceite Concentrado (Yara Rosa 20 ml), Pharaoh Ramesses II (solo vende el I) y Game of Spades Blind Bid. Su PVP es de 49,50 €, fijado por el usuario.
   - Los 4 lotes de la lista (Esencial, Premium, Otoño Invierno y Mixt & Gourmand) no se cargaron: falta saber qué contienen.
   - Fotos: 47 fotos oficiales de marca para 28 de estos perfumes, comprobadas contra la foto de la tienda oficial, subidas al bucket y enlazadas como provisionales (701 imágenes en total, ninguna sin archivo ni archivo sin fila). La subida se hizo con la cuenta temporal de pruebas, por autorización expresa del usuario, y la cuenta se retiró después: sin rol, bloqueada, sin sesiones ni MFA y con contraseña aleatoria. Seis perfumes publicados no tienen foto oficial que coincida y muestran la imagen de reserva: Voux Turquoise, Yara Moi y Yara Tous aceite, Miss Sakura, Game of Spades Queen y Reef 33 White.
 
@@ -100,7 +100,7 @@ La revisión visual con perfumes se hizo en local con un Supabase simulado que d
 - Activar en Supabase Auth la protección de contraseñas filtradas (aviso del asesor de seguridad; puede requerir plan de pago).
 
 - Tras la importación: fijar PVP (con el cambio masivo o por ficha), revisar marcas y nombres marcados y publicar.
-- Compra a Orient Fragance: PVP de Yara Aceite Concentrado, Pharaoh Ramesses II y Game of Spades Blind Bid; contenido y precio de los 4 lotes; fotos propias de los seis perfumes sin foto oficial.
+- Compra a Orient Fragance: contenido y precio de los 4 lotes; fotos propias de los seis perfumes sin foto oficial.
 - Configuración de Auth en Supabase (Site URL y Redirect URLs con la URL del despliegue; plantillas con `token_hash`) para invitaciones y recuperación por email.
 - Fase 1 sin cerrar. Ya cumplidos o cubiertos (docs/source/FASE_1_PLAN.md §16): 1 (lint, typecheck, tests y build), 3 (Preview de Vercel), 4–6 (i18n), 7 (`buildAlternates` con los 4 casos, en uso en home, colección y fichas), 10 (`internal` no está expuesto: la API responde «Only the following schemas are exposed: public, graphql_public»), 11 (`cost-leak.spec.ts`), 13 (`pnpm scan:secrets` en CI), 14 y 16 (acceso al panel y cabeceras de seguridad en E2E). Pendientes: 2 (tres workflows; hoy hay uno), 8, 9 y 12 (Supabase local, pgTAP en CI y diff de tipos: sin Docker en la sesión; pgTAP se ejecuta contra `adhara-dev`), 15 (cuenta real del administrador con MFA), 17 y 19 (docs y REPORT), además de proveedores (`internal`), taxonomía de notas y familias, procedencia del research, proyecto `adhara-prod` y protección de `main`. El criterio 18 (sin datos de producto) queda superado por decisión del usuario: se cargaron los perfumes del piloto.
 - Panel: precio del PDF como referencia (A2); compras y proveedores (A3). Confirmar con la asesoría qué debe llevar la etiqueta de estante (precio por unidad de medida, etc.).
