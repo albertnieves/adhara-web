@@ -8,6 +8,7 @@ import {
 } from 'next-intl/server';
 import { draftMode } from 'next/headers';
 import { notFound } from 'next/navigation';
+import { BRAND_NAME } from '@/modules/brand';
 import { routing } from '@/modules/i18n';
 import { siteUrl } from '@/modules/i18n/seo';
 import { Footer, Header, PreviewBanner } from '@/modules/storefront';
@@ -23,7 +24,7 @@ export async function generateMetadata({
   const t = await getTranslations({ locale, namespace: 'meta' });
   return {
     metadataBase: siteUrl(),
-    title: { default: t('title'), template: `%s · ADHARA` },
+    title: { default: t('title'), template: `%s · ${BRAND_NAME}` },
     description: t('description'),
     robots: { index: false, follow: false },
   };

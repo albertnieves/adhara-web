@@ -95,7 +95,7 @@ export function Hero({
         ))}
       </div>
 
-      {/* La estrella de Adhara, enorme y tenue, gira con el scroll. */}
+      {/* La estrella del emblema, enorme y tenue, gira con el scroll. */}
       <motion.div
         aria-hidden
         className="text-gold/10 absolute -z-10"

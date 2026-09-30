@@ -47,7 +47,7 @@ export default async function PanelLayout({
     <div className="min-h-screen lg:grid lg:grid-cols-[15rem_1fr] print:block print:min-h-0">
       <aside className="bg-night text-ivory relative flex items-center justify-between px-5 py-4 lg:sticky lg:top-0 lg:h-screen lg:flex-col lg:items-stretch lg:justify-start lg:gap-10 lg:px-4 lg:py-8 print:hidden">
         <Link href="/admin" className="lg:px-3" aria-label="Inicio del panel">
-          <Logo />
+          <Logo className="text-[14px]" />
         </Link>
         <PanelNav items={items} />
         <div className="hidden lg:mt-auto lg:flex lg:flex-col lg:items-start lg:gap-3 lg:px-3">

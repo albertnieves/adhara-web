@@ -1,12 +1,35 @@
-import { Star } from './Star';
+/**
+ * Logotipo de L’Atelier du Désert (definitivo, 30/09/2026).
+ *
+ * Los trazos están vectorizados del original del usuario
+ * (docs/brand/logo-original.png) en el sprite public/brand/logo.svg. Se usan
+ * con <use> para que el SVG se descargue una vez, quede en caché y no infle el
+ * HTML ni el payload de React; el color sale de `currentColor`.
+ */
+export const BRAND_NAME = 'L’Atelier du Désert';
+export const BRAND_TAGLINE = 'Haute Parfumerie Orientale';
+
+const SPRITE = '/brand/logo.svg';
+
+function Mark({ id, className }: { id: string; className: string }) {
+  return (
+    <svg aria-hidden className={className} fill="currentColor">
+      <use href={`${SPRITE}#${id}`} width="100%" height="100%" />
+    </svg>
+  );
+}
 
 /**
- * Logotipo PROVISIONAL (29/09/2026): wordmark tipográfico con la estrella.
- * Se sustituirá por la identidad definitiva (docs/DECISIONS.md).
+ * - `inline`: emblema ovalado (luna, estrella y dunas) y nombre en una línea.
+ *   Escala con el tamaño de letra que se pase en `className` (por defecto
+ *   `text-[17px]`): el nombre mide 1em de alto.
+ * - `stacked`: composición completa del original (emblema, nombre en dos
+ *   líneas y «Haute Parfumerie Orientale»). El ancho lo marca `className`
+ *   (por defecto `w-56`).
  */
 export function Logo({
   variant = 'inline',
-  className = '',
+  className,
 }: {
   variant?: 'inline' | 'stacked';
   className?: string;
@@ -14,33 +37,22 @@ export function Logo({
   if (variant === 'stacked') {
     return (
       <span
-        className={`inline-flex flex-col items-center gap-3 ${className}`}
-        aria-label="ADHARA"
         role="img"
+        aria-label={`${BRAND_NAME}. ${BRAND_TAGLINE}`}
+        className={`inline-flex ${className ?? 'w-56'}`}
       >
-        <Star className="text-gold size-4" />
-        <span
-          aria-hidden
-          className="font-display pl-[0.5em] text-[1.75rem] leading-none font-normal tracking-[0.5em]"
-        >
-          ADHARA
-        </span>
+        <Mark id="lockup" className="aspect-[834/839] h-auto w-full" />
       </span>
     );
   }
   return (
     <span
-      className={`inline-flex items-center gap-2.5 ${className}`}
-      aria-label="ADHARA"
       role="img"
+      aria-label={BRAND_NAME}
+      className={`inline-flex items-center gap-[0.6em] ${className ?? 'text-[17px]'}`}
     >
-      <Star className="text-gold size-2.5" />
-      <span
-        aria-hidden
-        className="font-display pl-[0.42em] text-xl leading-none font-normal tracking-[0.42em]"
-      >
-        ADHARA
-      </span>
+      <Mark id="emblem" className="aspect-[374/456] h-[2.1em] w-auto" />
+      <Mark id="wordmark" className="aspect-[1476/151] h-[1em] w-auto" />
     </span>
   );
 }

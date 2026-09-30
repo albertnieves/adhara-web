@@ -2,6 +2,7 @@
 import { redirect } from 'next/navigation';
 import { z } from 'zod';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
+import { BRAND_NAME } from '@/modules/brand';
 import {
   ADMIN_HOME,
   ADMIN_LOGIN,
@@ -67,7 +68,7 @@ export async function enrollTotp(): Promise<EnrollState> {
   }
   const { data, error } = await supabase.auth.mfa.enroll({
     factorType: 'totp',
-    friendlyName: 'ADHARA',
+    friendlyName: BRAND_NAME,
   });
   if (error || !data) return { status: 'error' };
   return {

@@ -1,6 +1,6 @@
-# ADHARA · adhara-web
+# L’Atelier du Désert · adhara-web
 
-Ecommerce de perfumería árabe ADHARA. **En desarrollo; Fase 1 todavía incompleta.** Tienda visual en es/ca/en con escena 3D de unboxing y panel de administración con catálogo, precios, inventario y equipo sobre Supabase (`adhara-dev`). Sin checkout ni catálogo real todavía (docs/STATUS.md).
+Ecommerce de perfumería árabe **L’Atelier du Désert** («Haute Parfumerie Orientale»). El repositorio y los proyectos de Supabase y Vercel conservan el nombre de trabajo `adhara`. **En desarrollo; Fase 1 todavía incompleta.** Tienda visual en es/ca/en con escena 3D de unboxing y panel de administración con catálogo, precios, inventario y equipo sobre Supabase (`adhara-dev`). El catálogo real está cargado como borradores con foto, pendiente de formatos, costes y PVP; sin checkout todavía (docs/STATUS.md).
 
 ## Arranque
 
