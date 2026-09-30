@@ -1,6 +1,6 @@
 # Estado real — 30/09/2026
 
-**Tienda visual (es/ca/en) y panel de administración operativos sobre `adhara-dev`, verificados en local y desplegados como Preview privada de Vercel (PR #6). La Fase 1 completa sigue pendiente: falta importar el catálogo real (el CSV ya está preparado), la verificación en dos pasos de las cuentas del personal y los criterios de la Fase 1 que se listan al final.**
+**Tienda visual (es/ca/en) y panel de administración operativos sobre `adhara-dev`, verificados en local y desplegados como Preview privada de Vercel (PR #6). La Fase 1 completa sigue pendiente: los 424 perfumes del catálogo real ya están cargados como borradores con foto, pero falta importar sus formatos y costes (el CSV ya está preparado), la verificación en dos pasos de las cuentas del personal y los criterios de la Fase 1 que se listan al final.**
 
 ## Qué funciona
 
@@ -32,9 +32,16 @@ Diez migraciones en `supabase/migrations/` (detalle en supabase/README.md): pers
 
 Datos cargados: los 4 perfumes del piloto como **borradores sin PVP** (`supabase/data/20260929_pilot_products.sql`), con marca, concentración y formato solo cuando constan en la caja o la ficha oficial (Khamrah sin formato), e imágenes oficiales de marca marcadas como provisionales. Ubicación: Tienda de Castelldefels. Cuentas del personal creadas por el usuario el 30/09 y con su rol aplicado automáticamente (administrador del sistema y administrador de la tienda); aún sin verificación en dos pasos configurada.
 
-Catálogo real: el PDF «CATALOGO 2026» (56 páginas, 429 etiquetas) está convertido en un CSV fuera del repositorio (contiene costes del proveedor): 424 perfumes de 25 marcas con su coste (versión 2, contrastada con las webs oficiales de las marcas). Por decisión del usuario, los precios del PDF son **coste interno** y las marcas que el catálogo no indica (pp. 2–26) se deducen de la foto y se marcan «por revisar» en la procedencia; 6 quedan como «Marca por identificar». Pendiente de importar desde el panel (DECISIONS §54).
+Catálogo real: el PDF «CATALOGO 2026» (56 páginas, 429 etiquetas) está convertido en un CSV fuera del repositorio (contiene costes del proveedor): 424 perfumes de 25 marcas con su coste (versión 2, contrastada con las webs oficiales de las marcas). Por decisión del usuario, los precios del PDF son **coste interno** y las marcas que el catálogo no indica (pp. 2–26) se deducen de la foto y se marcan «por revisar» en la procedencia; 6 quedan como «Marca por identificar» (DECISIONS §54).
 
-Fotos del catálogo: preparadas fuera del repositorio para los 420 perfumes nuevos (647 imágenes WebP, 33,7 MB). 291 son oficiales de la marca, comprobadas una a una contra la foto del PDF, y 133 son recortes del propio catálogo, para marcas sin web oficial accesible. Todas son provisionales y guardan su procedencia. **No están subidas**: subirlas al bucket requiere una sesión de personal y está pendiente de la decisión del usuario (DECISIONS §55).
+Perfumes del catálogo cargados el 30/09 (`supabase/data/20260930_catalogo_2026.sql`): 23 marcas nuevas y 420 perfumes nuevos, todos en **borrador**, sin formato, PVP ni coste, con la página del catálogo y el origen de la marca en `source_ref`. Con los 4 del piloto suman 25 marcas y 424 perfumes. Los formatos y los costes se añaden al importar el CSV desde el panel.
+
+Fotos del catálogo: **subidas** al bucket `product-media` (647 imágenes WebP, 33,7 MB) y enlazadas en `product_media`. Los 420 perfumes nuevos tienen foto principal:
+
+- 288 con fotos oficiales de la marca (515 imágenes), comprobadas una a una contra la foto del PDF;
+- 132 con un recorte del propio catálogo, sin texto ni precios, para marcas sin web oficial accesible.
+
+Todas son provisionales (`provisional = true`) y guardan su procedencia: `origin` y la página de origen en `source`. La subida se hizo con la cuenta temporal de prueba, por autorización expresa del usuario, que después se volvió a retirar (DECISIONS §55). Verificado: 654 filas en `product_media` (7 del piloto), ningún perfume sin foto principal ni con dos, ninguna fila sin archivo ni archivo sin fila, URL públicas con respuesta 200 y servidas por el optimizador de imágenes de Next.
 
 ### Despliegue
 
@@ -59,19 +66,19 @@ Vercel `adhara-web` (equipo SOAPBRXND, Hobby), funciones en París (cdg1), todos
 | Vista previa de la tienda                             | Con sesión real de personal (cuenta temporal): el público no ve borradores y la vista previa sí (7), con la escena 3D; «Salir» vuelve al estado público y la caché pública no se contamina. Cookie falsa: sin efecto                                                                                         |
 | Importador                                            | Con la cuenta temporal (rol de tienda, MFA): CSV ficticio con alias de columnas, errores y fila repetida; 1 marca, 2 perfumes, 3 formatos y 2 PVP en borrador; segunda pasada sin cambios y con el conflicto de PVP sin aplicar; móvil sin desbordamiento. Datos de prueba borrados                          |
 | Páginas del panel con sesión real (solo lectura)      | Inicio, catálogo, inventario, etiquetas, importar, ficha con «Stock en tienda», historial filtrado por perfume, tipo y fechas, y exportación CSV (BOM, «;»): todas 200 y sin errores                                                                                                                         |
-| CSV del catálogo real                                 | Leído y planificado con el código del importador: 0 errores; contra el catálogo actual, 420 perfumes nuevos, los 4 del piloto reconocidos y 424 costes; contra el catálogo con los perfumes de las fotos ya cargados, 0 perfumes nuevos, 421 formatos y 424 costes                                           |
+| CSV del catálogo real                                 | Leído y planificado con el código del importador: 0 errores. Contra el catálogo cargado (mismas marcas, slugs y nombres que en `adhara-dev`, comprobado por checksum): 0 marcas y 0 perfumes nuevos, 421 formatos y 424 costes                                                                               |
 | Cambio masivo de PVP                                  | Con la cuenta temporal y datos ficticios («Marca QA Precios»): −30 % exacto; 2 de 4 formatos aplicables (excluidos el de rebaja y el sin PVP); botón bloqueado hasta confirmar; solo se aplicó la fila confirmada y quedó en el historial. La prueba encontró y corrigió un bucle de renders. Datos borrados |
 
 Nota sobre el recorrido del panel: se hizo con una **cuenta temporal** (`prueba-e2e@adhara.invalid`, rol system_admin) y un perfume de prueba que se publicó, se vio en la tienda en es y ca, se retiró y se borró. La cuenta no se puede borrar de Auth porque la auditoría es de solo inserción (DECISIONS §39): quedó **sin rol, bloqueada y sin sesiones**. Quedan como rastro 8 entradas de auditoría y 2 filas del historial de PVP del formato de prueba borrado; no hubo movimientos de stock. La prueba encontró y corrigió un fallo real (un recuento que cuadra impedía borrar un borrador).
 
-El 30/09 la misma cuenta se reactivó temporalmente (rol de tienda) para validar el importador y la vista previa con sesión real, con datos ficticios («Marca QA Importación») que después se borraron; la cuenta volvió a quedar sin rol, bloqueada, sin sesiones ni MFA y con contraseña aleatoria. Se reactivó una vez más, solo para leer, y comprobar las páginas del panel con sesión real (sin movimientos ni cambios). Después se usó para probar el cambio masivo de PVP con datos ficticios, también borrados. Rastro total de las pruebas: 25 entradas de auditoría (sobre todo altas de MFA) y 10 filas del historial de PVP de formatos ya borrados (tablas de solo inserción); ningún movimiento de stock.
+El 30/09 la misma cuenta se reactivó temporalmente (rol de tienda) para validar el importador y la vista previa con sesión real, con datos ficticios («Marca QA Importación») que después se borraron; la cuenta volvió a quedar sin rol, bloqueada, sin sesiones ni MFA y con contraseña aleatoria. Se reactivó una vez más, solo para leer, y comprobar las páginas del panel con sesión real (sin movimientos ni cambios). Después se usó para probar el cambio masivo de PVP con datos ficticios, también borrados. Por último, con autorización expresa del usuario, se reactivó (rol de tienda, con `media.edit`) solo para subir las 647 fotos del catálogo; al terminar volvió a quedar sin rol, bloqueada, sin sesiones ni MFA y con contraseña aleatoria. Esa cuenta figura como propietaria de los archivos en Storage, lo que no da acceso a nada: la lectura es pública y la escritura exige `media.edit`. Rastro total de las pruebas: 25 entradas de auditoría (sobre todo altas de MFA) y 10 filas del historial de PVP de formatos ya borrados (tablas de solo inserción); ningún movimiento de stock.
 
 La revisión visual con perfumes se hizo en local con un Supabase simulado que devolvía los 4 perfumes del piloto como publicados y **sin precio**; no se modificó la base de datos.
 
 ## Pendiente del usuario
 
 1. Entrar en el panel con las cuentas ya creadas y configurar la verificación en dos pasos (la pide el primer acceso).
-2. Importar el CSV del catálogo desde Panel → Catálogo → Importar, indicando si los precios del PDF llevan IVA; revisar después las marcas «por revisar» y los 6 perfumes sin marca.
+2. Importar el CSV del catálogo desde Panel → Catálogo → Importar, indicando si los precios del PDF llevan IVA. Los perfumes ya existen, así que la revisión debe mostrar 0 perfumes nuevos, 421 formatos y 424 costes. Revisar después las marcas «por revisar», los 6 perfumes sin marca y las fotos (Panel → Catálogo, o la vista previa de la tienda).
 3. Decidir cuándo abrir la web a Agustín: con Vercel Authentication para todo, solo entra quien tiene cuenta en el equipo de Vercel (en Hobby, solo el titular).
 4. Revisar y fusionar el PR #6 (incluye el PR #5) para llevarlo a producción.
 

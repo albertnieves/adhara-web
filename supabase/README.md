@@ -40,7 +40,10 @@ Sin Docker, las pruebas se ejecutan contra `adhara-dev` con `tests/tap_remote.py
 
 ## Datos
 
-`data/` guarda cargas de datos versionadas (no son migraciones): `20260929_pilot_products.sql` crea los 4 perfumes del piloto como borradores sin PVP, con su procedencia.
+`data/` guarda cargas de datos versionadas (no son migraciones), idempotentes y con su procedencia:
+
+- `20260929_pilot_products.sql` crea los 4 perfumes del piloto como borradores sin PVP.
+- `20260930_catalogo_2026.sql` crea las marcas y los 420 perfumes nuevos del «CATALOGO 2026» como borradores, sin formatos, PVP ni costes, y sus 647 imágenes provisionales. Las URL apuntan a los archivos ya subidos al bucket `product-media` de `adhara-dev`; en otro proyecto habría que subirlos antes. Los formatos y los costes llegan con el CSV desde el panel (DECISIONS §54-55).
 
 ## Pendiente
 
