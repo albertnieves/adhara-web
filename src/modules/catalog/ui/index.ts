@@ -4,3 +4,4 @@ export { StatusActions } from './StatusActions';
 export { TranslationEditor } from './TranslationEditor';
 export { VariantEditor } from './VariantEditor';
 export { DeleteProductButton } from './DeleteProductButton';
+export { PriceLabelCard } from './PriceLabelCard';

@@ -98,6 +98,12 @@ export default async function EditProduct({
         >
           Vista previa de la ficha
         </Link>
+        <Link
+          href={`/admin/catalogo/etiquetas?producto=${product.id}`}
+          className="link-underline"
+        >
+          Etiquetas de precio
+        </Link>
         {product.status === 'published' && (
           <Link
             href={`/es/perfume/${product.slug}`}

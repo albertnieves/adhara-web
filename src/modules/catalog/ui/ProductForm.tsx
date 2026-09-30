@@ -9,17 +9,12 @@ import {
   useAdminAction,
 } from '@/modules/admin';
 import { UNBOXING_SCENES } from '@/modules/unboxing';
-import { AUDIENCES, CONCENTRATIONS } from '../domain/product';
+import {
+  AUDIENCES,
+  CONCENTRATIONS,
+  CONCENTRATION_NAMES,
+} from '../domain/product';
 
-const CONCENTRATION_LABELS: Record<string, string> = {
-  EDC: 'Eau de Cologne',
-  EDT: 'Eau de Toilette',
-  EDP: 'Eau de Parfum',
-  PARFUM: 'Parfum',
-  EXTRAIT: 'Extrait de Parfum',
-  OIL: 'Aceite perfumado',
-  OTHER: 'Otra',
-};
 const AUDIENCE_LABELS: Record<string, string> = {
   women: 'Mujer',
   men: 'Hombre',
@@ -106,7 +101,7 @@ export function ProductForm({
           <option value="">Sin indicar</option>
           {CONCENTRATIONS.map((c) => (
             <option key={c} value={c}>
-              {CONCENTRATION_LABELS[c]}
+              {CONCENTRATION_NAMES[c]}
             </option>
           ))}
         </select>

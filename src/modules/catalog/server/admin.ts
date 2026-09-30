@@ -145,3 +145,63 @@ export async function getVariantCosts(
   }
   return costs;
 }
+
+export type PriceLabel = {
+  variantId: string;
+  productId: string;
+  brandName: string;
+  productName: string;
+  concentration: string | null;
+  sizeMl: number | null;
+  variantLabel: string;
+  sku: string | null;
+  priceCents: number;
+  compareAtCents: number | null;
+};
+
+/**
+ * Etiquetas de la tienda física: formatos activos con PVP de perfumes en
+ * borrador o publicados (en tienda se vende también lo que aún no está online).
+ */
+export async function listPriceLabels(
+  supabase: Supabase,
+  filter: { productId?: string; brandId?: string; publishedOnly?: boolean },
+): Promise<PriceLabel[]> {
+  let query = supabase
+    .from('products')
+    .select(
+      'id, name, concentration, position, brand:brands!inner(id, name), variants:product_variants(id, label, size_ml, sku, active, retail_price_cents, compare_at_price_cents, position)',
+    )
+    .in('status', filter.publishedOnly ? ['published'] : ['draft', 'published'])
+    .order('position')
+    .order('name');
+  if (filter.productId) query = query.eq('id', filter.productId);
+  if (filter.brandId) query = query.eq('brand_id', filter.brandId);
+  const { data, error } = await query;
+  if (error) throw new Error(error.message);
+
+  return data
+    .toSorted((a, b) => a.brand.name.localeCompare(b.brand.name, 'es'))
+    .flatMap((product) =>
+      product.variants
+        .toSorted((a, b) => a.position - b.position)
+        .flatMap((v) =>
+          v.active && v.retail_price_cents !== null
+            ? [
+                {
+                  variantId: v.id,
+                  productId: product.id,
+                  brandName: product.brand.name,
+                  productName: product.name,
+                  concentration: product.concentration,
+                  sizeMl: v.size_ml,
+                  variantLabel: label(v),
+                  sku: v.sku,
+                  priceCents: v.retail_price_cents,
+                  compareAtCents: v.compare_at_price_cents,
+                },
+              ]
+            : [],
+        ),
+    );
+}

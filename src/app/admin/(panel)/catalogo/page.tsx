@@ -43,6 +43,12 @@ export default async function CatalogAdmin({
     <main>
       <PageHeader eyebrow="Catálogo" title="Perfumes">
         <Link
+          href="/admin/catalogo/etiquetas"
+          className="border-ink hover:bg-ink hover:text-ivory inline-flex min-h-11 items-center border px-5 text-xs font-semibold tracking-[0.18em] uppercase transition-colors"
+        >
+          Etiquetas
+        </Link>
+        <Link
           href="/admin/catalogo/nuevo"
           className="bg-ink text-ivory hover:bg-gold inline-flex min-h-11 items-center px-5 text-xs font-semibold tracking-[0.18em] uppercase transition-colors"
         >

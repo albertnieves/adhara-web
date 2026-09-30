@@ -39,8 +39,8 @@ export default async function PanelLayout({
   ).map(({ href, label, soon }) => ({ href, label, soon }));
 
   return (
-    <div className="min-h-screen lg:grid lg:grid-cols-[15rem_1fr]">
-      <aside className="bg-night text-ivory relative flex items-center justify-between px-5 py-4 lg:sticky lg:top-0 lg:h-screen lg:flex-col lg:items-stretch lg:justify-start lg:gap-10 lg:px-4 lg:py-8">
+    <div className="min-h-screen lg:grid lg:grid-cols-[15rem_1fr] print:block print:min-h-0">
+      <aside className="bg-night text-ivory relative flex items-center justify-between px-5 py-4 lg:sticky lg:top-0 lg:h-screen lg:flex-col lg:items-stretch lg:justify-start lg:gap-10 lg:px-4 lg:py-8 print:hidden">
         <Link href="/admin" className="lg:px-3" aria-label="Inicio del panel">
           <Logo />
         </Link>
@@ -56,7 +56,7 @@ export default async function PanelLayout({
         </div>
       </aside>
       <div className="min-w-0">
-        <header className="border-line flex flex-wrap items-center justify-between gap-3 border-b px-5 py-4 sm:px-10">
+        <header className="border-line flex flex-wrap items-center justify-between gap-3 border-b px-5 py-4 sm:px-10 print:hidden">
           <p className="text-sm">
             <span className="font-semibold">
               {staff.displayName ?? staff.email}
@@ -72,7 +72,7 @@ export default async function PanelLayout({
             </button>
           </form>
         </header>
-        <div className="px-5 py-10 sm:px-10">{children}</div>
+        <div className="px-5 py-10 sm:px-10 print:p-0">{children}</div>
       </div>
     </div>
   );

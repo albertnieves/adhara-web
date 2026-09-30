@@ -11,6 +11,17 @@ export const CONCENTRATIONS = [
 ] as const;
 export type Concentration = (typeof CONCENTRATIONS)[number];
 
+/** Nombres en el panel (en la tienda vienen de messages/). */
+export const CONCENTRATION_NAMES: Record<Concentration, string> = {
+  EDC: 'Eau de Cologne',
+  EDT: 'Eau de Toilette',
+  EDP: 'Eau de Parfum',
+  PARFUM: 'Parfum',
+  EXTRAIT: 'Extrait de Parfum',
+  OIL: 'Aceite perfumado',
+  OTHER: 'Otra',
+};
+
 export const AUDIENCES = ['women', 'men', 'unisex'] as const;
 export type Audience = (typeof AUDIENCES)[number];
 

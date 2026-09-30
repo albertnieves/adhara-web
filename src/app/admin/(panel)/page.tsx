@@ -3,7 +3,10 @@ import { formatEuros } from '@/lib/money';
 import { PageHeader } from '@/modules/admin';
 import { isAllowed } from '@/modules/auth';
 import { requireStaff } from '@/modules/auth/server';
-import { listAdminProducts } from '@/modules/catalog/server/admin';
+import {
+  getVariantCosts,
+  listAdminProducts,
+} from '@/modules/catalog/server/admin';
 import { MOVEMENT_LABELS } from '@/modules/inventory';
 import type { MovementType } from '@/modules/inventory';
 import {
@@ -16,11 +19,13 @@ function Stat({
   label,
   value,
   href,
+  note,
   tone = 'default',
 }: {
   label: string;
   value: string | number;
   href?: string;
+  note?: string;
   tone?: 'default' | 'alert';
 }) {
   const body = (
@@ -31,6 +36,7 @@ function Stat({
       >
         {value}
       </p>
+      {note && <p className="text-smoke mt-2 text-xs">{note}</p>}
     </div>
   );
   return href ? <Link href={href}>{body}</Link> : body;
@@ -42,6 +48,7 @@ export default async function AdminHome() {
     isAllowed({ role: staff.role, aal: 'aal2' }, p);
   const canCatalog = can('catalog.edit');
   const canStock = can('inventory.view');
+  const canCost = canCatalog && can('pricing.view_cost');
 
   const [products, location] = await Promise.all([
     canCatalog ? listAdminProducts(staff.supabase, canStock) : [],
@@ -70,6 +77,26 @@ export default async function AdminHome() {
           row.onHand - row.reserved <= row.reorderPoint)),
   );
   const units = stock.reduce((sum, row) => sum + row.onHand, 0);
+
+  // Costes: solo con pricing.view_cost (MFA). Formatos activos de perfumes no
+  // archivados sin coste registrado, y valor del stock de la tienda a coste.
+  const costedVariants = products
+    .filter((p) => p.status !== 'archived')
+    .flatMap((p) => p.variants.filter((v) => v.active).map((v) => v.id));
+  const costs = canCost
+    ? await getVariantCosts(staff.supabase, [
+        ...new Set([...costedVariants, ...stock.map((row) => row.variantId)]),
+      ])
+    : new Map<string, { costNetCents: number }>();
+  const withoutCost = costedVariants.filter((id) => !costs.has(id)).length;
+  const stockAtCost = stock.reduce(
+    (sum, row) =>
+      sum + row.onHand * (costs.get(row.variantId)?.costNetCents ?? 0),
+    0,
+  );
+  const unitsWithoutCost = stock
+    .filter((row) => row.onHand > 0 && !costs.has(row.variantId))
+    .reduce((sum, row) => sum + row.onHand, 0);
   const firstName = (staff.displayName ?? staff.email ?? '').split(/[ @]/)[0];
 
   return (
@@ -95,6 +122,26 @@ export default async function AdminHome() {
             value={low.length}
             href="/admin/inventario?filtro=bajo"
             tone={low.length ? 'alert' : 'default'}
+          />
+        )}
+        {canCost && (
+          <Stat
+            label="Formatos sin coste"
+            value={withoutCost}
+            href="/admin/catalogo"
+            tone={withoutCost ? 'alert' : 'default'}
+          />
+        )}
+        {canCost && canStock && (
+          <Stat
+            label="Stock a coste"
+            value={formatEuros(stockAtCost, 'es')}
+            href="/admin/inventario"
+            note={
+              unitsWithoutCost > 0
+                ? `${unitsWithoutCost} ${unitsWithoutCost === 1 ? 'unidad' : 'unidades'} sin coste no suman`
+                : 'Coste neto, sin IVA'
+            }
           />
         )}
       </section>
