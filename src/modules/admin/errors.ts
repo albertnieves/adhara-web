@@ -13,6 +13,7 @@ const MESSAGES: Record<string, string> = {
   insufficient_available: 'Esas unidades están reservadas para pedidos.',
   insufficient_reserved: 'No hay tantas unidades reservadas.',
   invalid_quantity: 'La cantidad no es válida.',
+  invalid_amount: 'El importe no es válido.',
   reason_required: 'Este movimiento necesita un motivo.',
   movement_not_manual:
     'Este tipo de movimiento lo genera el sistema de pedidos, no se registra a mano.',

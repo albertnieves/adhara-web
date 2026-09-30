@@ -9,7 +9,7 @@
 5. Vercel ya está conectado al repositorio (producción desde `main`, previews por rama). Falta conectarlo al entorno dev para previews y separar producción cuando proceda. Verificar CI, base de datos y E2E completos.
 6. Importar el catálogo real «CATALOGO global 2026» cuando esté en el repositorio o en el chat: perfumes, formatos y PVP con su página como procedencia; imágenes del PDF como provisionales. Después, publicar.
 7. Completar criterios de Fase 1 (docs/STATUS.md, «Pendiente técnico»); el sistema visual provisional ya existe (PR #6) y la Fase 2 lo formalizará.
-8. Panel de administración: A0–A1 hechas; A2 (catálogo y precios, sin costes) y A3 (inventario, sin compras ni TPV) en versión base. Siguiente: costes internos y proveedores, luego A4 (agente), A6 (mensajes) y A5 (pedidos) según docs/ADMIN_PLAN.md §7.
+8. Panel de administración: A0–A1 hechas; A2 (catálogo, PVP, costes y margen) y A3 (inventario, sin compras ni TPV) en versión base. Siguiente: proveedores y cambios masivos de precio, luego A4 (agente), A6 (mensajes) y A5 (pedidos) según docs/ADMIN_PLAN.md §7.
 
 ## Servicios y acceso que faltan
 

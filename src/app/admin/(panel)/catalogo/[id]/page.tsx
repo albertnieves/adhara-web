@@ -5,7 +5,11 @@ import { PageHeader, StatusBadge } from '@/modules/admin';
 import { isAllowed } from '@/modules/auth';
 import { requirePermission } from '@/modules/auth/server';
 import { updateProduct } from '@/modules/catalog/server/actions';
-import { getAdminProduct, listBrands } from '@/modules/catalog/server/admin';
+import {
+  getAdminProduct,
+  getVariantCosts,
+  listBrands,
+} from '@/modules/catalog/server/admin';
 import {
   DeleteProductButton,
   MediaManager,
@@ -58,6 +62,16 @@ export default async function EditProduct({
   if (!product) notFound();
   const can = (p: Parameters<typeof isAllowed>[1]) =>
     isAllowed({ role: staff.role, aal: 'aal2' }, p);
+  // Los costes solo se piden (y viajan al navegador) con pricing.view_cost.
+  const canViewCost = can('pricing.view_cost');
+  const costs = canViewCost
+    ? Object.fromEntries(
+        await getVariantCosts(
+          staff.supabase,
+          product.variants.map((v) => v.id),
+        ),
+      )
+    : {};
 
   return (
     <main>
@@ -104,12 +118,15 @@ export default async function EditProduct({
 
       <Section
         title="Formatos y PVP"
-        description="El PVP incluye IVA. Para publicar hace falta al menos un formato activo con precio. Los cambios quedan en el historial (Ómnibus)."
+        description={`El PVP incluye IVA. Para publicar hace falta al menos un formato activo con precio. Los cambios quedan en el historial (Ómnibus).${canViewCost ? ' El coste es neto (sin IVA) e interno; el margen se calcula sobre el PVP sin IVA.' : ''}`}
       >
         <VariantEditor
           productId={product.id}
           canEditPrice={can('pricing.edit_retail')}
           variants={product.variants}
+          costs={costs}
+          canViewCost={canViewCost}
+          canEditCost={can('pricing.edit_cost')}
         />
       </Section>
 

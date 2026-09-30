@@ -6,6 +6,7 @@ import { z } from 'zod';
 import { parseEuros } from '@/lib/money';
 import type { ActionState } from '@/modules/admin';
 import { describeDbError, fail, ok } from '@/modules/admin';
+import { isAllowed } from '@/modules/auth';
 import { requirePermission } from '@/modules/auth/server';
 import type { PricePeriod, PriceIssue } from '@/modules/pricing';
 import {
@@ -370,7 +371,7 @@ export async function setVariantPrice(
   _: ActionState,
   formData: FormData,
 ): Promise<ActionState> {
-  const { supabase } = await requirePermission('pricing.edit_retail');
+  const { supabase, role } = await requirePermission('pricing.edit_retail');
   const parsed = priceInput.safeParse({
     id: formData.get('id'),
     productId: formData.get('productId'),
@@ -405,12 +406,23 @@ export async function setVariantPrice(
       to: row.valid_to ? new Date(row.valid_to) : null,
     }));
 
+  // Solo quien puede ver costes recibe avisos de margen: «por debajo del
+  // coste» ya revela información del coste.
+  let costNetCents: number | null = null;
+  if (isAllowed({ role, aal: 'aal2' }, 'pricing.view_cost')) {
+    const cost = await supabase.rpc('admin_variant_costs', {
+      p_variant_ids: [parsed.data.id],
+    });
+    if (cost.error) return fail(describeDbError(cost.error));
+    costNetCents = cost.data[0]?.cost_net_cents ?? null;
+  }
+
   const review = reviewPriceChange({
     currentRetailGrossCents: current.data.retail_price_cents,
     proposedRetailGrossCents: price,
     proposedCompareAtGrossCents: compareAt,
     vatBp: VAT_GENERAL_BP,
-    costNetCents: null,
+    costNetCents,
     history: periods,
     at: new Date(),
     policy: PROVISIONAL_PRICING_POLICY,
@@ -459,6 +471,41 @@ export async function setVariantPrice(
   });
   refreshStorefront(parsed.data.productId);
   return ok('PVP guardado.');
+}
+
+const costInput = z.object({
+  id: z.uuid(),
+  productId: z.uuid(),
+  cost: z.string().trim().min(1).max(20),
+  note: optionalText(200),
+});
+
+/**
+ * Coste de compra neto (sin IVA). Vive en internal y no afecta a la tienda:
+ * solo se revalida la página del panel.
+ */
+export async function recordVariantCost(
+  _: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  const { supabase } = await requirePermission('pricing.edit_cost');
+  const parsed = costInput.safeParse({
+    id: formData.get('id'),
+    productId: formData.get('productId'),
+    cost: formData.get('cost') ?? '',
+    note: formData.get('note') ?? '',
+  });
+  if (!parsed.success) return fail('Escribe un coste como 18,40.');
+  const cost = parseEuros(parsed.data.cost);
+  if (cost === null) return fail('Escribe un coste como 18,40.');
+  const { error } = await supabase.rpc('admin_record_variant_cost', {
+    p_variant_id: parsed.data.id,
+    p_cost_net_cents: cost,
+    p_note: parsed.data.note ?? undefined,
+  });
+  if (error) return fail(describeDbError(error));
+  revalidatePath(`/admin/catalogo/${parsed.data.productId}`);
+  return ok('Coste registrado.');
 }
 
 const translationInput = z.object({

@@ -115,3 +115,33 @@ export async function getAdminProduct(supabase: Supabase, id: string) {
 export type AdminProduct = NonNullable<
   Awaited<ReturnType<typeof getAdminProduct>>
 >;
+
+export type VariantCost = {
+  costNetCents: number;
+  note: string | null;
+  recordedAt: string;
+};
+
+/**
+ * Coste vigente por formato. Solo con pricing.view_cost y MFA: la función SQL
+ * lo vuelve a comprobar y responde «forbidden» si no. Nunca se usa en la tienda.
+ */
+export async function getVariantCosts(
+  supabase: Supabase,
+  variantIds: string[],
+): Promise<Map<string, VariantCost>> {
+  const costs = new Map<string, VariantCost>();
+  if (variantIds.length === 0) return costs;
+  const { data, error } = await supabase.rpc('admin_variant_costs', {
+    p_variant_ids: variantIds,
+  });
+  if (error) throw new Error(error.message);
+  for (const row of data) {
+    costs.set(row.variant_id, {
+      costNetCents: row.cost_net_cents,
+      note: row.note,
+      recordedAt: row.recorded_at,
+    });
+  }
+  return costs;
+}

@@ -545,6 +545,14 @@ export type Database = {
           isSetofReturn: false;
         };
       };
+      admin_record_variant_cost: {
+        Args: {
+          p_cost_net_cents: number;
+          p_note?: string;
+          p_variant_id: string;
+        };
+        Returns: string;
+      };
       admin_set_reorder_point: {
         Args: {
           p_location_id: string;
@@ -556,6 +564,15 @@ export type Database = {
       admin_set_staff_active: {
         Args: { p_active: boolean; p_user_id: string };
         Returns: undefined;
+      };
+      admin_variant_costs: {
+        Args: { p_variant_ids: string[] };
+        Returns: {
+          cost_net_cents: number;
+          note: string | null;
+          recorded_at: string;
+          variant_id: string;
+        }[];
       };
       admin_variant_price_history: {
         Args: { p_variant_id: string };
