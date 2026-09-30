@@ -7,7 +7,7 @@
 3. Preparar Supabase local con Docker y CLI versionada. Crear dev en región UE tras elegir organización. Escribir migraciones, seed solo de referencia, pgTAP y tipos generados. Probar denegación por defecto y aislamiento de costes.
 4. Implementar sesión, invitación, roles y MFA del admin (fase A1 de docs/ADMIN_PLAN.md). La matriz de `src/modules/auth/domain/permissions.ts` es la fuente del seed de `role_permissions` y de la tabla de verdad pgTAP. Hace falta el email del primer owner. No pedir secretos por chat: configurar variables de entorno local o del proveedor.
 5. Vercel ya está conectado al repositorio (producción desde `main`, previews por rama). Falta conectarlo al entorno dev para previews y separar producción cuando proceda. Verificar CI, base de datos y E2E completos.
-6. Importar el catálogo real «CATALOGO global 2026» cuando esté en el repositorio o en el chat: perfumes, formatos y PVP con su página como procedencia; imágenes del PDF como provisionales. Después, publicar.
+6. Importar el catálogo real «CATALOGO global 2026» cuando esté en el repositorio o en el chat (pasarlo a CSV y usar Catálogo → Importar, con revisión previa): perfumes, formatos y PVP con su página como procedencia; imágenes del PDF como provisionales. Después, publicar.
 7. Completar criterios de Fase 1 (docs/STATUS.md, «Pendiente técnico»); el sistema visual provisional ya existe (PR #6) y la Fase 2 lo formalizará.
 8. Panel de administración: A0–A1 hechas; A2 (catálogo, PVP, costes y margen) y A3 (inventario, sin compras ni TPV) en versión base. Siguiente: proveedores y cambios masivos de precio, luego A4 (agente), A6 (mensajes) y A5 (pedidos) según docs/ADMIN_PLAN.md §7.
 

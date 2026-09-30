@@ -38,7 +38,7 @@ export function PurchasePanel({
         <AnimatePresence mode="wait" initial={false}>
           <motion.p
             key={selected?.id ?? 'none'}
-            className="font-display text-4xl font-light tabular-nums"
+            className="font-display text-4xl font-light lining-nums tabular-nums"
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}

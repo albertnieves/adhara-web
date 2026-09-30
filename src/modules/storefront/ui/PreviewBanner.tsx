@@ -2,7 +2,6 @@
 
 import { usePathname } from 'next/navigation';
 import { Star } from '@/modules/brand';
-import { exitStorefrontPreview } from '../server/preview';
 
 /** Aviso fijo mientras el personal ve la tienda con borradores. */
 export function PreviewBanner() {
@@ -10,7 +9,8 @@ export function PreviewBanner() {
   return (
     <div className="pointer-events-none fixed inset-x-0 bottom-4 z-50 flex justify-center px-4">
       <form
-        action={exitStorefrontPreview}
+        method="post"
+        action="/api/vista-previa/salir"
         className="bg-night text-ivory pointer-events-auto flex items-center gap-4 py-2.5 pr-2.5 pl-4 text-xs shadow-2xl"
       >
         <input type="hidden" name="path" value={pathname} />

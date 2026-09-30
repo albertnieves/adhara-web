@@ -32,7 +32,7 @@ function Stat({
     <div className="panel-card h-full transition-colors duration-300 hover:bg-white">
       <p className="eyebrow">{label}</p>
       <p
-        className={`font-display mt-3 text-5xl font-light tabular-nums ${tone === 'alert' ? 'text-danger' : ''}`}
+        className={`font-display mt-3 text-5xl font-light lining-nums tabular-nums ${tone === 'alert' ? 'text-danger' : ''}`}
       >
         {value}
       </p>

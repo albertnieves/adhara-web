@@ -52,6 +52,12 @@ export default async function CatalogAdmin({
           </button>
         </form>
         <Link
+          href="/admin/catalogo/importar"
+          className="border-line hover:border-ink inline-flex min-h-11 items-center border px-5 text-xs font-semibold tracking-[0.18em] uppercase transition-colors"
+        >
+          Importar
+        </Link>
+        <Link
           href="/admin/catalogo/etiquetas"
           className="border-ink hover:bg-ink hover:text-ivory inline-flex min-h-11 items-center border px-5 text-xs font-semibold tracking-[0.18em] uppercase transition-colors"
         >

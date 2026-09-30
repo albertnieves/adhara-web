@@ -7,6 +7,7 @@ for (const path of [
   '/admin/catalogo',
   '/admin/catalogo/nuevo',
   '/admin/catalogo/etiquetas',
+  '/admin/catalogo/importar',
   '/admin/inventario',
   '/admin/movimientos',
   '/admin/equipo',
