@@ -77,3 +77,13 @@
     - `BRAND_NAME` y `BRAND_TAGLINE` en `modules/brand` alimentan los títulos, el panel y el nombre del factor TOTP que ven las apps de autenticación.
     - Los textos descriptivos («Perfumería árabe…») y la paleta y tipografías de la web no cambian.
     - Los identificadores internos (repositorio, paquete, `adhara-dev`, proyecto de Vercel) conservan `adhara` para no romper integraciones.
+
+## Publicación y compra — 30/09/2026
+
+57. PVP y publicación, por decisión del usuario («establece los que tiene la tienda oficial en su web»).
+    - La tienda oficial es **orientfragance.com**, distribuidor oficial en España y Portugal y proveedor de la compra (su lista lleva su membrete). El PVP de cada perfume es el de su ficha allí, en euros con IVA, y su URL queda en `products.source_ref`.
+    - Tres perfumes del piloto no se venden allí: Asad, Khamrah y Club de Nuit Intense Man LE. El usuario eligió el precio de la web oficial de la marca en EE. UU. (lattafa-usa.com y armaf.com), pasado a euros con el cambio de referencia del BCE del día y redondeado al céntimo. Los precios de EE. UU. no incluyen impuestos.
+    - Sin PVP en la tienda oficial ni otra decisión, un perfume queda en borrador: no se inventan precios.
+    - Cada perfume comprado tiene un único formato. Así las filas sin tamaño del CSV del catálogo se asignan a ese formato y no crean otro. Los aceites concentrados de 20 ml son perfumes aparte, como en la tienda oficial.
+    - El stock inicial de la compra (20 uds por formato, confirmado por el usuario) se registró por SQL como carga de datos, con las mismas escrituras que `admin_record_inventory_movement` (nivel, movimiento `PURCHASE_RECEIPT` y auditoría), sin actor y con la referencia `compra-orient-fragance-2026-09-30`. La función exige una sesión de personal y no se usó ninguna cuenta para suplantarla.
+    - Fotos de los perfumes nuevos: solo oficiales de marca (armaf.com, frenchavenue.com, lattafa-usa.com, 3saf.com, laverne.co, bhararabeauty.com, jomilanoparis.com y reefperfumes.com), comprobadas una a una contra la foto de la tienda oficial. Se descartan las que no coinciden (Miss Sakura), los logos y los carteles. Sin foto oficial, la tienda muestra la imagen de reserva hasta que haya foto propia.
