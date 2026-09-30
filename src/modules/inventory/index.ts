@@ -25,3 +25,5 @@ export type {
   StockWatchPolicy,
 } from './domain/stock-watch';
 export { MOVEMENT_LABELS } from './domain/labels';
+export { parseMovementFilter } from './domain/movement-filter';
+export type { MovementSearch } from './domain/movement-filter';

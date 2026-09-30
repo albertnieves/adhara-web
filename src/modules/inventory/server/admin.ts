@@ -1,4 +1,5 @@
 import 'server-only';
+import { fetchAll } from '@/lib/supabase/paginate';
 import type { StaffContext } from '@/modules/auth/server';
 
 type Supabase = StaffContext['supabase'];
@@ -32,23 +33,31 @@ export async function getDefaultLocation(supabase: Supabase) {
 export async function listStock(
   supabase: Supabase,
   locationId: string,
+  { productId }: { productId?: string } = {},
 ): Promise<StockRow[]> {
   const [variants, levels] = await Promise.all([
-    supabase
-      .from('product_variants')
-      .select(
-        'id, label, size_ml, sku, active, position, product:products!inner(id, name, status, brand:brands!inner(name))',
-      )
-      .neq('product.status', 'archived'),
-    supabase
-      .from('inventory_levels')
-      .select('variant_id, on_hand, reserved, reorder_point')
-      .eq('location_id', locationId),
+    fetchAll((from, to) => {
+      let query = supabase
+        .from('product_variants')
+        .select(
+          'id, label, size_ml, sku, active, position, product:products!inner(id, name, status, brand:brands!inner(name))',
+        )
+        .neq('product.status', 'archived')
+        .order('id');
+      if (productId) query = query.eq('product_id', productId);
+      return query.range(from, to);
+    }),
+    fetchAll((from, to) =>
+      supabase
+        .from('inventory_levels')
+        .select('variant_id, on_hand, reserved, reorder_point')
+        .eq('location_id', locationId)
+        .order('variant_id')
+        .range(from, to),
+    ),
   ]);
-  if (variants.error) throw new Error(variants.error.message);
-  if (levels.error) throw new Error(levels.error.message);
-  const byVariant = new Map(levels.data.map((l) => [l.variant_id, l]));
-  return variants.data
+  const byVariant = new Map(levels.map((l) => [l.variant_id, l]));
+  return variants
     .map((v) => {
       const level = byVariant.get(v.id);
       return {
@@ -81,25 +90,55 @@ export type MovementRow = {
   onHandAfter: number;
   reason: string | null;
   reference: string | null;
+  productId: string;
   productName: string;
   brandName: string;
   variantLabel: string;
+  sku: string | null;
 };
+
+export type MovementFilter = {
+  limit?: number;
+  variantId?: string;
+  productId?: string;
+  type?: string;
+  /** Fechas ISO (inclusive desde, exclusiva hasta). */
+  from?: string;
+  to?: string;
+};
+
+/** PostgREST de Supabase devuelve como mucho 1000 filas por petición. */
+const PAGE = 1000;
 
 export async function listMovements(
   supabase: Supabase,
-  { limit = 100, variantId }: { limit?: number; variantId?: string } = {},
+  { limit = 100, variantId, productId, type, from, to }: MovementFilter = {},
 ): Promise<MovementRow[]> {
-  let query = supabase
-    .from('inventory_movements')
-    .select(
-      'id, created_at, type, quantity, delta_on_hand, on_hand_after, reason, reference, variant:product_variants!inner(label, size_ml, product:products!inner(name, brand:brands!inner(name)))',
-    )
-    .order('created_at', { ascending: false })
-    .limit(limit);
-  if (variantId) query = query.eq('variant_id', variantId);
-  const { data, error } = await query;
-  if (error) throw new Error(error.message);
+  const page = async (start: number, end: number) => {
+    let query = supabase
+      .from('inventory_movements')
+      .select(
+        'id, created_at, type, quantity, delta_on_hand, on_hand_after, reason, reference, variant:product_variants!inner(label, size_ml, sku, product_id, product:products!inner(name, brand:brands!inner(name)))',
+      )
+      .order('created_at', { ascending: false })
+      .order('id', { ascending: false })
+      .range(start, end);
+    if (variantId) query = query.eq('variant_id', variantId);
+    if (productId) query = query.eq('variant.product_id', productId);
+    if (type) query = query.eq('type', type);
+    if (from) query = query.gte('created_at', from);
+    if (to) query = query.lt('created_at', to);
+    const { data, error } = await query;
+    if (error) throw new Error(error.message);
+    return data;
+  };
+  const data: Awaited<ReturnType<typeof page>> = [];
+  for (let start = 0; start < limit; start += PAGE) {
+    const end = Math.min(start + PAGE, limit) - 1;
+    const rows = await page(start, end);
+    data.push(...rows);
+    if (rows.length < end - start + 1) break;
+  }
   return data.map((m) => ({
     id: m.id,
     createdAt: m.created_at,
@@ -109,8 +148,10 @@ export async function listMovements(
     onHandAfter: m.on_hand_after,
     reason: m.reason,
     reference: m.reference,
+    productId: m.variant.product_id,
     productName: m.variant.product.name,
     brandName: m.variant.product.brand.name,
+    sku: m.variant.sku,
     variantLabel:
       m.variant.label?.trim() ||
       (m.variant.size_ml ? `${m.variant.size_ml} ml` : '—'),

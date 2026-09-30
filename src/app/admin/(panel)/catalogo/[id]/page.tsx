@@ -18,6 +18,13 @@ import {
   TranslationEditor,
   VariantEditor,
 } from '@/modules/catalog/ui';
+import { MOVEMENT_PERMISSIONS, MOVEMENT_TYPES } from '@/modules/inventory';
+import {
+  getDefaultLocation,
+  listMovements,
+  listStock,
+} from '@/modules/inventory/server';
+import { ProductStock } from '@/modules/inventory/ui';
 import { enterStorefrontPreview } from '@/modules/storefront/server/preview';
 
 export const metadata: Metadata = { title: 'Editar perfume' };
@@ -73,6 +80,20 @@ export default async function EditProduct({
         ),
       )
     : {};
+  // Stock de este perfume en la tienda (inventory.view).
+  const location = can('inventory.view')
+    ? await getDefaultLocation(staff.supabase)
+    : null;
+  const [stockRows, movements] = location
+    ? await Promise.all([
+        listStock(staff.supabase, location.id, { productId: product.id }),
+        listMovements(staff.supabase, { productId: product.id, limit: 8 }),
+      ])
+    : [[], []];
+  const movementTypes = MOVEMENT_TYPES.filter((type) => {
+    const permission = MOVEMENT_PERMISSIONS[type];
+    return permission !== null && can(permission);
+  });
 
   return (
     <main>
@@ -148,6 +169,23 @@ export default async function EditProduct({
           canEditCost={can('pricing.edit_cost')}
         />
       </Section>
+
+      {location && (
+        <Section
+          title="Stock en tienda"
+          description={`${location.name}. Cada cambio es un movimiento que queda en el historial; el stock no se edita a mano.`}
+        >
+          <ProductStock
+            productId={product.id}
+            locationId={location.id}
+            rows={stockRows}
+            movements={movements}
+            movementTypes={movementTypes}
+            canStocktake={can('inventory.stocktake')}
+            canAdjust={can('inventory.adjust')}
+          />
+        </Section>
+      )}
 
       <Section title="Datos" description="Nombre, marca y clasificación.">
         <ProductForm

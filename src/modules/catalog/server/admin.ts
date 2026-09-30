@@ -1,4 +1,5 @@
 import 'server-only';
+import { chunk, fetchAll } from '@/lib/supabase/paginate';
 import type { StaffContext } from '@/modules/auth/server';
 
 /*
@@ -37,21 +38,29 @@ export async function listAdminProducts(
   supabase: Supabase,
   canViewStock: boolean,
 ): Promise<AdminProductRow[]> {
-  const { data, error } = await supabase
-    .from('products')
-    .select(
-      'id, slug, name, status, featured, concentration, position, updated_at, brand:brands!inner(name), variants:product_variants(id, label, size_ml, retail_price_cents, active, position), media:product_media(url, role, position)',
-    )
-    .order('position')
-    .order('name');
-  if (error) throw new Error(error.message);
+  const data = await fetchAll((from, to) =>
+    supabase
+      .from('products')
+      .select(
+        'id, slug, name, status, featured, concentration, position, updated_at, brand:brands!inner(name), variants:product_variants(id, label, size_ml, retail_price_cents, active, position), media:product_media(url, role, position)',
+      )
+      .order('position')
+      .order('name')
+      .order('id')
+      .range(from, to),
+  );
 
   const stock = new Map<string, number>();
   if (canViewStock) {
-    const { data: levels } = await supabase
-      .from('inventory_levels')
-      .select('variant_id, on_hand');
-    for (const level of levels ?? []) {
+    const levels = await fetchAll((from, to) =>
+      supabase
+        .from('inventory_levels')
+        .select('variant_id, on_hand')
+        .order('variant_id')
+        .order('location_id')
+        .range(from, to),
+    );
+    for (const level of levels) {
       stock.set(
         level.variant_id,
         (stock.get(level.variant_id) ?? 0) + level.on_hand,
@@ -87,12 +96,14 @@ export async function listAdminProducts(
 }
 
 export async function listBrands(supabase: Supabase) {
-  const { data, error } = await supabase
-    .from('brands')
-    .select('id, slug, name')
-    .order('name');
-  if (error) throw new Error(error.message);
-  return data;
+  return fetchAll((from, to) =>
+    supabase
+      .from('brands')
+      .select('id, slug, name')
+      .order('name')
+      .order('id')
+      .range(from, to),
+  );
 }
 
 export async function getAdminProduct(supabase: Supabase, id: string) {
@@ -131,17 +142,19 @@ export async function getVariantCosts(
   variantIds: string[],
 ): Promise<Map<string, VariantCost>> {
   const costs = new Map<string, VariantCost>();
-  if (variantIds.length === 0) return costs;
-  const { data, error } = await supabase.rpc('admin_variant_costs', {
-    p_variant_ids: variantIds,
-  });
-  if (error) throw new Error(error.message);
-  for (const row of data) {
-    costs.set(row.variant_id, {
-      costNetCents: row.cost_net_cents,
-      note: row.note,
-      recordedAt: row.recorded_at,
+  // Una fila por formato: en tramos de 500 no se alcanza el tope de 1000.
+  for (const ids of chunk(variantIds)) {
+    const { data, error } = await supabase.rpc('admin_variant_costs', {
+      p_variant_ids: ids,
     });
+    if (error) throw new Error(error.message);
+    for (const row of data) {
+      costs.set(row.variant_id, {
+        costNetCents: row.cost_net_cents,
+        note: row.note,
+        recordedAt: row.recorded_at,
+      });
+    }
   }
   return costs;
 }
@@ -167,18 +180,23 @@ export async function listPriceLabels(
   supabase: Supabase,
   filter: { productId?: string; brandId?: string; publishedOnly?: boolean },
 ): Promise<PriceLabel[]> {
-  let query = supabase
-    .from('products')
-    .select(
-      'id, name, concentration, position, brand:brands!inner(id, name), variants:product_variants(id, label, size_ml, sku, active, retail_price_cents, compare_at_price_cents, position)',
-    )
-    .in('status', filter.publishedOnly ? ['published'] : ['draft', 'published'])
-    .order('position')
-    .order('name');
-  if (filter.productId) query = query.eq('id', filter.productId);
-  if (filter.brandId) query = query.eq('brand_id', filter.brandId);
-  const { data, error } = await query;
-  if (error) throw new Error(error.message);
+  const data = await fetchAll((from, to) => {
+    let query = supabase
+      .from('products')
+      .select(
+        'id, name, concentration, position, brand:brands!inner(id, name), variants:product_variants(id, label, size_ml, sku, active, retail_price_cents, compare_at_price_cents, position)',
+      )
+      .in(
+        'status',
+        filter.publishedOnly ? ['published'] : ['draft', 'published'],
+      )
+      .order('position')
+      .order('name')
+      .order('id');
+    if (filter.productId) query = query.eq('id', filter.productId);
+    if (filter.brandId) query = query.eq('brand_id', filter.brandId);
+    return query.range(from, to);
+  });
 
   return data
     .toSorted((a, b) => a.brand.name.localeCompare(b.brand.name, 'es'))

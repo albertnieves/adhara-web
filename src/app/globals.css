@@ -109,7 +109,10 @@
 }
 
 @layer components {
+  /* Siempre en sans, también cuando la etiqueta es un encabezado (h2, h3). */
   .eyebrow {
+    font-family: var(--font-sans);
+    font-weight: 400;
     font-size: 0.6875rem;
     letter-spacing: 0.32em;
     text-transform: uppercase;

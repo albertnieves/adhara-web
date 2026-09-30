@@ -10,6 +10,7 @@ for (const path of [
   '/admin/catalogo/importar',
   '/admin/inventario',
   '/admin/movimientos',
+  '/admin/movimientos/exportar',
   '/admin/equipo',
 ]) {
   test(`sin sesión ${path} redirige al acceso`, async ({ request }) => {

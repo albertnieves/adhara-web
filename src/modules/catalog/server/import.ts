@@ -1,6 +1,7 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
+import { fetchAll } from '@/lib/supabase/paginate';
 import { describeDbError } from '@/modules/admin';
 import { isAllowed } from '@/modules/auth';
 import type { StaffContext } from '@/modules/auth/server';
@@ -44,8 +45,13 @@ const PAGE = 1000;
 const BATCH = 500;
 
 async function loadCatalog(supabase: Supabase): Promise<ExistingCatalog> {
-  const brands = await supabase.from('brands').select('id, slug, name');
-  if (brands.error) throw new Error(brands.error.message);
+  const brands = await fetchAll((from, to) =>
+    supabase
+      .from('brands')
+      .select('id, slug, name')
+      .order('id')
+      .range(from, to),
+  );
   const products: ExistingCatalog['products'] = [];
   // PostgREST devuelve como mucho 1000 filas por petición.
   for (let from = 0; ; from += PAGE) {
@@ -78,7 +84,7 @@ async function loadCatalog(supabase: Supabase): Promise<ExistingCatalog> {
     }
     if (data.length < PAGE) break;
   }
-  return { brands: brands.data, products };
+  return { brands, products };
 }
 
 function chunks<T>(items: T[]): T[][] {

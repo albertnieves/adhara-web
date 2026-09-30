@@ -2,6 +2,7 @@ import 'server-only';
 import { draftMode } from 'next/headers';
 import { cache } from 'react';
 import { createSupabasePublicClient } from '@/lib/supabase/public';
+import { fetchAll } from '@/lib/supabase/paginate';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 import type { Availability, StorefrontProduct } from '../domain/product';
 import { AVAILABILITY, isAudience, isConcentration } from '../domain/product';
@@ -117,17 +118,22 @@ export const listStorefrontProducts = cache(
   async (locale: string): Promise<StorefrontProduct[]> => {
     const source = await storefrontSource();
     if (!source) return [];
-    const { data, error } = await source.supabase
-      .from('products')
-      .select(PRODUCT_SELECT)
-      .in('status', source.statuses)
-      // RLS ya lo limita para el público; en vista previa el personal ve todo.
-      .eq('variants.active', true);
-    if (error) {
-      console.error('[catalog] no se pudo leer la colección', error.message);
+    try {
+      const data = await fetchAll((from, to) =>
+        source.supabase
+          .from('products')
+          .select(PRODUCT_SELECT)
+          .in('status', source.statuses)
+          // RLS ya lo limita para el público; en vista previa el personal ve todo.
+          .eq('variants.active', true)
+          .order('id')
+          .range(from, to),
+      );
+      return data.map((row) => toProduct(row, locale)).sort(byCollectionOrder);
+    } catch (error) {
+      console.error('[catalog] no se pudo leer la colección', error);
       return [];
     }
-    return data.map((row) => toProduct(row, locale)).sort(byCollectionOrder);
   },
 );
 

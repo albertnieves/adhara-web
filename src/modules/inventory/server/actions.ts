@@ -22,8 +22,8 @@ import {
  */
 
 function refresh() {
-  revalidatePath('/admin/inventario');
-  revalidatePath('/admin');
+  // Inventario, inicio, movimientos y la ficha de cada perfume del panel.
+  revalidatePath('/admin', 'layout');
   // La tienda muestra disponible / últimas unidades / agotado.
   revalidatePath('/', 'layout');
 }
