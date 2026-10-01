@@ -4,6 +4,7 @@
  * hallazgos con los datos que los justifican. Las propuestas nunca se
  * ejecutan aquí: pasan a una cola que aprueba una persona con permiso.
  */
+import type { StockLevel } from './movements';
 import { availableUnits } from './movements';
 
 /** Parámetros del negocio; se guardarán en la configuración, sin valores por defecto ocultos. */
@@ -36,6 +37,11 @@ export type StockSnapshot = {
   firstStockedAt: Date | null;
   /** Reservas activas cuyo plazo ya venció (el barrido no las liberó). */
   expiredActiveReservations: number;
+  /**
+   * Suma de los movimientos de la ubicación. Si se indica y no coincide con
+   * el nivel, el nivel no es fiable (alguien lo cambió sin movimiento).
+   */
+  ledger?: StockLevel | null;
 };
 
 export type FindingKind =
@@ -137,13 +143,29 @@ function inspect(
     locationId: snapshot.locationId,
   };
   const available = availableUnits(snapshot);
-  if (snapshot.onHand < 0 || snapshot.reserved < 0 || available < 0) {
+  const ledger = snapshot.ledger;
+  const offLedger =
+    ledger != null &&
+    (ledger.onHand !== snapshot.onHand ||
+      ledger.reserved !== snapshot.reserved);
+  if (
+    snapshot.onHand < 0 ||
+    snapshot.reserved < 0 ||
+    available < 0 ||
+    offLedger
+  ) {
     return [
       {
         ...base,
         kind: 'inconsistent_level',
         severity: 'critical',
-        facts: { onHand: snapshot.onHand, reserved: snapshot.reserved },
+        facts: {
+          onHand: snapshot.onHand,
+          reserved: snapshot.reserved,
+          ...(ledger
+            ? { ledgerOnHand: ledger.onHand, ledgerReserved: ledger.reserved }
+            : {}),
+        },
         proposal: null,
       },
     ];

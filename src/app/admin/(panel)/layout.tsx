@@ -10,6 +10,11 @@ import { enterStorefrontPreview } from '@/modules/storefront/server/preview';
 
 const SECTIONS: (NavItem & { permission?: Permission })[] = [
   { href: '/admin', label: 'Inicio' },
+  {
+    href: '/admin/mostrador',
+    label: 'Mostrador',
+    permission: 'inventory.sell_in_store',
+  },
   { href: '/admin/catalogo', label: 'Catálogo', permission: 'catalog.edit' },
   {
     href: '/admin/inventario',
@@ -21,6 +26,12 @@ const SECTIONS: (NavItem & { permission?: Permission })[] = [
     label: 'Movimientos',
     permission: 'inventory.view',
   },
+  {
+    href: '/admin/reposicion',
+    label: 'Reposición',
+    permission: 'inventory.view',
+  },
+  { href: '/admin/compras', label: 'Compras', permission: 'purchasing.manage' },
   { href: '/admin/equipo', label: 'Equipo', permission: 'staff.manage' },
   { href: '/admin/pedidos', label: 'Pedidos', soon: true },
   { href: '/admin/mensajes', label: 'Mensajes', soon: true },
