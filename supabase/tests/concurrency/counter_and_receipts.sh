@@ -2,7 +2,7 @@
 # Concurrencia del mostrador y de las recepciones contra un Postgres REAL con
 # sesiones paralelas (pgTAP corre en una sola transacción y no puede probarlo).
 #
-#   DB_URL=postgresql://postgres:postgres@127.0.0.1:54322/postgres \
+#   DB_URL="<DB_URL que muestra supabase status>" \
 #     supabase/tests/concurrency/counter_and_receipts.sh
 #
 # Solo contra una base local: deja datos de prueba en tablas de solo inserción
@@ -10,7 +10,7 @@
 # `supabase db reset`.
 set -euo pipefail
 
-DB_URL=${DB_URL:-postgresql://postgres:postgres@127.0.0.1:54322/postgres}
+DB_URL=${DB_URL:?Indica DB_URL: la URL de la base local que muestra supabase status}
 case "$DB_URL" in
   *@127.0.0.1:* | *@localhost:*) ;;
   *) echo "Solo contra una base local (127.0.0.1 o localhost)." >&2; exit 2 ;;
