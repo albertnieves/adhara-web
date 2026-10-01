@@ -18,6 +18,8 @@ Proyecto de desarrollo: **`adhara-dev`** (ref `xgpsislololgbakzcmad`), región `
 | 20260929232007 | Roles preasignados por email (`private.pending_staff_grants`): al crear y confirmar la cuenta en Auth recibe su rol automáticamente                                                                                     |
 | 20260930045615 | Costes: `internal.variant_cost_records` (solo inserción, fuera de la API) y funciones `admin_variant_costs` (pricing.view_cost) y `admin_record_variant_cost` (pricing.edit_cost), ambas con MFA                        |
 | 20260930083657 | `admin_record_variant_costs`: registro de costes por lotes para la importación (hasta 2000, todo o nada), auditado con el número de filas y sin importes                                                                |
+| 20260930224000 | Fase R (**sin aplicar en `adhara-dev`**): proveedores, pedidos y recepciones en `internal`; mostrador (`store_sales`), parámetros del vigilante y sus funciones `admin_*`, con MFA en toda escritura                    |
+| 20261001090000 | Fase S (**sin aplicar en `adhara-dev`**): informes de solo lectura `admin_report_inventory_period` (reports.view; costes con pricing.view_cost) y `admin_report_purchases` (purchasing.manage)                          |
 
 La matriz de permisos se genera desde `src/modules/auth/domain/permissions.ts`; `tests/unit/permissions-sql.test.ts` falla si ambas divergen. Del mismo modo, `tests/unit/inventory-sql.test.ts` compara tipos, efectos, permisos y motivos de los movimientos con `src/modules/inventory/domain/movements.ts`.
 
@@ -28,6 +30,12 @@ Los tipos de `src/lib/supabase/database.types.ts` se generan desde `adhara-dev` 
 Sin Docker, las pruebas se ejecutan contra `adhara-dev` con `tests/tap_remote.py`, que revierte todo al terminar. Resultados: `01_staff_permissions` 22/22 (29/09, sesión del PR #5), `02_catalog_inventory` 33/33 (29/09) y `03_costs` 33/33 (30/09, con el registro por lotes).
 
 `tests/database/*.test.sql` son pruebas pgTAP para `supabase test db`. Crean usuarios ficticios dentro de una transacción que se revierte. Cubren anon, usuario sin personal (cliente), `viewer`, `store_admin` y `system_admin`, con y sin MFA (aal2), y la auditoría de solo inserción. `03_costs` comprueba además que ninguna tabla pública tiene columnas de coste y que anon no ejecuta ninguna función que los devuelva.
+
+### Concurrencia
+
+`tests/concurrency/counter_and_receipts.sh` abre sesiones paralelas contra una base **local** (deja datos en tablas de solo inserción; se limpia con `supabase db reset`): N ventas simultáneas de la última unidad, la misma venta enviada N veces y N recepciones simultáneas de un pedido. Resultado del 01/10 con 24 sesiones: una sola venta, una sola venta para la misma clave, nunca más de lo pedido y nivel igual a la suma de movimientos.
+
+`04_purchasing_counter` (54 pruebas) cubre proveedores, pedidos, recepción, mostrador y vigilante por rol y con o sin MFA. `05_reports` (22) cubre los informes: permisos, cuadre de existencias, coste a fecha y plazo real. Validado el 01/10 con Supabase local (CLI 2.119.0): las cinco pruebas pasan, 164/164.
 
 ## Configuración de Auth (panel de Supabase)
 
@@ -50,4 +58,5 @@ Sin Docker, las pruebas se ejecutan contra `adhara-dev` con `tests/tap_remote.py
 ## Pendiente
 
 - `config.toml` y Supabase local con la CLI cuando haya Docker disponible; añadir las pruebas pgTAP a la CI.
-- Resto de migraciones de la Fase 1: taxonomía (familias, notas), procedencia del research y proveedores.
+- Resto de migraciones de la Fase 1: taxonomía (familias, notas) y procedencia del research. Proveedores: fase R.
+- Aplicar `20260930224000_purchasing_counter_replenishment.sql` y `20261001090000_reports.sql` en `adhara-dev` al fusionar (renombrar con la versión real) y regenerar `src/lib/supabase/database.types.ts`; ejecutar `04_purchasing_counter` y `05_reports` con `tap_remote.py`.

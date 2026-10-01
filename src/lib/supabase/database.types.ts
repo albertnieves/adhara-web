@@ -464,14 +464,173 @@ export type Database = {
         };
         Relationships: [];
       };
+      stock_watch_settings: {
+        Row: {
+          dead_stock_days: number;
+          id: boolean;
+          safety_days: number;
+          sales_window_days: number;
+          target_cover_days: number;
+          updated_at: string;
+          updated_by: string | null;
+        };
+        Insert: {
+          dead_stock_days: number;
+          id?: boolean;
+          safety_days: number;
+          sales_window_days: number;
+          target_cover_days: number;
+          updated_at?: string;
+          updated_by?: string | null;
+        };
+        Update: {
+          dead_stock_days?: number;
+          id?: boolean;
+          safety_days?: number;
+          sales_window_days?: number;
+          target_cover_days?: number;
+          updated_at?: string;
+          updated_by?: string | null;
+        };
+        Relationships: [];
+      };
+      store_sale_lines: {
+        Row: {
+          movement_id: number;
+          quantity: number;
+          sale_id: number;
+          variant_id: string;
+        };
+        Insert: {
+          movement_id: number;
+          quantity: number;
+          sale_id: number;
+          variant_id: string;
+        };
+        Update: {
+          movement_id?: number;
+          quantity?: number;
+          sale_id?: number;
+          variant_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'store_sale_lines_movement_id_fkey';
+            columns: ['movement_id'];
+            isOneToOne: false;
+            referencedRelation: 'inventory_movements';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'store_sale_lines_sale_id_fkey';
+            columns: ['sale_id'];
+            isOneToOne: false;
+            referencedRelation: 'store_sales';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'store_sale_lines_variant_id_fkey';
+            columns: ['variant_id'];
+            isOneToOne: false;
+            referencedRelation: 'product_variants';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      store_sales: {
+        Row: {
+          actor_id: string | null;
+          created_at: string;
+          id: number;
+          kind: string;
+          location_id: string;
+          request_id: string;
+          ticket_ref: string | null;
+          units: number;
+        };
+        Insert: {
+          actor_id?: string | null;
+          created_at?: string;
+          id?: never;
+          kind: string;
+          location_id: string;
+          request_id: string;
+          ticket_ref?: string | null;
+          units: number;
+        };
+        Update: {
+          actor_id?: string | null;
+          created_at?: string;
+          id?: never;
+          kind?: string;
+          location_id?: string;
+          request_id?: string;
+          ticket_ref?: string | null;
+          units?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'store_sales_location_id_fkey';
+            columns: ['location_id'];
+            isOneToOne: false;
+            referencedRelation: 'stock_locations';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
     };
     Views: {
       [_ in never]: never;
     };
     Functions: {
+      admin_assign_supplier_brand: {
+        Args: {
+          p_brand_id?: string;
+          p_preferred?: boolean;
+          p_supplier_id: string;
+        };
+        Returns: number;
+      };
+      admin_create_purchase_order: {
+        Args: {
+          p_expected_on?: string;
+          p_lines?: Json;
+          p_location_id: string;
+          p_notes?: string;
+          p_supplier_id: string;
+        };
+        Returns: string;
+      };
+      admin_delete_purchase_order: {
+        Args: { p_order_id: string; p_revision: number };
+        Returns: undefined;
+      };
       admin_grant_staff: {
         Args: { p_display_name?: string; p_email: string; p_role: string };
         Returns: string;
+      };
+      admin_list_purchase_orders: {
+        Args: { p_order_id?: string; p_status?: string };
+        Returns: {
+          closed_at: string | null;
+          created_at: string;
+          expected_on: string | null;
+          id: string;
+          line_count: number;
+          location_id: string;
+          location_name: string;
+          notes: string | null;
+          number: string;
+          ordered_at: string | null;
+          revision: number;
+          status: string;
+          supplier_id: string;
+          supplier_name: string;
+          supplier_reference: string | null;
+          total_cost_net_cents: number | null;
+          units_ordered: number;
+          units_received: number;
+        }[];
       };
       admin_list_staff: {
         Args: never;
@@ -484,6 +643,56 @@ export type Database = {
           role: string;
           user_id: string;
         }[];
+      };
+      admin_list_suppliers: {
+        Args: never;
+        Returns: {
+          active: boolean;
+          contact_name: string | null;
+          created_at: string;
+          email: string | null;
+          id: string;
+          lead_time_days: number | null;
+          name: string;
+          notes: string | null;
+          open_orders: number;
+          phone: string | null;
+          variant_count: number;
+        }[];
+      };
+      admin_purchase_order_lines: {
+        Args: { p_order_id: string };
+        Returns: {
+          line_id: number;
+          line_position: number;
+          pack_size: number | null;
+          quantity_ordered: number;
+          quantity_received: number;
+          supplier_sku: string | null;
+          unit_cost_net_cents: number | null;
+          variant_id: string;
+        }[];
+      };
+      admin_purchase_order_receipts: {
+        Args: { p_order_id: string };
+        Returns: {
+          actor_name: string | null;
+          at: string;
+          costs_recorded: number;
+          receipt_id: number;
+          reference: string | null;
+          units: number;
+        }[];
+      };
+      admin_receive_purchase_order: {
+        Args: {
+          p_items: Json;
+          p_order_id: string;
+          p_record_costs?: boolean;
+          p_reference?: string;
+          p_request_id: string;
+        };
+        Returns: number;
       };
       admin_record_inventory_movement: {
         Args: {
@@ -545,6 +754,31 @@ export type Database = {
           isSetofReturn: false;
         };
       };
+      admin_record_store_sale: {
+        Args: {
+          p_items: Json;
+          p_kind: string;
+          p_location_id: string;
+          p_request_id: string;
+          p_ticket_ref?: string;
+        };
+        Returns: {
+          actor_id: string | null;
+          created_at: string;
+          id: number;
+          kind: string;
+          location_id: string;
+          request_id: string;
+          ticket_ref: string | null;
+          units: number;
+        };
+        SetofOptions: {
+          from: '*';
+          to: 'store_sales';
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
       admin_record_variant_cost: {
         Args: {
           p_cost_net_cents: number;
@@ -555,6 +789,75 @@ export type Database = {
       };
       admin_record_variant_costs: {
         Args: { p_items: Json };
+        Returns: number;
+      };
+      admin_remove_supplier_variant: {
+        Args: { p_supplier_id: string; p_variant_id: string };
+        Returns: undefined;
+      };
+      admin_report_inventory_period: {
+        Args: { p_from: string; p_location_id: string; p_to: string };
+        Returns: {
+          adjusted_units: number;
+          closing_cost_is_later: boolean | null;
+          closing_cost_net_cents: number | null;
+          closing_units: number;
+          last_sale_at: string | null;
+          lost_units: number;
+          opening_cost_is_later: boolean | null;
+          opening_cost_net_cents: number | null;
+          opening_units: number;
+          received_units: number;
+          returned_units: number;
+          sold_units: number;
+          transferred_units: number;
+          variant_id: string;
+        }[];
+      };
+      admin_report_purchases: {
+        Args: { p_from: string; p_to: string };
+        Returns: {
+          avg_lead_time_days: number | null;
+          declared_lead_time_days: number | null;
+          max_lead_time_days: number | null;
+          orders_placed: number;
+          orders_with_lead: number;
+          receipts: number;
+          supplier_active: boolean;
+          supplier_id: string;
+          supplier_name: string;
+          units_ordered: number;
+          units_received: number;
+          units_received_without_cost: number | null;
+          value_received_net_cents: number | null;
+        }[];
+      };
+      admin_save_supplier: {
+        Args: {
+          p_active?: boolean;
+          p_contact_name?: string;
+          p_email?: string;
+          p_id: string;
+          p_lead_time_days?: number;
+          p_name: string;
+          p_notes?: string;
+          p_phone?: string;
+        };
+        Returns: string;
+      };
+      admin_save_supplier_variant: {
+        Args: {
+          p_lead_time_days?: number;
+          p_pack_size?: number;
+          p_preferred?: boolean;
+          p_supplier_id: string;
+          p_supplier_sku?: string;
+          p_variant_id: string;
+        };
+        Returns: undefined;
+      };
+      admin_set_purchase_order_lines: {
+        Args: { p_lines: Json; p_order_id: string; p_revision: number };
         Returns: number;
       };
       admin_set_reorder_point: {
@@ -568,6 +871,58 @@ export type Database = {
       admin_set_staff_active: {
         Args: { p_active: boolean; p_user_id: string };
         Returns: undefined;
+      };
+      admin_set_stock_watch_settings: {
+        Args: {
+          p_dead_stock_days: number;
+          p_safety_days: number;
+          p_sales_window_days: number;
+          p_target_cover_days: number;
+        };
+        Returns: undefined;
+      };
+      admin_stock_watch_facts: {
+        Args: { p_location_id: string };
+        Returns: {
+          first_stocked_at: string | null;
+          has_supplier: boolean;
+          incoming_units: number;
+          last_sale_at: string | null;
+          lead_time_days: number | null;
+          ledger_on_hand: number;
+          ledger_reserved: number;
+          pack_size: number | null;
+          units_sold: number;
+          variant_id: string;
+        }[];
+      };
+      admin_supplier_terms: {
+        Args: { p_supplier_id?: string; p_variant_ids?: string[] };
+        Returns: {
+          effective_lead_time_days: number | null;
+          lead_time_days: number | null;
+          pack_size: number;
+          preferred: boolean;
+          supplier_active: boolean;
+          supplier_id: string;
+          supplier_name: string;
+          supplier_sku: string | null;
+          variant_id: string;
+        }[];
+      };
+      admin_transition_purchase_order: {
+        Args: { p_action: string; p_order_id: string; p_revision: number };
+        Returns: string;
+      };
+      admin_update_purchase_order: {
+        Args: {
+          p_expected_on?: string;
+          p_notes?: string;
+          p_order_id: string;
+          p_revision: number;
+          p_supplier_reference?: string;
+        };
+        Returns: number;
       };
       admin_variant_costs: {
         Args: { p_variant_ids: string[] };
