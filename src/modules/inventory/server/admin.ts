@@ -84,6 +84,7 @@ export async function listStock(
 export type MovementRow = {
   id: number;
   createdAt: string;
+  variantId: string;
   type: string;
   quantity: number;
   deltaOnHand: number;
@@ -118,7 +119,7 @@ export async function listMovements(
     let query = supabase
       .from('inventory_movements')
       .select(
-        'id, created_at, type, quantity, delta_on_hand, on_hand_after, reason, reference, variant:product_variants!inner(label, size_ml, sku, product_id, product:products!inner(name, brand:brands!inner(name)))',
+        'id, created_at, type, quantity, delta_on_hand, on_hand_after, reason, reference, variant_id, variant:product_variants!inner(label, size_ml, sku, product_id, product:products!inner(name, brand:brands!inner(name)))',
       )
       .order('created_at', { ascending: false })
       .order('id', { ascending: false })
@@ -142,6 +143,7 @@ export async function listMovements(
   return data.map((m) => ({
     id: m.id,
     createdAt: m.created_at,
+    variantId: m.variant_id,
     type: m.type,
     quantity: m.quantity,
     deltaOnHand: m.delta_on_hand,

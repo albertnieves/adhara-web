@@ -24,6 +24,7 @@
     "build:local": "node scripts/local-env.ts pnpm build"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "0.130.0",
     "@react-three/drei": "10.7.9",
     "@react-three/fiber": "9.8.1",
     "@supabase/ssr": "0.12.7",

@@ -14,6 +14,7 @@ const DATE = new Intl.DateTimeFormat('es-ES', {
 export function ProductStock({
   productId,
   locationId,
+  productName,
   rows,
   movements,
   movementTypes,
@@ -21,6 +22,7 @@ export function ProductStock({
   canAdjust,
 }: {
   productId: string;
+  productName: string;
   locationId: string;
   rows: StockRow[];
   movements: MovementRow[];
@@ -39,7 +41,7 @@ export function ProductStock({
   return (
     <div className="space-y-10">
       <div className="overflow-x-auto">
-        <table className="data-table min-w-[40rem]">
+        <table className="data-table stack-table md:min-w-[40rem]">
           <thead>
             <tr>
               <th>Formato</th>
@@ -56,30 +58,42 @@ export function ProductStock({
                 available <= 0 ||
                 (row.reorderPoint !== null && available <= row.reorderPoint);
               return (
-                <tr key={row.variantId} className="align-top">
-                  <td className="text-sm">
+                <tr key={row.variantId}>
+                  <td data-primary className="text-sm">
                     {row.variantLabel}
                     {row.sku && <p className="text-mist text-xs">{row.sku}</p>}
                     {!row.active && (
                       <p className="text-mist text-xs">inactivo</p>
                     )}
                   </td>
-                  <td className="text-right tabular-nums">{row.onHand}</td>
-                  <td className="text-smoke text-right tabular-nums">
+                  <td
+                    data-label="En tienda"
+                    className="text-right tabular-nums"
+                  >
+                    {row.onHand}
+                  </td>
+                  <td
+                    data-label="Reservado"
+                    className="text-smoke text-right tabular-nums"
+                  >
                     {row.reserved}
                   </td>
                   <td
+                    data-label="Disponible"
                     className={`text-right font-semibold tabular-nums ${low ? 'text-danger' : ''}`}
                   >
-                    {available}
-                    {row.reorderPoint !== null && (
-                      <p className="text-mist text-[0.6875rem] font-normal">
-                        aviso ≤ {row.reorderPoint}
-                      </p>
-                    )}
+                    <span>
+                      {available}
+                      {row.reorderPoint !== null && (
+                        <p className="text-mist text-[0.6875rem] font-normal">
+                          aviso ≤ {row.reorderPoint}
+                        </p>
+                      )}
+                    </span>
                   </td>
                   <td>
                     <StockActions
+                      title={`${productName} · ${row.variantLabel}`}
                       variantId={row.variantId}
                       locationId={locationId}
                       onHand={row.onHand}

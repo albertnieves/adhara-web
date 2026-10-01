@@ -9,6 +9,45 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      assistant_usage: {
+        Row: {
+          cache_read_tokens: number;
+          created_at: string;
+          id: number;
+          input_tokens: number;
+          kind: string;
+          model: string;
+          output_tokens: number;
+          stop_reason: string | null;
+          tools: string[];
+          user_id: string | null;
+        };
+        Insert: {
+          cache_read_tokens?: number;
+          created_at?: string;
+          id?: never;
+          input_tokens?: number;
+          kind: string;
+          model: string;
+          output_tokens?: number;
+          stop_reason?: string | null;
+          tools?: string[];
+          user_id?: string | null;
+        };
+        Update: {
+          cache_read_tokens?: number;
+          created_at?: string;
+          id?: never;
+          input_tokens?: number;
+          kind?: string;
+          model?: string;
+          output_tokens?: number;
+          stop_reason?: string | null;
+          tools?: string[];
+          user_id?: string | null;
+        };
+        Relationships: [];
+      };
       audit_log: {
         Row: {
           action: string;
@@ -65,6 +104,50 @@ export type Database = {
           updated_at?: string;
         };
         Relationships: [];
+      };
+      daily_reports: {
+        Row: {
+          facts: NonNullable<Json>;
+          generated_at: string;
+          generated_by: string | null;
+          id: string;
+          location_id: string;
+          report_date: string;
+          summary: string | null;
+          summary_at: string | null;
+          summary_model: string | null;
+        };
+        Insert: {
+          facts: NonNullable<Json>;
+          generated_at?: string;
+          generated_by?: string | null;
+          id?: string;
+          location_id: string;
+          report_date: string;
+          summary?: string | null;
+          summary_at?: string | null;
+          summary_model?: string | null;
+        };
+        Update: {
+          facts?: NonNullable<Json>;
+          generated_at?: string;
+          generated_by?: string | null;
+          id?: string;
+          location_id?: string;
+          report_date?: string;
+          summary?: string | null;
+          summary_at?: string | null;
+          summary_model?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'daily_reports_location_id_fkey';
+            columns: ['location_id'];
+            isOneToOne: false;
+            referencedRelation: 'stock_locations';
+            referencedColumns: ['id'];
+          },
+        ];
       };
       inventory_levels: {
         Row: {
@@ -688,6 +771,17 @@ export type Database = {
           open_orders: number;
           phone: string;
           variant_count: number;
+        }[];
+      };
+      admin_open_purchase_orders: {
+        Args: { p_location_id: string };
+        Returns: {
+          expected_on: string;
+          number: string;
+          ordered_at: string;
+          status: string;
+          units_ordered: number;
+          units_received: number;
         }[];
       };
       admin_pending_invites: {

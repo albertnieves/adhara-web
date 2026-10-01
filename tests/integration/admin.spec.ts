@@ -1,5 +1,6 @@
 import { test, expect, type Page } from '@playwright/test';
 import { createClient } from '@supabase/supabase-js';
+import { execFileSync } from 'node:child_process';
 import { createHmac, randomUUID } from 'node:crypto';
 
 if (
@@ -295,5 +296,129 @@ test('recuperación local exige el segundo factor existente y rechaza enlace reu
   await expect(recovered).toHaveURL(/\/admin$/);
   await recovered.goto(link);
   await expect(recovered).toHaveURL(/error=enlace/);
+  await context.close();
+});
+
+/**
+ * Perfume en borrador con un formato sin PVP. Se crea con psql en el
+ * contenedor local (como la prueba de concurrencia): la clave de servicio no
+ * tiene acceso al esquema private que usan los disparadores del catálogo.
+ */
+function draftProduct(label: string) {
+  const id = randomUUID().slice(0, 8);
+  const name = `${label} ${id}`;
+  execFileSync(
+    'docker',
+    [
+      'exec',
+      '-i',
+      'supabase_db_adhara-admin-delivery',
+      'psql',
+      '-X',
+      '-U',
+      'postgres',
+      '-d',
+      'postgres',
+      '-v',
+      'ON_ERROR_STOP=1',
+    ],
+    {
+      input: `with b as (
+          insert into public.brands (slug, name)
+          values ('marca-${id}', 'Marca ${id}') returning id
+        ), p as (
+          insert into public.products (brand_id, slug, name)
+          select b.id, 'perfume-${id}', '${name}' from b returning id
+        )
+        insert into public.product_variants (product_id, size_ml)
+        select p.id, 100 from p;`,
+      stdio: ['pipe', 'ignore', 'inherit'],
+    },
+  );
+  return name;
+}
+
+test('panel: la barra lateral no invade el contenido y el menú móvil navega', async ({
+  page,
+}) => {
+  await login(page, await user('store_admin'));
+  await page.setViewportSize({ width: 1280, height: 640 });
+  await page.goto('/admin/inventario');
+  const aside = await page.locator('aside').boundingBox();
+  const nav = await page
+    .locator('aside nav[aria-label="Secciones del panel"]')
+    .boundingBox();
+  expect(nav!.x + nav!.width).toBeLessThanOrEqual(aside!.x + aside!.width);
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.getByRole('button', { name: 'Menú' }).click();
+  const menu = page.getByRole('dialog', { name: 'Menú' });
+  await expect(menu).toBeVisible();
+  await menu.getByRole('link', { name: 'Movimientos', exact: true }).click();
+  await expect(page).toHaveURL(/\/admin\/movimientos$/);
+  await expect(menu).toBeHidden();
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= window.innerWidth,
+    ),
+  ).toBe(true);
+});
+
+test('inventario: el movimiento se registra en un panel lateral y deja aviso', async ({
+  page,
+}) => {
+  const name = draftProduct('Perfume panel');
+  await login(page, await user('store_admin'));
+  await page.goto(`/admin/inventario?q=${encodeURIComponent(name)}`);
+  const row = page.getByRole('row').filter({ hasText: name });
+  await row.getByRole('button', { name: 'Movimiento' }).click();
+  const sheet = page.getByRole('dialog', { name: 'Registrar movimiento' });
+  await expect(sheet).toBeVisible();
+  await expect(sheet).toContainText(name);
+  await sheet.getByLabel('Unidades').fill('3');
+  await sheet.getByRole('button', { name: 'Registrar', exact: true }).click();
+  await expect(sheet).toBeHidden();
+  await expect(
+    page.getByRole('status').filter({ hasText: name }),
+  ).toBeVisible();
+  await expect(row.getByRole('cell').nth(2)).toHaveText('3');
+  await page.setViewportSize({ width: 390, height: 844 });
+  await row.getByRole('button', { name: 'Recuento' }).click();
+  await expect(page.getByRole('dialog', { name: 'Recuento' })).toBeInViewport();
+  await page.keyboard.press('Escape');
+  await expect(page.getByRole('dialog', { name: 'Recuento' })).toBeHidden();
+});
+
+test('asistente: informe del día según el rol y chat desactivado sin clave', async ({
+  page,
+  browser,
+}) => {
+  draftProduct('Perfume sin precio');
+  await login(page, await user('viewer'));
+  await page.goto('/admin/asistente');
+  await expect(
+    page.getByRole('heading', { name: 'Informe del día', exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.getByText('El asistente aún no está activado.'),
+  ).toBeVisible();
+  await expect(page.getByRole('button', { name: /^Guardar/ })).toHaveCount(0);
+  await expect(page.locator('main a[href^="/admin/catalogo"]')).toHaveCount(0);
+
+  const context = await browser.newContext();
+  const shop = await context.newPage();
+  await login(shop, await user('store_admin'));
+  await shop.goto('/admin/asistente');
+  await expect(
+    shop.getByRole('link', { name: /Perfumes sin PVP completo/ }),
+  ).toBeVisible();
+  await shop.getByRole('button', { name: 'Guardar informe' }).click();
+  await expect(
+    shop.getByText('el informe se guarda sin resumen del asistente'),
+  ).toBeVisible();
+  await expect(shop.getByText(/^Guardado el/)).toBeVisible();
+  await shop.goto('/admin');
+  await expect(
+    shop.getByRole('link', { name: 'Abrir el asistente' }),
+  ).toBeVisible();
   await context.close();
 });

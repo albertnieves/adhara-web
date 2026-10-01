@@ -147,7 +147,7 @@ export function CatalogImport({ canSetPrices }: { canSetPrices: boolean }) {
           <button
             type="button"
             onClick={downloadTemplate}
-            className="link-underline text-xs tracking-[0.16em] uppercase"
+            className="link-underline inline-flex min-h-11 items-center text-xs tracking-[0.16em] uppercase"
           >
             Descargar plantilla
           </button>
@@ -398,7 +398,7 @@ export function CatalogImport({ canSetPrices }: { canSetPrices: boolean }) {
                   name="confirm"
                   checked={confirmed}
                   onChange={(event) => setConfirmed(event.target.checked)}
-                  className="accent-ink size-4"
+                  className="accent-ink size-5"
                 />
                 He revisado las {plan.rows.length} filas; crear como borradores.
               </label>

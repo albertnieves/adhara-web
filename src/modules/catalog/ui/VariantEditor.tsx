@@ -212,7 +212,7 @@ function PriceForm({
                   name="confirm"
                   value={issue.code}
                   required
-                  className="accent-ink size-4"
+                  className="accent-ink size-5"
                 />
                 {issue.label}
               </label>
@@ -387,7 +387,7 @@ function VariantCard({
               name="active"
               value="on"
               defaultChecked={variant.active}
-              className="accent-ink size-4"
+              className="accent-ink size-5"
             />
             Activo (se muestra y se vende)
           </label>
