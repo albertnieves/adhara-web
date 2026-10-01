@@ -18,6 +18,7 @@ import {
 } from '../server/actions';
 
 export type VariantValues = {
+  updated_at: string;
   id: string;
   size_ml: number | null;
   label: string | null;
@@ -151,6 +152,16 @@ function PriceForm({
     >
       <input type="hidden" name="id" value={variant.id} />
       <input type="hidden" name="productId" value={productId} />
+      <input type="hidden" name="expected" value={variant.updated_at} />
+      <input
+        type="hidden"
+        name="reviewId"
+        value={
+          state.reviewedInput === `${price}|${compareAt}`
+            ? (state.reviewId ?? '')
+            : ''
+        }
+      />
       <Field label="PVP (IVA incl.)">
         <input
           name="price"
@@ -172,7 +183,12 @@ function PriceForm({
         />
       </Field>
       <div className="self-end pb-0.5">
-        <SubmitButton pending={pending}>Guardar PVP</SubmitButton>
+        <SubmitButton pending={pending}>
+          {state.status === 'confirm' &&
+          state.reviewedInput === `${price}|${compareAt}`
+            ? 'Aplicar PVP revisado'
+            : 'Revisar PVP'}
+        </SubmitButton>
       </div>
       {liveMargin && (
         <p
@@ -182,25 +198,27 @@ function PriceForm({
           Margen con este PVP: {liveMargin.text}
         </p>
       )}
-      {state.status === 'confirm' && state.confirm && (
-        <fieldset className="border-gold/50 flex flex-col gap-2 border bg-white/60 p-4 text-sm sm:col-span-3">
-          <legend className="px-1 text-xs font-semibold">
-            {state.message}
-          </legend>
-          {state.confirm.map((issue) => (
-            <label key={issue.code} className="flex items-center gap-3">
-              <input
-                type="checkbox"
-                name="confirm"
-                value={issue.code}
-                required
-                className="accent-ink size-4"
-              />
-              {issue.label}
-            </label>
-          ))}
-        </fieldset>
-      )}
+      {state.status === 'confirm' &&
+        state.reviewedInput === `${price}|${compareAt}` &&
+        state.confirm && (
+          <fieldset className="border-gold/50 flex flex-col gap-2 border bg-white/60 p-4 text-sm sm:col-span-3">
+            <legend className="px-1 text-xs font-semibold">
+              {state.message}
+            </legend>
+            {state.confirm.map((issue) => (
+              <label key={issue.code} className="flex items-center gap-3">
+                <input
+                  type="checkbox"
+                  name="confirm"
+                  value={issue.code}
+                  required
+                  className="accent-ink size-4"
+                />
+                {issue.label}
+              </label>
+            ))}
+          </fieldset>
+        )}
       {state.status !== 'confirm' && (
         <div className="sm:col-span-3">
           <FormMessage state={state} />

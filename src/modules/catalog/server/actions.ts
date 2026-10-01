@@ -8,13 +8,12 @@ import type { ActionState } from '@/modules/admin';
 import { describeDbError, fail, ok } from '@/modules/admin';
 import { isAllowed } from '@/modules/auth';
 import { requirePermission } from '@/modules/auth/server';
-import type { PricePeriod, PriceIssue } from '@/modules/pricing';
+import type { PricePeriod } from '@/modules/pricing';
 import {
   PRICE_ISSUE_LABELS,
   PROVISIONAL_PRICING_POLICY,
   VAT_GENERAL_BP,
   hasBlockingIssues,
-  missingConfirmations,
   reviewPriceChange,
 } from '@/modules/pricing';
 import { UNBOXING_SCENES } from '@/modules/unboxing';
@@ -171,10 +170,15 @@ export async function updateProduct(
   if (!parsed.success) {
     return fail(parsed.error.issues[0]?.message ?? 'Revisa los datos.');
   }
+  const expected = z
+    .string()
+    .datetime({ offset: true })
+    .safeParse(formData.get('expected'));
+  if (!expected.success) return fail('Recarga la ficha antes de guardar.');
   const input = parsed.data;
   const brand = await resolveBrand(supabase, input.brandId, input.newBrand);
   if ('error' in brand) return fail(brand.error);
-  const { error } = await supabase
+  const { data: saved, error } = await supabase
     .from('products')
     .update({
       brand_id: brand.id,
@@ -186,8 +190,12 @@ export async function updateProduct(
       featured: input.featured,
       position: input.position,
     })
-    .eq('id', id.data);
+    .eq('id', id.data)
+    .eq('updated_at', expected.data)
+    .select('id');
   if (error) return fail(describeDbError(error));
+  if (!saved?.length)
+    return fail(describeDbError({ message: 'edit_conflict' }));
   refreshStorefront(id.data);
   return ok('Cambios guardados.');
 }
@@ -362,6 +370,22 @@ export async function setVariantPrice(
   formData: FormData,
 ): Promise<ActionState> {
   const { supabase, role } = await requirePermission('pricing.edit_retail');
+  const reviewId = z.uuid().safeParse(formData.get('reviewId'));
+  if (reviewId.success) {
+    const { data, error } = await supabase.rpc('admin_apply_price_review', {
+      p_review_id: reviewId.data,
+      p_confirmed: formData.getAll('confirm').map(String),
+    });
+    if (error) return fail(describeDbError(error));
+    refreshStorefront(data);
+    return ok('PVP guardado.');
+  }
+  const expected = z
+    .string()
+    .datetime({ offset: true })
+    .safeParse(formData.get('expected'));
+  if (!expected.success)
+    return fail('Recarga la ficha antes de cambiar el precio.');
   const parsed = priceInput.safeParse({
     id: formData.get('id'),
     productId: formData.get('productId'),
@@ -380,7 +404,7 @@ export async function setVariantPrice(
 
   const current = await supabase
     .from('product_variants')
-    .select('retail_price_cents, compare_at_price_cents')
+    .select('retail_price_cents, compare_at_price_cents, updated_at')
     .eq('id', parsed.data.id)
     .single();
   if (current.error) return fail(describeDbError(current.error));
@@ -425,42 +449,25 @@ export async function setVariantPrice(
         .join(' '),
     );
   }
-  const confirmed = formData
-    .getAll('confirm')
-    .map(String) as PriceIssue['code'][];
-  const missing = missingConfirmations(review, confirmed);
-  if (missing.length > 0) {
-    return {
-      status: 'confirm',
-      message: 'Revisa y confirma antes de guardar:',
-      confirm: missing.map((code) => ({ code, label: ISSUE_LABELS[code] })),
-    };
-  }
-
-  const { error } = await supabase
-    .from('product_variants')
-    .update({
-      retail_price_cents: price,
-      compare_at_price_cents: compareAt,
-    })
-    .eq('id', parsed.data.id);
-  if (error) return fail(describeDbError(error));
-  await supabase.rpc('record_audit_event', {
-    action: 'pricing.retail_changed',
-    entity: 'product_variant',
-    entity_id: parsed.data.id,
-    before: {
-      retail_price_cents: current.data.retail_price_cents,
-      compare_at_price_cents: current.data.compare_at_price_cents,
-    },
-    after: {
-      retail_price_cents: price,
-      compare_at_price_cents: compareAt,
-      confirmed,
-    },
+  const required = review.issues
+    .filter((issue) => issue.severity === 'confirm')
+    .map((issue) => issue.code);
+  const { data: id, error } = await supabase.rpc('admin_review_price', {
+    p_variant_id: parsed.data.id,
+    p_expected: expected.data,
+    p_price: price,
+    p_compare_at: compareAt as number,
+    p_cost: costNetCents as number,
+    p_required: required,
   });
-  refreshStorefront(parsed.data.productId);
-  return ok('PVP guardado.');
+  if (error) return fail(describeDbError(error));
+  return {
+    status: 'confirm',
+    message: `Revisa el nuevo PVP: ${(price / 100).toFixed(2)} €.`,
+    reviewId: id,
+    reviewedInput: `${parsed.data.price}|${parsed.data.compareAt}`,
+    confirm: required.map((code) => ({ code, label: ISSUE_LABELS[code] })),
+  };
 }
 
 const costInput = z.object({
@@ -624,17 +631,10 @@ export async function updateMedia(
   if (!parsed.success) return fail('Acción no válida.');
   const { id, productId, intent } = parsed.data;
   if (intent === 'hero') {
-    // Una sola imagen principal por perfume.
-    const reset = await supabase
-      .from('product_media')
-      .update({ role: 'gallery' })
-      .eq('product_id', productId)
-      .eq('role', 'hero');
-    if (reset.error) return fail(describeDbError(reset.error));
-    const { error } = await supabase
-      .from('product_media')
-      .update({ role: 'hero' })
-      .eq('id', id);
+    const { error } = await supabase.rpc('admin_set_primary_media', {
+      p_product_id: productId,
+      p_media_id: id,
+    });
     if (error) return fail(describeDbError(error));
   } else {
     const row = await supabase

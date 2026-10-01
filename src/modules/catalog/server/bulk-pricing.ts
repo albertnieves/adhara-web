@@ -18,16 +18,14 @@ import {
 } from '@/modules/pricing';
 import { getVariantCosts } from './admin';
 
-/*
- * Cambio masivo de PVP. «review» calcula el plan; «apply» lo vuelve a
- * calcular en servidor con los mismos parámetros (no se fía de precios
- * enviados por el navegador) y aplica solo las filas marcadas cuyas
- * confirmaciones están completas. Cada cambio pasa por el trigger de PVP
- * (permiso con MFA e historial) y solo si el PVP no ha cambiado entretanto.
+/* La revisión queda almacenada en SQL con actor, versiones y caducidad.
+ * Aplicar consume esa revisión exacta; un reintento no recalcula ni duplica.
+ * Cada fila devuelve su conflicto sin ocultar los éxitos parciales del lote.
  */
 
 export type BulkRowView = {
   variantId: string;
+  reviewId?: string;
   productId: string;
   brandName: string;
   productName: string;
@@ -84,6 +82,36 @@ export async function bulkChangePrices(
 ): Promise<BulkState> {
   const { supabase, role } = await requirePermission('pricing.edit_retail');
   const canViewCost = isAllowed({ role, aal: 'aal2' }, 'pricing.view_cost');
+  if (formData.get('intent') === 'apply') {
+    const selected = [...new Set(formData.getAll('row').map(String))];
+    if (selected.length > MAX_BULK_ROWS)
+      return { status: 'error', message: 'Demasiadas filas.' };
+    const failures: string[] = [];
+    let applied = 0;
+    for (const variantId of selected) {
+      const reviewId = z.uuid().safeParse(formData.get(`review:${variantId}`));
+      if (!reviewId.success) {
+        failures.push('Una fila no tiene revisión válida.');
+        continue;
+      }
+      const { error } = await supabase.rpc('admin_apply_price_review', {
+        p_review_id: reviewId.data,
+        p_confirmed: formData.getAll(`confirm:${variantId}`).map(String),
+      });
+      if (error) failures.push(`${variantId}: ${describeDbError(error)}`);
+      else applied++;
+    }
+    if (applied) {
+      revalidatePath('/', 'layout');
+      revalidatePath('/admin', 'layout');
+    }
+    return {
+      status: 'done',
+      message: `${applied} revisiones aplicadas o ya aplicadas.`,
+      failures,
+    };
+  }
+  const versions = new Map<string, string>();
   const params = readParams(formData);
   if (!params) {
     return {
@@ -99,7 +127,7 @@ export async function bulkChangePrices(
       let query = supabase
         .from('product_variants')
         .select(
-          'id, label, size_ml, position, retail_price_cents, compare_at_price_cents, product:products!inner(id, name, status, brand_id, position, brand:brands!inner(name))',
+          'id, updated_at, label, size_ml, position, retail_price_cents, compare_at_price_cents, product:products!inner(id, name, status, brand_id, position, brand:brands!inner(name))',
         )
         .eq('active', true)
         .in(
@@ -110,6 +138,7 @@ export async function bulkChangePrices(
       if (params.brandId) query = query.eq('product.brand_id', params.brandId);
       return query.range(from, to);
     });
+    for (const row of rows) versions.set(row.id, row.updated_at);
     const costs = canViewCost
       ? await getVariantCosts(
           supabase,
@@ -153,85 +182,39 @@ export async function bulkChangePrices(
     at: new Date(),
   });
 
-  if (formData.get('intent') !== 'apply') {
-    return {
-      status: 'review',
-      canViewCost,
-      rows: plan.map((row) => ({
-        variantId: row.variantId,
-        productId: row.productId,
-        brandName: row.brandName,
-        productName: row.productName,
-        variantLabel: row.variantLabel,
-        retailCents: row.retailCents,
-        proposedCents: row.proposedCents,
-        changeBp: row.changeBp,
-        excluded: row.excluded,
-        confirm: row.confirm,
-        marginBp:
-          canViewCost && row.review?.margin?.kind === 'known'
-            ? row.review.margin.marginBp
-            : null,
-      })),
-    };
-  }
-
-  const selected = new Set(formData.getAll('row').map(String));
-  const changes: {
-    variant_id: string;
-    before: number;
-    after: number;
-    confirmed: string[];
-  }[] = [];
-  const failures: string[] = [];
+  const reviewIds = new Map<string, string>();
   for (const row of plan) {
-    if (!selected.has(row.variantId) || row.excluded) continue;
-    const name = `${row.productName} ${row.variantLabel}`;
-    const confirmed = formData.getAll(`confirm:${row.variantId}`).map(String);
-    if (row.confirm.some((code) => !confirmed.includes(code))) {
-      failures.push(`${name}: faltan confirmaciones.`);
-      continue;
-    }
-    if (row.retailCents === null || row.proposedCents === null) continue;
-    const { data, error } = await supabase
-      .from('product_variants')
-      .update({ retail_price_cents: row.proposedCents })
-      .eq('id', row.variantId)
-      .eq('retail_price_cents', row.retailCents)
-      .is('compare_at_price_cents', null)
-      .select('id');
-    if (error) {
-      failures.push(`${name}: ${describeDbError(error)}`);
-    } else if (data.length === 0) {
-      failures.push(`${name}: el PVP cambió mientras tanto; vuelve a revisar.`);
-    } else {
-      changes.push({
-        variant_id: row.variantId,
-        before: row.retailCents,
-        after: row.proposedCents,
-        confirmed,
-      });
-    }
-  }
-
-  if (changes.length > 0) {
-    await supabase.rpc('record_audit_event', {
-      action: 'pricing.bulk_changed',
-      entity: 'catalog',
-      after: {
-        brand_id: params.brandId || null,
-        scope: params.scope,
-        adjustment: params.adjustment,
-        ending: params.ending,
-        changes,
-      },
+    if (row.excluded || row.proposedCents === null) continue;
+    const { data, error } = await supabase.rpc('admin_review_price', {
+      p_variant_id: row.variantId,
+      p_expected: versions.get(row.variantId)!,
+      p_price: row.proposedCents,
+      p_compare_at: null as unknown as number,
+      p_cost: row.costNetCents as number,
+      p_required: row.confirm,
     });
-    revalidatePath('/', 'layout');
-    revalidatePath('/admin', 'layout');
+    if (error) return { status: 'error', message: describeDbError(error) };
+    reviewIds.set(row.variantId, data);
   }
   return {
-    status: 'done',
-    message: `${changes.length} ${changes.length === 1 ? 'PVP cambiado' : 'PVP cambiados'}.`,
-    failures,
+    status: 'review',
+    canViewCost,
+    rows: plan.map((row) => ({
+      variantId: row.variantId,
+      reviewId: reviewIds.get(row.variantId),
+      productId: row.productId,
+      brandName: row.brandName,
+      productName: row.productName,
+      variantLabel: row.variantLabel,
+      retailCents: row.retailCents,
+      proposedCents: row.proposedCents,
+      changeBp: row.changeBp,
+      excluded: row.excluded,
+      confirm: row.confirm,
+      marginBp:
+        canViewCost && row.review?.margin?.kind === 'known'
+          ? row.review.margin.marginBp
+          : null,
+    })),
   };
 }

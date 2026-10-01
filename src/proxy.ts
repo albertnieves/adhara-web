@@ -23,7 +23,11 @@ export default async function proxy(request: NextRequest) {
   // El proxy solo refresca la sesión y redirige sin ella; la autorización
   // real está en el layout del panel, en cada Server Action y en RLS.
   const { response, hasSession } = await refreshSupabaseSession(request);
-  if (!hasSession && pathname !== ADMIN_LOGIN) {
+  if (
+    !hasSession &&
+    pathname !== ADMIN_LOGIN &&
+    pathname !== '/admin/recuperar'
+  ) {
     return NextResponse.redirect(new URL(ADMIN_LOGIN, request.url));
   }
   return response;

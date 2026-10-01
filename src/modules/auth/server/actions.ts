@@ -99,14 +99,20 @@ export async function verifyTotp(formData: FormData) {
     factorId,
     code: String(formData.get('code') ?? '').replace(/\s/g, ''),
   });
-  if (!parsed.success) redirect('/admin/mfa?error=codigo');
+  const retry =
+    formData.get('next') === 'contrasena'
+      ? '/admin/mfa?error=codigo&next=contrasena'
+      : '/admin/mfa?error=codigo';
+  if (!parsed.success) redirect(retry);
   const { error } = await supabase.auth.mfa.challengeAndVerify(parsed.data);
-  if (error) redirect('/admin/mfa?error=codigo');
+  if (error) redirect(retry);
   await audit(
     supabase,
     step === 'enroll_mfa' ? 'auth.mfa_enrolled' : 'auth.mfa_verified',
   );
-  redirect(ADMIN_HOME);
+  redirect(
+    formData.get('next') === 'contrasena' ? '/admin/contrasena' : ADMIN_HOME,
+  );
 }
 
 const newPassword = z

@@ -1,3 +1,5 @@
+import { readStoreContent } from '@/modules/content/server';
+import { homeContent, storeContent, STORE_DEFAULTS } from '@/modules/content';
 import Image from 'next/image';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { Star } from '@/modules/brand';
@@ -27,10 +29,14 @@ export default async function Home({
 }) {
   const { locale } = await params;
   setRequestLocale(locale);
-  const [t, products] = await Promise.all([
+  const [t, products, editorial, store] = await Promise.all([
     getTranslations('home'),
     listStorefrontProducts(locale),
+    readStoreContent('home', locale),
+    readStoreContent('store', 'es'),
   ]);
+  const content = editorial ? homeContent.parse(editorial.payload) : null;
+  const details = store ? storeContent.parse(store.payload) : STORE_DEFAULTS;
   const featured = (
     products.some((p) => p.featured)
       ? products.filter((p) => p.featured)
@@ -43,11 +49,13 @@ export default async function Home({
   return (
     <main>
       <Hero
-        eyebrow={t('heroEyebrow')}
-        title={t('heroTitle')}
-        lead={t('heroLead')}
-        cta={t('heroCta')}
+        eyebrow={content?.heroEyebrow ?? t('heroEyebrow')}
+        title={content?.heroTitle ?? t('heroTitle')}
+        lead={content?.heroLead ?? t('heroLead')}
+        cta={content?.heroCta ?? t('heroCta')}
         scroll={t('scroll')}
+        imageUrl={editorial?.imageUrl ?? undefined}
+        imageAlt={content?.imageAlt ?? ''}
       />
 
       <section className="mx-auto max-w-[90rem] px-5 py-28 sm:px-10 sm:py-36">
@@ -157,8 +165,14 @@ export default async function Home({
             {t('storeTitle')}
           </h2>
           <p className="text-ivory/70 mx-auto mt-8 max-w-md text-lg leading-relaxed">
-            {t('storeBody')}
+            {content?.storeBody ?? t('storeBody')}
           </p>
+          <address className="mt-6 not-italic">
+            {details.address} · {details.city}
+          </address>
+          {details.hours && (
+            <p className="mt-4 whitespace-pre-line">{details.hours}</p>
+          )}
         </Reveal>
       </section>
     </main>

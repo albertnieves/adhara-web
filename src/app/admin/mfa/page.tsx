@@ -5,10 +5,10 @@ import { TotpEnrollment } from '@/modules/auth/ui/totp-enrollment';
 export default async function AdminMfa({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string }>;
+  searchParams: Promise<{ error?: string; next?: string }>;
 }) {
   const { step } = await requireMfaStep();
-  const { error } = await searchParams;
+  const { error, next } = await searchParams;
   return (
     <AuthScreen title="Verificación en dos pasos">
       {error === 'codigo' && (
@@ -23,6 +23,11 @@ export default async function AdminMfa({
         </>
       ) : (
         <form action={verifyTotp} className="flex flex-col gap-5">
+          <input
+            type="hidden"
+            name="next"
+            value={next === 'contrasena' ? next : ''}
+          />
           <Field label="Código de tu app de autenticación">
             <input
               name="code"

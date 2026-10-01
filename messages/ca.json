@@ -91,7 +91,8 @@
     "shop": "Botiga",
     "info": "Informació",
     "dev": "Web en desenvolupament: continguts i imatges provisionals.",
-    "rights": "© {year} L’Atelier du Désert"
+    "rights": "© {year} L’Atelier du Désert",
+    "staffAccess": "Accés de l’equip"
   },
   "notFound": {
     "title": "Aquesta pàgina no existeix",

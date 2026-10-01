@@ -32,6 +32,7 @@ type Tab = 'movement' | 'stocktake' | 'reorder';
 
 /** Acciones de una fila de inventario, en un panel desplegable. */
 export function StockActions(props: Props) {
+  const [requestId, setRequestId] = useState('');
   const [open, setOpen] = useState<Tab | null>(null);
   const [type, setType] = useState<MovementType>(
     props.movementTypes[0] ?? 'PURCHASE_RECEIPT',
@@ -51,6 +52,7 @@ export function StockActions(props: Props) {
   ];
   const hidden = (
     <>
+      <input type="hidden" name="requestId" value={requestId} />
       <input type="hidden" name="variantId" value={props.variantId} />
       <input type="hidden" name="locationId" value={props.locationId} />
     </>
@@ -66,7 +68,10 @@ export function StockActions(props: Props) {
               key={tab.id}
               type="button"
               aria-expanded={open === tab.id}
-              onClick={() => setOpen(open === tab.id ? null : tab.id)}
+              onClick={() => {
+                setRequestId(crypto.randomUUID());
+                setOpen(open === tab.id ? null : tab.id);
+              }}
               className={`border px-3 py-2 text-[0.625rem] font-semibold tracking-[0.14em] uppercase transition-colors ${
                 open === tab.id
                   ? 'border-ink bg-ink text-ivory'
@@ -81,6 +86,7 @@ export function StockActions(props: Props) {
       {open === 'movement' && (
         <form
           onSubmit={movement.onSubmit}
+          onChange={() => setRequestId(crypto.randomUUID())}
           className="panel-card grid w-full min-w-[18rem] gap-3 text-left sm:w-[26rem]"
         >
           {hidden}
@@ -139,6 +145,7 @@ export function StockActions(props: Props) {
       {open === 'stocktake' && (
         <form
           onSubmit={stocktake.onSubmit}
+          onChange={() => setRequestId(crypto.randomUUID())}
           className="panel-card grid w-full min-w-[18rem] gap-3 text-left sm:w-[26rem]"
         >
           {hidden}

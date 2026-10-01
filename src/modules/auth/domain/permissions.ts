@@ -39,16 +39,19 @@ export type Permission = (typeof PERMISSIONS)[number];
 export type AuthenticatorLevel = 'aal1' | 'aal2';
 
 /** Permisos que exigen sesión con MFA verificada (aal2) además del rol. */
-export const AAL2_PERMISSIONS: ReadonlySet<Permission> = new Set([
-  'pricing.edit_retail',
-  'pricing.view_cost',
-  'pricing.edit_cost',
-  'purchasing.manage',
-  'orders.refund',
-  'customers.manage',
-  'settings.manage',
-  'staff.manage',
-]);
+export const AAL2_PERMISSIONS: ReadonlySet<Permission> = new Set(
+  PERMISSIONS.filter(
+    (permission) =>
+      ![
+        'inventory.view',
+        'orders.view',
+        'messages.view',
+        'agent.use',
+        'reports.view',
+        'customers.view',
+      ].includes(permission),
+  ),
+);
 
 /** Administrador de la tienda: toda la operación diaria, sin personal ni configuración. */
 const STORE_ADMIN: readonly Permission[] = PERMISSIONS.filter(

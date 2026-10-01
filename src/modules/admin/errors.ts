@@ -3,6 +3,17 @@
  * Las funciones SQL lanzan códigos cortos (p. ej. «negative_on_hand»).
  */
 const MESSAGES: Record<string, string> = {
+  invalid_content: 'Revisa los textos, enlaces y procedencia de la imagen.',
+  invalid_media: 'La imagen ya no pertenece a este perfume. Recarga la ficha.',
+  invalid_previous_price:
+    'El precio anterior no cumple el historial de precios. Vuelve a revisar.',
+  last_admin: 'Debe quedar al menos un administrador del sistema activo.',
+  edit_conflict:
+    'Otra persona ha cambiado los datos. Recarga y vuelve a revisar.',
+  review_expired: 'La revisión ha caducado. Vuelve a revisar.',
+  invalid_review: 'La revisión no es válida para esta sesión.',
+  confirmations_required: 'Faltan confirmaciones de la revisión.',
+  rate_limited: 'Espera un minuto antes de volver a enviar.',
   forbidden: 'No tienes permiso para esta acción.',
   forbidden_publish: 'No tienes permiso para publicar o retirar perfumes.',
   forbidden_price_change:

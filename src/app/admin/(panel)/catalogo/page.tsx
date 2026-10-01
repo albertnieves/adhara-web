@@ -5,7 +5,10 @@ import { formatEuros } from '@/lib/money';
 import { PageHeader, StatusBadge } from '@/modules/admin';
 import { isAllowed } from '@/modules/auth';
 import { requirePermission } from '@/modules/auth/server';
-import { listAdminProducts } from '@/modules/catalog/server/admin';
+import {
+  getVariantCosts,
+  listAdminProducts,
+} from '@/modules/catalog/server/admin';
 import { enterStorefrontPreview } from '@/modules/storefront/server/preview';
 
 export const metadata: Metadata = { title: 'Catálogo' };
@@ -24,10 +27,10 @@ function normalize(text: string) {
 export default async function CatalogAdmin({
   searchParams,
 }: {
-  searchParams: Promise<{ estado?: string; q?: string }>;
+  searchParams: Promise<{ estado?: string; q?: string; pendiente?: string }>;
 }) {
   const staff = await requirePermission('catalog.edit');
-  const { estado = '', q = '' } = await searchParams;
+  const { estado = '', q = '', pendiente = '' } = await searchParams;
   const canStock = isAllowed(
     { role: staff.role, aal: 'aal2' },
     'inventory.view',
@@ -37,9 +40,33 @@ export default async function CatalogAdmin({
     'pricing.edit_retail',
   );
   const all = await listAdminProducts(staff.supabase, canStock);
+  const costs =
+    pendiente === 'coste' &&
+    isAllowed({ role: staff.role, aal: 'aal2' }, 'pricing.view_cost')
+      ? await getVariantCosts(
+          staff.supabase,
+          all.flatMap((p) => p.variants.map((v) => v.id)),
+        )
+      : null;
   const needle = normalize(q.trim());
   const products = all
     .filter((p) => !estado || p.status === estado)
+    .filter(
+      (p) =>
+        !pendiente ||
+        (p.status !== 'archived' &&
+          (pendiente === 'precio'
+            ? p.variants.filter((v) => v.active).length === 0 ||
+              p.variants.some((v) => v.active && v.priceCents === null)
+            : pendiente === 'imagen'
+              ? !p.heroUrl
+              : pendiente === 'traducciones'
+                ? p.missingTranslations.length > 0
+                : pendiente === 'coste'
+                  ? costs !== null &&
+                    p.variants.some((v) => v.active && !costs.has(v.id))
+                  : true)),
+    )
     .filter(
       (p) => !needle || normalize(`${p.name} ${p.brandName}`).includes(needle),
     );
@@ -84,6 +111,17 @@ export default async function CatalogAdmin({
       </PageHeader>
 
       <form className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        {pendiente && (
+          <>
+            <input type="hidden" name="pendiente" value={pendiente} />
+            <p className="text-sm">
+              Pendiente: {pendiente} ·{' '}
+              <Link href="/admin/catalogo" className="link-underline">
+                Quitar filtro
+              </Link>
+            </p>
+          </>
+        )}
         <nav aria-label="Estado" className="flex flex-wrap gap-2">
           {FILTERS.map((filter) => {
             const count = filter.value
@@ -93,6 +131,7 @@ export default async function CatalogAdmin({
             const params = new URLSearchParams();
             if (filter.value) params.set('estado', filter.value);
             if (q) params.set('q', q);
+            if (pendiente) params.set('pendiente', pendiente);
             return (
               <Link
                 key={filter.value}

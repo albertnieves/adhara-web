@@ -1,5 +1,3 @@
-// Generado desde adhara-dev con el conector de Supabase (generate_typescript_types).
-// No editar a mano: regenerar tras cada migración.
 export type Json =
   | string
   | number
@@ -9,11 +7,6 @@ export type Json =
   | Json[];
 
 export type Database = {
-  // Allows to automatically instantiate createClient with right options
-  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
-  __InternalSupabase: {
-    PostgrestVersion: '14.18';
-  };
   public: {
     Tables: {
       audit_log: {
@@ -494,6 +487,30 @@ export type Database = {
         };
         Relationships: [];
       };
+      store_content: {
+        Row: {
+          kind: string;
+          locale: string;
+          payload: NonNullable<Json>;
+          published_at: string;
+          revision: number;
+        };
+        Insert: {
+          kind: string;
+          locale: string;
+          payload: NonNullable<Json>;
+          published_at?: string;
+          revision: number;
+        };
+        Update: {
+          kind?: string;
+          locale?: string;
+          payload?: NonNullable<Json>;
+          published_at?: string;
+          revision?: number;
+        };
+        Relationships: [];
+      };
       store_sale_lines: {
         Row: {
           movement_id: number;
@@ -583,6 +600,10 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
+      admin_apply_price_review: {
+        Args: { p_confirmed: string[]; p_review_id: string };
+        Returns: string;
+      };
       admin_assign_supplier_brand: {
         Args: {
           p_brand_id?: string;
@@ -591,6 +612,7 @@ export type Database = {
         };
         Returns: number;
       };
+      admin_cancel_invite: { Args: { p_email: string }; Returns: undefined };
       admin_create_purchase_order: {
         Args: {
           p_expected_on?: string;
@@ -605,35 +627,43 @@ export type Database = {
         Args: { p_order_id: string; p_revision: number };
         Returns: undefined;
       };
+      admin_get_content: {
+        Args: { p_kind: string; p_locale: string };
+        Returns: Json;
+      };
       admin_grant_staff: {
         Args: { p_display_name?: string; p_email: string; p_role: string };
         Returns: string;
       };
+      admin_inventory_once: {
+        Args: { p_input: Json; p_request_id: string };
+        Returns: Json;
+      };
       admin_list_purchase_orders: {
         Args: { p_order_id?: string; p_status?: string };
         Returns: {
-          closed_at: string | null;
+          closed_at: string;
           created_at: string;
-          expected_on: string | null;
+          expected_on: string;
           id: string;
           line_count: number;
           location_id: string;
           location_name: string;
-          notes: string | null;
+          notes: string;
           number: string;
-          ordered_at: string | null;
+          ordered_at: string;
           revision: number;
           status: string;
           supplier_id: string;
           supplier_name: string;
-          supplier_reference: string | null;
-          total_cost_net_cents: number | null;
+          supplier_reference: string;
+          total_cost_net_cents: number;
           units_ordered: number;
           units_received: number;
         }[];
       };
       admin_list_staff: {
-        Args: never;
+        Args: Record<PropertyKey, never>;
         Returns: {
           active: boolean;
           created_at: string;
@@ -645,42 +675,59 @@ export type Database = {
         }[];
       };
       admin_list_suppliers: {
-        Args: never;
+        Args: Record<PropertyKey, never>;
         Returns: {
           active: boolean;
-          contact_name: string | null;
+          contact_name: string;
           created_at: string;
-          email: string | null;
+          email: string;
           id: string;
-          lead_time_days: number | null;
+          lead_time_days: number;
           name: string;
-          notes: string | null;
+          notes: string;
           open_orders: number;
-          phone: string | null;
+          phone: string;
           variant_count: number;
         }[];
+      };
+      admin_pending_invites: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          created_at: string;
+          display_name: string;
+          email: string;
+          role: string;
+        }[];
+      };
+      admin_prepare_invite: {
+        Args: { p_display_name: string; p_email: string; p_role: string };
+        Returns: undefined;
+      };
+      admin_publish_content: {
+        Args: { p_expected: number; p_kind: string; p_locale: string };
+        Returns: undefined;
       };
       admin_purchase_order_lines: {
         Args: { p_order_id: string };
         Returns: {
           line_id: number;
           line_position: number;
-          pack_size: number | null;
+          pack_size: number;
           quantity_ordered: number;
           quantity_received: number;
-          supplier_sku: string | null;
-          unit_cost_net_cents: number | null;
+          supplier_sku: string;
+          unit_cost_net_cents: number;
           variant_id: string;
         }[];
       };
       admin_purchase_order_receipts: {
         Args: { p_order_id: string };
         Returns: {
-          actor_name: string | null;
+          actor_name: string;
           at: string;
           costs_recorded: number;
           receipt_id: number;
-          reference: string | null;
+          reference: string;
           units: number;
         }[];
       };
@@ -787,10 +834,7 @@ export type Database = {
         };
         Returns: string;
       };
-      admin_record_variant_costs: {
-        Args: { p_items: Json };
-        Returns: number;
-      };
+      admin_record_variant_costs: { Args: { p_items: Json }; Returns: number };
       admin_remove_supplier_variant: {
         Args: { p_supplier_id: string; p_variant_id: string };
         Returns: undefined;
@@ -799,13 +843,13 @@ export type Database = {
         Args: { p_from: string; p_location_id: string; p_to: string };
         Returns: {
           adjusted_units: number;
-          closing_cost_is_later: boolean | null;
-          closing_cost_net_cents: number | null;
+          closing_cost_is_later: boolean;
+          closing_cost_net_cents: number;
           closing_units: number;
-          last_sale_at: string | null;
+          last_sale_at: string;
           lost_units: number;
-          opening_cost_is_later: boolean | null;
-          opening_cost_net_cents: number | null;
+          opening_cost_is_later: boolean;
+          opening_cost_net_cents: number;
           opening_units: number;
           received_units: number;
           returned_units: number;
@@ -817,9 +861,9 @@ export type Database = {
       admin_report_purchases: {
         Args: { p_from: string; p_to: string };
         Returns: {
-          avg_lead_time_days: number | null;
-          declared_lead_time_days: number | null;
-          max_lead_time_days: number | null;
+          avg_lead_time_days: number;
+          declared_lead_time_days: number;
+          max_lead_time_days: number;
           orders_placed: number;
           orders_with_lead: number;
           receipts: number;
@@ -828,9 +872,38 @@ export type Database = {
           supplier_name: string;
           units_ordered: number;
           units_received: number;
-          units_received_without_cost: number | null;
-          value_received_net_cents: number | null;
+          units_received_without_cost: number;
+          value_received_net_cents: number;
         }[];
+      };
+      admin_restore_content: {
+        Args: {
+          p_expected: number;
+          p_kind: string;
+          p_locale: string;
+          p_revision_id: number;
+        };
+        Returns: number;
+      };
+      admin_review_price: {
+        Args: {
+          p_compare_at: number;
+          p_cost: number;
+          p_expected: string;
+          p_price: number;
+          p_required: string[];
+          p_variant_id: string;
+        };
+        Returns: string;
+      };
+      admin_save_content: {
+        Args: {
+          p_expected: number;
+          p_kind: string;
+          p_locale: string;
+          p_payload: Json;
+        };
+        Returns: number;
       };
       admin_save_supplier: {
         Args: {
@@ -854,6 +927,10 @@ export type Database = {
           p_supplier_sku?: string;
           p_variant_id: string;
         };
+        Returns: undefined;
+      };
+      admin_set_primary_media: {
+        Args: { p_media_id: string; p_product_id: string };
         Returns: undefined;
       };
       admin_set_purchase_order_lines: {
@@ -884,14 +961,14 @@ export type Database = {
       admin_stock_watch_facts: {
         Args: { p_location_id: string };
         Returns: {
-          first_stocked_at: string | null;
+          first_stocked_at: string;
           has_supplier: boolean;
           incoming_units: number;
-          last_sale_at: string | null;
-          lead_time_days: number | null;
+          last_sale_at: string;
+          lead_time_days: number;
           ledger_on_hand: number;
           ledger_reserved: number;
-          pack_size: number | null;
+          pack_size: number;
           units_sold: number;
           variant_id: string;
         }[];
@@ -899,14 +976,14 @@ export type Database = {
       admin_supplier_terms: {
         Args: { p_supplier_id?: string; p_variant_ids?: string[] };
         Returns: {
-          effective_lead_time_days: number | null;
-          lead_time_days: number | null;
+          effective_lead_time_days: number;
+          lead_time_days: number;
           pack_size: number;
           preferred: boolean;
           supplier_active: boolean;
           supplier_id: string;
           supplier_name: string;
-          supplier_sku: string | null;
+          supplier_sku: string;
           variant_id: string;
         }[];
       };
@@ -928,7 +1005,7 @@ export type Database = {
         Args: { p_variant_ids: string[] };
         Returns: {
           cost_net_cents: number;
-          note: string | null;
+          note: string;
           recorded_at: string;
           variant_id: string;
         }[];
@@ -967,3 +1044,126 @@ export type Database = {
     };
   };
 };
+
+type DatabaseWithoutInternals = Omit<Database, '__InternalSupabase'>;
+
+type DefaultSchema = DatabaseWithoutInternals[Extract<
+  keyof Database,
+  'public'
+>];
+
+export type Tables<
+  DefaultSchemaTableNameOrOptions extends
+    | keyof (DefaultSchema['Tables'] & DefaultSchema['Views'])
+    | { schema: keyof DatabaseWithoutInternals },
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals;
+  }
+    ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables'] &
+        DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Views'])
+    : never) = never,
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals;
+}
+  ? (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables'] &
+      DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Views'])[TableName] extends {
+      Row: infer R;
+    }
+    ? R
+    : never
+  : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema['Tables'] &
+        DefaultSchema['Views'])
+    ? (DefaultSchema['Tables'] &
+        DefaultSchema['Views'])[DefaultSchemaTableNameOrOptions] extends {
+        Row: infer R;
+      }
+      ? R
+      : never
+    : never;
+
+export type TablesInsert<
+  DefaultSchemaTableNameOrOptions extends
+    keyof DefaultSchema['Tables'] | { schema: keyof DatabaseWithoutInternals },
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals;
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables']
+    : never) = never,
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals;
+}
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables'][TableName] extends {
+      Insert: infer I;
+    }
+    ? I
+    : never
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema['Tables']
+    ? DefaultSchema['Tables'][DefaultSchemaTableNameOrOptions] extends {
+        Insert: infer I;
+      }
+      ? I
+      : never
+    : never;
+
+export type TablesUpdate<
+  DefaultSchemaTableNameOrOptions extends
+    keyof DefaultSchema['Tables'] | { schema: keyof DatabaseWithoutInternals },
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals;
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables']
+    : never) = never,
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals;
+}
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables'][TableName] extends {
+      Update: infer U;
+    }
+    ? U
+    : never
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema['Tables']
+    ? DefaultSchema['Tables'][DefaultSchemaTableNameOrOptions] extends {
+        Update: infer U;
+      }
+      ? U
+      : never
+    : never;
+
+export type Enums<
+  DefaultSchemaEnumNameOrOptions extends
+    keyof DefaultSchema['Enums'] | { schema: keyof DatabaseWithoutInternals },
+  EnumName extends (DefaultSchemaEnumNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals;
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions['schema']]['Enums']
+    : never) = never,
+> = DefaultSchemaEnumNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals;
+}
+  ? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions['schema']]['Enums'][EnumName]
+  : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema['Enums']
+    ? DefaultSchema['Enums'][DefaultSchemaEnumNameOrOptions]
+    : never;
+
+export type CompositeTypes<
+  PublicCompositeTypeNameOrOptions extends
+    | keyof DefaultSchema['CompositeTypes']
+    | { schema: keyof DatabaseWithoutInternals },
+  CompositeTypeName extends (PublicCompositeTypeNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals;
+  }
+    ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions['schema']]['CompositeTypes']
+    : never) = never,
+> = PublicCompositeTypeNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals;
+}
+  ? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions['schema']]['CompositeTypes'][CompositeTypeName]
+  : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema['CompositeTypes']
+    ? DefaultSchema['CompositeTypes'][PublicCompositeTypeNameOrOptions]
+    : never;
+
+export const Constants = {
+  public: {
+    Enums: {},
+  },
+} as const;

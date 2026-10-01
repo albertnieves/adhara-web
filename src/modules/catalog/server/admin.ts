@@ -18,6 +18,7 @@ export type AdminProductRow = {
   concentration: string | null;
   brandName: string;
   heroUrl: string | null;
+  missingTranslations: string[];
   variants: {
     id: string;
     label: string;
@@ -42,7 +43,7 @@ export async function listAdminProducts(
     supabase
       .from('products')
       .select(
-        'id, slug, name, status, featured, concentration, position, updated_at, brand:brands!inner(name), variants:product_variants(id, label, size_ml, retail_price_cents, active, position), media:product_media(url, role, position)',
+        'id, slug, name, status, featured, concentration, position, updated_at, brand:brands!inner(name), variants:product_variants(id, label, size_ml, retail_price_cents, active, position), media:product_media(url, role, position), translations:product_translations(locale, description)',
       )
       .order('position')
       .order('name')
@@ -81,6 +82,12 @@ export async function listAdminProducts(
       concentration: row.concentration,
       brandName: row.brand.name,
       heroUrl: hero?.url ?? null,
+      missingTranslations: ['es', 'ca', 'en'].filter(
+        (locale) =>
+          !row.translations.some(
+            (t) => t.locale === locale && t.description?.trim(),
+          ),
+      ),
       variants: variants.map((v) => ({
         id: v.id,
         label: label(v),

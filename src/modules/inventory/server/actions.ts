@@ -78,21 +78,26 @@ export async function recordMovement(
   ) {
     return fail(describeDbError({ message: preview.error }));
   }
-  const { data, error } = await staff.supabase.rpc(
-    'admin_record_inventory_movement',
-    {
-      p_variant_id: m.variantId,
-      p_location_id: m.locationId,
-      p_type: type,
-      p_quantity: quantity,
-      p_reason: m.reason || undefined,
-      p_reference: m.reference || undefined,
+  const requestId = z.uuid().safeParse(formData.get('requestId'));
+  if (!requestId.success)
+    return fail('Abre de nuevo el movimiento antes de registrar.');
+  const { data, error } = await staff.supabase.rpc('admin_inventory_once', {
+    p_request_id: requestId.data,
+    p_input: {
+      kind: 'movement',
+      variantId: m.variantId,
+      locationId: m.locationId,
+      type,
+      quantity,
+      reason: m.reason,
+      reference: m.reference,
     },
-  );
+  });
   if (error) return fail(describeDbError(error));
+  const result = z.object({ on_hand_after: z.number() }).parse(data);
   refresh();
   return ok(
-    `${MOVEMENT_LABELS[type]} registrada. Quedan ${data.on_hand_after} uds.`,
+    `${MOVEMENT_LABELS[type]} registrada. Quedan ${result.on_hand_after} uds.`,
   );
 }
 
@@ -116,19 +121,35 @@ export async function recordStocktake(
   });
   if (!parsed.success) return fail('El recuento debe ser un número entero.');
   const s = parsed.data;
-  const { data, error } = await supabase.rpc('admin_record_stocktake', {
-    p_variant_id: s.variantId,
-    p_location_id: s.locationId,
-    p_counted: s.counted,
-    p_reason: s.reason || undefined,
+  const requestId = z.uuid().safeParse(formData.get('requestId'));
+  if (!requestId.success)
+    return fail('Abre de nuevo el recuento antes de registrar.');
+  const { data: raw, error } = await supabase.rpc('admin_inventory_once', {
+    p_request_id: requestId.data,
+    p_input: {
+      kind: 'stocktake',
+      variantId: s.variantId,
+      locationId: s.locationId,
+      counted: s.counted,
+      reason: s.reason,
+    },
   });
   if (error) return fail(describeDbError(error));
+  const data = raw
+    ? z
+        .object({
+          id: z.number().nullable(),
+          quantity: z.number().nullable(),
+          on_hand_after: z.number().nullable(),
+        })
+        .parse(raw)
+    : null;
   refresh();
   // Sin diferencia la función no crea movimiento.
   if (!data || data.id == null)
     return ok('Recuento correcto: coincide con el stock.');
   return ok(
-    `Recuento registrado: ${data.quantity > 0 ? '+' : ''}${data.quantity} uds. Quedan ${data.on_hand_after}.`,
+    `Recuento registrado: ${(data.quantity ?? 0) > 0 ? '+' : ''}${data.quantity} uds. Quedan ${data.on_hand_after}.`,
   );
 }
 

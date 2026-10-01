@@ -8,10 +8,13 @@ import {
 } from '@/modules/admin';
 import { ROLE_LABELS } from '../domain/labels';
 import { STAFF_ROLES } from '../domain/permissions';
+import { inviteStaff } from '../server/invitations';
 import { grantStaff, setStaffActive } from '../server/staff';
 
-export function GrantStaffForm() {
-  const { state, pending, onSubmit } = useAdminAction(grantStaff);
+export function GrantStaffForm({ invite = false }: { invite?: boolean }) {
+  const { state, pending, onSubmit } = useAdminAction(
+    invite ? inviteStaff : grantStaff,
+  );
   return (
     <form onSubmit={onSubmit} className="panel-card grid gap-4 md:grid-cols-3">
       <Field label="Email de la cuenta">
@@ -30,7 +33,9 @@ export function GrantStaffForm() {
         </select>
       </Field>
       <div className="flex flex-wrap items-center gap-3 md:col-span-3">
-        <SubmitButton pending={pending}>Dar acceso</SubmitButton>
+        <SubmitButton pending={pending}>
+          {invite ? 'Enviar invitación' : 'Dar acceso'}
+        </SubmitButton>
         <FormMessage state={state} />
       </div>
     </form>
