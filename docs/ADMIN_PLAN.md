@@ -204,3 +204,7 @@ La bandeja básica de mensajes (A6.1) puede adelantarse a pedidos porque solo de
 | 8   | Confirmar Claude como proveedor de IA y el tratamiento de datos                            | A4.2 |
 | 9   | Canales de mensajes, número de WhatsApp Business y tiempo de respuesta                     | A6   |
 | 10  | Proveedor de email transaccional                                                           | A5   |
+
+## Entrega complementaria (01/10/2026)
+
+Acceso, contenido y operaciones seguras se implementan en `codex/admin-delivery-foundation`, sobre las fases R/S de la PR #9. Ver `docs/DELIVERY_REPORT.md` y `docs/ADMIN_OPERATIONS.md`. La implementación local no cierra el alta de MFA de los titulares, la validación remota ni la Fase 1.

@@ -91,7 +91,8 @@
     "shop": "Shop",
     "info": "Information",
     "dev": "Website in development: provisional content and images.",
-    "rights": "© {year} L’Atelier du Désert"
+    "rights": "© {year} L’Atelier du Désert",
+    "staffAccess": "Staff access"
   },
   "notFound": {
     "title": "This page does not exist",

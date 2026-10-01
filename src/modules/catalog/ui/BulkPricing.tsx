@@ -320,6 +320,14 @@ export function BulkPricing({
             {/* Solo se envían las filas marcadas y con todo confirmado. */}
             {ready.map((row) => (
               <input
+                key={`review-${row.variantId}`}
+                type="hidden"
+                name={`review:${row.variantId}`}
+                value={row.reviewId ?? ''}
+              />
+            ))}
+            {ready.map((row) => (
+              <input
                 key={row.variantId}
                 type="hidden"
                 name="row"

@@ -60,3 +60,7 @@ Sin Docker, las pruebas se ejecutan contra `adhara-dev` con `tests/tap_remote.py
 - `config.toml` y Supabase local con la CLI cuando haya Docker disponible; añadir las pruebas pgTAP a la CI.
 - Resto de migraciones de la Fase 1: taxonomía (familias, notas) y procedencia del research. Proveedores: fase R.
 - Aplicar `20260930224000_purchasing_counter_replenishment.sql` y `20261001090000_reports.sql` en `adhara-dev` al fusionar (renombrar con la versión real) y regenerar `src/lib/supabase/database.types.ts`; ejecutar `04_purchasing_counter` y `05_reports` con `tap_remote.py`.
+
+## Entrega de administración
+
+Cuatro migraciones adicionales: `20260930220818` MFA/último administrador, `20260930220820` ediciones/PVP/stock/media, `20260930220822` contenido/editorial y `20260930220824` invitaciones. Son complementarias a las fases R/S y aún no se han aplicado remotamente. CLI local fijada, comandos y tipos en `docs/ADMIN_LOCAL_VALIDATION.md`; aplicación y reversión en `docs/DELIVERY_REPORT.md`.

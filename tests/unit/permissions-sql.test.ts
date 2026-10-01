@@ -15,6 +15,19 @@ const sql = readFileSync(
   'utf8',
 );
 
+const guards = readFileSync(
+  new URL(
+    '../../supabase/migrations/20260930220818_admin_mfa_guards.sql',
+    import.meta.url,
+  ),
+  'utf8',
+);
+const allowedAal1 = [
+  ...(guards.match(/where code not in \(([^)]+)\)/)?.[1] ?? '').matchAll(
+    /'([^']+)'/g,
+  ),
+].map((match) => match[1]);
+
 function valuesOf(table: string): string[][] {
   const block = sql.split(`insert into public.${table}`)[1]?.split(';')[0];
   if (!block) throw new Error(`Sin datos para ${table}`);
@@ -30,7 +43,9 @@ describe('la migración refleja la matriz de permisos del código', () => {
     const rows = valuesOf('permissions');
     expect(rows.map(([code]) => code)).toEqual([...PERMISSIONS]);
     expect(
-      rows.filter(([, aal2]) => aal2 === 'true').map(([code]) => code),
+      rows
+        .filter(([code]) => !allowedAal1.includes(code!))
+        .map(([code]) => code),
     ).toEqual(PERMISSIONS.filter((code) => AAL2_PERMISSIONS.has(code)));
   });
 

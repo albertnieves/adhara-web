@@ -1,6 +1,6 @@
 # L’Atelier du Désert · adhara-web
 
-Ecommerce de perfumería árabe **L’Atelier du Désert** («Haute Parfumerie Orientale»). El repositorio y los proyectos de Supabase y Vercel conservan el nombre de trabajo `adhara`. **En desarrollo; Fase 1 todavía incompleta.** Tienda visual en es/ca/en con escena 3D de unboxing y panel de administración con catálogo, precios, inventario y equipo sobre Supabase (`adhara-dev`). El catálogo real está cargado como borradores con foto, pendiente de formatos, costes y PVP; sin checkout todavía (docs/STATUS.md).
+Ecommerce de perfumería árabe **L’Atelier du Désert** («Haute Parfumerie Orientale»). El repositorio y los proyectos de Supabase y Vercel conservan el nombre de trabajo `adhara`. **En desarrollo; Fase 1 todavía incompleta.** Tienda visual en es/ca/en con escena 3D de unboxing y panel de administración con catálogo, precios, inventario y equipo sobre Supabase (`adhara-dev`). El entorno de desarrollo tiene 50 perfumes publicados y el resto pendiente de completar; sin checkout todavía (docs/STATUS.md).
 
 ## Arranque
 
@@ -38,3 +38,7 @@ pnpm format:check
 ## Continuar con Codex
 
 Abrir esta carpeta como proyecto y pedir: «Lee AGENTS.md y docs/STATUS.md y continúa con el siguiente bloque de fundaciones». Consultar [desarrollo](docs/DEVELOPMENT.md), [panel de administración](docs/ADMIN_PLAN.md), [habilidades](docs/SKILLS.md), [decisiones](docs/DECISIONS.md) y [estado](docs/STATUS.md).
+
+## Entrega de administración
+
+Esta rama complementa la PR #9 con acceso, borradores/publicación de portada y datos de tienda, revisiones de PVP y protección frente a conflictos y reintentos. Requiere cuatro migraciones nuevas antes de conectarse al entorno remoto. Consultar [guía del panel](docs/ADMIN_OPERATIONS.md), [validación local](docs/ADMIN_LOCAL_VALIDATION.md) e [informe de entrega](docs/DELIVERY_REPORT.md).

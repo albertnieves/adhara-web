@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { AuthError, AuthScreen, Field } from '@/modules/admin';
 import { signIn } from '@/modules/auth/server';
 
@@ -40,6 +41,9 @@ export default async function AdminLogin({
           Entrar
         </button>
       </form>
+      <Link href="/admin/recuperar" className="link-underline text-sm">
+        He olvidado mi contraseña
+      </Link>
     </AuthScreen>
   );
 }

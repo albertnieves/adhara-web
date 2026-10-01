@@ -7,6 +7,7 @@ import {
   useTransform,
 } from 'motion/react';
 import { useRef } from 'react';
+import Image from 'next/image';
 import { Star } from '@/modules/brand';
 import { Link } from '@/modules/i18n';
 
@@ -34,12 +35,16 @@ export function Hero({
   lead,
   cta,
   scroll,
+  imageUrl,
+  imageAlt,
 }: {
   eyebrow: string;
   title: string;
   lead: string;
   cta: string;
   scroll: string;
+  imageUrl?: string;
+  imageAlt?: string;
 }) {
   const reduced = useReducedMotion();
   const ref = useRef<HTMLElement>(null);
@@ -58,6 +63,19 @@ export function Hero({
       ref={ref}
       className="bg-night text-ivory grain relative isolate flex min-h-svh items-center justify-center overflow-hidden"
     >
+      {imageUrl && (
+        <div className="absolute inset-0 -z-10">
+          <Image
+            src={imageUrl}
+            alt={imageAlt ?? ''}
+            fill
+            unoptimized
+            sizes="100vw"
+            className="object-cover opacity-30"
+          />
+          <div className="absolute inset-0 bg-black/30" />
+        </div>
+      )}
       {/* Resplandor cálido que respira. */}
       <motion.div
         aria-hidden

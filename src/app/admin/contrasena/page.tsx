@@ -1,3 +1,4 @@
+import { redirect } from 'next/navigation';
 import { AuthError, AuthScreen, Field } from '@/modules/admin';
 import {
   requireStaffSessionAnyLevel,
@@ -9,7 +10,11 @@ export default async function AdminPassword({
 }: {
   searchParams: Promise<{ error?: string }>;
 }) {
-  const { email } = await requireStaffSessionAnyLevel();
+  const { email, supabase } = await requireStaffSessionAnyLevel();
+  const { data: assurance } =
+    await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+  if (assurance?.nextLevel === 'aal2' && assurance.currentLevel !== 'aal2')
+    redirect('/admin/mfa?next=contrasena');
   const { error } = await searchParams;
   return (
     <AuthScreen title="Elige tu contraseña">

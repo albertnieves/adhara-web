@@ -33,6 +33,12 @@ const SECTIONS: (NavItem & { permission?: Permission })[] = [
   },
   { href: '/admin/compras', label: 'Compras', permission: 'purchasing.manage' },
   { href: '/admin/informes', label: 'Informes', permission: 'reports.view' },
+  { href: '/admin/contenido', label: 'Contenido', permission: 'content.edit' },
+  {
+    href: '/admin/configuracion',
+    label: 'Configuración',
+    permission: 'settings.manage',
+  },
   { href: '/admin/equipo', label: 'Equipo', permission: 'staff.manage' },
   { href: '/admin/pedidos', label: 'Pedidos', soon: true },
   { href: '/admin/mensajes', label: 'Mensajes', soon: true },
@@ -57,12 +63,12 @@ export default async function PanelLayout({
 
   return (
     <div className="min-h-screen lg:grid lg:grid-cols-[15rem_1fr] print:block print:min-h-0">
-      <aside className="bg-night text-ivory relative flex items-center justify-between px-5 py-4 lg:sticky lg:top-0 lg:h-screen lg:flex-col lg:items-stretch lg:justify-start lg:gap-10 lg:px-4 lg:py-8 print:hidden">
+      <aside className="bg-night text-ivory relative flex flex-wrap items-center justify-between gap-4 px-5 py-4 lg:sticky lg:top-0 lg:h-screen lg:flex-col lg:items-stretch lg:justify-start lg:gap-10 lg:px-4 lg:py-8 print:hidden">
         <Link href="/admin" className="lg:px-3" aria-label="Inicio del panel">
           <Logo className="text-[14px]" />
         </Link>
         <PanelNav items={items} />
-        <div className="hidden lg:mt-auto lg:flex lg:flex-col lg:items-start lg:gap-3 lg:px-3">
+        <div className="flex flex-wrap gap-3 lg:mt-auto lg:flex-col lg:items-start lg:px-3">
           {canPreview && (
             <form action={enterStorefrontPreview}>
               <button

@@ -2,6 +2,12 @@
 
 **Tienda visual (es/ca/en) y panel de administración operativos sobre `adhara-dev`, verificados en local y fusionados en `main` el 30/09 (PR #6) y desplegados en Vercel, que sigue siendo privado (Vercel Authentication). Desde el 30/09 la tienda muestra **50 perfumes publicados con PVP**: los 4 del piloto con su escena 3D y 46 de la compra a Orient Fragance, con 20 uds de cada uno en inventario. La Fase 1 completa sigue pendiente: falta importar los formatos y costes del resto del catálogo (el CSV ya está preparado), la verificación en dos pasos de las cuentas del personal y los criterios de la Fase 1 que se listan al final.**
 
+## Entrega complementaria de administración (01/10)
+
+La rama `codex/admin-delivery-foundation` integra localmente la PR #9 (`f95c370`) y añade edición de portada/configuración, invitación y recuperación, MFA en escrituras SQL, revisiones de precios, control de versiones e idempotencia de stock. Dirección confirmada: Carrer de Pompeu Fabra 1. Evidencia y pendientes en [DELIVERY_REPORT.md](DELIVERY_REPORT.md); guía en [ADMIN_OPERATIONS.md](ADMIN_OPERATIONS.md).
+
+**No desplegado todavía.** Consulta real de solo lectura del 01/10: `adhara-dev` saludable, diez migraciones anteriores, un `system_admin` y un `store_admin` activos, ambos sin MFA verificado. Activación por los titulares, correo real, migraciones remotas y Preview siguen pendientes. No se han modificado sus cuentas ni los datos comerciales. La Fase 1 sigue incompleta.
+
 ## Qué funciona
 
 ### Tienda
@@ -77,7 +83,7 @@ Todas son provisionales (`provisional = true`) y guardan su procedencia: `origin
 
 ### Despliegue
 
-Vercel `adhara-web` (equipo SOAPBRXND, Hobby), funciones en París (cdg1), todos los despliegues protegidos con Vercel Authentication. Variables públicas de Supabase (`adhara-dev`) configuradas para Preview, Production y Development. `main` (producción) sigue en el commit 5a444ce: el trabajo nuevo está en la Preview del PR #6 hasta que se fusione.
+Vercel `adhara-web` (equipo SOAPBRXND, Hobby), funciones en París (cdg1), todos los despliegues protegidos con Vercel Authentication. Variables públicas de Supabase (`adhara-dev`) configuradas para Preview, Production y Development. `main` revisado está en `effd709` (PR #8). La PR #9 y esta entrega complementaria siguen separadas de producción.
 
 ## Validación ejecutada (29–30/09/2026)
 

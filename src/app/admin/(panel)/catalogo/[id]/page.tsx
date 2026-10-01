@@ -200,6 +200,7 @@ export default async function EditProduct({
             audience: product.audience,
             unboxingScene: product.unboxing_scene,
             sourceRef: product.source_ref,
+            updatedAt: product.updated_at,
             featured: product.featured,
             position: product.position,
           }}

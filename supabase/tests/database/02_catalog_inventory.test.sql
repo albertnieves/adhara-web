@@ -45,10 +45,11 @@ grant execute on function pg_temp.location_id() to authenticated, anon;
 -- Precio y publicación
 set local role authenticated;
 select pg_temp.act_as('00000000-0000-4000-8000-000000000012', 'aal1');
-select throws_ok(
+select is_empty(
   $$update public.product_variants set retail_price_cents = 4990
-    where id = '00000000-0000-4000-8000-0000000000c1'$$,
-  '42501', 'forbidden_price_change', 'sin MFA no se cambia el PVP');
+    where id = '00000000-0000-4000-8000-0000000000c1' returning id$$,
+  'sin MFA no se cambia el PVP');
+select pg_temp.act_as('00000000-0000-4000-8000-000000000012', 'aal2');
 select throws_ok(
   $$update public.products set status = 'published'
     where id = '00000000-0000-4000-8000-0000000000a1'$$,
@@ -110,7 +111,7 @@ select throws_ok(
     'PURCHASE_RECEIPT', 5)$$,
   '42501', 'forbidden', 'viewer no recibe mercancía');
 
-select pg_temp.act_as('00000000-0000-4000-8000-000000000012', 'aal1');
+select pg_temp.act_as('00000000-0000-4000-8000-000000000012', 'aal2');
 select is(
   (select on_hand_after from public.admin_record_inventory_movement(
     '00000000-0000-4000-8000-0000000000c1', pg_temp.location_id(),

@@ -66,8 +66,14 @@ export default async function AdminHome() {
   const missingPrice = products.filter(
     (p) =>
       p.status !== 'archived' &&
-      (p.variants.length === 0 ||
-        p.variants.some((v) => v.priceCents === null)),
+      (p.variants.filter((v) => v.active).length === 0 ||
+        p.variants.some((v) => v.active && v.priceCents === null)),
+  );
+  const missingImages = products.filter(
+    (p) => p.status !== 'archived' && !p.heroUrl,
+  );
+  const missingTranslations = products.filter(
+    (p) => p.status !== 'archived' && p.missingTranslations.length > 0,
   );
   const low = stock.filter(
     (row) =>
@@ -103,15 +109,59 @@ export default async function AdminHome() {
     <main>
       <PageHeader eyebrow="Panel" title={`Hola, ${firstName}`} />
 
+      <nav
+        aria-label="Acciones frecuentes"
+        className="mb-8 flex flex-wrap gap-4"
+      >
+        {canCatalog && (
+          <Link className="btn btn-primary" href="/admin/catalogo">
+            Editar catálogo
+          </Link>
+        )}
+        {can('pricing.edit_retail') && (
+          <Link className="btn" href="/admin/catalogo/precios">
+            Revisar precios
+          </Link>
+        )}
+        {can('inventory.receive') && (
+          <Link className="btn" href="/admin/inventario">
+            Recibir mercancía
+          </Link>
+        )}
+        {can('content.edit') && (
+          <Link className="btn" href="/admin/contenido">
+            Editar portada
+          </Link>
+        )}
+      </nav>
       <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {canCatalog && (
           <>
-            <Stat label="Publicados" value={published} href="/admin/catalogo" />
-            <Stat label="Borradores" value={drafts} href="/admin/catalogo" />
+            <Stat
+              label="Publicados"
+              value={published}
+              href="/admin/catalogo?estado=published"
+            />
+            <Stat
+              label="Sin imagen"
+              value={missingImages.length}
+              href="/admin/catalogo?pendiente=imagen"
+            />
+            <Stat
+              label="Traducciones pendientes"
+              value={missingTranslations.length}
+              href="/admin/catalogo?pendiente=traducciones"
+              note="Perfumes con descripción pendiente en algún idioma"
+            />
+            <Stat
+              label="Borradores"
+              value={drafts}
+              href="/admin/catalogo?estado=draft"
+            />
             <Stat
               label="Sin PVP completo"
               value={missingPrice.length}
-              href="/admin/catalogo"
+              href="/admin/catalogo?pendiente=precio"
               tone={missingPrice.length ? 'alert' : 'default'}
             />
           </>
@@ -128,7 +178,7 @@ export default async function AdminHome() {
           <Stat
             label="Formatos sin coste"
             value={withoutCost}
-            href="/admin/catalogo"
+            href="/admin/catalogo?pendiente=coste"
             tone={withoutCost ? 'alert' : 'default'}
           />
         )}

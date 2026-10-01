@@ -2,6 +2,8 @@
 export type ActionState = {
   status: 'idle' | 'ok' | 'error' | 'confirm';
   message?: string;
+  reviewId?: string;
+  reviewedInput?: string;
   /** Avisos que hay que confirmar antes de repetir la acción (precios). */
   confirm?: { code: string; label: string }[];
 };

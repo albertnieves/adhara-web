@@ -23,6 +23,7 @@ const AUDIENCE_LABELS: Record<string, string> = {
 
 export type ProductFormValues = {
   id?: string;
+  updatedAt?: string;
   name: string;
   brandId: string;
   concentration: string | null;
@@ -48,6 +49,7 @@ export function ProductForm({
   const [newBrand, setNewBrand] = useState(brands.length === 0);
   return (
     <form onSubmit={onSubmit} className="grid gap-6 md:grid-cols-2">
+      <input type="hidden" name="expected" value={values.updatedAt ?? ''} />
       {values.id && <input type="hidden" name="id" value={values.id} />}
       <Field label="Nombre" className="md:col-span-2">
         <input

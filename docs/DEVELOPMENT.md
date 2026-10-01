@@ -22,3 +22,7 @@
 ## Flujo de trabajo
 
 Una tarea concreta por rama codex/<tema>. Describir comportamiento y criterios antes de implementar. Hacer pruebas proporcionadas al cambio y reportar las ejecutadas. La CI inicial solo valida el arranque técnico; ampliar a auth, RLS, costes y migraciones al implementarlos. No marcar controles futuros como aprobados.
+
+## Entrega de acceso y edición (01/10)
+
+La rama `codex/admin-delivery-foundation` se apoya en la PR #9 de Claude (`f95c370`), conserva las fases R/S y añade cuatro migraciones, edición de tienda y refuerzo de acceso/operaciones. Ver [entorno reproducible](ADMIN_LOCAL_VALIDATION.md), [guía del panel](ADMIN_OPERATIONS.md) e [informe](DELIVERY_REPORT.md). Las referencias anteriores son el roadmap; no sustituyen el estado verificado del informe.
