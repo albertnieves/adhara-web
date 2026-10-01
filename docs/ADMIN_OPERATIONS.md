@@ -26,6 +26,20 @@ Para PVP: escribir, revisar, confirmar avisos y aplicar. La revisión caduca en 
 
 Para recibir mercancía: Inventario → formato → Movimiento → Recepción, con unidades y referencia. El reintento del mismo formulario no duplica stock. Para una segunda operación intencionada con los mismos valores, cerrar y abrir el formulario. Corregir errores con movimientos compensatorios o recuentos; nunca borrando el historial. Mostrador, Compras, Reposición e Informes conservan los flujos de las fases R/S.
 
+## Moverse por el panel
+
+En escritorio, el menú lateral agrupa las secciones (Tienda, Web, Análisis y Administración) y tiene su propio desplazamiento si no cabe en alto. En tablet vertical y móvil, «Menú» abre un panel con las mismas secciones, la vista previa y la tienda pública; se cierra con la ×, con Esc o tocando fuera.
+
+Las acciones de inventario (Movimiento, Recuento y Alerta) se abren en un panel lateral con el perfume, el formato y las unidades actuales. Al guardar, el panel se cierra y aparece un aviso abajo con el resultado; si algo falla, el error queda en el formulario. Catálogo e inventario filtran mientras se escribe en el buscador. La ficha de un perfume tiene una barra fija para saltar a Formatos y PVP, Stock, Datos, Imágenes y Textos.
+
+## Asistente e informe diario
+
+Panel → Asistente muestra el informe del día: qué hay que hacer (cada línea enlaza a su pantalla), la actividad (entradas, ventas, devoluciones, mermas, ajustes y traslados en unidades), los agotados y el stock bajo según el vigilante, y los pedidos de compra abiertos o con la entrega vencida. «Hoy» se calcula en directo; cada mañana la tarea programada guarda el del día anterior con un resumen redactado por el asistente, que también aparece en Inicio. El informe no lleva costes, importes ni nombres de proveedor, y cada persona solo ve las tareas de las pantallas a las que tiene acceso. Los administradores pueden guardarlo a mano («Guardar informe» o «Guardar con resumen», hasta 10 al día por persona).
+
+«Pregunta al asistente» responde con los datos reales del panel: stock, movimientos, reposición, ventas en unidades de un periodo y pendientes del catálogo, según los permisos de quien pregunta. Solo consulta: no registra movimientos, no cambia precios ni crea pedidos; indica en qué pantalla hacerlo. Si no tiene un dato, lo dice. Cada persona tiene un tope de consultas al día (40 por defecto) y cada consulta queda registrada con sus tokens.
+
+Para activarlo hacen falta, solo en el servidor de Vercel: `ANTHROPIC_API_KEY` (clave de la cuenta de Anthropic del negocio), `CRON_SECRET` (valor aleatorio largo; Vercel lo envía a la tarea programada) y `SUPABASE_SECRET_KEY`. Sin la clave de Anthropic el informe funciona igual, sin resumen, y el chat aparece como «no activado». Las claves se configuran en Vercel, nunca en el chat ni en el repositorio.
+
 ## Equipo
 
 Solo `system_admin` gestiona el equipo. «Invitar a una persona» envía un enlace para fijar contraseña y configurar MFA. Elegir el rol mínimo necesario. «Dar acceso a una cuenta existente» requiere una cuenta ya creada y confirmada. Para reenviar, introducir los mismos datos tras un minuto; también se aplican los límites del servicio de correo.

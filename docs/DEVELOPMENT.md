@@ -9,7 +9,7 @@
 5. Vercel ya está conectado al repositorio (producción desde `main`, previews por rama). Falta conectarlo al entorno dev para previews y separar producción cuando proceda. Verificar CI, base de datos y E2E completos.
 6. Importar el catálogo real «CATALOGO global 2026» cuando esté en el repositorio o en el chat (pasarlo a CSV y usar Catálogo → Importar, con revisión previa): perfumes, formatos y PVP con su página como procedencia; imágenes del PDF como provisionales. Después, publicar.
 7. Completar criterios de Fase 1 (docs/STATUS.md, «Pendiente técnico»); el sistema visual provisional ya existe (PR #6) y la Fase 2 lo formalizará.
-8. Panel de administración: A0–A1 hechas; A2 (catálogo, PVP, costes y margen, cambios masivos) en versión base; A3 completa y A4.1 en la fase R (docs/PLAN_TIENDA_REPOSICION.md) e informes y auditoría de A8 en la fase S (docs/PLAN_INFORMES.md), pendientes de aplicar sus migraciones en `adhara-dev`. Siguiente: A6.1 (mensajes) y A5 (pedidos, con el checkout de F10) en cuanto haya proveedor de email, textos legales y Stripe; luego A4.2 (asistente) según docs/ADMIN_PLAN.md §7.
+8. Panel de administración: A0–A1 hechas; A2 en versión base; A3, A4.1 (con informe diario programado) e informes de A8 hechos; A4.2 (asistente) en primera versión de solo lectura (docs/ADMIN_PLAN.md). Orden acordado con el usuario el 01/10: cerrar la Fase 1 (punto 7); después A5 (pedidos y checkout de F10, con los datos del TPV para cobrar con tarjeta) y A6.1 (mensajes) cuando haya proveedor de correo; luego herramientas de propuesta del asistente.
 
 ## Servicios y acceso que faltan
 

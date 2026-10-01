@@ -1,6 +1,6 @@
 # Panel de administración — plan por fases
 
-Estado: **A0 y A1 implementadas; A2 (catálogo, PVP, cambios masivos, costes y margen por formato, etiquetas de precio e importación CSV) en versión base; A3 completa y A4.1 hecha en la fase R (proveedores, pedidos de compra, mostrador y vigilante; [PLAN_TIENDA_REPOSICION.md](PLAN_TIENDA_REPOSICION.md)) e informes de A8 en la fase S ([PLAN_INFORMES.md](PLAN_INFORMES.md)), pendientes de aplicar sus migraciones en `adhara-dev`** · 01/10/2026
+Estado: **A0 y A1 implementadas; A2 (catálogo, PVP, cambios masivos, costes y margen por formato, etiquetas de precio e importación CSV) en versión base; A3 completa y A4.1 en la fase R (proveedores, pedidos de compra, mostrador y vigilante; [PLAN_TIENDA_REPOSICION.md](PLAN_TIENDA_REPOSICION.md)) con informe diario programado desde el 01/10; A4.2 (asistente) en primera versión de solo lectura; informes de A8 en la fase S ([PLAN_INFORMES.md](PLAN_INFORMES.md)). La migración del asistente está pendiente de aplicar en `adhara-dev`** · 01/10/2026
 
 Este documento concreta el back-office de ADHARA sobre la arquitectura de docs/source (Fase 0 §10–§11 y plan de Fase 1). No sustituye esos documentos. Cada fase A se corresponde con fases del roadmap original (F1…F17), indicadas entre paréntesis.
 
@@ -103,6 +103,11 @@ Diseño completo en §5. Dos subfases:
 
 Aceptación: el agente no tiene ninguna herramienta que escriba stock o precios (prueba sobre la lista de herramientas y sobre los permisos SQL del rol que usa); toda propuesta aprobada pasa por el caso de uso normal y queda en auditoría; un conjunto de escenarios de evaluación (fotos de inventario → hallazgos y respuestas esperados) en verde antes de activarlo.
 
+Hecho el 01/10/2026 (rama `codex/panel-asistente`, DECISIONS §77–81):
+
+- **A4.1 programado:** informe diario determinista (actividad, agotados y bajo mínimo del vigilante, pedidos abiertos y vencidos, pendientes del catálogo), en unidades y sin costes ni proveedores, guardado cada mañana por Vercel Cron con `CRON_SECRET` y visible en Panel → Asistente y en el inicio. Cada tarea enlaza a su pantalla y solo se muestra a quien tiene su permiso.
+- **A4.2, primera versión:** chat con `claude-opus-5-5` y herramientas de solo lectura con la sesión de quien pregunta (stock, movimientos, reposición, informe del día, ventas en unidades y pendientes del catálogo), respuesta en streaming, registro de uso y tope diario por persona. Aceptación comprobada: ninguna herramienta escribe ni usa la clave privilegiada (`tests/unit/assistant.test.ts`) y el registro de uso es de solo inserción con RLS (`06_assistant`). Quedan las herramientas de propuesta (cola de aprobación), el envío del informe por email y los escenarios de evaluación con la clave real.
+
 Necesito: parámetros del vigilante (días de cobertura objetivo, colchón sobre el plazo, días para considerar stock inmovilizado); para A4.2, confirmar proveedor de IA y clave de API en variables de entorno del servidor.
 
 ### A5 — Pedidos y Click & Collect (F10–F12)
@@ -192,18 +197,18 @@ La bandeja básica de mensajes (A6.1) puede adelantarse a pedidos porque solo de
 
 ## 8. Decisiones que necesito de ti
 
-| #   | Pregunta                                                                                   | Fase |
-| --- | ------------------------------------------------------------------------------------------ | ---- |
-| 1   | Permiso para crear `adhara-dev` en región UE dentro de «albertnieves's Org» (ya conectada) | A1   |
-| 2   | Email del administrador del sistema y de Agustín                                           | A1   |
-| 3   | ¿Los precios del PDF son PVP con IVA, mayorista o coste?                                   | A2   |
-| 4   | Margen mínimo y umbral a partir del cual un cambio de PVP pide confirmación                | A2   |
-| 5   | ¿Hay TPV en la tienda? ¿Cuál? ¿Tiene API o exportación?                                    | A3   |
-| 6   | Proveedores, plazos de entrega y múltiplos de compra                                       | A3   |
-| 7   | Parámetros del vigilante: cobertura objetivo, colchón, días de inmovilizado                | A4   |
-| 8   | Confirmar Claude como proveedor de IA y el tratamiento de datos                            | A4.2 |
-| 9   | Canales de mensajes, número de WhatsApp Business y tiempo de respuesta                     | A6   |
-| 10  | Proveedor de email transaccional                                                           | A5   |
+| #   | Pregunta                                                                                                                         | Fase |
+| --- | -------------------------------------------------------------------------------------------------------------------------------- | ---- |
+| 1   | Permiso para crear `adhara-dev` en región UE dentro de «albertnieves's Org» (ya conectada)                                       | A1   |
+| 2   | Email del administrador del sistema y de Agustín                                                                                 | A1   |
+| 3   | ¿Los precios del PDF son PVP con IVA, mayorista o coste?                                                                         | A2   |
+| 4   | Margen mínimo y umbral a partir del cual un cambio de PVP pide confirmación                                                      | A2   |
+| 5   | ¿Hay TPV en la tienda? ¿Cuál? ¿Tiene API o exportación?                                                                          | A3   |
+| 6   | Proveedores, plazos de entrega y múltiplos de compra                                                                             | A3   |
+| 7   | Parámetros del vigilante: cobertura objetivo, colchón, días de inmovilizado                                                      | A4   |
+| 8   | Confirmar Claude como proveedor de IA y el tratamiento de datos (el 01/10 pidió integrar el asistente; falta su clave en Vercel) | A4.2 |
+| 9   | Canales de mensajes, número de WhatsApp Business y tiempo de respuesta                                                           | A6   |
+| 10  | Proveedor de email transaccional y datos del TPV para cobrar con tarjeta (pendientes el 01/10)                                   | A5   |
 
 ## Entrega complementaria (01/10/2026)
 
