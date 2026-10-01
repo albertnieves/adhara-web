@@ -32,6 +32,7 @@ const SECTIONS: (NavItem & { permission?: Permission })[] = [
     permission: 'inventory.view',
   },
   { href: '/admin/compras', label: 'Compras', permission: 'purchasing.manage' },
+  { href: '/admin/informes', label: 'Informes', permission: 'reports.view' },
   { href: '/admin/equipo', label: 'Equipo', permission: 'staff.manage' },
   { href: '/admin/pedidos', label: 'Pedidos', soon: true },
   { href: '/admin/mensajes', label: 'Mensajes', soon: true },

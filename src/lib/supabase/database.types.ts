@@ -795,6 +795,43 @@ export type Database = {
         Args: { p_supplier_id: string; p_variant_id: string };
         Returns: undefined;
       };
+      admin_report_inventory_period: {
+        Args: { p_from: string; p_location_id: string; p_to: string };
+        Returns: {
+          adjusted_units: number;
+          closing_cost_is_later: boolean | null;
+          closing_cost_net_cents: number | null;
+          closing_units: number;
+          last_sale_at: string | null;
+          lost_units: number;
+          opening_cost_is_later: boolean | null;
+          opening_cost_net_cents: number | null;
+          opening_units: number;
+          received_units: number;
+          returned_units: number;
+          sold_units: number;
+          transferred_units: number;
+          variant_id: string;
+        }[];
+      };
+      admin_report_purchases: {
+        Args: { p_from: string; p_to: string };
+        Returns: {
+          avg_lead_time_days: number | null;
+          declared_lead_time_days: number | null;
+          max_lead_time_days: number | null;
+          orders_placed: number;
+          orders_with_lead: number;
+          receipts: number;
+          supplier_active: boolean;
+          supplier_id: string;
+          supplier_name: string;
+          units_ordered: number;
+          units_received: number;
+          units_received_without_cost: number | null;
+          value_received_net_cents: number | null;
+        }[];
+      };
       admin_save_supplier: {
         Args: {
           p_active?: boolean;

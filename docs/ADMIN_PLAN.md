@@ -1,6 +1,6 @@
 # Panel de administración — plan por fases
 
-Estado: **A0 y A1 implementadas; A2 (catálogo, PVP, cambios masivos, costes y margen por formato, etiquetas de precio e importación CSV) en versión base; A3 completa y A4.1 hecha en la fase R (proveedores, pedidos de compra, mostrador y vigilante; [PLAN_TIENDA_REPOSICION.md](PLAN_TIENDA_REPOSICION.md)), pendiente de aplicar su migración en `adhara-dev`** · 01/10/2026
+Estado: **A0 y A1 implementadas; A2 (catálogo, PVP, cambios masivos, costes y margen por formato, etiquetas de precio e importación CSV) en versión base; A3 completa y A4.1 hecha en la fase R (proveedores, pedidos de compra, mostrador y vigilante; [PLAN_TIENDA_REPOSICION.md](PLAN_TIENDA_REPOSICION.md)) e informes de A8 en la fase S ([PLAN_INFORMES.md](PLAN_INFORMES.md)), pendientes de aplicar sus migraciones en `adhara-dev`** · 01/10/2026
 
 Este documento concreta el back-office de ADHARA sobre la arquitectura de docs/source (Fase 0 §10–§11 y plan de Fase 1). No sustituye esos documentos. Cada fase A se corresponde con fases del roadmap original (F1…F17), indicadas entre paréntesis.
 
@@ -138,6 +138,8 @@ Ficha de cliente (pedidos, conversaciones, consentimientos con fecha), exportaci
 - Configuración: datos y horarios de la tienda, IVA, envíos, parámetros de precios y del vigilante, usuarios, roles y visor de auditoría.
 
 Aceptación (F11): cada KPI coincide con una consulta de control y los roles se prueban según la matriz.
+
+Hecho en la fase S (01/10/2026; [PLAN_INFORMES.md](PLAN_INFORMES.md)): informes de existencias y cierre mensual en CSV, rotación e inmovilizado, márgenes por marca, compras por proveedor con plazo real y visor de auditoría. Quedan el dashboard (E06), la configuración (E05) y los informes de ventas en euros, que llegan con el checkout.
 
 ## 5. Agente de inventario
 

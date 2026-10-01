@@ -64,3 +64,4 @@ export type {
   SearchableVariant,
   TicketLine,
 } from './domain/counter';
+export { madridMidnight } from './domain/movement-filter';

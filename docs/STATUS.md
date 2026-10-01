@@ -35,6 +35,16 @@ Plan en [PLAN_TIENDA_REPOSICION.md](PLAN_TIENDA_REPOSICION.md). Validado con Sup
 - **Compras**: pedidos a proveedor (borrador → pedido → recibido en parte → recibido, o cancelado / cerrado con faltas), líneas con coste neto (solo con permiso de costes), recepción parcial con albarán que suma stock y, opcionalmente, actualiza el coste vigente, historial de recepciones e impresión del pedido. Revisión optimista: un cambio sobre una versión antigua no se aplica.
 - **Proveedores**: ficha (contacto, plazo habitual), condiciones por formato (referencia, múltiplo de compra, plazo, preferente) y asignación de todos los formatos de una marca de una vez.
 
+### Fase S: informes y control (misma rama, sin fusionar)
+
+Plan en [PLAN_INFORMES.md](PLAN_INFORMES.md). Validado con Supabase local; su migración (solo funciones de lectura) tampoco está en `adhara-dev`.
+
+- **Existencias y cierre mensual**: iniciales, entradas, ventas, mermas, ajustes y finales de cada mes, por marca y con valor a coste (con permiso de costes). CSV para la gestoría con una fila por formato y el total.
+- **Rotación e inmovilizado**: más vendidos (rotación y días de cobertura) y lo que no se ha vendido en 30, 90, 180 o 365 días, con su valor a coste.
+- **Márgenes**: margen teórico por marca, formatos por debajo del mínimo y formatos con PVP sin coste.
+- **Compras por proveedor**: pedidos, unidades y valor recibidos, y plazo real frente al declarado.
+- **Auditoría** (administrador del sistema): quién hizo qué y cuándo, con filtros.
+
 ### Base de datos (`adhara-dev`, Frankfurt)
 
 Diez migraciones en `supabase/migrations/` (detalle en supabase/README.md): personal y permisos (PR #5), catálogo, inventario, gestión del personal, borrado de niveles con su formato, roles preasignados, costes y registro de costes por lotes. RLS en todas las tablas públicas; costes fuera de la API (`internal`), solo accesibles con permiso de costes y MFA; historial de PVP, de costes, movimientos y auditoría de solo inserción.
@@ -93,6 +103,8 @@ Vercel `adhara-web` (equipo SOAPBRXND, Hobby), funciones en París (cdg1), todos
 | Fase R: pgTAP en Supabase local                       | `04_purchasing_counter` 54/54 y las tres anteriores: 142/142 (CLI 2.119.0, Postgres 17)                                                                                                                                                                                                                                                             |
 | Fase R: concurrencia                                  | 24 sesiones paralelas: una sola venta de la última unidad, una sola venta por clave de petición, nunca más recibido que lo pedido, nivel igual a la suma de movimientos (`supabase/tests/concurrency/`)                                                                                                                                             |
 | Fase R: recorrido real del panel                      | Supabase local con los datos de `supabase/data/` y cuentas ficticias con MFA: proveedor, asignación por marca, venta y devolución en mostrador, propuesta → borrador → pedido → recepción parcial y total, parámetros; encargado sin Compras ni Mostrador ni nombres de proveedor; 1024, 768 y 390 px sin desbordamiento                            |
+| Fase S: pgTAP en Supabase local                       | `05_reports` 22/22; las cinco pruebas, 164/164                                                                                                                                                                                                                                                                                                      |
+| Fase S: recorrido real de informes                    | Con los datos de la fase R: existencias de hoy = suma de niveles, CSV con BOM, fila TOTAL y euros con coma, rotación, márgenes, plazo real del proveedor, auditoría filtrada; store_admin sin auditoría, encargado sin informes; 1024, 768 y 390 px                                                                                                 |
 
 Nota sobre el recorrido del panel: se hizo con una **cuenta temporal** (`prueba-e2e@adhara.invalid`, rol system_admin) y un perfume de prueba que se publicó, se vio en la tienda en es y ca, se retiró y se borró. La cuenta no se puede borrar de Auth porque la auditoría es de solo inserción (DECISIONS §39): quedó **sin rol, bloqueada y sin sesiones**. Quedan como rastro 8 entradas de auditoría y 2 filas del historial de PVP del formato de prueba borrado; no hubo movimientos de stock. La prueba encontró y corrigió un fallo real (un recuento que cuadra impedía borrar un borrador).
 
@@ -106,8 +118,9 @@ La revisión visual con perfumes se hizo en local con un Supabase simulado que d
 2. Importar el CSV del catálogo desde Panel → Catálogo → Importar, indicando si los precios del PDF llevan IVA. Los perfumes ya existen y 16 ya tienen su único formato, así que la revisión debe mostrar 0 perfumes nuevos, 408 formatos y 424 costes. Revisar después las marcas «por revisar», los 6 perfumes sin marca y las fotos (Panel → Catálogo, o la vista previa de la tienda).
 3. Decidir cuándo abrir la web a Agustín: con Vercel Authentication para todo, solo entra quien tiene cuenta en el equipo de Vercel (en Hobby, solo el titular).
 4. Revisar y fusionar el PR #6 (incluye el PR #5) para llevarlo a producción.
-5. Revisar y fusionar la fase R; después, aplicar su migración en `adhara-dev` (supabase/README.md, «Pendiente») y dar de alta los proveedores reales.
+5. Revisar y fusionar las fases R y S ([PR #9](https://github.com/albertnieves/adhara-web/pull/9)); después, aplicar sus migraciones en `adhara-dev` (supabase/README.md, «Pendiente») y dar de alta los proveedores reales.
 6. Decisiones de la fase R: proveedores, plazos y múltiplos; si hay TPV; parámetros del vigilante; si el coste del pedido debe pasar a ser el vigente al recibir (PLAN_TIENDA_REPOSICION.md).
+7. Decisiones de la fase S: criterio de valoración que pide la gestoría para el cierre de existencias y margen mínimo (PLAN_INFORMES.md).
 
 ## Pendiente técnico
 
@@ -128,5 +141,6 @@ La revisión visual con perfumes se hizo en local con un Supabase simulado que d
 - 29/09: despliegue en Vercel verificado; producción privada y en París. Sesión del PR #5: reglas de dominio del panel (A0), `adhara-dev`, personal, permisos, auditoría y acceso con MFA (A1), 22/22 pgTAP y 22 E2E.
 - 29–30/09: esta sesión (PR #6): sistema visual, tienda animada con 3D, catálogo, precios, inventario y equipo en el panel.
 - 30/09–01/10: fase R (rama `claude/wonderful-babbage-4ojhui`): mostrador, compras a proveedor y reposición, en paralelo al bloque E01–E07 de Codex.
+- 01/10: fase S en la misma rama: informes (existencias y cierre mensual, rotación, márgenes, compras por proveedor) y visor de auditoría.
 
 Ver docs/DEVELOPMENT.md para continuar y docs/DECISIONS.md para las decisiones.
