@@ -1,4 +1,4 @@
-# Estado real — 30/09/2026
+# Estado real — 01/10/2026
 
 **Tienda visual (es/ca/en) y panel de administración operativos sobre `adhara-dev`, verificados en local y fusionados en `main` el 30/09 (PR #6) y desplegados en Vercel, que sigue siendo privado (Vercel Authentication). Desde el 30/09 la tienda muestra **50 perfumes publicados con PVP**: los 4 del piloto con su escena 3D y 46 de la compra a Orient Fragance, con 20 uds de cada uno en inventario. La Fase 1 completa sigue pendiente: falta importar los formatos y costes del resto del catálogo (el CSV ya está preparado), la verificación en dos pasos de las cuentas del personal y los criterios de la Fase 1 que se listan al final.**
 
@@ -25,6 +25,15 @@
 - **Stock en la ficha de cada perfume**: niveles por formato, las mismas acciones de inventario y sus últimos movimientos, con enlace al historial filtrado.
 - Equipo: listar personal y dar o retirar acceso por email a cuentas ya creadas en Supabase Auth.
 - Pantallas de acceso, alta y verificación de MFA y contraseña con el nuevo diseño.
+
+### Fase R: tienda física y reposición (rama `claude/wonderful-babbage-4ojhui`, sin fusionar)
+
+Plan en [PLAN_TIENDA_REPOSICION.md](PLAN_TIENDA_REPOSICION.md). Validado con Supabase local; **su migración aún no está en `adhara-dev`**, así que en la Preview de Vercel estas pantallas fallan hasta aplicarla.
+
+- **Mostrador** (tablet): buscar por nombre, marca, SKU o EAN (un lector de códigos teclea el código y Enter), varias líneas con −/+, venta o devolución todo o nada con el nº de ticket del TPV. No emite tickets ni guarda importes (DECISIONS §59). Una línea sin stock bloquea el botón; un doble toque registra una sola venta. Últimas operaciones de la tienda debajo.
+- **Reposición**: el vigilante revisa el stock al abrir la página (agotados, por debajo del punto de pedido, cobertura que no llega a la próxima entrega, inmovilizado y niveles que no cuadran con sus movimientos), explica cada hallazgo con sus datos y propone cantidades solo cuando hay datos. Quien gestiona compras crea borradores de pedido por proveedor desde las propuestas. Parámetros visibles y editables por el administrador del sistema.
+- **Compras**: pedidos a proveedor (borrador → pedido → recibido en parte → recibido, o cancelado / cerrado con faltas), líneas con coste neto (solo con permiso de costes), recepción parcial con albarán que suma stock y, opcionalmente, actualiza el coste vigente, historial de recepciones e impresión del pedido. Revisión optimista: un cambio sobre una versión antigua no se aplica.
+- **Proveedores**: ficha (contacto, plazo habitual), condiciones por formato (referencia, múltiplo de compra, plazo, preferente) y asignación de todos los formatos de una marca de una vez.
 
 ### Base de datos (`adhara-dev`, Frankfurt)
 
@@ -81,6 +90,9 @@ Vercel `adhara-web` (equipo SOAPBRXND, Hobby), funciones en París (cdg1), todos
 | Páginas del panel con sesión real (solo lectura)      | Inicio, catálogo, inventario, etiquetas, importar, ficha con «Stock en tienda», historial filtrado por perfume, tipo y fechas, y exportación CSV (BOM, «;»): todas 200 y sin errores                                                                                                                                                                |
 | CSV del catálogo real                                 | Leído y planificado con el código del importador: 0 errores. Contra el catálogo cargado (mismas marcas, slugs y nombres que en `adhara-dev`, comprobado por checksum): 0 marcas y 0 perfumes nuevos y 424 costes; tras la publicación del 30/09, 16 perfumes ya tienen su único formato, así que quedan 408 formatos nuevos (comprobado en la base) |
 | Cambio masivo de PVP                                  | Con la cuenta temporal y datos ficticios («Marca QA Precios»): −30 % exacto; 2 de 4 formatos aplicables (excluidos el de rebaja y el sin PVP); botón bloqueado hasta confirmar; solo se aplicó la fila confirmada y quedó en el historial. La prueba encontró y corrigió un bucle de renders. Datos borrados                                        |
+| Fase R: pgTAP en Supabase local                       | `04_purchasing_counter` 54/54 y las tres anteriores: 142/142 (CLI 2.119.0, Postgres 17)                                                                                                                                                                                                                                                             |
+| Fase R: concurrencia                                  | 24 sesiones paralelas: una sola venta de la última unidad, una sola venta por clave de petición, nunca más recibido que lo pedido, nivel igual a la suma de movimientos (`supabase/tests/concurrency/`)                                                                                                                                             |
+| Fase R: recorrido real del panel                      | Supabase local con los datos de `supabase/data/` y cuentas ficticias con MFA: proveedor, asignación por marca, venta y devolución en mostrador, propuesta → borrador → pedido → recepción parcial y total, parámetros; encargado sin Compras ni Mostrador ni nombres de proveedor; 1024, 768 y 390 px sin desbordamiento                            |
 
 Nota sobre el recorrido del panel: se hizo con una **cuenta temporal** (`prueba-e2e@adhara.invalid`, rol system_admin) y un perfume de prueba que se publicó, se vio en la tienda en es y ca, se retiró y se borró. La cuenta no se puede borrar de Auth porque la auditoría es de solo inserción (DECISIONS §39): quedó **sin rol, bloqueada y sin sesiones**. Quedan como rastro 8 entradas de auditoría y 2 filas del historial de PVP del formato de prueba borrado; no hubo movimientos de stock. La prueba encontró y corrigió un fallo real (un recuento que cuadra impedía borrar un borrador).
 
@@ -94,6 +106,8 @@ La revisión visual con perfumes se hizo en local con un Supabase simulado que d
 2. Importar el CSV del catálogo desde Panel → Catálogo → Importar, indicando si los precios del PDF llevan IVA. Los perfumes ya existen y 16 ya tienen su único formato, así que la revisión debe mostrar 0 perfumes nuevos, 408 formatos y 424 costes. Revisar después las marcas «por revisar», los 6 perfumes sin marca y las fotos (Panel → Catálogo, o la vista previa de la tienda).
 3. Decidir cuándo abrir la web a Agustín: con Vercel Authentication para todo, solo entra quien tiene cuenta en el equipo de Vercel (en Hobby, solo el titular).
 4. Revisar y fusionar el PR #6 (incluye el PR #5) para llevarlo a producción.
+5. Revisar y fusionar la fase R; después, aplicar su migración en `adhara-dev` (supabase/README.md, «Pendiente») y dar de alta los proveedores reales.
+6. Decisiones de la fase R: proveedores, plazos y múltiplos; si hay TPV; parámetros del vigilante; si el coste del pedido debe pasar a ser el vigente al recibir (PLAN_TIENDA_REPOSICION.md).
 
 ## Pendiente técnico
 
@@ -113,5 +127,6 @@ La revisión visual con perfumes se hizo en local con un Supabase simulado que d
 - 28/09: arranque técnico verificado (lint, typecheck, build, 12 E2E; detalle en el historial de Git de este archivo).
 - 29/09: despliegue en Vercel verificado; producción privada y en París. Sesión del PR #5: reglas de dominio del panel (A0), `adhara-dev`, personal, permisos, auditoría y acceso con MFA (A1), 22/22 pgTAP y 22 E2E.
 - 29–30/09: esta sesión (PR #6): sistema visual, tienda animada con 3D, catálogo, precios, inventario y equipo en el panel.
+- 30/09–01/10: fase R (rama `claude/wonderful-babbage-4ojhui`): mostrador, compras a proveedor y reposición, en paralelo al bloque E01–E07 de Codex.
 
 Ver docs/DEVELOPMENT.md para continuar y docs/DECISIONS.md para las decisiones.

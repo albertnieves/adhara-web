@@ -9,12 +9,12 @@
 5. Vercel ya está conectado al repositorio (producción desde `main`, previews por rama). Falta conectarlo al entorno dev para previews y separar producción cuando proceda. Verificar CI, base de datos y E2E completos.
 6. Importar el catálogo real «CATALOGO global 2026» cuando esté en el repositorio o en el chat (pasarlo a CSV y usar Catálogo → Importar, con revisión previa): perfumes, formatos y PVP con su página como procedencia; imágenes del PDF como provisionales. Después, publicar.
 7. Completar criterios de Fase 1 (docs/STATUS.md, «Pendiente técnico»); el sistema visual provisional ya existe (PR #6) y la Fase 2 lo formalizará.
-8. Panel de administración: A0–A1 hechas; A2 (catálogo, PVP, costes y margen) y A3 (inventario, sin compras ni TPV) en versión base. Siguiente: proveedores y cambios masivos de precio, luego A4 (agente), A6 (mensajes) y A5 (pedidos) según docs/ADMIN_PLAN.md §7.
+8. Panel de administración: A0–A1 hechas; A2 (catálogo, PVP, costes y margen, cambios masivos) en versión base; A3 completa y A4.1 en la fase R (docs/PLAN_TIENDA_REPOSICION.md), pendiente de aplicar su migración en `adhara-dev`. Siguiente: A6.1 (mensajes) y A5 (pedidos, con el checkout de F10), luego A4.2 (asistente) según docs/ADMIN_PLAN.md §7.
 
 ## Servicios y acceso que faltan
 
 - GitHub: repositorio privado albertnieves/adhara-web conectado a Codex con lectura y escritura. Git local continúa sin autenticar; GitHub CLI no instalada. Las operaciones remotas se realizan mediante el conector.
-- Docker: no encontrado; necesario para Supabase local y pgTAP en CI. Mientras tanto, pgTAP se ejecuta contra `adhara-dev` con `supabase/tests/tap_remote.py` (revierte todo).
+- Docker: no encontrado en la máquina de Codex; necesario para Supabase local y pgTAP en CI. Mientras tanto, pgTAP se ejecuta contra `adhara-dev` con `supabase/tests/tap_remote.py` (revierte todo). En las sesiones de Claude Code en la nube sí hay Docker: la fase R se validó con Supabase local (DECISIONS §64).
 - Supabase: proyecto `adhara-dev` (Frankfurt) accesible con el conector de Supabase de Claude Code. Faltan las cuentas del personal, la configuración de URLs y plantillas de Auth y el proyecto `adhara-prod`.
 - Vercel: proyecto `adhara-web` conectado a GitHub. Funciones en París (cdg1), todos los despliegues protegidos con Vercel Authentication y variables públicas de `adhara-dev` configuradas. Separar producción cuando exista `adhara-prod`.
 - Catálogo PDF: recibido por Drive y convertido en CSV fuera del repositorio (contiene costes). Identidad: L’Atelier du Désert, definitiva desde el 30/09 (DECISIONS §56).
