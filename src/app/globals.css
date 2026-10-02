@@ -1,23 +1,67 @@
 @import 'tailwindcss';
 
 /*
- * L’Atelier du Désert · sistema visual (provisional hasta la Fase 2 de Design System;
- * el nombre y el logotipo ya son definitivos).
- * Minimalista y cálido: marfil, tinta y un acento dorado usado con mesura.
+ * L’Atelier du Désert · sistema de diseño (Fase 2, docs/phases/FASE_2_PLAN.md).
+ * Tokens en dos capas: la paleta de marca y los tokens semánticos que usan los
+ * componentes (superficie, texto, borde, acento, foco y estados). Los tonos
+ * oscuros redefinen los semánticos con data-tone; tests/unit/design-tokens
+ * comprueba el contraste AA de todas las combinaciones permitidas. `static`
+ * publica todos los tokens aunque ningún componente los use todavía.
  */
-@theme {
+@theme static {
+  /* Paleta de marca. Solo para definir los semánticos y casos de marca. */
   --color-ivory: #f5f1ea;
+  --color-paper: #fdfcf9;
   --color-sand: #ebe4d8;
   --color-stage: #efe9df;
   --color-ink: #151311;
+  --color-ink-soft: #2e2925;
   --color-night: #0d0c0b;
+  --color-night-raised: #1b1916;
   --color-smoke: #6b645b;
+  /* Niebla: solo adornos o texto sobre tonos oscuros (2,3:1 sobre marfil). */
   --color-mist: #a8a095;
   --color-line: #ddd5c8;
+  --color-line-strong: #8a8073;
+  --color-line-dark: #2b2824;
+  --color-line-strong-dark: #7b746b;
   --color-gold: #a8844f;
+  --color-gold-deep: #7a5d33;
   --color-gold-soft: #d6bf98;
+  /* Oscuros de colección (D3): momentos editoriales, no tema global. */
+  --color-oud: #2a1d15;
+  --color-indigo-night: #151a2e;
+  --color-forest: #13211a;
+
+  /* Semánticos (tono claro). Los componentes usan estos. */
+  --color-surface: var(--color-ivory);
+  --color-surface-raised: var(--color-paper);
+  --color-surface-sunken: var(--color-sand);
+  --color-fg: var(--color-ink);
+  --color-fg-muted: var(--color-smoke);
+  --color-fg-inverse: var(--color-ivory);
+  --color-border: var(--color-line);
+  --color-border-strong: var(--color-line-strong);
+  --color-accent: var(--color-gold);
+  --color-accent-fg: var(--color-gold-deep);
+  --color-focus: var(--color-gold-deep);
   --color-danger: #9b2c2c;
+  --color-danger-soft: #f4e3e0;
   --color-success: #3d6647;
+  --color-success-soft: #e4ede4;
+  --color-warning: #865816;
+  --color-warning-soft: #f5ead3;
+
+  /* Tipografía: tamaño mínimo de 11 px y espaciados de versalitas. */
+  --text-2xs: 0.6875rem;
+  --text-2xs--line-height: 1rem;
+  --tracking-caps-sm: 0.12em;
+  --tracking-caps: 0.18em;
+  --tracking-caps-lg: 0.3em;
+
+  /* Retícula, radios y movimiento. */
+  --container-page: 80rem;
+  --radius-hairline: 2px;
 
   --font-display: var(--font-cormorant), 'Times New Roman', serif;
   --font-sans: var(--font-manrope), system-ui, sans-serif;
@@ -78,13 +122,60 @@
 }
 
 @layer base {
+  :root {
+    /* Movimiento: lento y líquido (Fase 0 §13); reduce-motion lo anula. */
+    --duration-fast: 200ms;
+    --duration-base: 400ms;
+    --duration-slow: 600ms;
+    /* Capas, de abajo arriba. */
+    --z-header: 30;
+    --z-overlay: 40;
+    --z-sheet: 50;
+    --z-toast: 60;
+    /* Ritmo vertical entre secciones editoriales. */
+    --section-y: clamp(4rem, 9vw, 8rem);
+  }
+
+  /*
+   * Tonos oscuros: redefinen los semánticos dentro de su contenedor. El fondo
+   * lo pone el contenedor (bg-surface o su color de marca).
+   */
+  [data-tone='dark'],
+  [data-tone='oud'],
+  [data-tone='indigo'],
+  [data-tone='forest'] {
+    --color-surface: var(--color-night);
+    --color-surface-raised: var(--color-night-raised);
+    --color-surface-sunken: var(--color-night);
+    --color-fg: var(--color-ivory);
+    --color-fg-muted: var(--color-mist);
+    --color-fg-inverse: var(--color-ink);
+    --color-border: var(--color-line-dark);
+    --color-border-strong: var(--color-line-strong-dark);
+    --color-accent: var(--color-gold);
+    --color-accent-fg: var(--color-gold-soft);
+    --color-focus: var(--color-gold-soft);
+    --color-danger: #e3958e;
+    --color-success: #94c2a0;
+    --color-warning: #e2b66c;
+  }
+  [data-tone='oud'] {
+    --color-surface: var(--color-oud);
+  }
+  [data-tone='indigo'] {
+    --color-surface: var(--color-indigo-night);
+  }
+  [data-tone='forest'] {
+    --color-surface: var(--color-forest);
+  }
+
   html {
     -webkit-text-size-adjust: 100%;
     scroll-behavior: smooth;
   }
   body {
-    background: var(--color-ivory);
-    color: var(--color-ink);
+    background: var(--color-surface);
+    color: var(--color-fg);
     font-family: var(--font-sans);
     font-feature-settings: 'ss01', 'kern';
     -webkit-font-smoothing: antialiased;
@@ -96,8 +187,8 @@
     color: var(--color-ink);
   }
   :focus-visible {
-    outline: 1px solid var(--color-gold);
-    outline-offset: 4px;
+    outline: 2px solid var(--color-focus);
+    outline-offset: 3px;
   }
   h1,
   h2,
@@ -114,10 +205,10 @@
   .eyebrow {
     font-family: var(--font-sans);
     font-weight: 400;
-    font-size: 0.6875rem;
+    font-size: var(--text-2xs);
     letter-spacing: 0.32em;
     text-transform: uppercase;
-    color: var(--color-smoke);
+    color: var(--color-fg-muted);
   }
 
   /* Subrayado dorado que se dibuja al pasar el cursor. */
@@ -127,7 +218,7 @@
     background-repeat: no-repeat;
     background-size: 0% 1px;
     padding-bottom: 2px;
-    transition: background-size 0.6s var(--ease-luxe);
+    transition: background-size var(--duration-slow) var(--ease-luxe);
   }
   .link-underline:hover,
   .link-underline:focus-visible,
@@ -143,21 +234,22 @@
     gap: 0.75rem;
     overflow: hidden;
     padding: 1rem 2.25rem;
-    font-size: 0.6875rem;
+    font-size: var(--text-2xs);
     font-weight: 600;
     letter-spacing: 0.28em;
     text-transform: uppercase;
     transition:
-      background-color 0.5s var(--ease-luxe),
-      color 0.5s var(--ease-luxe),
-      border-color 0.5s var(--ease-luxe);
+      background-color var(--duration-base) var(--ease-luxe),
+      color var(--duration-base) var(--ease-luxe),
+      border-color var(--duration-base) var(--ease-luxe);
   }
+  /* D4: el dorado no es fondo de texto; el principal pasa a tinta suave. */
   .btn-primary {
     background: var(--color-ink);
     color: var(--color-ivory);
   }
   .btn-primary:hover {
-    background: var(--color-gold);
+    background: var(--color-ink-soft);
   }
   .btn-outline {
     border: 1px solid currentColor;
@@ -185,7 +277,7 @@
     background: linear-gradient(
       90deg,
       transparent,
-      rgb(255 255 255 / 0.18),
+      color-mix(in oklab, var(--color-ivory) 18%, transparent),
       transparent
     );
     animation: var(--animate-sweep);
@@ -205,15 +297,15 @@
   .field {
     width: 100%;
     border: 0;
-    border-bottom: 1px solid var(--color-line);
+    border-bottom: 1px solid var(--color-border-strong);
     background: transparent;
     padding: 0.75rem 0;
     font-size: 0.9375rem;
-    transition: border-color 0.4s var(--ease-luxe);
+    transition: border-color var(--duration-base) var(--ease-luxe);
   }
   .field:focus {
     outline: none;
-    border-color: var(--color-ink);
+    border-color: var(--color-fg);
   }
 }
 
@@ -233,19 +325,19 @@
   .input {
     width: 100%;
     min-height: 2.75rem;
-    border: 1px solid var(--color-line);
-    background: #fdfcf9;
+    border: 1px solid var(--color-border-strong);
+    background: var(--color-surface-raised);
     padding: 0.5rem 0.75rem;
     font-size: 0.9375rem;
-    transition: border-color 0.3s var(--ease-luxe);
+    transition: border-color var(--duration-fast) var(--ease-luxe);
   }
   .input:focus {
     outline: none;
-    border-color: var(--color-ink);
+    border-color: var(--color-fg);
   }
   .panel-card {
-    border: 1px solid var(--color-line);
-    background: #fbf9f5;
+    border: 1px solid var(--color-border);
+    background: var(--color-surface-raised);
     padding: 1.5rem;
   }
   .data-table {
@@ -254,25 +346,29 @@
     font-size: 0.875rem;
   }
   .data-table th {
-    border-bottom: 1px solid var(--color-line);
+    border-bottom: 1px solid var(--color-border);
     padding: 0.75rem 0.75rem;
     text-align: left;
-    font-size: 0.625rem;
+    font-size: var(--text-2xs);
     font-weight: 600;
-    letter-spacing: 0.16em;
+    letter-spacing: var(--tracking-caps);
     text-transform: uppercase;
-    color: var(--color-smoke);
+    color: var(--color-fg-muted);
   }
   .data-table td {
-    border-bottom: 1px solid var(--color-line);
+    border-bottom: 1px solid var(--color-border);
     padding: 0.75rem;
     vertical-align: middle;
   }
   .data-table tbody tr {
-    transition: background-color 0.3s var(--ease-luxe);
+    transition: background-color var(--duration-fast) var(--ease-luxe);
   }
   .data-table tbody tr:hover {
-    background: rgb(255 255 255 / 0.6);
+    background: color-mix(
+      in oklab,
+      var(--color-surface-raised) 60%,
+      transparent
+    );
   }
 
   /* Botones del panel: mismo alto táctil (44 px) en tablet y escritorio. */
@@ -282,19 +378,19 @@
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-    border: 1px solid var(--color-line);
+    border: 1px solid var(--color-border);
     padding: 0 1.25rem;
     font-size: 0.75rem;
     font-weight: 600;
     letter-spacing: 0.18em;
     text-transform: uppercase;
     transition:
-      border-color 0.3s var(--ease-luxe),
-      background-color 0.3s var(--ease-luxe),
-      color 0.3s var(--ease-luxe);
+      border-color var(--duration-fast) var(--ease-luxe),
+      background-color var(--duration-fast) var(--ease-luxe),
+      color var(--duration-fast) var(--ease-luxe);
   }
   .panel-btn:hover {
-    border-color: var(--color-ink);
+    border-color: var(--color-fg);
   }
   .panel-btn-primary {
     border-color: var(--color-ink);
@@ -302,14 +398,14 @@
     color: var(--color-ivory);
   }
   .panel-btn-primary:hover {
-    border-color: var(--color-gold);
-    background: var(--color-gold);
+    border-color: var(--color-ink-soft);
+    background: var(--color-ink-soft);
   }
   .panel-btn-sm {
     min-height: 2.25rem;
     padding: 0 0.75rem;
-    font-size: 0.625rem;
-    letter-spacing: 0.14em;
+    font-size: var(--text-2xs);
+    letter-spacing: var(--tracking-caps-sm);
   }
   .panel-shell input[type='checkbox'] {
     width: 1.25rem;
@@ -327,10 +423,11 @@
     max-height: 100dvh;
     overflow-y: auto;
     overscroll-behavior: contain;
+    z-index: var(--z-sheet);
     border: 0;
-    border-left: 1px solid var(--color-line);
-    background: var(--color-ivory);
-    color: var(--color-ink);
+    border-left: 1px solid var(--color-border);
+    background: var(--color-surface);
+    color: var(--color-fg);
     padding: 0;
     /* No hereda la alineación ni el estilo de la celda donde se declara. */
     text-align: left;
@@ -338,18 +435,14 @@
     font-size: 1rem;
     transform: translateX(100%);
     transition:
-      transform 0.45s var(--ease-luxe),
-      display 0.45s allow-discrete,
-      overlay 0.45s allow-discrete;
+      transform var(--duration-base) var(--ease-luxe),
+      display var(--duration-base) allow-discrete,
+      overlay var(--duration-base) allow-discrete;
   }
-  .sheet[data-tone='dark'] {
-    border-color: rgb(245 241 234 / 0.1);
-    background: var(--color-night);
-    color: var(--color-ivory);
-  }
+  /* Con data-tone='dark' los semánticos ya son los del tono oscuro. */
   .sheet[data-side='left'] {
     inset: 0 auto 0 0;
-    border-right: 1px solid var(--color-line);
+    border-right: 1px solid var(--color-border);
     border-left: 0;
     transform: translateX(-100%);
   }
@@ -365,23 +458,23 @@
     }
   }
   .sheet::backdrop {
-    background: rgb(13 12 11 / 0);
+    background: transparent;
     transition:
-      background-color 0.45s var(--ease-luxe),
-      display 0.45s allow-discrete,
-      overlay 0.45s allow-discrete;
+      background-color var(--duration-base) var(--ease-luxe),
+      display var(--duration-base) allow-discrete,
+      overlay var(--duration-base) allow-discrete;
   }
   .sheet[open]::backdrop {
-    background: rgb(13 12 11 / 0.45);
+    background: color-mix(in oklab, var(--color-night) 45%, transparent);
   }
   @starting-style {
     .sheet[open]::backdrop {
-      background: rgb(13 12 11 / 0);
+      background: transparent;
     }
   }
 
   .toast {
-    animation: toast-in 0.45s var(--ease-luxe);
+    animation: toast-in var(--duration-base) var(--ease-luxe);
   }
   @keyframes toast-in {
     from {
@@ -409,7 +502,7 @@
     .stack-table tr {
       display: flex;
       flex-direction: column;
-      border-bottom: 1px solid var(--color-line);
+      border-bottom: 1px solid var(--color-border);
       padding: 0.75rem 0;
     }
     .stack-table td {
@@ -425,11 +518,11 @@
       content: attr(data-label);
       flex-shrink: 0;
       text-align: left;
-      font-size: 0.625rem;
+      font-size: var(--text-2xs);
       font-weight: 600;
-      letter-spacing: 0.16em;
+      letter-spacing: var(--tracking-caps);
       text-transform: uppercase;
-      color: var(--color-smoke);
+      color: var(--color-fg-muted);
     }
     .stack-table td[data-primary] {
       order: -1;

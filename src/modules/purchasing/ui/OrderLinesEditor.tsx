@@ -224,7 +224,7 @@ export function OrderLinesEditor({
           type="button"
           onClick={save}
           disabled={pending || !dirty}
-          className="bg-ink text-ivory hover:bg-gold inline-flex min-h-11 items-center justify-center px-5 text-xs font-semibold tracking-[0.18em] uppercase transition-colors duration-300 disabled:opacity-50"
+          className="bg-ink text-ivory hover:bg-ink-soft inline-flex min-h-11 items-center justify-center px-5 text-xs font-semibold tracking-[0.18em] uppercase transition-colors duration-300 disabled:opacity-50"
         >
           {pending ? 'Guardando…' : 'Guardar líneas'}
         </button>

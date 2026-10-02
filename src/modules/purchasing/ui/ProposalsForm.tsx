@@ -80,7 +80,7 @@ export function ProposalsForm({ groups }: { groups: ProposalGroupView[] }) {
                       className="input w-24 text-right tabular-nums"
                     />
                     {line.packSize && line.packSize > 1 && (
-                      <span className="text-mist">x{line.packSize}</span>
+                      <span className="text-fg-muted">x{line.packSize}</span>
                     )}
                   </label>
                 </li>

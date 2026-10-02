@@ -25,7 +25,7 @@ export const metadata: Metadata = { title: 'Reposición' };
 const SEVERITIES: FindingSeverity[] = ['critical', 'warning', 'info'];
 const TONE: Record<FindingSeverity, string> = {
   critical: 'text-danger',
-  warning: 'text-gold',
+  warning: 'text-warning',
   info: 'text-smoke',
 };
 

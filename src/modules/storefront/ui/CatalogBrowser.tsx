@@ -141,7 +141,7 @@ export function CatalogBrowser({
             value={query}
             onChange={(event) => setQuery(event.target.value)}
             placeholder={t('search')}
-            className="field placeholder:text-mist"
+            className="field placeholder:text-fg-muted"
           />
         </label>
         <div className="flex flex-wrap items-center gap-x-6 gap-y-3">

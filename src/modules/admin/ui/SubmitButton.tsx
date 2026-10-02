@@ -25,7 +25,7 @@ export function SubmitButton({
   const status = useFormStatus();
   const pending = pendingProp ?? status.pending;
   const styles = {
-    primary: 'bg-ink text-ivory hover:bg-gold',
+    primary: 'bg-ink text-ivory hover:bg-ink-soft',
     ghost: 'border border-line hover:border-ink',
     danger:
       'border border-danger/40 text-danger hover:bg-danger hover:text-ivory',

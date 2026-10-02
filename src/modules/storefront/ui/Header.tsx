@@ -118,6 +118,7 @@ export function Header() {
           <motion.div
             id="mobile-menu"
             key="menu"
+            data-tone="dark"
             className="bg-night text-ivory fixed inset-0 top-18 z-30 flex flex-col justify-between px-6 pt-12 pb-10 md:hidden"
             initial={
               reduced ? { opacity: 0 } : { clipPath: 'inset(0 0 100% 0)' }
@@ -148,7 +149,7 @@ export function Header() {
               ))}
             </ul>
             <div>
-              <p className="eyebrow text-mist! mb-4">{t('language')}</p>
+              <p className="eyebrow text-fg-muted! mb-4">{t('language')}</p>
               <LanguageLinks
                 pathname={pathname}
                 onNavigate={() => setOpen(false)}

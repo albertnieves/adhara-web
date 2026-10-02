@@ -41,7 +41,7 @@ export default async function Team() {
               {data.map((member) => (
                 <tr
                   key={member.user_id}
-                  className={member.active ? '' : 'opacity-50'}
+                  className={member.active ? '' : 'text-fg-muted'}
                 >
                   <td>
                     <p>{member.display_name ?? member.email}</p>

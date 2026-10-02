@@ -155,7 +155,7 @@ export default async function EditProduct({
             </button>
           </form>
         )}
-        <span className="text-mist">/{product.slug}</span>
+        <span className="text-fg-muted">/{product.slug}</span>
       </div>
       {error === 'borrar' && (
         <p role="alert" className="text-danger mb-4 text-sm">

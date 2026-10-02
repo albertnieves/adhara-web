@@ -186,7 +186,7 @@ export default async function CatalogAdmin({
                     <p className="text-smoke text-xs">
                       {p.brandName}
                       {p.featured && (
-                        <span className="text-gold"> · destacado</span>
+                        <span className="text-accent-fg"> · destacado</span>
                       )}
                     </p>
                   </td>
@@ -201,7 +201,7 @@ export default async function CatalogAdmin({
                         p.variants.map((v) => (
                           <span
                             key={v.id}
-                            className={`mr-3 inline-block ${v.active ? '' : 'text-mist line-through'}`}
+                            className={`mr-3 inline-block ${v.active ? '' : 'text-fg-muted line-through'}`}
                           >
                             {v.label}:{' '}
                             {v.priceCents === null ? (

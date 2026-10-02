@@ -75,7 +75,7 @@ export function VariantSearch<T extends SearchableVariant>({
         </p>
       )}
       {results.length > 0 && (
-        <ul className="border-line divide-line max-h-80 divide-y overflow-y-auto border bg-white/70">
+        <ul className="border-line divide-line bg-surface-raised/70 max-h-80 divide-y overflow-y-auto border">
           {results.map((item) => {
             const disabled = isDisabled?.(item) ?? false;
             return (
@@ -84,14 +84,14 @@ export function VariantSearch<T extends SearchableVariant>({
                   type="button"
                   disabled={disabled}
                   onClick={() => pick(item)}
-                  className="flex min-h-12 w-full items-center justify-between gap-4 px-4 py-2 text-left text-sm transition-colors hover:bg-white disabled:opacity-40"
+                  className="hover:bg-surface-raised flex min-h-12 w-full items-center justify-between gap-4 px-4 py-2 text-left text-sm transition-colors disabled:opacity-40"
                 >
                   <span>
                     <span className="text-smoke">{item.brandName} · </span>
                     {item.productName}
                     <span className="text-smoke"> · {item.variantLabel}</span>
                     {item.sku && (
-                      <span className="text-mist block text-xs">
+                      <span className="text-fg-muted block text-xs">
                         {item.sku}
                       </span>
                     )}

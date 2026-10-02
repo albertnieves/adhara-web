@@ -136,7 +136,10 @@ export default async function PanelLayout({
 
   return (
     <div className="panel-shell min-h-screen lg:grid lg:grid-cols-[15rem_1fr] print:block print:min-h-0">
-      <aside className="bg-night text-ivory flex items-center justify-between gap-4 px-5 py-3 lg:sticky lg:top-0 lg:h-screen lg:flex-col lg:items-stretch lg:justify-start lg:gap-8 lg:overflow-y-auto lg:overscroll-contain lg:px-4 lg:py-8 print:hidden">
+      <aside
+        data-tone="dark"
+        className="bg-night text-ivory flex items-center justify-between gap-4 px-5 py-3 lg:sticky lg:top-0 lg:h-screen lg:flex-col lg:items-stretch lg:justify-start lg:gap-8 lg:overflow-y-auto lg:overscroll-contain lg:px-4 lg:py-8 print:hidden"
+      >
         <Link
           href="/admin"
           className="inline-flex min-h-11 items-center lg:px-3"

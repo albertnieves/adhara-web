@@ -10,11 +10,14 @@ export function AuthScreen({
 }) {
   return (
     <div className="grid min-h-screen lg:grid-cols-2">
-      <div className="bg-night text-ivory grain relative hidden items-center justify-center overflow-hidden lg:flex">
+      <div
+        data-tone="dark"
+        className="bg-night text-ivory grain relative hidden items-center justify-center overflow-hidden lg:flex"
+      >
         <Star className="text-gold/10 absolute size-[36rem]" />
         <div className="relative text-center">
           <Logo variant="stacked" className="w-72" />
-          <p className="text-mist mt-6 text-xs tracking-[0.3em] uppercase">
+          <p className="text-fg-muted mt-6 text-xs tracking-[0.3em] uppercase">
             Panel de administración
           </p>
         </div>

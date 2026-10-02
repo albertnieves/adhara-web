@@ -16,7 +16,7 @@ export function BrandMarquee({ brands }: { brands: string[] }) {
         {[...row, ...row].map((brand, index) => (
           <span
             key={`${brand}-${index}`}
-            className="font-display text-smoke/70 flex items-center gap-16 text-5xl font-light italic sm:text-7xl"
+            className="font-display text-fg-muted flex items-center gap-16 text-5xl font-light italic sm:text-7xl"
           >
             {brand}
             <span className="text-gold text-base not-italic">✦</span>

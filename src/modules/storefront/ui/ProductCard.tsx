@@ -56,7 +56,7 @@ export function ProductCard({
           </div>
         )}
         {media?.provisional && (
-          <span className="text-smoke/80 absolute top-3 left-3 text-[0.5625rem] tracking-[0.25em] uppercase">
+          <span className="text-fg-muted text-2xs tracking-caps absolute top-3 left-3 uppercase">
             {t('product.provisionalImage')}
           </span>
         )}

@@ -61,6 +61,7 @@ export function Hero({
   return (
     <section
       ref={ref}
+      data-tone="dark"
       className="bg-night text-ivory grain relative isolate flex min-h-svh items-center justify-center overflow-hidden"
     >
       {imageUrl && (
@@ -73,7 +74,7 @@ export function Hero({
             sizes="100vw"
             className="object-cover opacity-30"
           />
-          <div className="absolute inset-0 bg-black/30" />
+          <div className="bg-night/30 absolute inset-0" />
         </div>
       )}
       {/* Resplandor cálido que respira. */}
@@ -82,7 +83,7 @@ export function Hero({
         className="absolute inset-0 -z-10"
         style={{
           background:
-            'radial-gradient(60% 55% at 50% 62%, rgb(168 132 79 / 0.28), transparent 70%)',
+            'radial-gradient(60% 55% at 50% 62%, color-mix(in oklab, var(--color-gold) 28%, transparent), transparent 70%)',
         }}
         animate={reduced ? undefined : { opacity: [0.65, 1, 0.65] }}
         transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}

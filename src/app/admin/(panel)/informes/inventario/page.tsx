@@ -109,7 +109,7 @@ export default async function InventoryReport({
         )}
         <a
           href={`/admin/informes/inventario/exportar?mes=${month}`}
-          className="bg-ink text-ivory hover:bg-gold inline-flex min-h-11 items-center px-5 text-xs font-semibold tracking-[0.18em] uppercase transition-colors"
+          className="bg-ink text-ivory hover:bg-ink-soft inline-flex min-h-11 items-center px-5 text-xs font-semibold tracking-[0.18em] uppercase transition-colors"
         >
           CSV para la gestoría
         </a>

@@ -11,7 +11,7 @@ export function FormMessage({ state }: { state: ActionState }) {
   return (
     <p
       role={state.status === 'error' ? 'alert' : 'status'}
-      className={`border-l-2 bg-white/50 px-4 py-3 text-sm ${tone}`}
+      className={`bg-surface-raised/50 border-l-2 px-4 py-3 text-sm ${tone}`}
     >
       {state.message}
     </p>
