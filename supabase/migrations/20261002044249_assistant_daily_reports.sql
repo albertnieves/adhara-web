@@ -6,7 +6,7 @@
 -- Los informes guardan unidades y estados, nunca costes ni nombres de
 -- proveedor, para que también los lea el encargado (agent.use). Solo el
 -- servidor los escribe con la clave privilegiada: la tarea programada (tras
--- CRON_SECRET) o una persona con agent.use y MFA desde el panel. No hay
+-- CRON_SECRET) o una persona con reports.view y MFA desde el panel. No hay
 -- políticas de escritura para authenticated: nadie puede falsear un informe
 -- llamando a la API.
 
