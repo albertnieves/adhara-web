@@ -250,7 +250,7 @@ export function Counter({
             autoComplete="off"
             className="input"
           />
-          <span className="text-mist text-xs">
+          <span className="text-fg-muted text-xs">
             Opcional, pero permite cuadrar el stock con la caja.
           </span>
         </label>
@@ -270,7 +270,7 @@ export function Counter({
           type="button"
           onClick={submit}
           disabled={pending || lines.length === 0 || blocked.length > 0}
-          className="bg-ink text-ivory hover:bg-gold inline-flex min-h-14 w-full items-center justify-center px-5 text-xs font-semibold tracking-[0.18em] uppercase transition-colors duration-300 disabled:opacity-50"
+          className="bg-ink text-ivory hover:bg-ink-soft inline-flex min-h-14 w-full items-center justify-center px-5 text-xs font-semibold tracking-[0.18em] uppercase transition-colors duration-300 disabled:opacity-50"
         >
           {pending
             ? 'Registrando…'
@@ -282,7 +282,7 @@ export function Counter({
         {result && (
           <p
             role={result.status === 'error' ? 'alert' : 'status'}
-            className={`border-l-2 bg-white/50 px-4 py-3 text-sm ${
+            className={`bg-surface-raised/50 border-l-2 px-4 py-3 text-sm ${
               result.status === 'ok'
                 ? 'border-success/30 text-success'
                 : 'border-danger/30 text-danger'

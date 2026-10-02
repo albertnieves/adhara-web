@@ -88,7 +88,7 @@ export default async function ProductPreview({
               </p>
             )}
             {variants.length > 0 && (
-              <p className="text-mist mt-8 text-xs">
+              <p className="text-fg-muted mt-8 text-xs">
                 PVP:{' '}
                 {variants
                   .map((v) =>

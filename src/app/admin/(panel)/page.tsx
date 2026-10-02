@@ -32,7 +32,7 @@ function Stat({
   tone?: 'default' | 'alert';
 }) {
   const body = (
-    <div className="panel-card h-full !p-4 transition-colors duration-300 hover:bg-white sm:!p-6">
+    <div className="panel-card hover:bg-surface-raised h-full !p-4 transition-colors duration-300 sm:!p-6">
       <p className="eyebrow !tracking-[0.2em] sm:!tracking-[0.32em]">{label}</p>
       <p
         className={`font-display mt-2 text-4xl font-light lining-nums tabular-nums sm:mt-3 sm:text-5xl ${tone === 'alert' ? 'text-danger' : ''}`}
@@ -171,6 +171,7 @@ export default async function AdminHome() {
       {can('agent.use') && (
         <section
           aria-labelledby="informe-diario"
+          data-tone="dark"
           className="bg-night text-ivory mb-8 grid gap-6 px-6 py-6 sm:px-8 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-start"
         >
           <div className="min-w-0">
@@ -292,7 +293,7 @@ export default async function AdminHome() {
                 <li key={p.id}>
                   <Link
                     href={`/admin/catalogo/${p.id}`}
-                    className="flex items-center justify-between gap-4 py-3 text-sm hover:bg-white/60"
+                    className="hover:bg-surface-raised/60 flex items-center justify-between gap-4 py-3 text-sm"
                   >
                     <span>
                       <span className="text-smoke">{p.brandName} · </span>

@@ -11,6 +11,7 @@ export function PreviewBanner() {
       <form
         method="post"
         action="/api/vista-previa/salir"
+        data-tone="dark"
         className="bg-night text-ivory pointer-events-auto flex items-center gap-4 py-2.5 pr-2.5 pl-4 text-xs shadow-2xl"
       >
         <input type="hidden" name="path" value={pathname} />

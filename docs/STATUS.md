@@ -12,7 +12,14 @@ Plan del sistema de diseño en [phases/FASE_2_PLAN.md](phases/FASE_2_PLAN.md), a
 - línea base de axe: 2 reglas incumplidas, contraste en 32 pantallas y un indicador de carga sin rol;
 - capturas y axe como artefacto de cada ejecución de `e2e.yml`.
 
-Siguiente tarea: DS-02 (tokens).
+**DS-02 hecha (tokens):**
+
+- paleta y tokens semánticos con tonos oscuros;
+- pruebas de contraste AA en los cinco tonos;
+- guardas de colores y tipografía;
+- **axe sin infracciones en las 35 pantallas**, frente a 304 elementos con contraste insuficiente.
+
+Siguiente tarea: DS-03 (página de referencia `/admin/diseno`).
 
 - **Objetivos:**
   - tokens en dos capas;

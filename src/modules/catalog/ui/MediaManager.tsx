@@ -45,17 +45,22 @@ function MediaCard({
           className="object-contain p-3 mix-blend-multiply brightness-[1.04]"
         />
         {media.role === 'hero' && (
-          <span className="bg-ink text-ivory absolute top-2 left-2 px-2 py-0.5 text-[0.5625rem] tracking-[0.16em] uppercase">
+          <span className="bg-ink text-ivory text-2xs tracking-caps absolute top-2 left-2 px-2 py-0.5 uppercase">
             Principal
           </span>
         )}
       </div>
       <p className="text-xs">
         {ORIGIN_LABELS[media.origin] ?? media.origin}
-        {media.provisional && <span className="text-gold"> · provisional</span>}
+        {media.provisional && (
+          <span className="text-accent-fg"> · provisional</span>
+        )}
       </p>
       {media.source && (
-        <p className="text-mist truncate text-[0.6875rem]" title={media.source}>
+        <p
+          className="text-fg-muted truncate text-[0.6875rem]"
+          title={media.source}
+        >
           {media.source}
         </p>
       )}

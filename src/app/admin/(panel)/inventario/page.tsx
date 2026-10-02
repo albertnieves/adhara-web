@@ -133,9 +133,11 @@ export default async function Inventory({
                     <td data-label="Formato" className="text-sm">
                       <span>
                         {r.variantLabel}
-                        {r.sku && <p className="text-mist text-xs">{r.sku}</p>}
+                        {r.sku && (
+                          <p className="text-fg-muted text-xs">{r.sku}</p>
+                        )}
                         {!r.active && (
-                          <p className="text-mist text-xs">inactivo</p>
+                          <p className="text-fg-muted text-xs">inactivo</p>
                         )}
                       </span>
                     </td>
@@ -158,7 +160,7 @@ export default async function Inventory({
                       <span>
                         {available}
                         {r.reorderPoint !== null && (
-                          <p className="text-mist text-[0.6875rem] font-normal">
+                          <p className="text-fg-muted text-[0.6875rem] font-normal">
                             aviso ≤ {r.reorderPoint}
                           </p>
                         )}

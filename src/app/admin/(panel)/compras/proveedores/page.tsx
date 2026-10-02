@@ -43,7 +43,7 @@ export default async function Suppliers() {
             </thead>
             <tbody>
               {suppliers.map((s) => (
-                <tr key={s.id} className={s.active ? '' : 'text-mist'}>
+                <tr key={s.id} className={s.active ? '' : 'text-fg-muted'}>
                   <td>
                     <Link
                       href={`/admin/compras/proveedores/${s.id}`}

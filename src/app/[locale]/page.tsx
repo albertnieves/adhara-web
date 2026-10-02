@@ -157,10 +157,13 @@ export default async function Home({
         </section>
       )}
 
-      <section className="bg-night text-ivory relative overflow-hidden">
+      <section
+        data-tone="dark"
+        className="bg-night text-ivory relative overflow-hidden"
+      >
         <Reveal className="mx-auto max-w-3xl px-5 py-32 text-center sm:px-10">
           <Star className="text-gold-soft mx-auto size-4" />
-          <p className="eyebrow text-mist! mt-8">{t('storeEyebrow')}</p>
+          <p className="eyebrow text-fg-muted! mt-8">{t('storeEyebrow')}</p>
           <h2 className="mt-4 text-6xl font-light sm:text-7xl">
             {t('storeTitle')}
           </h2>

@@ -48,7 +48,7 @@ export function PurchasePanel({
               <>
                 {formatEuros(selected.priceCents, locale)}
                 {selected.compareAtCents != null && (
-                  <s className="text-mist ml-4 text-2xl">
+                  <s className="text-fg-muted ml-4 text-2xl">
                     {formatEuros(selected.compareAtCents, locale)}
                   </s>
                 )}

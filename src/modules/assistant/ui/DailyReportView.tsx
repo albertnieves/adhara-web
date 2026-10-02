@@ -60,6 +60,7 @@ export function DailyReportView({
       {summary && (
         <section
           aria-label="Resumen del asistente"
+          data-tone="dark"
           className="border-gold bg-night text-ivory border-l-2 px-6 py-5"
         >
           <p className="text-gold-soft text-[0.625rem] font-semibold tracking-[0.2em] uppercase">
@@ -85,14 +86,17 @@ export function DailyReportView({
               <li key={task.key}>
                 <Link
                   href={task.href}
-                  className="flex min-h-12 items-center justify-between gap-4 py-2 text-sm hover:bg-white/60"
+                  className="hover:bg-surface-raised/60 flex min-h-12 items-center justify-between gap-4 py-2 text-sm"
                 >
                   <span>{task.label}</span>
                   <span
                     className={`font-display text-2xl tabular-nums ${task.tone === 'alert' ? 'text-danger' : ''}`}
                   >
                     {task.count}
-                    <span aria-hidden="true" className="text-mist ml-3 text-sm">
+                    <span
+                      aria-hidden="true"
+                      className="text-fg-muted ml-3 text-sm"
+                    >
                       →
                     </span>
                   </span>
@@ -201,7 +205,7 @@ export function DailyReportView({
         </div>
       </section>
 
-      <p className="text-mist text-xs">
+      <p className="text-fg-muted text-xs">
         {report.location} · calculado el{' '}
         {TIME.format(new Date(report.generatedAt))}. Unidades, sin costes.
       </p>

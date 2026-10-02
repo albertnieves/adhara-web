@@ -187,6 +187,38 @@ export async function auditRoute(
         { timeout: 5_000 },
       )
       .catch(() => undefined);
+    // Contenido en streaming ya servido: sin el esqueleto de «Cargando».
+    await page
+      .waitForFunction(() => !document.querySelector('[aria-busy="true"]'), {
+        timeout: 15_000,
+      })
+      .catch(() => undefined);
+    // Recorre la página para que aparezca lo que se revela al hacer scroll
+    // (whileInView); si no, queda con opacidad 0 y fuera de la auditoría.
+    await page.evaluate(async () => {
+      const step = Math.max(200, Math.floor(window.innerHeight / 2));
+      for (let y = 0; y < document.documentElement.scrollHeight; y += step) {
+        window.scrollTo(0, y);
+        await new Promise((resolve) => setTimeout(resolve, 60));
+      }
+      window.scrollTo(0, 0);
+    });
+    // Animaciones con fin (entradas, fundidos) terminadas: axe y la auditoría
+    // miden el estado final, no un color a medio fundir.
+    await page
+      .waitForFunction(
+        () =>
+          document
+            .getAnimations()
+            .every(
+              (a) =>
+                a.playState !== 'running' ||
+                a.effect?.getComputedTiming().iterations === Infinity,
+            ),
+        undefined,
+        { timeout: 5_000 },
+      )
+      .catch(() => undefined);
     if (response?.status() !== expectedStatus)
       throw new Error(
         `${path} respondió ${response?.status()} y se esperaba ${expectedStatus}`,

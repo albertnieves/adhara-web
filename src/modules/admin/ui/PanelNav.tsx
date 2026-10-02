@@ -39,7 +39,7 @@ function NavList({
       {groups.map((group) => (
         <div key={group.name ?? 'inicio'}>
           {group.name && (
-            <p className="text-ivory/35 px-3 pb-1 text-[0.5625rem] font-semibold tracking-[0.24em] uppercase">
+            <p className="text-fg-muted text-2xs tracking-caps px-3 pb-1 font-semibold uppercase">
               {group.name}
             </p>
           )}
@@ -48,10 +48,10 @@ function NavList({
               item.soon ? (
                 <li
                   key={item.href}
-                  className="text-ivory/30 flex min-h-10 items-center justify-between px-3 text-sm"
+                  className="text-fg-muted flex min-h-10 items-center justify-between px-3 text-sm"
                 >
                   {item.label}
-                  <span className="text-[0.5625rem] tracking-[0.16em] uppercase">
+                  <span className="text-2xs tracking-caps-sm uppercase">
                     Pronto
                   </span>
                 </li>

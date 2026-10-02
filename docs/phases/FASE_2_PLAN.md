@@ -1,6 +1,6 @@
 # Fase 2 — Sistema de diseño: plan
 
-Estado: **en curso**. Plan aprobado el 02/10/2026 (PR #13) con las decisiones D1–D6 recomendadas; DS-01 hecha.
+Estado: **en curso**. Plan aprobado el 02/10/2026 (PR #13) con las decisiones D1–D6 recomendadas; DS-01 y DS-02 hechas.
 
 Base:
 
@@ -131,7 +131,7 @@ DS-01 puede empezar ya. De DS-05 a DS-09 se pueden trabajar en paralelo cuando e
 
 ### Fundamentos
 
-- [ ] **DS-02 · Tokens.** Depende de: DS-00, DS-01.
+- [x] **DS-02 · Tokens.** Depende de: DS-00, DS-01.
   - Capa de paleta (los colores de marca actuales) y capa semántica:
     - `surface`, `surface-raised`, `surface-sunken`;
     - `text`, `text-muted`, `text-inverse`;
@@ -146,6 +146,12 @@ DS-01 puede empezar ya. De DS-05 a DS-09 se pueden trabajar en paralelo cuando e
     - borde de controles en torno a `#8f8578` (3,2:1 sobre marfil, 3,5:1 sobre el fondo del campo).
   - Pruebas de los criterios 1 a 3. Empiezan con una lista de excepciones de las pantallas aún no migradas, que debe quedar vacía en DS-11.
   - Hecho cuando: los tokens están en `globals.css`, las pruebas de contraste pasan y la lista de excepciones está escrita.
+  - Hecho el 02/10 (rama `codex/ds-02-tokens`, DECISIONS §94):
+    - tokens semánticos `surface*`, `fg*`, `border*`, `accent*`, `focus` y estados, con los tonos oscuro, oud, índigo y bosque;
+    - escalas `text-2xs` (11 px), `tracking-caps*`, `max-w-page`, `rounded-hairline`, duraciones, capas y ritmo de sección;
+    - `tests/unit/design-tokens.test.ts`, criterio 2, en los cinco tonos;
+    - `tests/unit/design-guard.test.ts`, criterios 1 y 3, con excepciones en `design-guard-exceptions.ts`: solo el fondo 3D es permanente, y los tamaños y espaciados arbitrarios bajan a cero en DS-04;
+    - axe pasa de 304 elementos con contraste insuficiente a **0 infracciones en las 35 pantallas**.
 
 - [ ] **DS-03 · Página de referencia `/admin/diseno`.** Depende de: DS-02.
   - Protegida con `requireStaff` y enlazada desde el pie del menú del panel, fuera de las secciones de trabajo.
@@ -207,7 +213,7 @@ DS-01 puede empezar ya. De DS-05 a DS-09 se pueden trabajar en paralelo cuando e
 - [ ] **DS-11 · Migrar el panel.** Depende de: DS-06, DS-07, DS-08 y DS-09.
   - Menú y diseño general, acceso y MFA, y las pantallas de catálogo, inventario, mostrador, compras, reposición, informes, contenido, configuración, equipo y asistente.
   - Eliminar `.btn`, `.panel-btn`, `.input`, `.panel-card` y los colores sueltos. La lista de excepciones de DS-02 queda vacía.
-  - Corregir el indicador «Cargando» del panel: `aria-label` en un `div` sin rol (línea base de axe, §9).
+  - El indicador «Cargando» ya se corrigió en DS-02 (`role="status"`).
   - Hecho cuando: los criterios 1, 4, 6, 7 y 8 pasan en el panel con sesión (`e2e.yml`).
 
 ### Cierre
@@ -250,7 +256,16 @@ Medida con Supabase local y el perfume centinela, como en `e2e.yml`. El diseño 
 | `color-contrast`       | serious  | 32        | 304       | 253 son textos atenuados del menú lateral oscuro del panel (`#53514e` a 2,5:1 y `#5e5c59` a 2,9:1 sobre noche). El resto: niebla sobre marfil (2,3:1) y marfil con transparencia (2,9–4,1:1) en la tienda y el panel |
 | `aria-prohibited-attr` | serious  | 4         | 4         | Indicador «Cargando» del panel (`aria-label` en un `div` sin rol)                                                                                                                                                    |
 
-Las cifras varían un poco entre ejecuciones: entre 304 y 306 elementos, y el indicador de carga aparece en 3 o 4 pantallas según lo que tarde cada una. Lo corrigen DS-02 (tokens del tono oscuro y del texto atenuado) y DS-11 (indicador de carga). El criterio 6 exige cero infracciones al cerrar la fase.
+Las cifras varían un poco entre ejecuciones: entre 304 y 306 elementos, y el indicador de carga aparece en 3 o 4 pantallas según lo que tarde cada una. El criterio 6 exige cero infracciones al cerrar la fase.
+
+**Tras DS-02 (02/10):** 35 pantallas y **0 infracciones**.
+
+La auditoría de DS-01 tenía dos huecos, corregidos en DS-02:
+
+- no esperaba al contenido en streaming del panel, así que a veces medía el esqueleto de «Cargando»;
+- no recorría la página, así que no veía lo que aparece al hacer scroll (la mitad de la portada).
+
+Ahora espera a que no quede `aria-busy`, recorre la página y espera a que terminen las animaciones con fin. Con eso, la portada entera y todas las pantallas del panel también quedan a cero.
 
 **Límites de la auditoría:**
 

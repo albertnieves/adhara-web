@@ -61,9 +61,11 @@ export function ProductStock({
                 <tr key={row.variantId}>
                   <td data-primary className="text-sm">
                     {row.variantLabel}
-                    {row.sku && <p className="text-mist text-xs">{row.sku}</p>}
+                    {row.sku && (
+                      <p className="text-fg-muted text-xs">{row.sku}</p>
+                    )}
                     {!row.active && (
-                      <p className="text-mist text-xs">inactivo</p>
+                      <p className="text-fg-muted text-xs">inactivo</p>
                     )}
                   </td>
                   <td
@@ -85,7 +87,7 @@ export function ProductStock({
                     <span>
                       {available}
                       {row.reorderPoint !== null && (
-                        <p className="text-mist text-[0.6875rem] font-normal">
+                        <p className="text-fg-muted text-[0.6875rem] font-normal">
                           aviso ≤ {row.reorderPoint}
                         </p>
                       )}
@@ -145,7 +147,7 @@ export function ProductStock({
                   {MOVEMENT_LABELS[m.type as MovementType] ?? m.type}
                   <span className="text-smoke"> · {m.variantLabel}</span>
                   {(m.reason || m.reference) && (
-                    <span className="text-mist block truncate text-xs">
+                    <span className="text-fg-muted block truncate text-xs">
                       {[m.reason, m.reference].filter(Boolean).join(' · ')}
                     </span>
                   )}
@@ -155,7 +157,10 @@ export function ProductStock({
                 >
                   {m.deltaOnHand > 0 ? '+' : ''}
                   {m.deltaOnHand}
-                  <span className="text-mist text-xs"> → {m.onHandAfter}</span>
+                  <span className="text-fg-muted text-xs">
+                    {' '}
+                    → {m.onHandAfter}
+                  </span>
                 </span>
               </li>
             ))}

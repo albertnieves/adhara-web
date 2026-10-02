@@ -114,7 +114,7 @@ export default async function MarginsReport() {
               <li key={r.variantId}>
                 <Link
                   href={`/admin/catalogo/${productOf.get(r.variantId)}`}
-                  className="flex items-center justify-between gap-4 py-3 text-sm hover:bg-white/60"
+                  className="hover:bg-surface-raised/60 flex items-center justify-between gap-4 py-3 text-sm"
                 >
                   <span>
                     <span className="text-smoke">{r.brandName} · </span>

@@ -201,7 +201,7 @@ function PriceForm({
       {state.status === 'confirm' &&
         state.reviewedInput === `${price}|${compareAt}` &&
         state.confirm && (
-          <fieldset className="border-gold/50 flex flex-col gap-2 border bg-white/60 p-4 text-sm sm:col-span-3">
+          <fieldset className="border-gold/50 bg-surface-raised/60 flex flex-col gap-2 border p-4 text-sm sm:col-span-3">
             <legend className="px-1 text-xs font-semibold">
               {state.message}
             </legend>
@@ -246,7 +246,7 @@ function CostPanel({
     <div className="border-line border-t pt-6">
       <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1">
         <p className="eyebrow">Coste y margen</p>
-        <p className="text-mist text-xs">
+        <p className="text-fg-muted text-xs">
           Interno · no se muestra en la tienda
         </p>
       </div>
@@ -286,7 +286,7 @@ function CostPanel({
         </div>
       </dl>
       {cost && (
-        <p className="text-mist mt-3 text-xs">
+        <p className="text-fg-muted mt-3 text-xs">
           Registrado el {RECORDED_AT.format(new Date(cost.recordedAt))}
           {cost.note ? ` · ${cost.note}` : ''}
         </p>

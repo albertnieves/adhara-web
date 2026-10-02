@@ -68,7 +68,7 @@ export default async function Reports() {
           <li key={report.href}>
             <Link
               href={report.href}
-              className="panel-card block h-full transition-colors duration-300 hover:bg-white"
+              className="panel-card hover:bg-surface-raised block h-full transition-colors duration-300"
             >
               <h2 className="text-2xl font-light">{report.title}</h2>
               <p className="text-smoke mt-3 text-sm leading-relaxed">

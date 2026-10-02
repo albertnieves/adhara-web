@@ -43,7 +43,7 @@ export function PriceLabelCard({
 
   return (
     <article
-      className={`text-ink flex h-[38.1mm] w-[63.5mm] break-inside-avoid flex-col justify-between overflow-hidden bg-white px-[3.5mm] py-[3mm] ${cutLines ? 'border-line border-[0.2mm]' : ''}`}
+      className={`text-ink bg-surface-raised flex h-[38.1mm] w-[63.5mm] break-inside-avoid flex-col justify-between overflow-hidden px-[3.5mm] py-[3mm] ${cutLines ? 'border-line border-[0.2mm]' : ''}`}
     >
       <header className="flex items-center justify-between gap-[2mm]">
         <p className="truncate text-[6pt] tracking-[0.24em] uppercase">

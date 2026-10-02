@@ -189,3 +189,39 @@ Formato de la Fase 0 §16: fecha · contexto · decisión · alternativas descar
     - Se excluyen las capas superpuestas a propósito (`absolute`, `fixed` y `aria-hidden`).
     - axe solo guarda la línea base (plan §9) hasta que las tareas siguientes la lleven a cero.
     - Capturas en JPEG como artefacto de la CI (14 días), sin versionar.
+94. **Tokens (DS-02).** En `src/app/globals.css`, en dos capas.
+    - **Paleta de marca:** los colores de antes y siete nuevos.
+      - `paper` (`#fdfcf9`, campos y tarjetas);
+      - `ink-soft` (`#2e2925`);
+      - `gold-deep` (`#7a5d33`);
+      - `line-strong` (`#8a8073`) y sus variantes oscuras;
+      - los oscuros de colección `oud`, `indigo-night` y `forest` (D3).
+    - **Semánticos:** `surface`, `surface-raised`, `surface-sunken`, `fg`, `fg-muted`, `fg-inverse`, `border`, `border-strong`, `accent`, `accent-fg`, `focus`, y `danger`, `success` y `warning` con su `-soft`.
+      - Se llaman `fg` y no `text` para que la clase sea `text-fg` y no `text-text`.
+    - **Tonos:** `data-tone="dark"` (y `oud`, `indigo` y `forest`) redefine los semánticos dentro de su contenedor.
+      - Se añadió a los fondos oscuros que ya existían: pie, portada, menú móvil, banner de vista previa, menú del panel, informe del inicio y resumen del asistente.
+      - El panel lateral (`Sheet`) ya lo usaba.
+    - **Contraste:** `tests/unit/design-tokens.test.ts` comprueba la matriz en los cinco tonos.
+      - Texto, 4,5:1. Bordes de controles y foco, 3:1.
+      - El dorado de acento marca estados solo sobre la superficie y la elevada; sobre arena o el fondo de la ficha es adorno (2,7–2,9:1).
+      - La niebla deja de ser color de texto sobre fondos claros (2,3:1): es el texto atenuado del tono oscuro y un adorno.
+    - **Cambios visibles, aprobados como parte del plan (D4):**
+      - el texto atenuado pasa de niebla a humo;
+      - los bordes de los campos se oscurecen (de 1,3:1 a 3,4:1);
+      - el botón principal pasa a tinta suave al pasar el ratón, no a dorado;
+      - el foco tiene 2 px en dorado oscuro;
+      - la marquesina de marcas pasa a humo;
+      - las etiquetas del menú lateral del panel pasan de 9 a 11 px y son legibles;
+      - el personal inactivo se muestra en texto atenuado, no con opacidad.
+    - **Escalas:**
+      - `text-2xs` (11 px, el mínimo);
+      - `tracking-caps-sm`, `tracking-caps` y `tracking-caps-lg`;
+      - `max-w-page` y `rounded-hairline`.
+      - Tailwind 4 no tiene espacio de nombres para duraciones ni capas, así que `--duration-*`, `--z-*` y `--section-y` son variables CSS.
+      - `@theme static` publica todos los tokens. Sin `static`, Tailwind descarta los que aún no usa ningún componente, como los fondos suaves de estado, y la página de referencia no podría leerlos.
+    - **Guardas (criterios 1 y 3):** `tests/unit/design-guard.test.ts`, con excepciones exactas en `design-guard-exceptions.ts`, que solo pueden bajar.
+      - La única permanente es el fondo de la escena 3D, porque three.js no lee variables CSS.
+      - Los tamaños y espaciados arbitrarios bajan a cero en DS-04.
+    - **Accesibilidad:** el indicador «Cargando» del panel lleva `role="status"`.
+    - **Auditoría:** ahora espera al contenido en streaming, recorre la página y espera a las animaciones con fin.
+    - **Resultado:** axe da 0 infracciones en las 35 pantallas.

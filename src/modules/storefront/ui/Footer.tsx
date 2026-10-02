@@ -11,16 +11,19 @@ export async function Footer() {
   const t = await getTranslations('footer');
   const nav = await getTranslations('nav');
   return (
-    <footer className="bg-night text-ivory relative overflow-hidden">
+    <footer
+      data-tone="dark"
+      className="bg-night text-ivory relative overflow-hidden"
+    >
       <div className="mx-auto grid max-w-[90rem] gap-14 px-5 pt-24 pb-12 sm:px-10 md:grid-cols-[2fr_1fr_1fr]">
         <div className="space-y-6">
           <Logo variant="stacked" />
-          <p className="text-mist max-w-xs text-sm leading-relaxed">
+          <p className="text-fg-muted max-w-xs text-sm leading-relaxed">
             {t('tagline')}
           </p>
         </div>
         <div>
-          <p className="eyebrow text-mist! mb-5">{t('shop')}</p>
+          <p className="eyebrow text-fg-muted! mb-5">{t('shop')}</p>
           <ul className="space-y-3 text-sm">
             <li>
               <Link href="/catalogo" className="link-underline">
@@ -38,8 +41,8 @@ export async function Footer() {
           </ul>
         </div>
         <div>
-          <p className="eyebrow text-mist! mb-5">{t('info')}</p>
-          <address className="text-mist space-y-3 text-sm not-italic">
+          <p className="eyebrow text-fg-muted! mb-5">{t('info')}</p>
+          <address className="text-fg-muted space-y-3 text-sm not-italic">
             <p>
               {store.address}
               <br />
@@ -77,14 +80,14 @@ export async function Footer() {
           </address>
           <NextLink
             href="/admin/acceso"
-            className="link-underline text-mist mt-6 inline-block text-xs"
+            className="link-underline text-fg-muted mt-6 inline-block text-xs"
           >
             {t('staffAccess')}
           </NextLink>
         </div>
       </div>
       <div className="border-ivory/10 mx-auto flex max-w-[90rem] items-center justify-between border-t px-5 py-6 text-[0.6875rem] tracking-[0.2em] uppercase sm:px-10">
-        <span className="text-mist">
+        <span className="text-fg-muted">
           {t('rights', { year: new Date().getFullYear() })}
         </span>
         <span className="text-gold-soft">Castelldefels</span>

@@ -12,7 +12,7 @@ export function PrintButton({
       type="button"
       disabled={disabled}
       onClick={() => window.print()}
-      className="bg-ink text-ivory hover:bg-gold inline-flex min-h-11 items-center px-5 text-xs font-semibold tracking-[0.18em] uppercase transition-colors disabled:opacity-40"
+      className="bg-ink text-ivory hover:bg-ink-soft inline-flex min-h-11 items-center px-5 text-xs font-semibold tracking-[0.18em] uppercase transition-colors disabled:opacity-40"
     >
       {children}
     </button>

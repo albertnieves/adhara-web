@@ -104,7 +104,7 @@ export function ReceiveForm({
                     {v?.productName ?? line.variantId}
                     <span className="text-smoke"> · {v?.variantLabel}</span>
                     {line.supplierSku && (
-                      <span className="text-mist block text-xs">
+                      <span className="text-fg-muted block text-xs">
                         ref. {line.supplierSku}
                       </span>
                     )}

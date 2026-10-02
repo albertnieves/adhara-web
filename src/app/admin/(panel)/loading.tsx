@@ -1,7 +1,12 @@
 /** Mientras carga una sección del panel: estructura tenue, sin saltos. */
 export default function PanelLoading() {
   return (
-    <div aria-busy="true" aria-label="Cargando" className="animate-pulse">
+    <div
+      role="status"
+      aria-busy="true"
+      aria-label="Cargando"
+      className="animate-pulse"
+    >
       <div className="border-line mb-10 border-b pb-8">
         <div className="bg-sand h-3 w-24" />
         <div className="bg-sand mt-4 h-10 w-72" />

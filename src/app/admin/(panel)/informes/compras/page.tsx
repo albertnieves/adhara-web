@@ -26,7 +26,7 @@ function LeadTime({ check }: { check: LeadTimeCheck }) {
       return (
         <span>
           {DAYS.format(check.realDays)} d
-          <span className="text-gold block text-xs">
+          <span className="text-warning block text-xs">
             Sin plazo declarado: anótalo en el proveedor
           </span>
         </span>
@@ -38,7 +38,7 @@ function LeadTime({ check }: { check: LeadTimeCheck }) {
             check.kind === 'slower'
               ? 'text-danger'
               : check.kind === 'faster'
-                ? 'text-gold'
+                ? 'text-accent-fg'
                 : ''
           }
         >
@@ -134,7 +134,7 @@ export default async function PurchasesReport({
                       {s.supplierName}
                     </Link>
                     {!s.supplierActive && (
-                      <p className="text-mist text-xs">inactivo</p>
+                      <p className="text-fg-muted text-xs">inactivo</p>
                     )}
                   </td>
                   <td className="text-right tabular-nums">{s.ordersPlaced}</td>
