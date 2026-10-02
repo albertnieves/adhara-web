@@ -62,7 +62,7 @@ export const ARBITRARY_TRACKING: Readonly<Record<string, number>> = {
   'src/app/admin/(panel)/informes/inventario/page.tsx': 3,
   'src/app/admin/(panel)/informes/rotacion/page.tsx': 1,
   'src/app/admin/(panel)/inventario/page.tsx': 2,
-  'src/app/admin/(panel)/layout.tsx': 3,
+  'src/app/admin/(panel)/layout.tsx': 2,
   'src/app/admin/(panel)/mostrador/page.tsx': 1,
   'src/app/admin/(panel)/movimientos/page.tsx': 2,
   'src/app/admin/(panel)/page.tsx': 5,

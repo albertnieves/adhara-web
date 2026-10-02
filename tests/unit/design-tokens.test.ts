@@ -1,10 +1,19 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
+import { contrastRatio, parseColor } from '@/modules/design/domain/contrast';
+import {
+  catalogVariables,
+  fixedPairs,
+  matrixPairs,
+  TONES,
+} from '@/modules/design/domain/tokens';
+import type { ToneId } from '@/modules/design/domain/tokens';
 
 /*
  * Criterio 2 de la Fase 2: todas las combinaciones permitidas de tokens
  * cumplen WCAG 2.2 AA en el tono claro y en los oscuros. Lee los tokens de
- * src/app/globals.css, así que no hay una segunda copia de los valores.
+ * src/app/globals.css, así que no hay una segunda copia de los valores; la
+ * matriz es la de src/modules/design, la misma que enseña /admin/diseno.
  */
 
 const css = readFileSync(
@@ -36,12 +45,12 @@ function colors(source: string): Map<string, string> {
 
 const theme = colors(block('@theme static {'));
 const darkTones = colors(block("[data-tone='dark'],"));
-const TONES: Record<string, Map<string, string>> = {
-  claro: new Map(),
-  oscuro: darkTones,
+const TONE_COLORS: Record<ToneId, Map<string, string>> = {
+  light: new Map(),
+  dark: darkTones,
   oud: new Map([...darkTones, ...colors(block("[data-tone='oud'] {"))]),
   indigo: new Map([...darkTones, ...colors(block("[data-tone='indigo'] {"))]),
-  bosque: new Map([...darkTones, ...colors(block("[data-tone='forest'] {"))]),
+  forest: new Map([...darkTones, ...colors(block("[data-tone='forest'] {"))]),
 };
 
 function resolve(name: string, tone: Map<string, string>, depth = 0): string {
@@ -55,53 +64,19 @@ function resolve(name: string, tone: Map<string, string>, depth = 0): string {
   return value;
 }
 
-function luminance(hex: string) {
-  const channel = (i: number) => {
-    const c = parseInt(hex.slice(i, i + 2), 16) / 255;
-    return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
-  };
-  return 0.2126 * channel(1) + 0.7152 * channel(3) + 0.0722 * channel(5);
-}
-
-function contrast(a: string, b: string) {
-  const [hi, lo] = [luminance(a), luminance(b)].sort((x, y) => y - x);
-  return (hi! + 0.05) / (lo! + 0.05);
-}
-
-const SURFACES = ['surface', 'surface-raised', 'surface-sunken'];
-/** Texto: 4,5:1 (WCAG 1.4.3). */
-const TEXT = ['fg', 'fg-muted', 'accent-fg', 'danger', 'success', 'warning'];
-/** Bordes de controles y foco: 3:1 en cualquier superficie (WCAG 1.4.11). */
-const NON_TEXT = ['border-strong', 'focus'];
-/**
- * El dorado de acento marca estados (activo, seleccionado) solo sobre la
- * superficie y la elevada; sobre arena o escenario es adorno (2,7–2,9:1).
- */
-const ACCENT_SURFACES = ['surface', 'surface-raised'];
-
-type Pair = { fg: string; bg: string; min: number };
-
-function pairsFor(toneName: string): Pair[] {
-  const bgs =
-    toneName === 'claro' ? [...SURFACES, 'stage', 'sand'] : [...SURFACES];
-  return [
-    ...bgs.flatMap((bg) => TEXT.map((fg) => ({ fg, bg, min: 4.5 }))),
-    ...bgs.flatMap((bg) => NON_TEXT.map((fg) => ({ fg, bg, min: 3 }))),
-    ...ACCENT_SURFACES.map((bg) => ({ fg: 'accent', bg, min: 3 })),
-    { fg: 'fg-inverse', bg: 'fg', min: 4.5 },
-  ];
+function contrast(fg: string, bg: string, tone: Map<string, string>) {
+  return contrastRatio(
+    parseColor(resolve(fg, tone))!,
+    parseColor(resolve(bg, tone))!,
+  );
 }
 
 describe('contraste de los tokens (WCAG 2.2 AA)', () => {
-  for (const [toneName, tone] of Object.entries(TONES)) {
-    it(`tono ${toneName}: texto 4,5:1 y elementos gráficos 3:1`, () => {
-      const failures = pairsFor(toneName)
-        .map(({ fg, bg, min }) => ({
-          fg,
-          bg,
-          min,
-          ratio: contrast(resolve(fg, tone), resolve(bg, tone)),
-        }))
+  for (const { id, label } of TONES) {
+    it(`tono ${label.toLowerCase()}: texto 4,5:1 y elementos gráficos 3:1`, () => {
+      const tone = TONE_COLORS[id];
+      const failures = [...matrixPairs(id), ...fixedPairs(id)]
+        .map((pair) => ({ ...pair, ratio: contrast(pair.fg, pair.bg, tone) }))
         .filter(({ ratio, min }) => ratio < min)
         .map(
           ({ fg, bg, min, ratio }) =>
@@ -111,36 +86,11 @@ describe('contraste de los tokens (WCAG 2.2 AA)', () => {
     });
   }
 
-  it('estados sobre su fondo suave y botones principales', () => {
-    const light = TONES.claro!;
-    const checks: [string, string][] = [
-      ['danger', 'danger-soft'],
-      ['success', 'success-soft'],
-      ['warning', 'warning-soft'],
-      ['ivory', 'ink'],
-      ['ivory', 'ink-soft'],
-      ['ink', 'gold-soft'],
-    ];
-    const failures = checks
-      .map(
-        ([fg, bg]) =>
-          [fg, bg, contrast(resolve(fg, light), resolve(bg, light))] as const,
-      )
-      .filter(([, , ratio]) => ratio < 4.5)
-      .map(([fg, bg, ratio]) => `${fg} sobre ${bg}: ${ratio.toFixed(2)}`);
-    expect(failures).toEqual([]);
-  });
-
   it('la niebla no sirve como texto sobre fondos claros', () => {
     // Por eso no es un token de texto: solo adornos o tonos oscuros.
+    expect(contrast('mist', 'surface', TONE_COLORS.light)).toBeLessThan(4.5);
     expect(
-      contrast(resolve('mist', TONES.claro!), resolve('surface', TONES.claro!)),
-    ).toBeLessThan(4.5);
-    expect(
-      contrast(
-        resolve('fg-muted', TONES.oscuro!),
-        resolve('surface', TONES.oscuro!),
-      ),
+      contrast('fg-muted', 'surface', TONE_COLORS.dark),
     ).toBeGreaterThanOrEqual(4.5);
   });
 
@@ -148,5 +98,33 @@ describe('contraste de los tokens (WCAG 2.2 AA)', () => {
     expect(css).toMatch(
       /:focus-visible\s*{\s*outline:\s*2px solid var\(--color-focus\)/,
     );
+  });
+});
+
+describe('catálogo de tokens (DS-03)', () => {
+  it('tiene exactamente los tokens que declara globals.css', () => {
+    // Declaraciones al principio de línea; las subpropiedades de Tailwind
+    // (--text-2xs--line-height) van con su token.
+    const declared = new Set(
+      [...css.matchAll(/^\s*(--[a-z0-9-]+)\s*:/gm)]
+        .map((m) => m[1]!)
+        .filter((name) => !name.slice(2).includes('--')),
+    );
+    const catalog = new Set(catalogVariables());
+    expect([...declared].filter((v) => !catalog.has(v))).toEqual([]);
+    expect([...catalog].filter((v) => !declared.has(v))).toEqual([]);
+    expect(catalog.size).toBe(catalogVariables().length);
+  });
+
+  it('lee los colores en hexadecimal y los que calcula el navegador', () => {
+    expect(parseColor('#F5F1EA')).toEqual([245, 241, 234]);
+    expect(parseColor(' #0d0c0b ')).toEqual([13, 12, 11]);
+    expect(parseColor('rgb(21, 19, 17)')).toEqual([21, 19, 17]);
+    expect(parseColor('var(--color-ink)')).toBeNull();
+    expect(parseColor('#fff')).toBeNull();
+    const black = parseColor('#000000')!;
+    const white = parseColor('#ffffff')!;
+    expect(contrastRatio(black, white)).toBeCloseTo(21, 5);
+    expect(contrastRatio(white, white)).toBe(1);
   });
 });

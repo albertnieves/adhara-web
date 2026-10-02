@@ -112,24 +112,23 @@ export default async function PanelLayout({
     { role: staff.role, aal: 'aal2' },
     'catalog.edit',
   );
+  const shortcut =
+    'text-ivory/60 hover:text-ivory inline-flex min-h-9 items-center text-left text-xs tracking-[0.16em] uppercase';
   const shortcuts = (
     <>
       {canPreview && (
         <form action={enterStorefrontPreview}>
-          <button
-            type="submit"
-            className="text-ivory/60 hover:text-ivory min-h-9 text-left text-xs tracking-[0.16em] uppercase"
-          >
+          <button type="submit" className={shortcut}>
             Vista previa con borradores
           </button>
         </form>
       )}
-      <Link
-        href="/es"
-        className="text-ivory/60 hover:text-ivory inline-flex min-h-9 items-center text-xs tracking-[0.16em] uppercase"
-        target="_blank"
-      >
+      <Link href="/es" className={shortcut} target="_blank">
         Tienda pública ↗
+      </Link>
+      {/* Fuera de las secciones de trabajo: la referencia de la Fase 2 (D6). */}
+      <Link href="/admin/diseno" className={shortcut}>
+        Sistema de diseño
       </Link>
     </>
   );

@@ -1,6 +1,6 @@
 # Fase 2 — Sistema de diseño: plan
 
-Estado: **en curso**. Plan aprobado el 02/10/2026 (PR #13) con las decisiones D1–D6 recomendadas; DS-01 y DS-02 hechas.
+Estado: **en curso**. Plan aprobado el 02/10/2026 (PR #13) con las decisiones D1–D6 recomendadas; DS-01 a DS-03 hechas.
 
 Base:
 
@@ -153,12 +153,19 @@ DS-01 puede empezar ya. De DS-05 a DS-09 se pueden trabajar en paralelo cuando e
     - `tests/unit/design-guard.test.ts`, criterios 1 y 3, con excepciones en `design-guard-exceptions.ts`: solo el fondo 3D es permanente, y los tamaños y espaciados arbitrarios bajan a cero en DS-04;
     - axe pasa de 304 elementos con contraste insuficiente a **0 infracciones en las 35 pantallas**.
 
-- [ ] **DS-03 · Página de referencia `/admin/diseno`.** Depende de: DS-02.
+- [x] **DS-03 · Página de referencia `/admin/diseno`.** Depende de: DS-02.
   - Protegida con `requireStaff` y enlazada desde el pie del menú del panel, fuera de las secciones de trabajo.
   - Muestra colores con su contraste calculado, escala tipográfica, espaciado, radios, movimiento y tonos claro y oscuro.
   - Cada tarea siguiente añade la sección de sus componentes.
   - E2E: sin sesión redirige al acceso y con sesión responde 200; axe sin infracciones.
   - Hecho cuando: la página existe con todos los tokens.
+  - Hecho el 02/10 (rama `codex/ds-03-referencia`, DECISIONS §95):
+    - módulo `src/modules/design`: catálogo de tokens con su uso y la matriz de contraste, compartidos por la página y por `design-tokens.test.ts`, que exige que el catálogo y `globals.css` tengan exactamente los mismos tokens;
+    - la página lee los valores en el navegador dentro de cada tono y calcula el contraste con la misma función que la prueba: 49 combinaciones en claro y 27 en cada oscuro, todas cumplen;
+    - secciones: color, tonos y contraste, tipografía, espacio, radios y líneas, movimiento, capas y componentes (vacía hasta DS-04);
+    - enlace «Sistema de diseño» en el pie del menú, en escritorio y en el menú móvil;
+    - `tests/integration/design-reference.spec.ts` con el rol de encargado, el de menos permisos; la ruta se suma a la auditoría del panel y a las redirecciones sin sesión.
+  - Para revisar en la página (D3, criterio 13): los tonos de colección solo cambian la superficie; la elevada y la hundida siguen siendo las del tono oscuro.
 
 - [ ] **DS-04 · Tipografía.** Depende de: DS-03.
   - Componentes `Heading` (display, h1–h4), `Text` (cuerpo, pequeño y cifras tabulares) y `Eyebrow` (versalitas).
@@ -259,6 +266,8 @@ Medida con Supabase local y el perfume centinela, como en `e2e.yml`. El diseño 
 Las cifras varían un poco entre ejecuciones: entre 304 y 306 elementos, y el indicador de carga aparece en 3 o 4 pantallas según lo que tarde cada una. El criterio 6 exige cero infracciones al cerrar la fase.
 
 **Tras DS-02 (02/10):** 35 pantallas y **0 infracciones**.
+
+**Tras DS-03 (02/10):** 36 pantallas, con la página de referencia, y **0 infracciones**; la auditoría de diseño, sin incidencias en ninguna.
 
 La auditoría de DS-01 tenía dos huecos, corregidos en DS-02:
 

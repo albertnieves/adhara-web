@@ -1,6 +1,6 @@
 # Estado real — 02/10/2026
 
-**Tienda visual (es/ca/en) y panel de administración operativos sobre `adhara-dev`, desplegados en Vercel, que sigue siendo privado (Vercel Authentication). `main` incluye las fases R y S (PR #9), la entrega de acceso y edición de Codex (PR #10) y el panel con el asistente (PR #11); sus 17 migraciones están aplicadas en `adhara-dev` (comprobado el 02/10). La tienda muestra 50 perfumes publicados con PVP. La Fase 1 está cerrada (PR #12): sus 19 criterios están cumplidos o con una excepción escrita ([informe](phases/FASE_1_REPORT.md)). La Fase 2 (sistema de diseño) está en preparación ([plan](phases/FASE_2_PLAN.md)).**
+**Tienda visual (es/ca/en) y panel de administración operativos sobre `adhara-dev`, desplegados en Vercel, que sigue siendo privado (Vercel Authentication). `main` incluye las fases R y S (PR #9), la entrega de acceso y edición de Codex (PR #10) y el panel con el asistente (PR #11); sus 17 migraciones están aplicadas en `adhara-dev` (comprobado el 02/10). La tienda muestra 50 perfumes publicados con PVP. La Fase 1 está cerrada (PR #12): sus 19 criterios están cumplidos o con una excepción escrita ([informe](phases/FASE_1_REPORT.md)). La Fase 2 (sistema de diseño) está en curso ([plan](phases/FASE_2_PLAN.md)).**
 
 ## Fase 2 en curso (02/10)
 
@@ -19,7 +19,13 @@ Plan del sistema de diseño en [phases/FASE_2_PLAN.md](phases/FASE_2_PLAN.md), a
 - guardas de colores y tipografía;
 - **axe sin infracciones en las 35 pantallas**, frente a 304 elementos con contraste insuficiente.
 
-Siguiente tarea: DS-03 (página de referencia `/admin/diseno`).
+**DS-03 hecha (página de referencia):**
+
+- `/admin/diseno`, para todo el personal con sesión, enlazada desde el pie del menú del panel;
+- todos los tokens con el valor que aplica el navegador y el contraste calculado en los cinco tonos (todas las combinaciones cumplen);
+- una prueba exige que la página y `globals.css` tengan los mismos tokens.
+
+Siguiente tarea: DS-04 (tipografía), y en paralelo DS-05 (iconos y marca).
 
 - **Objetivos:**
   - tokens en dos capas;
@@ -224,5 +230,6 @@ La revisión visual con perfumes se hizo en local con un Supabase simulado que d
 - 01–02/10: panel sin solapes y más cómodo, informe diario programado y asistente de inventario (PR #11, fusionada; migración aplicada en `adhara-dev`).
 - 02/10: cierre de la Fase 1 (PR #12, fusionada): CI en tres workflows, garantías probadas, documentación e informe.
 - 02/10: plan de la Fase 2 (sistema de diseño) con objetivos, criterios y tareas.
+- 02/10: Fase 2, DS-01 a DS-03: red de seguridad (PR #14), tokens y contraste AA (PR #15) y página de referencia `/admin/diseno`.
 
 Ver docs/DEVELOPMENT.md para continuar y docs/DECISIONS.md para las decisiones.
