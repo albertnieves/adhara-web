@@ -2,9 +2,17 @@
 
 **Tienda visual (es/ca/en) y panel de administración operativos sobre `adhara-dev`, desplegados en Vercel, que sigue siendo privado (Vercel Authentication). `main` incluye las fases R y S (PR #9), la entrega de acceso y edición de Codex (PR #10) y el panel con el asistente (PR #11); sus 17 migraciones están aplicadas en `adhara-dev` (comprobado el 02/10). La tienda muestra 50 perfumes publicados con PVP. La Fase 1 está cerrada (PR #12): sus 19 criterios están cumplidos o con una excepción escrita ([informe](phases/FASE_1_REPORT.md)). La Fase 2 (sistema de diseño) está en preparación ([plan](phases/FASE_2_PLAN.md)).**
 
-## Fase 2 en preparación (02/10)
+## Fase 2 en curso (02/10)
 
-Plan del sistema de diseño en [phases/FASE_2_PLAN.md](phases/FASE_2_PLAN.md), pendiente de aprobación.
+Plan del sistema de diseño en [phases/FASE_2_PLAN.md](phases/FASE_2_PLAN.md), aprobado (PR #13) con las decisiones D1–D6 recomendadas (DECISIONS §92).
+
+**DS-01 hecha (red de seguridad):**
+
+- auditoría de diseño en E2E sobre 35 pantallas a 4 anchuras, sin incidencias;
+- línea base de axe: 2 reglas incumplidas, contraste en 32 pantallas y un indicador de carga sin rol;
+- capturas y axe como artefacto de cada ejecución de `e2e.yml`.
+
+Siguiente tarea: DS-02 (tokens).
 
 - **Objetivos:**
   - tokens en dos capas;

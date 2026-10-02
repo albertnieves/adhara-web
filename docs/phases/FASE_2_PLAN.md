@@ -1,6 +1,6 @@
 # Fase 2 — Sistema de diseño: plan
 
-Estado: **PLAN, pendiente de aprobación** (no se ha implementado nada) · 02/10/2026.
+Estado: **en curso**. Plan aprobado el 02/10/2026 (PR #13) con las decisiones D1–D6 recomendadas; DS-01 hecha.
 
 Base:
 
@@ -110,10 +110,11 @@ DS-01 puede empezar ya. De DS-05 a DS-09 se pueden trabajar en paralelo cuando e
 
 ### Preparación
 
-- [ ] **DS-00 · Aprobar el plan y las decisiones D1–D6** (usuario).
+- [x] **DS-00 · Aprobar el plan y las decisiones D1–D6** (usuario).
   - Hecho cuando: la PR de este plan está fusionada y las decisiones constan en DECISIONS.
+  - Hecho el 02/10: PR #13 fusionada; D1–D6 con su recomendación en DECISIONS §92.
 
-- [ ] **DS-01 · Red de seguridad antes de tocar estilos.** Depende de: —.
+- [x] **DS-01 · Red de seguridad antes de tocar estilos.** Depende de: —.
   - Convertir la auditoría de solapes, texto fuera de su caja, desplazamiento horizontal y objetivos pequeños (usada en la PR #11) en un E2E:
     - rutas públicas a 390, 768, 1280 y 1440 px;
     - el panel con sesión local.
@@ -121,6 +122,12 @@ DS-01 puede empezar ya. De DS-05 a DS-09 se pueden trabajar en paralelo cuando e
   - Guardar un informe inicial de infracciones: no falla todavía, pero mide de dónde partimos.
   - Capturas «antes» como artefacto de la CI, no versionadas.
   - Hecho cuando: el E2E de auditoría pasa en `e2e.yml` y el informe inicial de axe está en la PR.
+  - Hecho el 02/10 (rama `codex/ds-01-red-de-seguridad`):
+    - `tests/support/layout-audit.ts`;
+    - `tests/e2e/layout-audit.spec.ts`, que audita 12 pantallas públicas y comprueba que la propia auditoría detecta cada problema;
+    - `tests/integration/layout-audit.spec.ts`, que audita 23 pantallas del panel;
+    - `scripts/axe-report.ts`, cuyo resumen aparece en cada ejecución de `e2e.yml`, que además publica capturas y axe en el artefacto `auditoria-visual`.
+  - Línea base en §9.
 
 ### Fundamentos
 
@@ -200,6 +207,7 @@ DS-01 puede empezar ya. De DS-05 a DS-09 se pueden trabajar en paralelo cuando e
 - [ ] **DS-11 · Migrar el panel.** Depende de: DS-06, DS-07, DS-08 y DS-09.
   - Menú y diseño general, acceso y MFA, y las pantallas de catálogo, inventario, mostrador, compras, reposición, informes, contenido, configuración, equipo y asistente.
   - Eliminar `.btn`, `.panel-btn`, `.input`, `.panel-card` y los colores sueltos. La lista de excepciones de DS-02 queda vacía.
+  - Corregir el indicador «Cargando» del panel: `aria-label` en un `div` sin rol (línea base de axe, §9).
   - Hecho cuando: los criterios 1, 4, 6, 7 y 8 pasan en el panel con sesión (`e2e.yml`).
 
 ### Cierre
@@ -228,3 +236,23 @@ No depende de esta fase y la hace el usuario desde el panel:
 | axe señala el lienzo 3D o falsos positivos                  | Excluir solo el `<canvas>` con justificación escrita; nada más se excluye                               |
 | Crecer el alcance (páginas nuevas, rediseños)               | Solo migración con el mismo contenido y las mismas rutas; lo nuevo va a su fase                         |
 | Tiempo de CI                                                | axe y auditoría dentro de `e2e.yml`, que ya levanta el servidor                                         |
+
+## 9. Línea base (DS-01, 02/10)
+
+Medida con Supabase local y el perfume centinela, como en `e2e.yml`. El diseño se audita con movimiento reducido, para medir el estado final sin animaciones de entrada.
+
+**Auditoría de diseño:** sin incidencias bloqueantes en las 35 pantallas a 390, 768, 1280 y 1440 px: 12 públicas y 23 del panel. Las incidencias bloqueantes son desplazamiento horizontal, solapes, texto fuera de su caja y controles de menos de 24 px.
+
+**axe (WCAG 2.2 AA):** 35 pantallas, 3 sin infracciones y 2 reglas incumplidas.
+
+| Regla                  | Gravedad | Pantallas | Elementos | Dónde                                                                                                                                                                                                                |
+| ---------------------- | -------- | --------- | --------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `color-contrast`       | serious  | 32        | 304       | 253 son textos atenuados del menú lateral oscuro del panel (`#53514e` a 2,5:1 y `#5e5c59` a 2,9:1 sobre noche). El resto: niebla sobre marfil (2,3:1) y marfil con transparencia (2,9–4,1:1) en la tienda y el panel |
+| `aria-prohibited-attr` | serious  | 4         | 4         | Indicador «Cargando» del panel (`aria-label` en un `div` sin rol)                                                                                                                                                    |
+
+Las cifras varían un poco entre ejecuciones: entre 304 y 306 elementos, y el indicador de carga aparece en 3 o 4 pantallas según lo que tarde cada una. Lo corrigen DS-02 (tokens del tono oscuro y del texto atenuado) y DS-11 (indicador de carga). El criterio 6 exige cero infracciones al cerrar la fase.
+
+**Límites de la auditoría:**
+
+- No compara capas superpuestas a propósito: elementos con `position: absolute` o `fixed` y adornos con `aria-hidden`.
+- Los recortes con `overflow: hidden` y los controles de menos de 44 px solo se anotan. Los de 44 px se exigen en el criterio 8.
