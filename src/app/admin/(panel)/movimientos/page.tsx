@@ -119,7 +119,7 @@ export default async function Movements({
         </p>
       ) : (
         <div className="overflow-x-auto">
-          <table className="data-table min-w-[48rem]">
+          <table className="data-table stack-table md:min-w-[48rem]">
             <thead>
               <tr>
                 <th>Fecha</th>
@@ -133,13 +133,16 @@ export default async function Movements({
             <tbody>
               {movements.map((m) => (
                 <tr key={m.id}>
-                  <td className="text-smoke text-xs whitespace-nowrap">
+                  <td
+                    data-label="Fecha"
+                    className="text-smoke text-xs whitespace-nowrap"
+                  >
                     {DATE.format(new Date(m.createdAt))}
                   </td>
-                  <td className="text-sm">
+                  <td data-label="Movimiento" className="text-sm">
                     {MOVEMENT_LABELS[m.type as MovementType] ?? m.type}
                   </td>
-                  <td className="text-sm">
+                  <td data-primary className="text-sm">
                     <Link
                       href={`/admin/catalogo/${m.productId}`}
                       className="link-underline"
@@ -151,13 +154,16 @@ export default async function Movements({
                     </span>
                   </td>
                   <td
+                    data-label="Cambio"
                     className={`text-right tabular-nums ${m.deltaOnHand < 0 ? 'text-danger' : m.deltaOnHand > 0 ? 'text-success' : 'text-smoke'}`}
                   >
                     {m.deltaOnHand > 0 ? '+' : ''}
                     {m.deltaOnHand}
                   </td>
-                  <td className="text-right tabular-nums">{m.onHandAfter}</td>
-                  <td className="text-smoke text-xs">
+                  <td data-label="Queda" className="text-right tabular-nums">
+                    {m.onHandAfter}
+                  </td>
+                  <td data-label="Motivo" className="text-smoke text-xs">
                     {[m.reason, m.reference].filter(Boolean).join(' · ')}
                   </td>
                 </tr>

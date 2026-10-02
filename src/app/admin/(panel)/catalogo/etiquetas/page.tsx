@@ -112,7 +112,7 @@ export default async function PriceLabels({
               name="adhesiva"
               value="1"
               defaultChecked={!cutLines}
-              className="accent-ink size-4"
+              className="accent-ink size-5"
             />
             Hoja adhesiva (sin líneas de corte)
           </label>

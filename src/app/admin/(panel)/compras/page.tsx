@@ -113,7 +113,7 @@ export default async function Purchases({
         </p>
       ) : (
         <div className="overflow-x-auto">
-          <table className="data-table min-w-[48rem]">
+          <table className="data-table stack-table md:min-w-[48rem]">
             <thead>
               <tr>
                 <th>Pedido</th>
@@ -127,7 +127,7 @@ export default async function Purchases({
             <tbody>
               {visible.map((order) => (
                 <tr key={order.id}>
-                  <td>
+                  <td data-primary>
                     <Link
                       href={`/admin/compras/${order.id}`}
                       className="link-underline font-semibold"
@@ -138,25 +138,33 @@ export default async function Purchases({
                       {DATE.format(new Date(order.createdAt))}
                     </p>
                   </td>
-                  <td className="text-sm">{order.supplierName}</td>
-                  <td className="text-sm">
+                  <td data-label="Proveedor" className="text-sm">
+                    {order.supplierName}
+                  </td>
+                  <td data-label="Estado" className="text-sm">
                     {isPurchaseOrderStatus(order.status)
                       ? ORDER_STATUS_LABELS[order.status]
                       : order.status}
                   </td>
-                  <td className="text-right tabular-nums">
+                  <td data-label="Unidades" className="text-right tabular-nums">
                     {order.unitsReceived > 0
                       ? `${order.unitsReceived} / ${order.unitsOrdered}`
                       : order.unitsOrdered}
                   </td>
                   {canCost && (
-                    <td className="text-right tabular-nums">
+                    <td
+                      data-label="Coste neto"
+                      className="text-right tabular-nums"
+                    >
                       {order.totalCostNetCents === null
                         ? '—'
                         : formatEuros(order.totalCostNetCents, 'es')}
                     </td>
                   )}
-                  <td className="text-smoke text-sm">
+                  <td
+                    data-label="Llegada prevista"
+                    className="text-smoke text-sm"
+                  >
                     {order.expectedOn
                       ? DATE.format(new Date(`${order.expectedOn}T12:00:00Z`))
                       : '—'}

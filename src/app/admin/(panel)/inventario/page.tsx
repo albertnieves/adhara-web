@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { PageHeader } from '@/modules/admin';
+import { SearchField } from '@/modules/admin/ui/SearchField';
 import { isAllowed } from '@/modules/auth';
 import { requirePermission } from '@/modules/auth/server';
 import { MOVEMENT_PERMISSIONS, MOVEMENT_TYPES } from '@/modules/inventory';
@@ -51,16 +52,13 @@ export default async function Inventory({
   return (
     <main>
       <PageHeader eyebrow={location.name} title="Inventario">
-        <Link
-          href="/admin/movimientos"
-          className="border-line hover:border-ink inline-flex min-h-11 items-center border px-5 text-xs font-semibold tracking-[0.18em] uppercase"
-        >
+        <Link href="/admin/movimientos" className="panel-btn">
           Historial
         </Link>
       </PageHeader>
 
       <form className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <nav className="flex gap-2" aria-label="Filtro">
+        <nav className="flex flex-wrap gap-2" aria-label="Filtro">
           {[
             { value: '', label: `Todo · ${rows.length}` },
             {
@@ -70,29 +68,31 @@ export default async function Inventory({
           ].map((f) => (
             <Link
               key={f.value}
-              href={
-                f.value
-                  ? `/admin/inventario?filtro=${f.value}`
-                  : '/admin/inventario'
-              }
+              href={`/admin/inventario${
+                f.value || q
+                  ? `?${new URLSearchParams({
+                      ...(f.value && { filtro: f.value }),
+                      ...(q && { q }),
+                    })}`
+                  : ''
+              }`}
               aria-current={filtro === f.value ? 'page' : undefined}
-              className={`border px-3 py-2 text-xs tracking-[0.12em] uppercase ${filtro === f.value ? 'border-ink bg-ink text-ivory' : 'border-line hover:border-ink'}`}
+              className={`inline-flex min-h-10 items-center border px-3 text-xs tracking-[0.12em] uppercase ${filtro === f.value ? 'border-ink bg-ink text-ivory' : 'border-line hover:border-ink'}`}
             >
               {f.label}
             </Link>
           ))}
         </nav>
         {filtro && <input type="hidden" name="filtro" value={filtro} />}
-        <div className="flex items-center gap-6">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-6">
           <p className="text-smoke text-xs tracking-[0.14em] uppercase">
             {units} uds. en tienda
           </p>
-          <input
-            type="search"
-            name="q"
+          <SearchField
             defaultValue={q}
             placeholder="Buscar perfume, marca o SKU"
-            className="input sm:w-64"
+            label="Buscar en el inventario"
+            className="w-full sm:w-64"
           />
         </div>
       </form>
@@ -105,7 +105,7 @@ export default async function Inventory({
         </p>
       ) : (
         <div className="overflow-x-auto">
-          <table className="data-table min-w-[48rem]">
+          <table className="data-table stack-table md:min-w-[48rem]">
             <thead>
               <tr>
                 <th>Perfume</th>
@@ -120,8 +120,8 @@ export default async function Inventory({
               {visible.map((r) => {
                 const available = r.onHand - r.reserved;
                 return (
-                  <tr key={r.variantId} className="align-top">
-                    <td>
+                  <tr key={r.variantId}>
+                    <td data-primary>
                       <Link
                         href={`/admin/catalogo/${r.productId}`}
                         className="link-underline"
@@ -130,29 +130,43 @@ export default async function Inventory({
                       </Link>
                       <p className="text-smoke text-xs">{r.brandName}</p>
                     </td>
-                    <td className="text-sm">
-                      {r.variantLabel}
-                      {r.sku && <p className="text-mist text-xs">{r.sku}</p>}
-                      {!r.active && (
-                        <p className="text-mist text-xs">inactivo</p>
-                      )}
+                    <td data-label="Formato" className="text-sm">
+                      <span>
+                        {r.variantLabel}
+                        {r.sku && <p className="text-mist text-xs">{r.sku}</p>}
+                        {!r.active && (
+                          <p className="text-mist text-xs">inactivo</p>
+                        )}
+                      </span>
                     </td>
-                    <td className="text-right tabular-nums">{r.onHand}</td>
-                    <td className="text-smoke text-right tabular-nums">
+                    <td
+                      data-label="En tienda"
+                      className="text-right tabular-nums"
+                    >
+                      {r.onHand}
+                    </td>
+                    <td
+                      data-label="Reservado"
+                      className="text-smoke text-right tabular-nums"
+                    >
                       {r.reserved}
                     </td>
                     <td
+                      data-label="Disponible"
                       className={`text-right font-semibold tabular-nums ${isLow(r) ? 'text-danger' : ''}`}
                     >
-                      {available}
-                      {r.reorderPoint !== null && (
-                        <p className="text-mist text-[0.6875rem] font-normal">
-                          aviso ≤ {r.reorderPoint}
-                        </p>
-                      )}
+                      <span>
+                        {available}
+                        {r.reorderPoint !== null && (
+                          <p className="text-mist text-[0.6875rem] font-normal">
+                            aviso ≤ {r.reorderPoint}
+                          </p>
+                        )}
+                      </span>
                     </td>
                     <td>
                       <StockActions
+                        title={`${r.productName} · ${r.variantLabel}`}
                         variantId={r.variantId}
                         locationId={location.id}
                         onHand={r.onHand}

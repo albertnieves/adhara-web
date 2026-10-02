@@ -3,6 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { formatEuros } from '@/lib/money';
 import { PageHeader, StatusBadge } from '@/modules/admin';
+import { SearchField } from '@/modules/admin/ui/SearchField';
 import { isAllowed } from '@/modules/auth';
 import { requirePermission } from '@/modules/auth/server';
 import {
@@ -75,36 +76,24 @@ export default async function CatalogAdmin({
     <main>
       <PageHeader eyebrow="Catálogo" title="Perfumes">
         <form action={enterStorefrontPreview}>
-          <button
-            type="submit"
-            className="border-line hover:border-ink inline-flex min-h-11 items-center border px-5 text-xs font-semibold tracking-[0.18em] uppercase transition-colors"
-          >
+          <button type="submit" className="panel-btn">
             Ver tienda con borradores
           </button>
         </form>
         {canPrice && (
-          <Link
-            href="/admin/catalogo/precios"
-            className="border-line hover:border-ink inline-flex min-h-11 items-center border px-5 text-xs font-semibold tracking-[0.18em] uppercase transition-colors"
-          >
+          <Link href="/admin/catalogo/precios" className="panel-btn">
             Cambiar precios
           </Link>
         )}
-        <Link
-          href="/admin/catalogo/importar"
-          className="border-line hover:border-ink inline-flex min-h-11 items-center border px-5 text-xs font-semibold tracking-[0.18em] uppercase transition-colors"
-        >
+        <Link href="/admin/catalogo/importar" className="panel-btn">
           Importar
         </Link>
-        <Link
-          href="/admin/catalogo/etiquetas"
-          className="border-ink hover:bg-ink hover:text-ivory inline-flex min-h-11 items-center border px-5 text-xs font-semibold tracking-[0.18em] uppercase transition-colors"
-        >
+        <Link href="/admin/catalogo/etiquetas" className="panel-btn">
           Etiquetas
         </Link>
         <Link
           href="/admin/catalogo/nuevo"
-          className="bg-ink text-ivory hover:bg-gold inline-flex min-h-11 items-center px-5 text-xs font-semibold tracking-[0.18em] uppercase transition-colors"
+          className="panel-btn panel-btn-primary"
         >
           Nuevo perfume
         </Link>
@@ -137,7 +126,7 @@ export default async function CatalogAdmin({
                 key={filter.value}
                 href={`/admin/catalogo${params.size ? `?${params}` : ''}`}
                 aria-current={active ? 'page' : undefined}
-                className={`border px-3 py-2 text-xs tracking-[0.12em] uppercase ${active ? 'border-ink bg-ink text-ivory' : 'border-line hover:border-ink'}`}
+                className={`inline-flex min-h-10 items-center gap-1.5 border px-3 text-xs tracking-[0.12em] uppercase ${active ? 'border-ink bg-ink text-ivory' : 'border-line hover:border-ink'}`}
               >
                 {filter.label} <span className="opacity-60">{count}</span>
               </Link>
@@ -145,12 +134,11 @@ export default async function CatalogAdmin({
           })}
         </nav>
         {estado && <input type="hidden" name="estado" value={estado} />}
-        <input
-          type="search"
-          name="q"
+        <SearchField
           defaultValue={q}
           placeholder="Buscar perfume o marca"
-          className="input sm:max-w-xs"
+          label="Buscar en el catálogo"
+          className="w-full sm:max-w-xs"
         />
       </form>
 
@@ -162,7 +150,7 @@ export default async function CatalogAdmin({
         </p>
       ) : (
         <div className="overflow-x-auto">
-          <table className="data-table min-w-[44rem]">
+          <table className="data-table stack-table md:min-w-[44rem]">
             <thead>
               <tr>
                 <th className="w-16" />
@@ -175,7 +163,7 @@ export default async function CatalogAdmin({
             <tbody>
               {products.map((p) => (
                 <tr key={p.id}>
-                  <td>
+                  <td className="max-md:hidden">
                     <div className="bg-stage relative size-12">
                       {p.heroUrl && (
                         <Image
@@ -188,7 +176,7 @@ export default async function CatalogAdmin({
                       )}
                     </div>
                   </td>
-                  <td>
+                  <td data-primary>
                     <Link
                       href={`/admin/catalogo/${p.id}`}
                       className="link-underline font-display text-lg"
@@ -202,30 +190,34 @@ export default async function CatalogAdmin({
                       )}
                     </p>
                   </td>
-                  <td>
+                  <td data-label="Estado">
                     <StatusBadge status={p.status} />
                   </td>
-                  <td className="text-sm">
-                    {p.variants.length === 0 ? (
-                      <span className="text-danger">Sin formatos</span>
-                    ) : (
-                      p.variants.map((v) => (
-                        <span
-                          key={v.id}
-                          className={`mr-3 inline-block ${v.active ? '' : 'text-mist line-through'}`}
-                        >
-                          {v.label}:{' '}
-                          {v.priceCents === null ? (
-                            <span className="text-danger">sin PVP</span>
-                          ) : (
-                            formatEuros(v.priceCents, 'es')
-                          )}
-                        </span>
-                      ))
-                    )}
+                  <td data-label="Formatos y PVP" className="text-sm">
+                    <span>
+                      {p.variants.length === 0 ? (
+                        <span className="text-danger">Sin formatos</span>
+                      ) : (
+                        p.variants.map((v) => (
+                          <span
+                            key={v.id}
+                            className={`mr-3 inline-block ${v.active ? '' : 'text-mist line-through'}`}
+                          >
+                            {v.label}:{' '}
+                            {v.priceCents === null ? (
+                              <span className="text-danger">sin PVP</span>
+                            ) : (
+                              formatEuros(v.priceCents, 'es')
+                            )}
+                          </span>
+                        ))
+                      )}
+                    </span>
                   </td>
                   {canStock && (
-                    <td className="text-right tabular-nums">{p.onHand}</td>
+                    <td data-label="Stock" className="text-right tabular-nums">
+                      {p.onHand}
+                    </td>
                   )}
                 </tr>
               ))}

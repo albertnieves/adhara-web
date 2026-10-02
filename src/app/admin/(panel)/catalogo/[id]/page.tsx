@@ -30,18 +30,26 @@ import { enterStorefrontPreview } from '@/modules/storefront/server/preview';
 export const metadata: Metadata = { title: 'Editar perfume' };
 
 function Section({
+  id,
   title,
   description,
   children,
 }: {
+  id: string;
   title: string;
   description?: string;
   children: React.ReactNode;
 }) {
   return (
-    <section className="border-line grid gap-8 border-t py-12 xl:grid-cols-[16rem_1fr]">
+    <section
+      id={id}
+      aria-labelledby={`${id}-titulo`}
+      className="border-line grid scroll-mt-16 gap-6 border-t py-10 sm:gap-8 sm:py-12 xl:grid-cols-[16rem_1fr]"
+    >
       <div>
-        <h2 className="text-2xl font-light">{title}</h2>
+        <h2 id={`${id}-titulo`} className="text-2xl font-light">
+          {title}
+        </h2>
         {description && (
           <p className="text-smoke mt-2 text-sm leading-relaxed">
             {description}
@@ -112,7 +120,7 @@ export default async function EditProduct({
           />
         </PageHeader>
       </div>
-      <div className="mb-4 flex flex-wrap items-center gap-4 text-sm">
+      <div className="mb-4 flex flex-wrap items-center gap-x-5 gap-y-1 text-sm [&_a]:inline-flex [&_a]:min-h-10 [&_a]:items-center [&_button]:min-h-10">
         <StatusBadge status={product.status} />
         <Link
           href={`/admin/catalogo/${product.id}/vista-previa`}
@@ -156,7 +164,29 @@ export default async function EditProduct({
         </p>
       )}
 
+      <nav
+        aria-label="Secciones de la ficha"
+        className="border-line bg-ivory/95 sticky top-0 z-20 -mx-5 mb-2 flex gap-1 overflow-x-auto border-b px-5 py-2 backdrop-blur sm:-mx-10 sm:px-10 print:hidden"
+      >
+        {[
+          ['formatos', 'Formatos y PVP'],
+          ...(location ? [['stock', 'Stock']] : []),
+          ['datos', 'Datos'],
+          ['imagenes', 'Imágenes'],
+          ['textos', 'Textos'],
+        ].map(([anchor, label]) => (
+          <a
+            key={anchor}
+            href={`#${anchor}`}
+            className="text-smoke hover:text-ink hover:border-line inline-flex min-h-10 shrink-0 items-center border border-transparent px-3 text-xs tracking-[0.14em] whitespace-nowrap uppercase transition-colors"
+          >
+            {label}
+          </a>
+        ))}
+      </nav>
+
       <Section
+        id="formatos"
         title="Formatos y PVP"
         description={`El PVP incluye IVA. Para publicar hace falta al menos un formato activo con precio. Los cambios quedan en el historial (Ómnibus).${canViewCost ? ' El coste es neto (sin IVA) e interno; el margen se calcula sobre el PVP sin IVA.' : ''}`}
       >
@@ -172,11 +202,13 @@ export default async function EditProduct({
 
       {location && (
         <Section
+          id="stock"
           title="Stock en tienda"
           description={`${location.name}. Cada cambio es un movimiento que queda en el historial; el stock no se edita a mano.`}
         >
           <ProductStock
             productId={product.id}
+            productName={product.name}
             locationId={location.id}
             rows={stockRows}
             movements={movements}
@@ -187,7 +219,11 @@ export default async function EditProduct({
         </Section>
       )}
 
-      <Section title="Datos" description="Nombre, marca y clasificación.">
+      <Section
+        id="datos"
+        title="Datos"
+        description="Nombre, marca y clasificación."
+      >
         <ProductForm
           action={updateProduct}
           brands={brands}
@@ -208,6 +244,7 @@ export default async function EditProduct({
       </Section>
 
       <Section
+        id="imagenes"
         title="Imágenes"
         description="Cada imagen guarda su procedencia. Las que no son fotos propias se marcan como provisionales."
       >
@@ -219,6 +256,7 @@ export default async function EditProduct({
       </Section>
 
       <Section
+        id="textos"
         title="Textos"
         description="Frase corta y descripción en cada idioma. Si falta un idioma, la ficha no muestra texto."
       >
@@ -229,7 +267,7 @@ export default async function EditProduct({
       </Section>
 
       {product.status === 'draft' && (
-        <Section title="Eliminar">
+        <Section id="eliminar" title="Eliminar">
           <DeleteProductButton id={product.id} />
         </Section>
       )}

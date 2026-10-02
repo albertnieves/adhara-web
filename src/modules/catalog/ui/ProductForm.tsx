@@ -88,7 +88,7 @@ export function ProductForm({
           <button
             type="button"
             onClick={() => setNewBrand((v) => !v)}
-            className="link-underline text-smoke self-start text-xs"
+            className="link-underline text-smoke inline-flex min-h-10 items-center self-start text-xs"
           >
             {newBrand ? 'Elegir una marca existente' : '+ Nueva marca'}
           </button>
@@ -166,7 +166,7 @@ export function ProductForm({
           name="featured"
           type="checkbox"
           defaultChecked={values.featured}
-          className="accent-ink size-4"
+          className="accent-ink size-5"
         />
         Destacado en la portada
       </label>

@@ -27,9 +27,10 @@ pnpm format:check
 
 ## Qué hay
 
-- Next.js, React, TypeScript, Tailwind, next-intl, motion y three.js (React Three Fiber).
+- Next.js, React, TypeScript, Tailwind, next-intl, motion, three.js (React Three Fiber) y el SDK de Anthropic para el asistente.
 - Tienda en español, catalán e inglés: home animada, colección con filtros y fichas con escena 3D de unboxing (perfumes del piloto) o galería.
-- Panel `/admin` con verificación en dos pasos: catálogo, PVP con regla Ómnibus, imágenes, textos, inventario de la tienda, movimientos y equipo. Plan por fases en [docs/ADMIN_PLAN.md](docs/ADMIN_PLAN.md).
+- Panel `/admin` con verificación en dos pasos: catálogo, PVP con regla Ómnibus, imágenes, textos, inventario de la tienda, mostrador, compras, reposición, informes y equipo. Plan por fases en [docs/ADMIN_PLAN.md](docs/ADMIN_PLAN.md).
+- Asistente de inventario: informe diario programado (Vercel Cron) y chat de solo lectura con Claude (`@anthropic-ai/sdk`); se activa con `ANTHROPIC_API_KEY` y `CRON_SECRET` en el servidor ([guía](docs/ADMIN_OPERATIONS.md)).
 - Supabase con RLS en todas las tablas públicas, costes fuera de la API y registros de solo inserción; migraciones y pruebas pgTAP en `supabase/`.
 - Endpoint /api/health y exclusión de indexación mientras se desarrolla.
 - Vitest, Playwright y workflow de GitHub Actions.

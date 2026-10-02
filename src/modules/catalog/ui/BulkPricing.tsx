@@ -236,7 +236,7 @@ export function BulkPricing({
                             })
                           }
                           aria-label={`Aplicar a ${row.productName} ${row.variantLabel}`}
-                          className="accent-ink size-4"
+                          className="accent-ink size-5"
                         />
                       )}
                     </td>
@@ -303,7 +303,7 @@ export function BulkPricing({
                                     return { ...c, [row.variantId]: [...list] };
                                   })
                                 }
-                                className="accent-ink size-4"
+                                className="accent-ink size-5"
                               />
                               {PRICE_ISSUE_LABELS[code]}
                             </label>
