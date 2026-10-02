@@ -13,6 +13,7 @@ for (const path of [
   '/admin/movimientos',
   '/admin/movimientos/exportar',
   '/admin/equipo',
+  '/admin/diseno',
 ]) {
   test(`sin sesión ${path} redirige al acceso`, async ({ request }) => {
     const response = await request.get(path, { maxRedirects: 0 });

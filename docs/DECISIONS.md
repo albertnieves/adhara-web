@@ -225,3 +225,11 @@ Formato de la Fase 0 §16: fecha · contexto · decisión · alternativas descar
     - **Accesibilidad:** el indicador «Cargando» del panel lleva `role="status"`.
     - **Auditoría:** ahora espera al contenido en streaming, recorre la página y espera a las animaciones con fin.
     - **Resultado:** axe da 0 infracciones en las 35 pantallas.
+95. **Página de referencia (DS-03).** `/admin/diseno`, con `requireStaff`: la ve todo el personal con sesión (D6), sin permiso propio.
+    - **Enlace:** «Sistema de diseño» en el pie del menú del panel, junto a «Tienda pública», fuera de las secciones de trabajo. Sale en el menú lateral y en el móvil.
+    - **Valores leídos, no copiados:** la página lee cada variable en el navegador (`getComputedStyle`) dentro de su tono, así que enseña lo que se aplica de verdad. El contraste se calcula con la misma función y la misma matriz que `tests/unit/design-tokens.test.ts`, que viven en `src/modules/design`.
+    - **Catálogo:** `src/modules/design/domain/tokens.ts` guarda el nombre y el uso de cada token, sin valores. La prueba exige que tenga exactamente las variables que declara `globals.css`: un token nuevo no puede quedarse fuera de la página.
+    - **Tipografía:** los tamaños de Tailwind en uso salen como inventario; la escala se cierra en DS-04.
+    - **Guardas:** los accesos del pie del menú comparten una clase, así que los espaciados arbitrarios de `layout.tsx` bajan de 3 a 2 sin cambio visual.
+    - **Para revisar (D3, criterio 13):** los tonos de colección solo cambian la superficie; la elevada y la hundida siguen siendo las del tono oscuro. Se ve en la página y se decide al revisarla, antes de usarlos en la F5.
+    - **Pruebas:** sin sesión redirige al acceso. Con sesión de encargado (el rol con menos permisos): 200, todos los tokens con valor, todas las combinaciones cumplen en los cinco tonos, la demostración de movimiento con teclado, el enlace en el menú móvil y axe sin infracciones a 390 y 1440 px. La auditoría de diseño del panel suma la página.

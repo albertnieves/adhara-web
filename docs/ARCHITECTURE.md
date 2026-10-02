@@ -59,6 +59,7 @@ flowchart LR
 | `i18n`                | Rutas por idioma, carga de mensajes, metadatos y `buildAlternates`             |
 | `unboxing`            | Escena 3D bajo demanda de la ficha                                             |
 | `brand`               | Logotipo y nombre de la marca                                                  |
+| `design`              | Catálogo de tokens, matriz de contraste y página de referencia `/admin/diseno` |
 | `orders`, `messaging` | Reglas puras preparadas para pedidos y mensajes (fases A5 y A6), sin pantallas |
 
 Reglas de importación: los componentes de cliente solo importan `index.ts`; los secretos y el acceso privilegiado solo existen en módulos `server-only`; `@typescript-eslint/no-explicit-any` y `consistent-type-imports` son errores.
