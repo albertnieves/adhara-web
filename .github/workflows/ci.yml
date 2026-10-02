@@ -1,4 +1,4 @@
-name: Quality
+name: CI
 on:
   push:
     branches: [main]
@@ -19,32 +19,7 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm scan:secrets
       - run: pnpm format:check
-      - run: pnpm check
-      - run: pnpm exec playwright install --with-deps chromium
-      - run: pnpm test:e2e
-      - uses: actions/upload-artifact@v4
-        if: failure()
-        with:
-          name: playwright-results
-          path: test-results/
-          retention-days: 7
-  database:
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-    steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version-file: .nvmrc
-          cache: pnpm
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm exec supabase start
-      - run: pnpm test:db
-      - run: node scripts/check-db-types.ts
-      - run: node scripts/test-concurrency.ts
-      - run: pnpm build:local
-      - run: pnpm exec playwright install --with-deps chromium
-      - run: pnpm test:e2e:local
-      - run: pnpm exec supabase stop --no-backup
-        if: always()
+      - run: pnpm lint
+      - run: pnpm typecheck
+      - run: pnpm test:unit
+      - run: pnpm build

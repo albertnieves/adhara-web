@@ -15,8 +15,9 @@ export function createAuthAdminClient() {
 
 /**
  * Tareas del servidor sin sesión de personal: solo el informe diario del
- * asistente, después de comprobar CRON_SECRET o de autorizar agent.use con
- * MFA. Nunca para CRUD ordinario ni con datos que lleguen del navegador.
+ * asistente, después de comprobar CRON_SECRET o de autorizar reports.view
+ * (el panel exige MFA). Nunca para CRUD ordinario ni con datos que lleguen
+ * del navegador.
  */
 export function createJobClient() {
   const config = getSupabaseConfig();

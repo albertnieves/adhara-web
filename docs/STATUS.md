@@ -1,8 +1,25 @@
-# Estado real — 01/10/2026
+# Estado real — 02/10/2026
 
-**Tienda visual (es/ca/en) y panel de administración operativos sobre `adhara-dev`, desplegados en Vercel, que sigue siendo privado (Vercel Authentication). `main` incluye las fases R y S (PR #9) y la entrega de acceso y edición de Codex (PR #10); sus 16 migraciones están aplicadas en `adhara-dev` (comprobado el 01/10 con una lectura). La tienda muestra 50 perfumes publicados con PVP. La Fase 1 completa sigue pendiente: los criterios abiertos se listan al final.**
+**Tienda visual (es/ca/en) y panel de administración operativos sobre `adhara-dev`, desplegados en Vercel, que sigue siendo privado (Vercel Authentication). `main` incluye las fases R y S (PR #9), la entrega de acceso y edición de Codex (PR #10) y el panel con el asistente (PR #11); sus 17 migraciones están aplicadas en `adhara-dev` (comprobado el 02/10). La tienda muestra 50 perfumes publicados con PVP. La Fase 1 se cierra con la PR #12: sus 19 criterios están cumplidos o con una excepción escrita ([informe](phases/FASE_1_REPORT.md)).**
 
-## Panel más cómodo y asistente de inventario (01/10, rama `codex/panel-asistente`)
+## Cierre de la Fase 1 (02/10, PR #12)
+
+A petición del usuario. Criterio por criterio, con evidencia, en [phases/FASE_1_REPORT.md](phases/FASE_1_REPORT.md); excepciones en DECISIONS §83–90.
+
+- **CI en tres workflows**, en verde en la PR: `ci.yml` (secretos, formato, lint, tipos, unitarias y build), `db.yml` (`db reset`, pgTAP, tipos, `db lint` y concurrencia) y `e2e.yml` (Supabase local con un coste centinela, tienda a 390×844 y 1440×900 y recorridos autenticados).
+- **Garantías nuevas probadas:**
+  - pgTAP `07`: RLS en todas las tablas públicas, `anon` sin funciones `admin_*` ni escritura, PVP sin permiso, publicación y UPDATE/DELETE en las tablas de solo inserción;
+  - un coste centinela (987654) que no aparece en ninguna respuesta pública;
+  - una sesión sin ficha de personal recibe 404.
+- **Documentación de la fase:** `CLAUDE.md`, [ARCHITECTURE](ARCHITECTURE.md), [DATABASE](DATABASE.md), [SECURITY](SECURITY.md), [I18N](I18N.md), [PRICING](PRICING.md), [PRODUCT_RESEARCH](PRODUCT_RESEARCH.md) (borrador) y [ROADMAP](ROADMAP.md). Registro de ADR en DECISIONS, con ADR-010 (tres idiomas con prefijo) sustituyendo a ADR-008.
+- **Excepciones escritas:**
+  - `db reset` no se ejecuta en `adhara-dev` (datos reales); se comprueba la paridad de migraciones, 17/17;
+  - partes del esquema del plan se difieren a su fase (taxonomía, research, `media_assets`, `tax_rates`, `locales`);
+  - el owner se creó por preasignación y no con `bootstrap-owner`;
+  - el criterio 18 queda superado por decisión del usuario.
+- **Siguiente fase recomendada:** Fase 2 (Design System) con la preparación de la Fase 3 (importar el CSV del catálogo).
+
+## Panel más cómodo y asistente de inventario (01–02/10, PR #11, fusionada)
 
 A petición del usuario, antes de cerrar la Fase 1. Decisiones §74–82; guía en [ADMIN_OPERATIONS.md](ADMIN_OPERATIONS.md).
 
@@ -63,7 +80,7 @@ Plan en [PLAN_INFORMES.md](PLAN_INFORMES.md). Validado con Supabase local; su mi
 
 Diecisiete migraciones en `supabase/migrations/` (detalle en supabase/README.md): personal y permisos (PR #5), catálogo, inventario, gestión del personal, borrado de niveles con su formato, roles preasignados, costes y registro de costes por lotes; las de la entrega de Codex y las fases R y S, y la del asistente. Las 17 están aplicadas en `adhara-dev` (la del asistente, el 02/10, como `20261002044249`). RLS en todas las tablas públicas; costes fuera de la API (`internal`), solo accesibles con permiso de costes y MFA; historial de PVP, de costes, movimientos y auditoría de solo inserción.
 
-Datos cargados: los 4 perfumes del piloto como **borradores sin PVP** (`supabase/data/20260929_pilot_products.sql`), con marca, concentración y formato solo cuando constan en la caja o la ficha oficial (Khamrah sin formato), e imágenes oficiales de marca marcadas como provisionales. Ubicación: Tienda de Castelldefels. Cuentas del personal creadas por el usuario el 30/09 y con su rol aplicado automáticamente (administrador del sistema y administrador de la tienda); aún sin verificación en dos pasos configurada.
+Datos cargados: los 4 perfumes del piloto como **borradores sin PVP** (`supabase/data/20260929_pilot_products.sql`), con marca, concentración y formato solo cuando constan en la caja o la ficha oficial (Khamrah sin formato), e imágenes oficiales de marca marcadas como provisionales. Ubicación: Tienda de Castelldefels. Cuentas del personal creadas por el usuario el 30/09 y con su rol aplicado automáticamente (administrador del sistema y administrador de la tienda). El administrador del sistema tiene la verificación en dos pasos activa desde el 01/10; el de la tienda aún no (lectura del 02/10).
 
 Catálogo real: el PDF «CATALOGO 2026» (56 páginas, 429 etiquetas) está convertido en un CSV fuera del repositorio (contiene costes del proveedor): 424 perfumes de 25 marcas con su coste (versión 2, contrastada con las webs oficiales de las marcas). Por decisión del usuario, los precios del PDF son **coste interno** y las marcas que el catálogo no indica (pp. 2–26) se deducen de la foto y se marcan «por revisar» en la procedencia; 6 quedan como «Marca por identificar» (DECISIONS §54).
 
@@ -91,9 +108,9 @@ Todas son provisionales (`provisional = true`) y guardan su procedencia: `origin
 
 ### Despliegue
 
-Vercel `adhara-web` (equipo SOAPBRXND, Hobby), funciones en París (cdg1), todos los despliegues protegidos con Vercel Authentication. Variables públicas de Supabase (`adhara-dev`) configuradas para Preview, Production y Development. `main` revisado está en `effd709` (PR #8). La PR #9 y esta entrega complementaria siguen separadas de producción.
+Vercel `adhara-web` (equipo SOAPBRXND, Hobby), funciones en París (cdg1), todos los despliegues protegidos con Vercel Authentication. Variables públicas de Supabase (`adhara-dev`) configuradas para Preview, Production y Development. Production está en `06aacb1` (PR #11, READY); la PR #12 tiene su Preview en READY.
 
-## Validación ejecutada (29/09–01/10/2026)
+## Validación ejecutada (29/09–02/10/2026)
 
 | Comprobación                                          | Resultado                                                                                                                                                                                                                                                                                                                                                              |
 | ----------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -125,6 +142,10 @@ Vercel `adhara-web` (equipo SOAPBRXND, Hobby), funciones en París (cdg1), todos
 | Panel y asistente: recorridos autenticados            | 8/8 (3 nuevos): barra lateral dentro de su columna a 1280×640, menú móvil que navega y se cierra, movimiento en panel lateral con aviso y Esc, informe según el rol (el encargado no ve tareas del catálogo ni puede guardar) y chat «no activado» sin clave                                                                                                           |
 | Panel y asistente: auditoría visual                   | Las 23 pantallas del panel a 390, 768 y 1280 px con los datos de `supabase/data` en local: sin solapes de cajas, texto desbordado ni scroll horizontal (quedan falsos positivos revisados: texto que salta de línea, etiqueta «Principal» sobre la foto y URL truncada)                                                                                                |
 | Asistente con API simulada                            | Imitación local de la API de mensajes, sin coste: la tarea programada da 401 sin secreto o con uno erróneo y 200 con el correcto, y guarda el informe y el resumen; el chat del encargado usa `buscar_stock` con su sesión y recibe la respuesta en streaming; el uso queda registrado. Petición con `claude-opus-5-5`, `effort: medium`, respaldo en servidor y caché |
+| Cierre de la Fase 1: CI                               | `ci.yml`, `db.yml` y `e2e.yml` en verde en la PR #12 (`a15fdda`)                                                                                                                                                                                                                                                                                                       |
+| Cierre de la Fase 1: pgTAP                            | 263/263 en 8 archivos desde una base vacía (`07_phase1_guarantees` 28/28); tipos sin diferencias; `db lint` sin errores salvo 3 falsos positivos conocidos; concurrencia correcta                                                                                                                                                                                      |
+| Cierre de la Fase 1: E2E                              | Tienda pública contra Supabase local con el coste centinela: 134/134 (26 nuevas); recorridos autenticados 9/9 (sesión sin ficha → 404, nuevo)                                                                                                                                                                                                                          |
+| Cierre de la Fase 1: `adhara-dev` (solo lectura)      | 17/17 migraciones iguales al repositorio; `internal` y `private` responden `PGRST106` con la clave publicable; `anon` no ejecuta `admin_variant_costs` (42501) ni ve borradores; administrador del sistema con TOTP verificado                                                                                                                                         |
 
 Nota sobre el recorrido del panel: se hizo con una **cuenta temporal** (`prueba-e2e@adhara.invalid`, rol system_admin) y un perfume de prueba que se publicó, se vio en la tienda en es y ca, se retiró y se borró. La cuenta no se puede borrar de Auth porque la auditoría es de solo inserción (DECISIONS §39): quedó **sin rol, bloqueada y sin sesiones**. Quedan como rastro 8 entradas de auditoría y 2 filas del historial de PVP del formato de prueba borrado; no hubo movimientos de stock. La prueba encontró y corrigió un fallo real (un recuento que cuadra impedía borrar un borrador).
 
@@ -134,7 +155,7 @@ La revisión visual con perfumes se hizo en local con un Supabase simulado que d
 
 ## Pendiente del usuario
 
-1. Entrar en el panel con las cuentas ya creadas y configurar la verificación en dos pasos (la pide el primer acceso).
+1. Configurar la verificación en dos pasos del administrador de la tienda (la pide el primer acceso; la del administrador del sistema ya está activa) y proteger `main` en GitHub: PR obligatoria y `CI`, `Database` y `E2E` en verde.
 2. Importar el CSV del catálogo desde Panel → Catálogo → Importar, indicando si los precios del PDF llevan IVA. Los perfumes ya existen y 16 ya tienen su único formato, así que la revisión debe mostrar 0 perfumes nuevos, 408 formatos y 424 costes. Revisar después las marcas «por revisar», los 6 perfumes sin marca y las fotos (Panel → Catálogo, o la vista previa de la tienda).
 3. Decidir cuándo abrir la web a Agustín: con Vercel Authentication para todo, solo entra quien tiene cuenta en el equipo de Vercel (en Hobby, solo el titular).
 4. Asistente: configurar en Vercel, solo servidor y para Production y Preview, `ANTHROPIC_API_KEY` (de la cuenta de Anthropic del negocio), `CRON_SECRET` (valor aleatorio largo) y `SUPABASE_SECRET_KEY`; opcional `ASSISTANT_DAILY_LIMIT`. No pegar ninguna clave en el chat. La migración ya está aplicada.
@@ -150,7 +171,7 @@ La revisión visual con perfumes se hizo en local con un Supabase simulado que d
 - Tras la importación: fijar PVP (con el cambio masivo o por ficha), revisar marcas y nombres marcados y publicar.
 - Compra a Orient Fragance: contenido y precio de los 4 lotes; fotos propias de los seis perfumes sin foto oficial.
 - Configuración de Auth en Supabase (Site URL y Redirect URLs con la URL del despliegue; plantillas con `token_hash`) para invitaciones y recuperación por email.
-- Fase 1 sin cerrar. Ya cumplidos o cubiertos (docs/source/FASE_1_PLAN.md §16): 1 (lint, typecheck, tests y build), 3 (Preview de Vercel), 4–6 (i18n), 7 (`buildAlternates` con los 4 casos, en uso en home, colección y fichas), 10 (`internal` no está expuesto: la API responde «Only the following schemas are exposed: public, graphql_public»), 11 (`cost-leak.spec.ts`), 13 (`pnpm scan:secrets` en CI), 14 y 16 (acceso al panel y cabeceras de seguridad en E2E). Desde la PR #10, la CI (en verde en `main`, `7d42b1c`) levanta Supabase local, aplica las migraciones, ejecuta pgTAP y compara los tipos generados: cubre 8, 9 y 12 en local, pendientes de verificar formalmente al cerrar la Fase 1. Pendientes: 2 (tres workflows; hoy hay uno con dos trabajos), 15 (cuenta real del administrador con MFA), 17 y 19 (docs y REPORT), además de proveedores (`internal`), taxonomía de notas y familias, procedencia del research, proyecto `adhara-prod` y protección de `main`. El criterio 18 (sin datos de producto) queda superado por decisión del usuario: se cargaron los perfumes del piloto.
+- Fase 1: cerrada con la PR #12, con excepciones escritas (DECISIONS §83–90). Queda diferido a su fase: taxonomía, research y claims, `media_assets`, `tax_rates`, `locales`, `adhara-prod` y el despliegue automático de migraciones.
 - Panel: precio del PDF como referencia (A2); compras y proveedores (A3). Confirmar con la asesoría qué debe llevar la etiqueta de estante (precio por unidad de medida, etc.).
 - Fotos propias y derechos de las imágenes oficiales antes de abrir al público.
 - Escenas 3D para el resto del catálogo (hoy solo las 4 del piloto); medidas reales del kit de tienda.
@@ -163,6 +184,7 @@ La revisión visual con perfumes se hizo en local con un Supabase simulado que d
 - 29–30/09: esta sesión (PR #6): sistema visual, tienda animada con 3D, catálogo, precios, inventario y equipo en el panel.
 - 30/09–01/10: fase R (rama `claude/wonderful-babbage-4ojhui`): mostrador, compras a proveedor y reposición, en paralelo al bloque E01–E07 de Codex.
 - 01/10: fase S en la misma rama: informes (existencias y cierre mensual, rotación, márgenes, compras por proveedor) y visor de auditoría. Fusionadas las PR #9 y #10.
-- 01/10: panel sin solapes y más cómodo, informe diario programado y asistente de inventario (rama `codex/panel-asistente`). Siguiente paso acordado con el usuario: cerrar la Fase 1.
+- 01–02/10: panel sin solapes y más cómodo, informe diario programado y asistente de inventario (PR #11, fusionada; migración aplicada en `adhara-dev`).
+- 02/10: cierre de la Fase 1 (PR #12): CI en tres workflows, garantías probadas, documentación e informe.
 
 Ver docs/DEVELOPMENT.md para continuar y docs/DECISIONS.md para las decisiones.

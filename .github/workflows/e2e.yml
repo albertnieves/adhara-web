@@ -1,0 +1,43 @@
+name: E2E
+# Supabase local efímero: tienda pública con el coste centinela de
+# tests/fixtures/test-db.sql y recorridos autenticados del panel.
+on:
+  push:
+    branches: [main]
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec supabase start
+      - name: Datos de prueba con el coste centinela
+        run: >-
+          docker exec -i supabase_db_adhara-admin-delivery
+          psql -U postgres -d postgres -v ON_ERROR_STOP=1
+          < tests/fixtures/test-db.sql
+      - run: pnpm build:local
+      - run: pnpm exec playwright install --with-deps chromium
+      - name: Tienda pública (390×844 y 1440×900)
+        run: node scripts/local-env.ts pnpm test:e2e
+        env:
+          ADHARA_COST_SENTINEL: '1'
+      - name: Panel con sesión, MFA y roles
+        run: pnpm test:e2e:local
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-results
+          path: test-results/
+          retention-days: 7
+      - run: pnpm exec supabase stop --no-backup
+        if: always()
