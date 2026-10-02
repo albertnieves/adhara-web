@@ -1,8 +1,30 @@
 # Estado real — 02/10/2026
 
-**Tienda visual (es/ca/en) y panel de administración operativos sobre `adhara-dev`, desplegados en Vercel, que sigue siendo privado (Vercel Authentication). `main` incluye las fases R y S (PR #9), la entrega de acceso y edición de Codex (PR #10) y el panel con el asistente (PR #11); sus 17 migraciones están aplicadas en `adhara-dev` (comprobado el 02/10). La tienda muestra 50 perfumes publicados con PVP. La Fase 1 se cierra con la PR #12: sus 19 criterios están cumplidos o con una excepción escrita ([informe](phases/FASE_1_REPORT.md)).**
+**Tienda visual (es/ca/en) y panel de administración operativos sobre `adhara-dev`, desplegados en Vercel, que sigue siendo privado (Vercel Authentication). `main` incluye las fases R y S (PR #9), la entrega de acceso y edición de Codex (PR #10) y el panel con el asistente (PR #11); sus 17 migraciones están aplicadas en `adhara-dev` (comprobado el 02/10). La tienda muestra 50 perfumes publicados con PVP. La Fase 1 está cerrada (PR #12): sus 19 criterios están cumplidos o con una excepción escrita ([informe](phases/FASE_1_REPORT.md)). La Fase 2 (sistema de diseño) está en preparación ([plan](phases/FASE_2_PLAN.md)).**
 
-## Cierre de la Fase 1 (02/10, PR #12)
+## Fase 2 en preparación (02/10)
+
+Plan del sistema de diseño en [phases/FASE_2_PLAN.md](phases/FASE_2_PLAN.md), pendiente de aprobación.
+
+- **Objetivos:**
+  - tokens en dos capas;
+  - contraste AA garantizado por una prueba;
+  - una biblioteca de primitivas para la tienda y el panel;
+  - página de referencia `/admin/diseno`;
+  - accesibilidad comprobada con axe y teclado;
+  - migración sin regresiones;
+  - revisión visual del usuario.
+- **Criterios:** 13 criterios de cierre.
+- **Decisiones D1–D6:** cada una lleva recomendación; si no se dice nada, se sigue la recomendación.
+- **Tareas:** DS-00 a DS-12, cada una una PR.
+- **Problemas ya medidos:**
+  - texto en niebla sobre marfil, 2,3:1;
+  - dorado sobre marfil, 3,1:1;
+  - bordes de campos, 1,3:1;
+  - dos sistemas de botones;
+  - tamaños y espaciados de letra arbitrarios.
+
+## Cierre de la Fase 1 (02/10, PR #12, fusionada)
 
 A petición del usuario. Criterio por criterio, con evidencia, en [phases/FASE_1_REPORT.md](phases/FASE_1_REPORT.md); excepciones en DECISIONS §83–90.
 
@@ -17,7 +39,7 @@ A petición del usuario. Criterio por criterio, con evidencia, en [phases/FASE_1
   - partes del esquema del plan se difieren a su fase (taxonomía, research, `media_assets`, `tax_rates`, `locales`);
   - el owner se creó por preasignación y no con `bootstrap-owner`;
   - el criterio 18 queda superado por decisión del usuario.
-- **Siguiente fase recomendada:** Fase 2 (Design System) con la preparación de la Fase 3 (importar el CSV del catálogo).
+- **Siguiente fase:** Fase 2 (Design System), en preparación, con la preparación de la Fase 3 (importar el CSV del catálogo).
 
 ## Panel más cómodo y asistente de inventario (01–02/10, PR #11, fusionada)
 
@@ -185,6 +207,7 @@ La revisión visual con perfumes se hizo en local con un Supabase simulado que d
 - 30/09–01/10: fase R (rama `claude/wonderful-babbage-4ojhui`): mostrador, compras a proveedor y reposición, en paralelo al bloque E01–E07 de Codex.
 - 01/10: fase S en la misma rama: informes (existencias y cierre mensual, rotación, márgenes, compras por proveedor) y visor de auditoría. Fusionadas las PR #9 y #10.
 - 01–02/10: panel sin solapes y más cómodo, informe diario programado y asistente de inventario (PR #11, fusionada; migración aplicada en `adhara-dev`).
-- 02/10: cierre de la Fase 1 (PR #12): CI en tres workflows, garantías probadas, documentación e informe.
+- 02/10: cierre de la Fase 1 (PR #12, fusionada): CI en tres workflows, garantías probadas, documentación e informe.
+- 02/10: plan de la Fase 2 (sistema de diseño) con objetivos, criterios y tareas.
 
 Ver docs/DEVELOPMENT.md para continuar y docs/DECISIONS.md para las decisiones.

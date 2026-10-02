@@ -167,3 +167,10 @@ Formato de la Fase 0 §16: fecha · contexto · decisión · alternativas descar
 - **ADR-009 · Roadmap reordenado** (backend e importación antes que las páginas). Estado: aceptada; [ROADMAP.md](ROADMAP.md) muestra el estado. El usuario adelantó la parte visual (§27) y la operativa (fases R y S).
 - **ADR-010 · Español, catalán e inglés con prefijo.** Contexto: el plan de la Fase 1 implementa «§4.1 de la Fase 0 (ADR-010)» con tres idiomas, y la decisión §4 sigue el plan posterior. Decisión: next-intl con `es`, `ca` y `en`, español por defecto, `localePrefix: 'always'`, rutas traducidas, negociación en `/` (cookie > `Accept-Language` > español, 307) y `buildAlternates` para canonical y hreflang. Alternativas descartadas: ADR-008, que obligaba a migrar las rutas con redirecciones al añadir idiomas. Consecuencias: todas las URL públicas llevan prefijo; los mensajes tienen las mismas claves en los tres idiomas (prueba); los textos del catálogo van por idioma; el panel queda en español (§23). Estado: aceptada e implementada ([I18N.md](I18N.md)). **Sustituye a ADR-008.**
 - **ADR-011 a ADR-016.** Citadas por el plan de la Fase 1 («Base: … ADR-001 a ADR-016») sin contenido en los documentos recibidos. No se registran (§4, §83); se añadirán si llega la Fase 0 rev. 2.
+
+## Plan de la Fase 2 — 02/10/2026
+
+91. **Plan de la Fase 2 (sistema de diseño)** en [phases/FASE_2_PLAN.md](phases/FASE_2_PLAN.md), a petición del usuario («prepara el sistema de diseño de la fase dos, deja marcadas las tareas y establece los objetivos»).
+    - **Contenido:** 7 objetivos, 13 criterios de cierre, 6 decisiones con recomendación (D1–D6) y 13 tareas (DS-00 a DS-12), cada una con rama, dependencias y criterio de hecho.
+    - **Estado:** pendiente de aprobación. Al aprobarlo se registran aquí las decisiones D1–D6.
+    - **Dependencias:** ninguna hasta DS-01. La única prevista en toda la fase es `@axe-core/playwright`, de desarrollo, porque los criterios exigen axe.
