@@ -1,6 +1,6 @@
 # L’Atelier du Désert · adhara-web
 
-Ecommerce de perfumería árabe **L’Atelier du Désert** («Haute Parfumerie Orientale»). El repositorio y los proyectos de Supabase y Vercel conservan el nombre de trabajo `adhara`. **En desarrollo; Fase 1 todavía incompleta.** Tienda visual en es/ca/en con escena 3D de unboxing y panel de administración con catálogo, precios, inventario y equipo sobre Supabase (`adhara-dev`). El entorno de desarrollo tiene 50 perfumes publicados y el resto pendiente de completar; sin checkout todavía (docs/STATUS.md).
+Ecommerce de perfumería árabe **L’Atelier du Désert** («Haute Parfumerie Orientale»). El repositorio y los proyectos de Supabase y Vercel conservan el nombre de trabajo `adhara`. **En desarrollo; Fase 1 cerrada el 02/10/2026 con excepciones escritas ([informe](docs/phases/FASE_1_REPORT.md)).** Tienda visual en es/ca/en con escena 3D de unboxing y panel de administración con catálogo, precios, inventario y equipo sobre Supabase (`adhara-dev`). El entorno de desarrollo tiene 50 perfumes publicados y el resto pendiente de completar; sin checkout todavía (docs/STATUS.md).
 
 ## Arranque
 
@@ -23,7 +23,19 @@ pnpm test:e2e
 pnpm format:check
 ```
 
-`check` ejecuta lint, tipado, tests unitarios y build. E2E arranca el build de producción en el puerto 3000, que debe estar libre. Comprueba rutas, idioma y el acceso al panel en móvil y escritorio. Las pruebas de base de datos (pgTAP) están en `supabase/tests` (ver supabase/README.md).
+`check` ejecuta lint, tipado, tests unitarios y build. E2E arranca el build de producción en el puerto 3000, que debe estar libre. Comprueba rutas, idioma y el acceso al panel en móvil y escritorio.
+
+Con Docker, la base de datos y los recorridos autenticados se prueban sobre Supabase local:
+
+```sh
+pnpm exec supabase start
+pnpm test:db                      # pgTAP
+node scripts/check-db-types.ts    # tipos generados
+node scripts/check-db-lint.ts     # plpgsql_check
+pnpm build:local && pnpm test:e2e:local
+```
+
+La CI repite todo en tres workflows: `ci.yml`, `db.yml` y `e2e.yml` (ver [supabase/README.md](supabase/README.md) y [docs/DATABASE.md](docs/DATABASE.md)).
 
 ## Qué hay
 
@@ -33,12 +45,12 @@ pnpm format:check
 - Asistente de inventario: informe diario programado (Vercel Cron) y chat de solo lectura con Claude (`@anthropic-ai/sdk`); se activa con `ANTHROPIC_API_KEY` y `CRON_SECRET` en el servidor ([guía](docs/ADMIN_OPERATIONS.md)).
 - Supabase con RLS en todas las tablas públicas, costes fuera de la API y registros de solo inserción; migraciones y pruebas pgTAP en `supabase/`.
 - Endpoint /api/health y exclusión de indexación mientras se desarrolla.
-- Vitest, Playwright y workflow de GitHub Actions.
-- Instrucciones para Codex en AGENTS.md y documentos originales preservados.
+- Vitest, Playwright, pgTAP y tres workflows de GitHub Actions (calidad, base de datos y E2E con coste centinela).
+- Instrucciones para Codex en AGENTS.md y para Claude Code en CLAUDE.md; documentos originales preservados en `docs/source/`.
 
 ## Continuar con Codex
 
-Abrir esta carpeta como proyecto y pedir: «Lee AGENTS.md y docs/STATUS.md y continúa con el siguiente bloque de fundaciones». Consultar [desarrollo](docs/DEVELOPMENT.md), [panel de administración](docs/ADMIN_PLAN.md), [habilidades](docs/SKILLS.md), [decisiones](docs/DECISIONS.md) y [estado](docs/STATUS.md).
+Abrir esta carpeta como proyecto y pedir: «Lee AGENTS.md y docs/STATUS.md y continúa con el siguiente bloque de fundaciones». Consultar [desarrollo](docs/DEVELOPMENT.md), [roadmap](docs/ROADMAP.md), [arquitectura](docs/ARCHITECTURE.md), [base de datos](docs/DATABASE.md), [seguridad](docs/SECURITY.md), [idiomas](docs/I18N.md), [precios](docs/PRICING.md), [panel de administración](docs/ADMIN_PLAN.md), [habilidades](docs/SKILLS.md), [decisiones](docs/DECISIONS.md) y [estado](docs/STATUS.md).
 
 ## Entrega de administración
 

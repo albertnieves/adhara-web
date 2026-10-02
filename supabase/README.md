@@ -18,6 +18,10 @@ Proyecto de desarrollo: **`adhara-dev`** (ref `xgpsislololgbakzcmad`), región `
 | 20260929232007 | Roles preasignados por email (`private.pending_staff_grants`): al crear y confirmar la cuenta en Auth recibe su rol automáticamente                                                                                                                                                       |
 | 20260930045615 | Costes: `internal.variant_cost_records` (solo inserción, fuera de la API) y funciones `admin_variant_costs` (pricing.view_cost) y `admin_record_variant_cost` (pricing.edit_cost), ambas con MFA                                                                                          |
 | 20260930083657 | `admin_record_variant_costs`: registro de costes por lotes para la importación (hasta 2000, todo o nada), auditado con el número de filas y sin importes                                                                                                                                  |
+| 20260930220818 | Guardas de MFA en las escrituras SQL y protección del último administrador                                                                                                                                                                                                                |
+| 20260930220820 | Ediciones seguras: revisiones de PVP ligadas a la sesión, foto principal única, precio anterior y auditoría del catálogo                                                                                                                                                                  |
+| 20260930220822 | Contenido de la tienda (portada y datos) con borrador, revisiones de solo inserción y publicación; bucket `editorial`                                                                                                                                                                     |
+| 20260930220824 | Invitaciones del personal                                                                                                                                                                                                                                                                 |
 | 20260930224000 | Fase R: proveedores, pedidos y recepciones en `internal`; mostrador (`store_sales`), parámetros del vigilante y sus funciones `admin_*`, con MFA en toda escritura                                                                                                                        |
 | 20261001090000 | Fase S: informes de solo lectura `admin_report_inventory_period` (reports.view; costes con pricing.view_cost) y `admin_report_purchases` (purchasing.manage)                                                                                                                              |
 | 20261002044249 | Asistente (aplicada en `adhara-dev` el 02/10): `daily_reports` (lectura con `agent.use`, escritura solo del servidor), `assistant_usage` (solo inserción), `admin_open_purchase_orders` sin proveedor ni costes y lectura del vigilante también para la tarea programada (`service_role`) |
@@ -28,17 +32,30 @@ Los tipos de `src/lib/supabase/database.types.ts` se generan desde `adhara-dev` 
 
 ## Pruebas de base de datos
 
-Sin Docker, las pruebas se ejecutan contra `adhara-dev` con `tests/tap_remote.py`, que revierte todo al terminar. Resultados: `01_staff_permissions` 22/22 (29/09, sesión del PR #5), `02_catalog_inventory` 33/33 (29/09) y `03_costs` 33/33 (30/09, con el registro por lotes).
+`tests/database/*.test.sql` son pruebas pgTAP para `supabase test db` (`pnpm test:db`). Crean usuarios ficticios dentro de una transacción que se revierte y cubren anon, usuario sin personal (cliente), `viewer`, `store_admin` y `system_admin`, con y sin MFA (aal2). Se ejecutan en cada PR y en `main` en `db.yml`, sobre Supabase local recién reiniciado (`supabase db reset`). Resultado del 02/10 (CLI 2.118.0): 263/263 en 8 archivos.
 
-`tests/database/*.test.sql` son pruebas pgTAP para `supabase test db`. Crean usuarios ficticios dentro de una transacción que se revierte. Cubren anon, usuario sin personal (cliente), `viewer`, `store_admin` y `system_admin`, con y sin MFA (aal2), y la auditoría de solo inserción. `03_costs` comprueba además que ninguna tabla pública tiene columnas de coste y que anon no ejecuta ninguna función que los devuelva.
+| Archivo                 | Pruebas | Qué cubre                                                                                                                                                  |
+| ----------------------- | ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `01_staff_permissions`  | 22      | Matriz de permisos, MFA, personal y auditoría de solo inserción                                                                                            |
+| `02_catalog_inventory`  | 33      | Visibilidad pública, PVP con MFA, publicación, movimientos y niveles                                                                                       |
+| `03_costs`              | 33      | Costes fuera de la API, permisos y MFA, historial de solo inserción; ninguna tabla pública con columnas de coste                                           |
+| `04_delivery`           | 47      | Entrega de administración: MFA en escrituras, último administrador, revisiones de PVP, contenido e invitaciones                                            |
+| `04_purchasing_counter` | 54      | Proveedores, pedidos, recepción, mostrador y vigilante por rol                                                                                             |
+| `05_reports`            | 22      | Informes: permisos, cuadre de existencias, coste a fecha y plazo real                                                                                      |
+| `06_assistant`          | 24      | Informes diarios, registro de uso y lecturas de la tarea programada                                                                                        |
+| `07_phase1_guarantees`  | 28      | Criterio 9 de la Fase 1: RLS en todas las tablas públicas, anon sin `admin_*` ni escritura, PVP sin permiso, publicación y UPDATE/DELETE en solo inserción |
+
+Además, en `db.yml`: `scripts/check-db-types.ts` (tipos generados iguales a las migraciones) y `scripts/check-db-lint.ts` (`supabase db lint` con plpgsql_check; falla con cualquier error salvo tres falsos positivos de tablas temporales, DECISIONS §84).
+
+Antes de tener Docker, las pruebas se ejecutaron contra `adhara-dev` con `tests/tap_remote.py`, que revierte todo al terminar (29–30/09).
 
 ### Concurrencia
 
-`tests/concurrency/counter_and_receipts.sh` abre sesiones paralelas contra una base **local** (deja datos en tablas de solo inserción; se limpia con `supabase db reset`): N ventas simultáneas de la última unidad, la misma venta enviada N veces y N recepciones simultáneas de un pedido. Resultado del 01/10 con 24 sesiones: una sola venta, una sola venta para la misma clave, nunca más de lo pedido y nivel igual a la suma de movimientos.
+`tests/concurrency/counter_and_receipts.sh` abre sesiones paralelas contra una base **local** (deja datos en tablas de solo inserción; se limpia con `supabase db reset`): N ventas simultáneas de la última unidad, la misma venta enviada N veces y N recepciones simultáneas de un pedido. Resultado con 24 sesiones: una sola venta, una sola venta para la misma clave, nunca más de lo pedido y nivel igual a la suma de movimientos. Se ejecuta en `db.yml` con `scripts/test-concurrency.ts`.
 
-`06_assistant` (24) cubre los informes diarios, el registro de uso y las lecturas de la tarea programada; con base vacía, las siete pruebas pasan 235/235 (01/10, CLI 2.118.0).
+### Coste centinela
 
-`04_purchasing_counter` (54 pruebas) cubre proveedores, pedidos, recepción, mostrador y vigilante por rol y con o sin MFA. `05_reports` (22) cubre los informes: permisos, cuadre de existencias, coste a fecha y plazo real. Validado el 01/10 con Supabase local (CLI 2.119.0): las cinco pruebas pasan, 164/164.
+`../tests/fixtures/test-db.sql` crea, solo en la base local de `e2e.yml`, un perfume ficticio publicado con un coste de 987654 céntimos y un proveedor con ese número; `tests/e2e/cost-leak.spec.ts` comprueba que no aparece en ninguna respuesta pública. Nunca se carga en `adhara-dev`.
 
 ## Configuración de Auth (panel de Supabase)
 
@@ -60,10 +77,10 @@ Sin Docker, las pruebas se ejecutan contra `adhara-dev` con `tests/tap_remote.py
 
 ## Pendiente
 
-- `config.toml` y Supabase local con la CLI cuando haya Docker disponible; añadir las pruebas pgTAP a la CI.
-- Resto de migraciones de la Fase 1: taxonomía (familias, notas) y procedencia del research. Proveedores: fase R.
-- Aplicar `20260930224000_purchasing_counter_replenishment.sql` y `20261001090000_reports.sql` en `adhara-dev` al fusionar (renombrar con la versión real) y regenerar `src/lib/supabase/database.types.ts`; ejecutar `04_purchasing_counter` y `05_reports` con `tap_remote.py`.
+- Esquema diferido a su fase: taxonomía, research y claims, `media_assets`, `tax_rates`, `locales`, colecciones y buckets del plan (DECISIONS §86).
+- Proyecto `adhara-prod` y workflow de despliegue de migraciones (DECISIONS §84).
+- Protección de contraseñas filtradas en Supabase Auth.
 
 ## Entrega de administración
 
-Cuatro migraciones adicionales: `20260930220818` MFA/último administrador, `20260930220820` ediciones/PVP/stock/media, `20260930220822` contenido/editorial y `20260930220824` invitaciones. Son complementarias a las fases R/S y aún no se han aplicado remotamente. CLI local fijada, comandos y tipos en `docs/ADMIN_LOCAL_VALIDATION.md`; aplicación y reversión en `docs/DELIVERY_REPORT.md`.
+Cuatro migraciones adicionales: `20260930220818` MFA/último administrador, `20260930220820` ediciones/PVP/stock/media, `20260930220822` contenido/editorial y `20260930220824` invitaciones. Son complementarias a las fases R/S y están aplicadas en `adhara-dev` desde el 01/10. CLI local fijada, comandos y tipos en `docs/ADMIN_LOCAL_VALIDATION.md`; aplicación y reversión en `docs/DELIVERY_REPORT.md`.

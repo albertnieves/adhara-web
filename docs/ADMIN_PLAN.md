@@ -1,6 +1,6 @@
 # Panel de administración — plan por fases
 
-Estado: **A0 y A1 implementadas; A2 (catálogo, PVP, cambios masivos, costes y margen por formato, etiquetas de precio e importación CSV) en versión base; A3 completa y A4.1 en la fase R (proveedores, pedidos de compra, mostrador y vigilante; [PLAN_TIENDA_REPOSICION.md](PLAN_TIENDA_REPOSICION.md)) con informe diario programado desde el 01/10; A4.2 (asistente) en primera versión de solo lectura; informes de A8 en la fase S ([PLAN_INFORMES.md](PLAN_INFORMES.md)). La migración del asistente está pendiente de aplicar en `adhara-dev`** · 01/10/2026
+Estado: **A0 y A1 implementadas; A2 (catálogo, PVP, cambios masivos, costes y margen por formato, etiquetas de precio e importación CSV) en versión base; A3 completa y A4.1 en la fase R (proveedores, pedidos de compra, mostrador y vigilante; [PLAN_TIENDA_REPOSICION.md](PLAN_TIENDA_REPOSICION.md)) con informe diario programado desde el 01/10; A4.2 (asistente) en primera versión de solo lectura; informes de A8 en la fase S ([PLAN_INFORMES.md](PLAN_INFORMES.md)). Todas las migraciones, también la del asistente, están aplicadas en `adhara-dev`** · 02/10/2026
 
 Este documento concreta el back-office de ADHARA sobre la arquitectura de docs/source (Fase 0 §10–§11 y plan de Fase 1). No sustituye esos documentos. Cada fase A se corresponde con fases del roadmap original (F1…F17), indicadas entre paréntesis.
 
