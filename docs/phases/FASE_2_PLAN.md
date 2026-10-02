@@ -1,6 +1,6 @@
 # Fase 2 — Sistema de diseño: plan
 
-Estado: **en curso**. Plan aprobado el 02/10/2026 (PR #13) con las decisiones D1–D6 recomendadas; DS-01 a DS-04 hechas.
+Estado: **en curso**. Plan aprobado el 02/10/2026 (PR #13) con las decisiones D1–D6 recomendadas; DS-01 a DS-05 hechas.
 
 Base:
 
@@ -179,11 +179,17 @@ DS-01 puede empezar ya. De DS-05 a DS-09 se pueden trabajar en paralelo cuando e
     - la auditoría E2E bloquea cualquier texto visible de menos de 11 px.
   - Excepción permanente, escrita en `design-guard-exceptions.ts`: la etiqueta de estante impresa (`PriceLabelCard`) va en pt y mm para coincidir con la hoja.
 
-- [ ] **DS-05 · Iconos y marca.** Depende de: DS-03.
+- [x] **DS-05 · Iconos y marca.** Depende de: DS-03.
   - Componente `Icon` con el juego propio (D5): cerrar, menú, buscar, flecha, chevron, más, menos, check, alerta, información, carrito y usuario.
   - `Star` como viñeta, separador y cargador.
   - Reglas de uso del logotipo: tamaño mínimo, margen y fondos permitidos.
   - Hecho cuando: los iconos tienen `aria-hidden` o etiqueta, hay sección en la página de referencia y se revisaron los iconos de la aplicación (favicon y apple-icon).
+  - Hecho el 02/10 (rama `codex/ds-05-iconos`, DECISIONS §97):
+    - `Icon` con los 12 iconos de D5, de 1,5 px a cualquier tamaño; decorativo por defecto y con nombre si lleva `label`;
+    - `StarList`, `StarDivider` y `StarLoader` con la estrella del emblema;
+    - `Logo` con `size` (`sm`, el mínimo, y `md`) y ancho mínimo en la composición completa; reglas y fondos en la sección «Marca» de `/admin/diseno`;
+    - favicon y apple-icon revisados, sin cambios;
+    - pruebas unitarias de iconos, estrella y logotipo. Por indicación del usuario, la verificación E2E completa se deja a la CI y a la siguiente fase.
 
 ### Primitivas
 

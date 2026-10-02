@@ -252,3 +252,17 @@ Formato de la Fase 0 §16: fecha · contexto · decisión · alternativas descar
       - el logotipo de la cabecera de la tienda y de la pantalla de acceso pasa de 17 a 18 px. El del panel sigue en 14 px.
     - **Excepción permanente:** la etiqueta de estante impresa (`PriceLabelCard`, 63,5 × 38,1 mm) mantiene sus tamaños en pt para coincidir con la hoja. Va escrita con su motivo en `design-guard-exceptions.ts`, y la auditoría la excluye con `data-print-size`.
     - **Guardas:** la prueba cuenta cualquier `text-[…]`, también pt y `clamp()`, que antes no detectaba. No admite ningún `tracking-[…]` y exige tokens en los `letter-spacing` de `globals.css`. La auditoría E2E bloquea cualquier texto visible de menos de 11 px.
+97. **Iconos y marca (DS-05).**
+    - **`Icon`:** el juego propio de D5, sin librería: cerrar, menú, buscar, flecha, chevron, más, menos, check, alerta, información, carrito y usuario.
+      - Retícula de 24 × 24 con trazo de 1,5 px a cualquier tamaño (`vector-effect: non-scaling-stroke`), extremos redondeados y `currentColor`.
+      - Tres tamaños (16, 20 y 24 px). Flecha y chevron apuntan a la derecha y giran con `direction`.
+      - Sin `label` es decorativo (`aria-hidden`); con `label`, `role="img"` y su nombre.
+      - El carrito se dibuja como bolsa, más propia de una perfumería.
+    - **Estrella:** `StarList` (viñeta), `StarDivider` (separador con `role="separator"`) y `StarLoader` (titila; `role="status"` con texto para lectores de pantalla y quieta con «reducir movimiento»). Siempre decorativa y en dorado de acento.
+    - **Logotipo:**
+      - mínimo en línea con el nombre a 14 px (`size="sm"`, el del panel) y en composición completa con 160 px de ancho (`min-w-40`);
+      - margen libre de 1 em alrededor;
+      - tinta sobre los claros y marfil sobre los oscuros, siempre en un solo color; nunca dorado ni sobre fotos sin velo.
+      - `Logo` sustituye el tamaño libre por `size` (`sm` o `md`), así que no puede quedar por debajo del mínimo. Sin cambio visual.
+    - **Iconos de la aplicación:** `icon.svg` y `apple-icon.png` (180 px, fondo opaco) llevan el emblema en tinta sobre marfil; revisados y sin cambios.
+    - **Verificación:** por indicación del usuario («no hagas comprobaciones irrelevantes, las haremos en la siguiente fase») solo `pnpm check` en local, con 17 pruebas unitarias nuevas. Los E2E y la auditoría los ejecuta la CI.
