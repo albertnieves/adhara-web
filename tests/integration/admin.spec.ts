@@ -179,6 +179,28 @@ test('viewer no accede al editor y recuperación no enumera usuarios', async ({
   await expect(page).toHaveURL(/error=enlace/);
 });
 
+test('una sesión sin ficha de personal recibe 404 en el panel', async ({
+  page,
+}) => {
+  const email = `sin-personal-${randomUUID()}@test.invalid`;
+  const { error } = await admin.auth.admin.createUser({
+    email,
+    password,
+    email_confirm: true,
+  });
+  if (error) throw error;
+  await page.goto('/admin/acceso');
+  await page.getByLabel('Email', { exact: true }).fill(email);
+  await page.getByLabel('Contraseña', { exact: true }).fill(password);
+  await page.getByRole('button', { name: 'Entrar', exact: true }).click();
+  await expect(page).toHaveURL(/\/admin$/);
+  for (const path of ['/admin', '/admin/mfa', '/admin/catalogo']) {
+    const response = await page.goto(path);
+    expect(response?.status()).toBe(404);
+  }
+  await expect(page.getByRole('navigation')).toHaveCount(0);
+});
+
 async function mailLink(email: string) {
   let id: string | undefined;
   await expect
