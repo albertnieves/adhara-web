@@ -49,7 +49,7 @@ function Chip({
   };
   return (
     <span
-      className={`inline-block border px-2 py-0.5 text-[0.6875rem] whitespace-nowrap ${tones[tone]}`}
+      className={`text-2xs inline-block border px-2 py-0.5 whitespace-nowrap ${tones[tone]}`}
     >
       {children}
     </span>
@@ -147,7 +147,7 @@ export function CatalogImport({ canSetPrices }: { canSetPrices: boolean }) {
           <button
             type="button"
             onClick={downloadTemplate}
-            className="link-underline inline-flex min-h-11 items-center text-xs tracking-[0.16em] uppercase"
+            className="link-underline tracking-caps inline-flex min-h-11 items-center text-xs uppercase"
           >
             Descargar plantilla
           </button>
@@ -255,7 +255,7 @@ export function CatalogImport({ canSetPrices }: { canSetPrices: boolean }) {
           )}
           <Link
             href="/admin/catalogo?estado=draft"
-            className="link-underline text-xs tracking-[0.16em] uppercase"
+            className="link-underline tracking-caps text-xs uppercase"
           >
             Ver borradores
           </Link>

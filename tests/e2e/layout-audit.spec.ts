@@ -64,7 +64,7 @@ test('diseño sin solapes ni desbordes en una ficha publicada', async ({
   await check(page, `/en/fragrance/${slug}`, 'ficha-en');
 });
 
-test('la auditoría detecta solapes, desbordes y controles pequeños', async ({
+test('la auditoría detecta solapes, desbordes, letra y controles pequeños', async ({
   page,
 }) => {
   await page.setViewportSize({ width: 390, height: 900 });
@@ -76,6 +76,8 @@ test('la auditoría detecta solapes, desbordes y controles pequeños', async ({
       <div style="width: 60px"><span style="display: block; white-space: nowrap">Texto que se sale de su caja</span></div>
       <button style="width: 16px; height: 16px; padding: 0">x</button>
       <p><span style="position: absolute; top: 0">Capa superpuesta a propósito</span></p>
+      <p style="font-size: 9px; margin-top: 40px">Texto diminuto</p>
+      <div data-print-size><p style="font-size: 6pt">Etiqueta impresa</p></div>
     </main>`);
   const { blocking } = await page.evaluate(collectLayoutIssues);
   const kinds = blocking.map((issue) => issue.split(':')[0]);
@@ -83,5 +85,7 @@ test('la auditoría detecta solapes, desbordes y controles pequeños', async ({
   expect(kinds).toContain('solape');
   expect(kinds).toContain('texto fuera de su caja');
   expect(kinds).toContain('control de menos de 24 px');
+  expect(kinds).toContain('texto de menos de 11 px');
   expect(blocking.join('\n')).not.toContain('Capa superpuesta');
+  expect(blocking.join('\n')).not.toContain('Etiqueta impresa');
 });

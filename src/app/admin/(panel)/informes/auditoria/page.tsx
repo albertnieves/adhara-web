@@ -143,7 +143,7 @@ export default async function AuditLog({
         </label>
         <button
           type="submit"
-          className="border-line hover:border-ink inline-flex min-h-11 items-center border px-5 text-xs font-semibold tracking-[0.18em] uppercase"
+          className="border-line hover:border-ink tracking-caps inline-flex min-h-11 items-center border px-5 text-xs font-semibold uppercase"
         >
           Filtrar
         </button>
@@ -216,7 +216,7 @@ export default async function AuditLog({
         {page > 0 ? (
           <Link
             href={query({ pagina: String(page - 1) })}
-            className="link-underline text-xs tracking-[0.16em] uppercase"
+            className="link-underline tracking-caps text-xs uppercase"
           >
             ← Más recientes
           </Link>
@@ -226,7 +226,7 @@ export default async function AuditLog({
         {hasMore && (
           <Link
             href={query({ pagina: String(page + 1) })}
-            className="link-underline text-xs tracking-[0.16em] uppercase"
+            className="link-underline tracking-caps text-xs uppercase"
           >
             Más antiguas →
           </Link>

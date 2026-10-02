@@ -25,7 +25,12 @@ Plan del sistema de diseño en [phases/FASE_2_PLAN.md](phases/FASE_2_PLAN.md), a
 - todos los tokens con el valor que aplica el navegador y el contraste calculado en los cinco tonos (todas las combinaciones cumplen);
 - una prueba exige que la página y `globals.css` tengan los mismos tokens.
 
-Siguiente tarea: DS-04 (tipografía), y en paralelo DS-05 (iconos y marca).
+**DS-04 hecha (tipografía):**
+
+- componentes `Heading`, `Text` y `Eyebrow` en `src/components/ui`, la primera pieza de la biblioteca común;
+- escala cerrada: sin tamaños ni espaciados arbitrarios y ningún texto por debajo de 11 px, comprobado por prueba unitaria y por la auditoría E2E.
+
+Siguiente tarea: DS-05 (iconos y marca); DS-07 (formularios) y DS-09 (datos y comercio) pueden ir en paralelo.
 
 - **Objetivos:**
   - tokens en dos capas;
@@ -231,5 +236,6 @@ La revisión visual con perfumes se hizo en local con un Supabase simulado que d
 - 02/10: cierre de la Fase 1 (PR #12, fusionada): CI en tres workflows, garantías probadas, documentación e informe.
 - 02/10: plan de la Fase 2 (sistema de diseño) con objetivos, criterios y tareas.
 - 02/10: Fase 2, DS-01 a DS-03: red de seguridad (PR #14), tokens y contraste AA (PR #15) y página de referencia `/admin/diseno`.
+- 02/10: Fase 2, DS-04: tipografía con `Heading`, `Text` y `Eyebrow` y escala cerrada.
 
 Ver docs/DEVELOPMENT.md para continuar y docs/DECISIONS.md para las decisiones.

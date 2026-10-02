@@ -8,9 +8,10 @@ import { join } from 'node:path';
  * diseño en el navegador y línea base de accesibilidad con axe.
  *
  * Bloquean: desplazamiento horizontal de la página, cajas de contenido que
- * se pisan, texto que se sale de su caja y controles de menos de 24 × 24 px
- * (WCAG 2.5.8). Solo se anotan: recortes con overflow oculto y controles de
- * menos de 44 px, que se corrigen en las tareas siguientes de la fase.
+ * se pisan, texto que se sale de su caja, texto de menos de 11 px (criterio
+ * 3, desde DS-04) y controles de menos de 24 × 24 px (WCAG 2.5.8). Solo se
+ * anotan: recortes con overflow oculto y controles de menos de 44 px, que se
+ * corrigen en las tareas siguientes de la fase.
  */
 
 export const AUDIT_WIDTHS = [390, 768, 1280, 1440] as const;
@@ -133,6 +134,19 @@ export function collectLayoutIssues(): LayoutFindings {
       notes.push(
         `recorte: ${describe(el)} ${el.scrollWidth} > ${el.clientWidth}`,
       );
+  }
+
+  // Criterio 3: ningún texto por debajo de 11 px. Las etiquetas que se
+  // imprimen a tamaño físico (data-print-size) van en pt y quedan fuera.
+  let small = 0;
+  for (const el of all) {
+    if (small >= MAX || !hasText(el) || el.closest('[data-print-size]'))
+      continue;
+    const size = parseFloat(getComputedStyle(el).fontSize);
+    if (size < 10.95) {
+      small++;
+      blocking.push(`texto de menos de 11 px: ${describe(el)} ${size} px`);
+    }
   }
 
   const targets = all.filter(

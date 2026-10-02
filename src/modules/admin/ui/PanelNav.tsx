@@ -99,7 +99,7 @@ export function PanelNav({
     <>
       <button
         type="button"
-        className="border-ivory/20 hover:border-ivory text-ivory/85 inline-flex min-h-11 items-center gap-3 border px-4 text-xs tracking-[0.2em] uppercase transition-colors lg:hidden"
+        className="border-ivory/20 hover:border-ivory text-ivory/85 tracking-caps inline-flex min-h-11 items-center gap-3 border px-4 text-xs uppercase transition-colors lg:hidden"
         aria-expanded={open}
         aria-haspopup="dialog"
         onClick={() => setOpen(true)}

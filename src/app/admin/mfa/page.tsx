@@ -35,7 +35,7 @@ export default async function AdminMfa({
               autoComplete="one-time-code"
               pattern="[0-9]{6}"
               required
-              className="input text-center text-2xl tracking-[0.4em] tabular-nums"
+              className="input tracking-caps-lg text-center text-2xl tabular-nums"
             />
           </Field>
           <button type="submit" className="btn btn-primary">

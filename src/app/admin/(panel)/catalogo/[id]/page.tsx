@@ -107,7 +107,7 @@ export default async function EditProduct({
     <main>
       <Link
         href="/admin/catalogo"
-        className="link-underline text-smoke text-xs tracking-[0.16em] uppercase"
+        className="link-underline text-smoke tracking-caps text-xs uppercase"
       >
         ← Catálogo
       </Link>
@@ -178,7 +178,7 @@ export default async function EditProduct({
           <a
             key={anchor}
             href={`#${anchor}`}
-            className="text-smoke hover:text-ink hover:border-line inline-flex min-h-10 shrink-0 items-center border border-transparent px-3 text-xs tracking-[0.14em] whitespace-nowrap uppercase transition-colors"
+            className="text-smoke hover:text-ink hover:border-line tracking-caps-sm inline-flex min-h-10 shrink-0 items-center border border-transparent px-3 text-xs whitespace-nowrap uppercase transition-colors"
           >
             {label}
           </a>

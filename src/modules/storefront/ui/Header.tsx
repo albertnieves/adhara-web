@@ -88,14 +88,14 @@ export function Header() {
           </button>
           <Link
             href="/catalogo"
-            className="link-underline hidden text-[0.6875rem] tracking-[0.28em] uppercase md:inline"
+            className="link-underline text-2xs tracking-caps-lg hidden uppercase md:inline"
             aria-current={pathname === '/catalogo' ? 'page' : undefined}
           >
             {t('collection')}
           </Link>
           <Link
             href={{ pathname: '/', hash: 'experiencia' }}
-            className="link-underline hidden text-[0.6875rem] tracking-[0.28em] uppercase md:inline"
+            className="link-underline text-2xs tracking-caps-lg hidden uppercase md:inline"
           >
             {t('experience')}
           </Link>
@@ -108,7 +108,7 @@ export function Header() {
         <div className="flex justify-end">
           <LanguageLinks
             pathname={pathname}
-            className="hidden items-center gap-4 text-[0.6875rem] tracking-[0.2em] md:flex"
+            className="text-2xs tracking-caps hidden items-center gap-4 md:flex"
           />
         </div>
       </div>
@@ -153,7 +153,7 @@ export function Header() {
               <LanguageLinks
                 pathname={pathname}
                 onNavigate={() => setOpen(false)}
-                className="flex gap-6 text-sm tracking-[0.2em]"
+                className="tracking-caps flex gap-6 text-sm"
               />
             </div>
           </motion.div>

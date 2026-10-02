@@ -11,7 +11,7 @@ export default function NotFound() {
       <h1 className="mt-4 text-5xl font-light sm:text-6xl">{t('title')}</h1>
       <Link
         href="/"
-        className="link-underline mt-10 text-xs tracking-[0.25em] uppercase"
+        className="link-underline tracking-caps-lg mt-10 text-xs uppercase"
       >
         {t('cta')}
       </Link>

@@ -1,5 +1,5 @@
-import { Section } from './Section';
 import { ColorSection } from './sections/ColorSection';
+import { ComponentsSection } from './sections/ComponentsSection';
 import { LayerSection, MotionSection } from './sections/MotionSection';
 import { SpaceSection } from './sections/SpaceSection';
 import { ToneSection } from './sections/ToneSection';
@@ -13,22 +13,6 @@ const CONTENTS = [
   { id: 'movimiento', label: 'Movimiento' },
   { id: 'capas', label: 'Capas' },
   { id: 'componentes', label: 'Componentes' },
-];
-
-/** Componentes que añade cada tarea siguiente del plan de la Fase 2. */
-const UPCOMING = [
-  { task: 'DS-04', name: 'Tipografía: Heading, Text y Eyebrow' },
-  { task: 'DS-05', name: 'Iconos y marca: Icon, Star y uso del logotipo' },
-  { task: 'DS-06', name: 'Acciones: Button, TextLink y SubmitButton' },
-  {
-    task: 'DS-07',
-    name: 'Formularios: Field, Input, Textarea, Select, Checkbox, Radio y SearchField',
-  },
-  { task: 'DS-08', name: 'Superposiciones y avisos: Dialog, Sheet y Toast' },
-  {
-    task: 'DS-09',
-    name: 'Datos y comercio: Tag, Badge, Price, Table, Card, EmptyState y Skeleton',
-  },
 ];
 
 /**
@@ -62,25 +46,7 @@ export function DesignReference() {
       <SpaceSection />
       <MotionSection />
       <LayerSection />
-      <Section
-        id="componentes"
-        title="Componentes"
-        intro="Las primitivas de src/components/ui llegan con las tareas siguientes, cada una con su sección aquí."
-      >
-        <ul className="divide-border border-border divide-y border-y">
-          {UPCOMING.map((item) => (
-            <li
-              key={item.task}
-              className="flex flex-col gap-1 py-4 sm:flex-row sm:gap-6"
-            >
-              <span className="text-fg-muted w-16 shrink-0 text-sm">
-                {item.task}
-              </span>
-              <span className="text-sm">{item.name}</span>
-            </li>
-          ))}
-        </ul>
-      </Section>
+      <ComponentsSection />
     </>
   );
 }

@@ -87,7 +87,7 @@ export function ProductStock({
                     <span>
                       {available}
                       {row.reorderPoint !== null && (
-                        <p className="text-fg-muted text-[0.6875rem] font-normal">
+                        <p className="text-fg-muted text-2xs font-normal">
                           aviso ≤ {row.reorderPoint}
                         </p>
                       )}
@@ -111,7 +111,7 @@ export function ProductStock({
             })}
           </tbody>
         </table>
-        <p className="text-smoke mt-3 text-xs tracking-[0.14em] uppercase">
+        <p className="text-smoke tracking-caps-sm mt-3 text-xs uppercase">
           {total} {total === 1 ? 'unidad' : 'unidades'} en tienda
         </p>
       </div>
@@ -122,7 +122,7 @@ export function ProductStock({
           {movements.length > 0 && (
             <Link
               href={`/admin/movimientos?perfume=${productId}`}
-              className="link-underline text-xs tracking-[0.16em] uppercase"
+              className="link-underline tracking-caps text-xs uppercase"
             >
               Ver todos
             </Link>

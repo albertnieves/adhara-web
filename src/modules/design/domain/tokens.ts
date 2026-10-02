@@ -201,13 +201,17 @@ export const TEXT_SIZE_TOKENS: readonly Token[] = [
     variable: '--text-2xs',
     role: 'El tamaño mínimo (11 px): versalitas, etiquetas e insignias.',
   },
+  {
+    variable: '--text-display',
+    role: 'Titular fluido de la portada: de 44 a 120 px según el ancho, con interlineado 0,95.',
+  },
 ];
 
 export type TypeStep = { className: string; variable: string };
 
 /**
- * Tamaños que usa hoy la aplicación: text-2xs y los de Tailwind. Es un
- * inventario; DS-04 los ordena en los componentes Heading y Text.
+ * Escala cerrada (criterio 3): text-2xs, los tamaños de Tailwind que usa la
+ * aplicación y el titular fluido. No hay tamaños arbitrarios.
  */
 export const TYPE_SCALE: readonly TypeStep[] = [
   { className: 'text-2xs', variable: '--text-2xs' },
@@ -223,9 +227,14 @@ export const TYPE_SCALE: readonly TypeStep[] = [
   { className: 'text-6xl', variable: '--text-6xl' },
   { className: 'text-7xl', variable: '--text-7xl' },
   { className: 'text-8xl', variable: '--text-8xl' },
+  { className: 'text-display', variable: '--text-display' },
 ];
 
 export const TRACKING_TOKENS: readonly Token[] = [
+  {
+    variable: '--tracking-display',
+    role: 'Titulares en Cormorant: un poco más juntos.',
+  },
   {
     variable: '--tracking-caps-sm',
     role: 'Versalitas compactas: insignias y botones pequeños.',

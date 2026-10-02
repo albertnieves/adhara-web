@@ -139,7 +139,7 @@ export function Hero({
           {eyebrow}
         </motion.p>
 
-        <h1 className="mt-8 text-[clamp(2.75rem,8vw,7.5rem)] leading-[0.95] font-light">
+        <h1 className="text-display mt-8 font-light">
           {words.map((word, index) => (
             <span
               key={`${word}-${index}`}
@@ -195,7 +195,7 @@ export function Hero({
         aria-hidden
         className="absolute bottom-8 left-1/2 flex -translate-x-1/2 flex-col items-center gap-3"
       >
-        <span className="text-ivory/50 text-[0.625rem] tracking-[0.4em] uppercase">
+        <span className="text-ivory/50 text-2xs tracking-caps-lg uppercase">
           {scroll}
         </span>
         <span className="bg-ivory/15 relative h-12 w-px overflow-hidden">

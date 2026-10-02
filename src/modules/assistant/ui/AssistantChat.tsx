@@ -223,7 +223,7 @@ export function AssistantChat({
             setMessages([]);
             setError(null);
           }}
-          className="text-smoke hover:text-ink min-h-10 self-start px-5 pb-3 text-xs tracking-[0.14em] uppercase"
+          className="text-smoke hover:text-ink tracking-caps-sm min-h-10 self-start px-5 pb-3 text-xs uppercase"
         >
           Nueva conversación
         </button>

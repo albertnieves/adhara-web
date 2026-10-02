@@ -43,7 +43,7 @@ export default async function CounterPage() {
       <PageHeader eyebrow={location.name} title="Mostrador">
         <Link
           href="/admin/movimientos?tipo=SALE_STORE"
-          className="border-line hover:border-ink inline-flex min-h-11 items-center border px-5 text-xs font-semibold tracking-[0.18em] uppercase"
+          className="border-line hover:border-ink tracking-caps inline-flex min-h-11 items-center border px-5 text-xs font-semibold uppercase"
         >
           Ventas en el historial
         </Link>

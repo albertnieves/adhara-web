@@ -52,7 +52,7 @@ export function PurchasePanel({
                     {formatEuros(selected.compareAtCents, locale)}
                   </s>
                 )}
-                <span className="text-smoke ml-3 align-middle text-[0.625rem] font-normal tracking-[0.2em] uppercase">
+                <span className="text-smoke text-2xs tracking-caps ml-3 align-middle font-normal uppercase">
                   {t('vat')}
                 </span>
               </>
@@ -73,7 +73,7 @@ export function PurchasePanel({
                 type="button"
                 aria-pressed={variant.id === selectedId}
                 onClick={() => setSelectedId(variant.id)}
-                className={`min-w-20 border px-4 py-3 text-xs tracking-[0.15em] transition-colors duration-500 ${
+                className={`tracking-caps min-w-20 border px-4 py-3 text-xs transition-colors duration-500 ${
                   variant.id === selectedId
                     ? 'border-ink bg-ink text-ivory'
                     : 'border-line hover:border-ink'
@@ -87,7 +87,7 @@ export function PurchasePanel({
       )}
 
       {status && (
-        <p className="flex items-center gap-3 text-xs tracking-[0.2em] uppercase">
+        <p className="tracking-caps flex items-center gap-3 text-xs uppercase">
           <span className={`size-1.5 rounded-full ${DOT[status]}`} />
           {t(LABEL[status])}
         </p>

@@ -28,7 +28,7 @@ export function ProductImage({
         className={`text-smoke flex h-full w-full flex-col items-center justify-center gap-4 ${className}`}
       >
         <Star className="text-gold/60 size-5" />
-        <span className="font-display text-xl tracking-[0.3em] uppercase">
+        <span className="font-display tracking-caps-lg text-xl uppercase">
           {brand}
         </span>
       </div>

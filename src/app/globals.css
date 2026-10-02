@@ -52,9 +52,16 @@
   --color-warning: #865816;
   --color-warning-soft: #f5ead3;
 
-  /* Tipografía: tamaño mínimo de 11 px y espaciados de versalitas. */
+  /*
+   * Tipografía: tamaño mínimo de 11 px, titular fluido de portada y
+   * espaciados. El resto de tamaños son los de Tailwind (text-xs a text-8xl);
+   * no hay tamaños ni espaciados arbitrarios (criterio 3).
+   */
   --text-2xs: 0.6875rem;
   --text-2xs--line-height: 1rem;
+  --text-display: clamp(2.75rem, 8vw, 7.5rem);
+  --text-display--line-height: 0.95;
+  --tracking-display: -0.01em;
   --tracking-caps-sm: 0.12em;
   --tracking-caps: 0.18em;
   --tracking-caps-lg: 0.3em;
@@ -195,7 +202,7 @@
   h3 {
     font-family: var(--font-display);
     font-weight: 400;
-    letter-spacing: -0.01em;
+    letter-spacing: var(--tracking-display);
     text-wrap: balance;
   }
 }
@@ -206,7 +213,7 @@
     font-family: var(--font-sans);
     font-weight: 400;
     font-size: var(--text-2xs);
-    letter-spacing: 0.32em;
+    letter-spacing: var(--tracking-caps-lg);
     text-transform: uppercase;
     color: var(--color-fg-muted);
   }
@@ -236,7 +243,7 @@
     padding: 1rem 2.25rem;
     font-size: var(--text-2xs);
     font-weight: 600;
-    letter-spacing: 0.28em;
+    letter-spacing: var(--tracking-caps-lg);
     text-transform: uppercase;
     transition:
       background-color var(--duration-base) var(--ease-luxe),
@@ -382,7 +389,7 @@
     padding: 0 1.25rem;
     font-size: 0.75rem;
     font-weight: 600;
-    letter-spacing: 0.18em;
+    letter-spacing: var(--tracking-caps);
     text-transform: uppercase;
     transition:
       border-color var(--duration-fast) var(--ease-luxe),

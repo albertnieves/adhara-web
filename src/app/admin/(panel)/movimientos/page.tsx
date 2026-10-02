@@ -39,7 +39,7 @@ export default async function Movements({
       <PageHeader eyebrow="Inventario" title="Movimientos">
         <a
           href={`/admin/movimientos/exportar${query ? `?${query}` : ''}`}
-          className="border-line hover:border-ink inline-flex min-h-11 items-center border px-5 text-xs font-semibold tracking-[0.18em] uppercase"
+          className="border-line hover:border-ink tracking-caps inline-flex min-h-11 items-center border px-5 text-xs font-semibold uppercase"
         >
           Exportar CSV
         </a>
@@ -89,7 +89,7 @@ export default async function Movements({
         </label>
         <button
           type="submit"
-          className="border-ink hover:bg-ink hover:text-ivory min-h-11 border px-5 text-xs font-semibold tracking-[0.18em] uppercase transition-colors"
+          className="border-ink hover:bg-ink hover:text-ivory tracking-caps min-h-11 border px-5 text-xs font-semibold uppercase transition-colors"
         >
           Filtrar
         </button>

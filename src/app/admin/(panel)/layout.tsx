@@ -113,7 +113,7 @@ export default async function PanelLayout({
     'catalog.edit',
   );
   const shortcut =
-    'text-ivory/60 hover:text-ivory inline-flex min-h-9 items-center text-left text-xs tracking-[0.16em] uppercase';
+    'text-ivory/60 hover:text-ivory inline-flex min-h-9 items-center text-left text-xs tracking-caps uppercase';
   const shortcuts = (
     <>
       {canPreview && (
@@ -144,7 +144,7 @@ export default async function PanelLayout({
           className="inline-flex min-h-11 items-center lg:px-3"
           aria-label="Inicio del panel"
         >
-          <Logo className="text-[14px]" />
+          <Logo className="text-sm" />
         </Link>
         <PanelNav items={items} footer={shortcuts} />
         <div className="hidden lg:mt-auto lg:flex lg:flex-col lg:items-start lg:gap-1 lg:px-3">
@@ -162,7 +162,7 @@ export default async function PanelLayout({
           <form action={signOut}>
             <button
               type="submit"
-              className="link-underline text-smoke inline-flex min-h-11 items-center text-xs tracking-[0.16em] uppercase"
+              className="link-underline text-smoke tracking-caps inline-flex min-h-11 items-center text-xs uppercase"
             >
               Cerrar sesión
             </button>

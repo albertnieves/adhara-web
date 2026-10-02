@@ -155,7 +155,7 @@ export default async function PurchaseOrderPage({
       >
         <Link
           href="/admin/compras"
-          className="border-line hover:border-ink inline-flex min-h-11 items-center border px-5 text-xs font-semibold tracking-[0.18em] uppercase print:hidden"
+          className="border-line hover:border-ink tracking-caps inline-flex min-h-11 items-center border px-5 text-xs font-semibold uppercase print:hidden"
         >
           Todos los pedidos
         </Link>
@@ -292,7 +292,7 @@ export default async function PurchaseOrderPage({
           </ul>
           <Link
             href={`/admin/movimientos?tipo=PURCHASE_RECEIPT`}
-            className="link-underline mt-4 inline-block text-xs tracking-[0.16em] uppercase"
+            className="link-underline tracking-caps mt-4 inline-block text-xs uppercase"
           >
             Ver recepciones en el historial
           </Link>

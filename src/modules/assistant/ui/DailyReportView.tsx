@@ -30,7 +30,7 @@ function Figure({
 }) {
   return (
     <div className="border-line border-t pt-3">
-      <p className="text-smoke text-[0.625rem] font-semibold tracking-[0.12em] break-words hyphens-auto uppercase">
+      <p className="text-smoke text-2xs tracking-caps-sm font-semibold break-words hyphens-auto uppercase">
         {label}
       </p>
       <p
@@ -63,7 +63,7 @@ export function DailyReportView({
           data-tone="dark"
           className="border-gold bg-night text-ivory border-l-2 px-6 py-5"
         >
-          <p className="text-gold-soft text-[0.625rem] font-semibold tracking-[0.2em] uppercase">
+          <p className="text-gold-soft text-2xs tracking-caps font-semibold uppercase">
             Resumen del asistente
           </p>
           <div className="mt-3 text-sm leading-relaxed whitespace-pre-line">
@@ -175,7 +175,7 @@ export function DailyReportView({
                     </span>
                   </span>
                   <span
-                    className={`shrink-0 text-xs tracking-[0.12em] uppercase ${row.severity === 'critical' ? 'text-danger' : 'text-smoke'}`}
+                    className={`tracking-caps-sm shrink-0 text-xs uppercase ${row.severity === 'critical' ? 'text-danger' : 'text-smoke'}`}
                   >
                     {SEVERITY_LABELS[row.severity]}
                     {row.proposedUnits ? ` · pedir ${row.proposedUnits}` : ''}

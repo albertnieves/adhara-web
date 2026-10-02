@@ -96,11 +96,11 @@ export default function UnboxingViewer({
           label={labels.scene}
         />
       </SceneErrorBoundary>
-      <span className="text-smoke pointer-events-none absolute top-4 left-4 text-[0.625rem] tracking-[0.3em] uppercase">
+      <span className="text-smoke text-2xs tracking-caps-lg pointer-events-none absolute top-4 left-4 uppercase">
         {labels.provisional}
       </span>
       {phase === 'S5' && (
-        <div className="text-smoke absolute inset-x-0 bottom-5 flex items-center justify-center gap-6 text-xs tracking-[0.2em] uppercase">
+        <div className="text-smoke tracking-caps absolute inset-x-0 bottom-5 flex items-center justify-center gap-6 text-xs uppercase">
           <span aria-hidden className="hidden sm:inline">
             {labels.dragHint}
           </span>

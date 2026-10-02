@@ -1,6 +1,6 @@
 # Fase 2 — Sistema de diseño: plan
 
-Estado: **en curso**. Plan aprobado el 02/10/2026 (PR #13) con las decisiones D1–D6 recomendadas; DS-01 a DS-03 hechas.
+Estado: **en curso**. Plan aprobado el 02/10/2026 (PR #13) con las decisiones D1–D6 recomendadas; DS-01 a DS-04 hechas.
 
 Base:
 
@@ -167,10 +167,17 @@ DS-01 puede empezar ya. De DS-05 a DS-09 se pueden trabajar en paralelo cuando e
     - `tests/integration/design-reference.spec.ts` con el rol de encargado, el de menos permisos; la ruta se suma a la auditoría del panel y a las redirecciones sin sesión.
   - Para revisar en la página (D3, criterio 13): los tonos de colección solo cambian la superficie; la elevada y la hundida siguen siendo las del tono oscuro.
 
-- [ ] **DS-04 · Tipografía.** Depende de: DS-03.
+- [x] **DS-04 · Tipografía.** Depende de: DS-03.
   - Componentes `Heading` (display, h1–h4), `Text` (cuerpo, pequeño y cifras tabulares) y `Eyebrow` (versalitas).
   - Sustituir los tamaños y trackings arbitrarios en toda la aplicación.
   - Hecho cuando: el criterio 3 pasa sin excepciones.
+  - Hecho el 02/10 (rama `codex/ds-04-tipografia`, DECISIONS §96):
+    - `src/components/ui` con `Heading`, `Text` y `Eyebrow`, su sección en `/admin/diseno` y pruebas unitarias; `PageHeader` del panel ya los usa;
+    - tokens `text-display` (titular fluido de la portada) y `tracking-display` (titulares);
+    - los 24 tamaños y 88 espaciados arbitrarios pasan a la escala; `globals.css` usa tokens en todos sus `letter-spacing`;
+    - la guarda cuenta cualquier `text-[…]` (también pt y `clamp()`) y no quedan excepciones temporales;
+    - la auditoría E2E bloquea cualquier texto visible de menos de 11 px.
+  - Excepción permanente, escrita en `design-guard-exceptions.ts`: la etiqueta de estante impresa (`PriceLabelCard`) va en pt y mm para coincidir con la hoja.
 
 - [ ] **DS-05 · Iconos y marca.** Depende de: DS-03.
   - Componente `Icon` con el juego propio (D5): cerrar, menú, buscar, flecha, chevron, más, menos, check, alerta, información, carrito y usuario.
@@ -268,6 +275,8 @@ Las cifras varían un poco entre ejecuciones: entre 304 y 306 elementos, y el in
 **Tras DS-02 (02/10):** 35 pantallas y **0 infracciones**.
 
 **Tras DS-03 (02/10):** 36 pantallas, con la página de referencia, y **0 infracciones**; la auditoría de diseño, sin incidencias en ninguna.
+
+**Tras DS-04 (02/10):** 36 pantallas y **0 infracciones**; la auditoría, que ahora también bloquea el texto de menos de 11 px, sin incidencias.
 
 La auditoría de DS-01 tenía dos huecos, corregidos en DS-02:
 

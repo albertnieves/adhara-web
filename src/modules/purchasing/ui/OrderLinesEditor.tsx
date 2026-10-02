@@ -207,7 +207,7 @@ export function OrderLinesEditor({
                             ),
                           )
                         }
-                        className="text-smoke hover:text-danger min-h-11 px-2 text-xs tracking-[0.14em] uppercase"
+                        className="text-smoke hover:text-danger tracking-caps-sm min-h-11 px-2 text-xs uppercase"
                       >
                         Quitar
                       </button>
@@ -224,7 +224,7 @@ export function OrderLinesEditor({
           type="button"
           onClick={save}
           disabled={pending || !dirty}
-          className="bg-ink text-ivory hover:bg-ink-soft inline-flex min-h-11 items-center justify-center px-5 text-xs font-semibold tracking-[0.18em] uppercase transition-colors duration-300 disabled:opacity-50"
+          className="bg-ink text-ivory hover:bg-ink-soft tracking-caps inline-flex min-h-11 items-center justify-center px-5 text-xs font-semibold uppercase transition-colors duration-300 disabled:opacity-50"
         >
           {pending ? 'Guardando…' : 'Guardar líneas'}
         </button>
