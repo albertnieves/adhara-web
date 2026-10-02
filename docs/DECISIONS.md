@@ -174,3 +174,18 @@ Formato de la Fase 0 §16: fecha · contexto · decisión · alternativas descar
     - **Contenido:** 7 objetivos, 13 criterios de cierre, 6 decisiones con recomendación (D1–D6) y 13 tareas (DS-00 a DS-12), cada una con rama, dependencias y criterio de hecho.
     - **Estado:** pendiente de aprobación. Al aprobarlo se registran aquí las decisiones D1–D6.
     - **Dependencias:** ninguna hasta DS-01. La única prevista en toda la fase es `@axe-core/playwright`, de desarrollo, porque los criterios exigen axe.
+92. **Decisiones D1–D6 de la Fase 2.** El usuario aprobó el plan el 02/10 («fusiónalo y empieza») sin cambiar ninguna decisión, así que se aplican las recomendaciones:
+    - D1: Cormorant Garamond y Manrope;
+    - D2: tonos oscuros solo como momentos, sin tema oscuro global;
+    - D3: tokens de los oscuros de colección, que se aprueban en la página de referencia y se usan a partir de la F5;
+    - D4: dorado solo como acento, con un tono oscuro para el texto y el botón principal a tinta al pasar el ratón;
+    - D5: juego propio de iconos, sin librería;
+    - D6: página de referencia en `/admin/diseno`.
+93. **Red de seguridad (DS-01).**
+    - `@axe-core/playwright` 4.13.0, versión exacta, de desarrollo. Publicada el 11/08, cumple la antigüedad mínima de pnpm.
+    - La auditoría de diseño no espera a `networkidle`: a partir de cierto ancho la página mantiene peticiones abiertas unos 30 s. Espera a la carga, a las fuentes y a las imágenes, y comprueba que no hubo redirección. Así, una sesión perdida no audita la pantalla de acceso en lugar del panel.
+    - Se audita con movimiento reducido, para medir el diseño final.
+    - Bloquean: desplazamiento horizontal, solapes de cajas de contenido, texto fuera de su caja y controles de menos de 24 px.
+    - Se excluyen las capas superpuestas a propósito (`absolute`, `fixed` y `aria-hidden`).
+    - axe solo guarda la línea base (plan §9) hasta que las tareas siguientes la lleven a cero.
+    - Capturas en JPEG como artefacto de la CI (14 días), sin versionar.
