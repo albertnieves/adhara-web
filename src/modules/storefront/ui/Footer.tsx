@@ -86,7 +86,7 @@ export async function Footer() {
           </NextLink>
         </div>
       </div>
-      <div className="border-ivory/10 mx-auto flex max-w-[90rem] items-center justify-between border-t px-5 py-6 text-[0.6875rem] tracking-[0.2em] uppercase sm:px-10">
+      <div className="border-ivory/10 text-2xs tracking-caps mx-auto flex max-w-[90rem] items-center justify-between border-t px-5 py-6 uppercase sm:px-10">
         <span className="text-fg-muted">
           {t('rights', { year: new Date().getFullYear() })}
         </span>

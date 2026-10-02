@@ -68,7 +68,7 @@ export default async function Home({
           </div>
           <Link
             href="/catalogo"
-            className="link-underline self-start text-[0.6875rem] tracking-[0.28em] uppercase sm:self-auto"
+            className="link-underline text-2xs tracking-caps-lg self-start uppercase sm:self-auto"
           >
             {t('featuredCta')}
           </Link>

@@ -15,7 +15,7 @@ export default async function NewProduct() {
     <main className="max-w-3xl">
       <Link
         href="/admin/catalogo"
-        className="link-underline text-smoke text-xs tracking-[0.16em] uppercase"
+        className="link-underline text-smoke tracking-caps text-xs uppercase"
       >
         ← Catálogo
       </Link>

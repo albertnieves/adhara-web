@@ -77,7 +77,7 @@ export default async function Inventory({
                   : ''
               }`}
               aria-current={filtro === f.value ? 'page' : undefined}
-              className={`inline-flex min-h-10 items-center border px-3 text-xs tracking-[0.12em] uppercase ${filtro === f.value ? 'border-ink bg-ink text-ivory' : 'border-line hover:border-ink'}`}
+              className={`tracking-caps-sm inline-flex min-h-10 items-center border px-3 text-xs uppercase ${filtro === f.value ? 'border-ink bg-ink text-ivory' : 'border-line hover:border-ink'}`}
             >
               {f.label}
             </Link>
@@ -85,7 +85,7 @@ export default async function Inventory({
         </nav>
         {filtro && <input type="hidden" name="filtro" value={filtro} />}
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-6">
-          <p className="text-smoke text-xs tracking-[0.14em] uppercase">
+          <p className="text-smoke tracking-caps-sm text-xs uppercase">
             {units} uds. en tienda
           </p>
           <SearchField
@@ -160,7 +160,7 @@ export default async function Inventory({
                       <span>
                         {available}
                         {r.reorderPoint !== null && (
-                          <p className="text-fg-muted text-[0.6875rem] font-normal">
+                          <p className="text-fg-muted text-2xs font-normal">
                             aviso ≤ {r.reorderPoint}
                           </p>
                         )}

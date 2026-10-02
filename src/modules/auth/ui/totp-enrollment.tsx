@@ -44,7 +44,7 @@ export function TotpEnrollment({
       </p>
       <input type="hidden" name="factorId" value={state.factorId} />
       <label className="flex flex-col gap-1.5">
-        <span className="text-smoke text-[0.6875rem] font-semibold tracking-[0.16em] uppercase">
+        <span className="text-smoke text-2xs tracking-caps font-semibold uppercase">
           Código
         </span>
         <input
@@ -53,7 +53,7 @@ export function TotpEnrollment({
           autoComplete="one-time-code"
           pattern="[0-9]{6}"
           required
-          className="input text-center text-2xl tracking-[0.4em] tabular-nums"
+          className="input tracking-caps-lg text-center text-2xl tabular-nums"
         />
       </label>
       <button type="submit" className="btn btn-primary">

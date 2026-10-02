@@ -82,7 +82,7 @@ export default async function RotationReport({
               key={w}
               href={`/admin/informes/rotacion?dias=${w}`}
               aria-current={w === days ? 'page' : undefined}
-              className={`border px-3 py-2 text-xs tracking-[0.12em] uppercase ${w === days ? 'border-ink bg-ink text-ivory' : 'border-line hover:border-ink'}`}
+              className={`tracking-caps-sm border px-3 py-2 text-xs uppercase ${w === days ? 'border-ink bg-ink text-ivory' : 'border-line hover:border-ink'}`}
             >
               {w} días
             </Link>

@@ -48,7 +48,7 @@ function Chip({
       type="button"
       onClick={onClick}
       aria-pressed={active}
-      className={`border px-4 py-2 text-[0.6875rem] tracking-[0.18em] uppercase transition-colors duration-500 ${
+      className={`text-2xs tracking-caps border px-4 py-2 uppercase transition-colors duration-500 ${
         active
           ? 'border-ink bg-ink text-ivory'
           : 'border-line hover:border-ink text-ink'
@@ -145,7 +145,7 @@ export function CatalogBrowser({
           />
         </label>
         <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
-          <p className="text-smoke text-xs tracking-[0.2em] whitespace-nowrap uppercase tabular-nums">
+          <p className="text-smoke tracking-caps text-xs whitespace-nowrap uppercase tabular-nums">
             {t('count', { count: visible.length })}
           </p>
           <label className="flex items-center gap-3">
@@ -173,7 +173,7 @@ export function CatalogBrowser({
           {filtered && (
             <button
               type="button"
-              className="link-underline mt-6 text-xs tracking-[0.2em] uppercase"
+              className="link-underline tracking-caps mt-6 text-xs uppercase"
               onClick={() => {
                 setQuery('');
                 setBrand(null);

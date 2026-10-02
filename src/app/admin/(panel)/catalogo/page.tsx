@@ -126,7 +126,7 @@ export default async function CatalogAdmin({
                 key={filter.value}
                 href={`/admin/catalogo${params.size ? `?${params}` : ''}`}
                 aria-current={active ? 'page' : undefined}
-                className={`inline-flex min-h-10 items-center gap-1.5 border px-3 text-xs tracking-[0.12em] uppercase ${active ? 'border-ink bg-ink text-ivory' : 'border-line hover:border-ink'}`}
+                className={`tracking-caps-sm inline-flex min-h-10 items-center gap-1.5 border px-3 text-xs uppercase ${active ? 'border-ink bg-ink text-ivory' : 'border-line hover:border-ink'}`}
               >
                 {filter.label} <span className="opacity-60">{count}</span>
               </Link>

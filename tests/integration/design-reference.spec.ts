@@ -53,6 +53,12 @@ test('referencia del sistema de diseño con sesión de encargado', async ({
     await expect(region.getByText('No cumple')).toHaveCount(0);
   }
 
+  // Componentes tipográficos (DS-04) en su sección.
+  for (const name of ['Heading', 'Text', 'Eyebrow'])
+    await expect(
+      page.getByRole('heading', { level: 3, name, exact: true }),
+    ).toBeVisible();
+
   // La demostración de movimiento se maneja con el teclado.
   const play = page.getByRole('button', { name: 'Reproducir' });
   await play.focus();

@@ -79,7 +79,7 @@ export default async function ProductPage({ params }: { params: Params }) {
           <Reveal>
             <Link
               href="/catalogo"
-              className="link-underline text-smoke text-[0.6875rem] tracking-[0.25em] uppercase"
+              className="link-underline text-smoke text-2xs tracking-caps-lg uppercase"
             >
               ← {t('product.back')}
             </Link>

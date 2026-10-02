@@ -83,7 +83,7 @@ export function TranslationEditor({
             role="tab"
             aria-selected={active === locale.code}
             onClick={() => setActive(locale.code)}
-            className={`-mb-px border-b-2 px-4 py-3 text-xs tracking-[0.16em] uppercase ${
+            className={`tracking-caps -mb-px border-b-2 px-4 py-3 text-xs uppercase ${
               active === locale.code
                 ? 'border-ink text-ink'
                 : 'text-smoke border-transparent'

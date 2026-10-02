@@ -57,10 +57,7 @@ function MediaCard({
         )}
       </p>
       {media.source && (
-        <p
-          className="text-fg-muted truncate text-[0.6875rem]"
-          title={media.source}
-        >
+        <p className="text-fg-muted text-2xs truncate" title={media.source}>
           {media.source}
         </p>
       )}

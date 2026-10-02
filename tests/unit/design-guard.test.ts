@@ -2,9 +2,8 @@ import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import {
-  ARBITRARY_TEXT_SIZE,
-  ARBITRARY_TRACKING,
   PERMANENT_COLOR_EXCEPTIONS,
+  PERMANENT_TEXT_SIZE_EXCEPTIONS,
 } from './design-guard-exceptions';
 
 /*
@@ -43,7 +42,8 @@ const RULES = {
   ],
   /** Niebla como texto: 2,3:1 sobre marfil. Se usa text-fg-muted. */
   niebla: [/\btext-mist\b/g],
-  tamano: [/\btext-\[[0-9.]+(?:rem|px|em)\]/g],
+  /** Cualquier tamaño arbitrario: px, rem, pt, clamp()… (los colores van aparte). */
+  tamano: [/\btext-\[(?!#)/g],
   tracking: [/\btracking-\[/g],
 };
 
@@ -100,10 +100,34 @@ describe('guardas del sistema de diseño', () => {
   });
 
   it('tamaños de letra de la escala (criterio 3)', () => {
-    expect(compare(counts(RULES.tamano), ARBITRARY_TEXT_SIZE)).toEqual([]);
+    const permanent = Object.fromEntries(
+      Object.entries(PERMANENT_TEXT_SIZE_EXCEPTIONS).map(([f, e]) => [
+        f,
+        e.count,
+      ]),
+    );
+    expect(compare(counts(RULES.tamano), permanent)).toEqual([]);
   });
 
   it('espaciados de letra de la escala (criterio 3)', () => {
-    expect(compare(counts(RULES.tracking), ARBITRARY_TRACKING)).toEqual([]);
+    expect(counts(RULES.tracking)).toEqual({});
+  });
+
+  it('globals.css usa la escala: espaciados con tokens y nada por debajo de 11 px', () => {
+    const css = readFileSync(join(ROOT, 'src/app/globals.css'), 'utf8');
+    const spacing = [...css.matchAll(/letter-spacing:\s*([^;]+);/g)]
+      .map((m) => m[1]!.trim())
+      .filter((value) => !/^var\(--tracking-[a-z-]+\)$/.test(value));
+    expect(spacing).toEqual([]);
+    const tooSmall = [...css.matchAll(/font-size:\s*([^;]+);/g)]
+      .map((m) => m[1]!.trim())
+      .filter((value) => {
+        const rem = value.match(/^([0-9.]+)rem$/);
+        const px = value.match(/^([0-9.]+)px$/);
+        if (rem) return Number(rem[1]) < 0.6875;
+        if (px) return Number(px[1]) < 11;
+        return !/^var\(--text-[a-z0-9-]+\)$/.test(value);
+      });
+    expect(tooSmall).toEqual([]);
   });
 });

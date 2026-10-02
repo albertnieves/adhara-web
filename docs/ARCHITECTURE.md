@@ -43,6 +43,7 @@ flowchart LR
   - `ui/`: componentes del dominio;
   - `index.ts`: API pública segura para el cliente; `server.ts`: API de servidor.
 - `src/lib/`: infraestructura compartida (clientes de Supabase, dinero, CSV, identificadores de petición).
+- `src/components/ui/`: primitivas del sistema de diseño (Fase 2), las mismas para la tienda y el panel, sin datos ni lógica de dominio. Su referencia está en `/admin/diseno`.
 
 | Módulo                | Qué hace                                                                       |
 | --------------------- | ------------------------------------------------------------------------------ |

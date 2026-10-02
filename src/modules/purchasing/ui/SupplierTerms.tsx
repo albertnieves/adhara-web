@@ -98,7 +98,7 @@ function TermRow({
         <button
           type="submit"
           disabled={remove.pending}
-          className="text-smoke hover:text-danger text-xs tracking-[0.14em] uppercase"
+          className="text-smoke hover:text-danger tracking-caps-sm text-xs uppercase"
         >
           Quitar de este proveedor
         </button>

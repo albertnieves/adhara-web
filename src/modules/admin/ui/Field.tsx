@@ -12,7 +12,7 @@ export function Field({
 }) {
   return (
     <label className={`flex flex-col gap-1.5 ${className}`}>
-      <span className="text-smoke text-[0.6875rem] font-semibold tracking-[0.16em] uppercase">
+      <span className="text-smoke text-2xs tracking-caps font-semibold uppercase">
         {label}
       </span>
       {children}

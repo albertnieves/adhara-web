@@ -12,7 +12,7 @@ export function TypeSection() {
     <Section
       id="tipografia"
       title="Tipografía"
-      intro="Cormorant Garamond para titulares y Manrope para el resto (D1). Ningún texto baja de 11 px. La escala se cierra en DS-04 con los componentes Heading, Text y Eyebrow."
+      intro="Cormorant Garamond para titulares y Manrope para el resto (D1). La escala está cerrada: ningún texto baja de 11 px y no hay tamaños ni espaciados arbitrarios (criterio 3). Los componentes Heading, Text y Eyebrow la aplican."
     >
       <SubTitle>Familias</SubTitle>
       <TokenList
@@ -26,16 +26,20 @@ export function TypeSection() {
           </p>
         )}
       />
-      <SubTitle>Tamaño mínimo</SubTitle>
+      <SubTitle>Tokens de tamaño</SubTitle>
       <TokenList
         tokens={TEXT_SIZE_TOKENS}
-        sample={() => (
-          <p className="text-2xs tracking-caps font-semibold uppercase">
-            Eau de parfum · 100 ml
-          </p>
-        )}
+        sample={(token) =>
+          token.variable === '--text-display' ? (
+            <p className="font-display text-display font-light">Ámbar</p>
+          ) : (
+            <p className="text-2xs tracking-caps font-semibold uppercase">
+              Eau de parfum · 100 ml
+            </p>
+          )
+        }
       />
-      <SubTitle>Tamaños en uso</SubTitle>
+      <SubTitle>Escala</SubTitle>
       <ul className="divide-border border-border divide-y border-y">
         {TYPE_SCALE.map((step) => (
           <li
@@ -59,17 +63,26 @@ export function TypeSection() {
           </li>
         ))}
       </ul>
-      <SubTitle>Versalitas</SubTitle>
+      <SubTitle>Espaciado de letra</SubTitle>
       <TokenList
         tokens={TRACKING_TOKENS}
-        sample={(token) => (
-          <p
-            className="text-xs font-semibold uppercase"
-            style={{ letterSpacing: `var(${token.variable})` }}
-          >
-            Eau de parfum
-          </p>
-        )}
+        sample={(token) =>
+          token.variable === '--tracking-display' ? (
+            <p
+              className="font-display text-4xl font-light"
+              style={{ letterSpacing: `var(${token.variable})` }}
+            >
+              Ámbar y oud
+            </p>
+          ) : (
+            <p
+              className="text-xs font-semibold uppercase"
+              style={{ letterSpacing: `var(${token.variable})` }}
+            >
+              Eau de parfum
+            </p>
+          )
+        }
       />
     </Section>
   );

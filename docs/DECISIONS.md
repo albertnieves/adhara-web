@@ -233,3 +233,22 @@ Formato de la Fase 0 §16: fecha · contexto · decisión · alternativas descar
     - **Guardas:** los accesos del pie del menú comparten una clase, así que los espaciados arbitrarios de `layout.tsx` bajan de 3 a 2 sin cambio visual.
     - **Para revisar (D3, criterio 13):** los tonos de colección solo cambian la superficie; la elevada y la hundida siguen siendo las del tono oscuro. Se ve en la página y se decide al revisarla, antes de usarlos en la F5.
     - **Pruebas:** sin sesión redirige al acceso. Con sesión de encargado (el rol con menos permisos): 200, todos los tokens con valor, todas las combinaciones cumplen en los cinco tonos, la demostración de movimiento con teclado, el enlace en el menú móvil y axe sin infracciones a 390 y 1440 px. La auditoría de diseño del panel suma la página.
+96. **Tipografía (DS-04).** La escala queda cerrada (criterio 3) y nace la biblioteca común en `src/components/ui`.
+    - **Componentes:** `Heading`, `Text` y `Eyebrow`.
+      - `Heading` separa el nivel (h1–h4, la estructura) del tamaño (`display`, `h1`–`h4`, el aspecto). Sin nivel es un párrafo con aspecto de titular. Un título de página del panel es un h1 con tamaño h2, como hasta ahora.
+      - `Text` tiene tres tamaños (cuerpo, pequeño y nota), tonos semánticos y cifras tabulares.
+      - `Eyebrow` son las versalitas de 11 px.
+      - Su `className` solo coloca (márgenes): el aspecto lo fija el componente, porque sin una librería de mezcla de clases dos utilidades del mismo tipo no se resuelven por orden.
+      - `PageHeader` del panel ya los usa, sin cambio visual. El resto de pantallas los adopta al migrar (DS-10 y DS-11).
+    - **Tokens nuevos:** `text-display` (`clamp(2.75rem, 8vw, 7.5rem)` con interlineado 0,95, el titular de la portada) y `tracking-display` (-0,01 em, los titulares).
+    - **Espaciados:** tres pasos, 0,12, 0,18 y 0,3 em. Cada valor arbitrario pasa al más cercano:
+      - 0,12 y 0,14 a `caps-sm`;
+      - 0,15, 0,16, 0,18 y 0,2 a `caps`;
+      - de 0,24 a 0,4 a `caps-lg`.
+      - `.eyebrow` (0,32), `.btn` (0,28) y `.panel-btn` (0,18) usan ya los tokens.
+    - **Cambios visibles, pequeños:**
+      - los textos de 10 px pasan a 11 px: insignias de estado del panel, etiquetas del informe diario, el «IVA incluido» junto al precio de la ficha, el aviso de imagen provisional sobre la foto o la escena 3D y el «Desplázate» de la portada;
+      - el código de verificación en dos pasos y el «Desplázate» pasan de 0,4 a 0,3 em de espaciado;
+      - el logotipo de la cabecera de la tienda y de la pantalla de acceso pasa de 17 a 18 px. El del panel sigue en 14 px.
+    - **Excepción permanente:** la etiqueta de estante impresa (`PriceLabelCard`, 63,5 × 38,1 mm) mantiene sus tamaños en pt para coincidir con la hoja. Va escrita con su motivo en `design-guard-exceptions.ts`, y la auditoría la excluye con `data-print-size`.
+    - **Guardas:** la prueba cuenta cualquier `text-[…]`, también pt y `clamp()`, que antes no detectaba. No admite ningún `tracking-[…]` y exige tokens en los `letter-spacing` de `globals.css`. La auditoría E2E bloquea cualquier texto visible de menos de 11 px.

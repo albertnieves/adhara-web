@@ -14,7 +14,7 @@ export default async function BulkPricingPage() {
     <main>
       <Link
         href="/admin/catalogo"
-        className="link-underline text-smoke text-xs tracking-[0.16em] uppercase"
+        className="link-underline text-smoke tracking-caps text-xs uppercase"
       >
         ← Catálogo
       </Link>

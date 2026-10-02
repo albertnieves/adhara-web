@@ -42,11 +42,14 @@ export function PriceLabelCard({
     : null;
 
   return (
+    // data-print-size: medidas físicas (mm y pt), fuera de la escala de
+    // pantalla y del mínimo de 11 px de la auditoría.
     <article
+      data-print-size
       className={`text-ink bg-surface-raised flex h-[38.1mm] w-[63.5mm] break-inside-avoid flex-col justify-between overflow-hidden px-[3.5mm] py-[3mm] ${cutLines ? 'border-line border-[0.2mm]' : ''}`}
     >
       <header className="flex items-center justify-between gap-[2mm]">
-        <p className="truncate text-[6pt] tracking-[0.24em] uppercase">
+        <p className="tracking-caps-lg truncate text-[6pt] uppercase">
           {label.brandName}
         </p>
         <Star className="text-gold size-[2.4mm] shrink-0" />
@@ -79,7 +82,7 @@ export function PriceLabelCard({
           <p className="font-display text-[17pt] lining-nums tabular-nums">
             {formatEuros(label.priceCents, 'es')}
           </p>
-          <p className="text-smoke mt-[0.8mm] text-[5pt] tracking-[0.12em] uppercase">
+          <p className="text-smoke tracking-caps-sm mt-[0.8mm] text-[5pt] uppercase">
             IVA incl.
           </p>
         </div>

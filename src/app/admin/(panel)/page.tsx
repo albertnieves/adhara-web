@@ -33,7 +33,7 @@ function Stat({
 }) {
   const body = (
     <div className="panel-card hover:bg-surface-raised h-full !p-4 transition-colors duration-300 sm:!p-6">
-      <p className="eyebrow !tracking-[0.2em] sm:!tracking-[0.32em]">{label}</p>
+      <p className="eyebrow !tracking-caps sm:!tracking-caps-lg">{label}</p>
       <p
         className={`font-display mt-2 text-4xl font-light lining-nums tabular-nums sm:mt-3 sm:text-5xl ${tone === 'alert' ? 'text-danger' : ''}`}
       >
@@ -175,7 +175,7 @@ export default async function AdminHome() {
           className="bg-night text-ivory mb-8 grid gap-6 px-6 py-6 sm:px-8 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-start"
         >
           <div className="min-w-0">
-            <p className="text-gold-soft text-[0.625rem] font-semibold tracking-[0.2em] uppercase">
+            <p className="text-gold-soft text-2xs tracking-caps font-semibold uppercase">
               Asistente · informe diario
             </p>
             <h2
@@ -215,7 +215,7 @@ export default async function AdminHome() {
           </div>
           <Link
             href="/admin/asistente"
-            className="border-ivory/30 hover:border-ivory inline-flex min-h-11 items-center justify-center border px-5 text-xs font-semibold tracking-[0.18em] uppercase transition-colors"
+            className="border-ivory/30 hover:border-ivory tracking-caps inline-flex min-h-11 items-center justify-center border px-5 text-xs font-semibold uppercase transition-colors"
           >
             Abrir el asistente
           </Link>
@@ -323,7 +323,7 @@ export default async function AdminHome() {
               <h2 className="text-2xl font-light">Últimos movimientos</h2>
               <Link
                 href="/admin/movimientos"
-                className="link-underline text-xs tracking-[0.16em] uppercase"
+                className="link-underline tracking-caps text-xs uppercase"
               >
                 Ver todos
               </Link>

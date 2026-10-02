@@ -81,7 +81,7 @@ export default async function AssistantPage({
                     : `/admin/asistente?dia=${s.day}`
                 }
                 aria-current={s.day === day ? 'page' : undefined}
-                className={`inline-flex min-h-10 items-center border px-3 text-xs tracking-[0.12em] uppercase ${s.day === day ? 'border-ink bg-ink text-ivory' : 'border-line hover:border-ink'}`}
+                className={`tracking-caps-sm inline-flex min-h-10 items-center border px-3 text-xs uppercase ${s.day === day ? 'border-ink bg-ink text-ivory' : 'border-line hover:border-ink'}`}
               >
                 {s.label}
               </Link>

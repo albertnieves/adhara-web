@@ -8,7 +8,7 @@ export function StatusBadge({ status }: { status: string }) {
   const style = STYLES[status] ?? STYLES.draft!;
   return (
     <span
-      className={`inline-flex items-center border px-2 py-0.5 text-[0.625rem] font-semibold tracking-[0.16em] uppercase ${style.className}`}
+      className={`text-2xs tracking-caps inline-flex items-center border px-2 py-0.5 font-semibold uppercase ${style.className}`}
     >
       {style.label}
     </span>

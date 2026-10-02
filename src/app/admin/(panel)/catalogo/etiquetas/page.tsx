@@ -43,7 +43,7 @@ export default async function PriceLabels({
       <div className="print:hidden">
         <Link
           href={productId ? `/admin/catalogo/${productId}` : '/admin/catalogo'}
-          className="link-underline text-smoke text-xs tracking-[0.16em] uppercase"
+          className="link-underline text-smoke tracking-caps text-xs uppercase"
         >
           ← {productId ? 'Perfume' : 'Catálogo'}
         </Link>
@@ -118,7 +118,7 @@ export default async function PriceLabels({
           </label>
           <button
             type="submit"
-            className="border-ink hover:bg-ink hover:text-ivory min-h-11 border px-5 text-xs font-semibold tracking-[0.18em] uppercase transition-colors"
+            className="border-ink hover:bg-ink hover:text-ivory tracking-caps min-h-11 border px-5 text-xs font-semibold uppercase transition-colors"
           >
             Aplicar
           </button>

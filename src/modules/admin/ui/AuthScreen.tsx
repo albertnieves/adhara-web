@@ -17,7 +17,7 @@ export function AuthScreen({
         <Star className="text-gold/10 absolute size-[36rem]" />
         <div className="relative text-center">
           <Logo variant="stacked" className="w-72" />
-          <p className="text-fg-muted mt-6 text-xs tracking-[0.3em] uppercase">
+          <p className="text-fg-muted tracking-caps-lg mt-6 text-xs uppercase">
             Panel de administración
           </p>
         </div>

@@ -16,7 +16,7 @@ export default async function Suppliers() {
       <PageHeader eyebrow="Compras" title="Proveedores">
         <Link
           href="/admin/compras"
-          className="border-line hover:border-ink inline-flex min-h-11 items-center border px-5 text-xs font-semibold tracking-[0.18em] uppercase"
+          className="border-line hover:border-ink tracking-caps inline-flex min-h-11 items-center border px-5 text-xs font-semibold uppercase"
         >
           Pedidos
         </Link>

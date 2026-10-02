@@ -95,21 +95,21 @@ export default async function InventoryReport({
       >
         <Link
           href={`/admin/informes/inventario?mes=${shiftMonth(month, -1)}`}
-          className="border-line hover:border-ink inline-flex min-h-11 items-center border px-4 text-xs font-semibold tracking-[0.18em] uppercase"
+          className="border-line hover:border-ink tracking-caps inline-flex min-h-11 items-center border px-4 text-xs font-semibold uppercase"
         >
           ← Anterior
         </Link>
         {!open && (
           <Link
             href={`/admin/informes/inventario?mes=${shiftMonth(month, 1)}`}
-            className="border-line hover:border-ink inline-flex min-h-11 items-center border px-4 text-xs font-semibold tracking-[0.18em] uppercase"
+            className="border-line hover:border-ink tracking-caps inline-flex min-h-11 items-center border px-4 text-xs font-semibold uppercase"
           >
             Siguiente →
           </Link>
         )}
         <a
           href={`/admin/informes/inventario/exportar?mes=${month}`}
-          className="bg-ink text-ivory hover:bg-ink-soft inline-flex min-h-11 items-center px-5 text-xs font-semibold tracking-[0.18em] uppercase transition-colors"
+          className="bg-ink text-ivory hover:bg-ink-soft tracking-caps inline-flex min-h-11 items-center px-5 text-xs font-semibold uppercase transition-colors"
         >
           CSV para la gestoría
         </a>

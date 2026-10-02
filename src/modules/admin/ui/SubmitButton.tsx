@@ -36,7 +36,7 @@ export function SubmitButton({
       name={name}
       value={value}
       disabled={pending || disabled}
-      className={`inline-flex min-h-11 items-center justify-center px-5 text-xs font-semibold tracking-[0.18em] uppercase transition-colors duration-300 disabled:opacity-50 ${styles} ${className}`}
+      className={`tracking-caps inline-flex min-h-11 items-center justify-center px-5 text-xs font-semibold uppercase transition-colors duration-300 disabled:opacity-50 ${styles} ${className}`}
     >
       {pending ? pendingLabel : children}
     </button>

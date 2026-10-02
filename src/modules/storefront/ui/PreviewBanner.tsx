@@ -17,7 +17,7 @@ export function PreviewBanner() {
         <input type="hidden" name="path" value={pathname} />
         <Star className="text-gold-soft size-3 shrink-0" />
         <p>
-          <span className="font-semibold tracking-[0.14em] uppercase">
+          <span className="tracking-caps-sm font-semibold uppercase">
             Vista previa
           </span>
           <span className="text-ivory/70">
@@ -27,7 +27,7 @@ export function PreviewBanner() {
         </p>
         <button
           type="submit"
-          className="border-ivory/30 hover:bg-ivory hover:text-ink border px-3 py-1.5 tracking-[0.16em] uppercase transition-colors"
+          className="border-ivory/30 hover:bg-ivory hover:text-ink tracking-caps border px-3 py-1.5 uppercase transition-colors"
         >
           Salir
         </button>

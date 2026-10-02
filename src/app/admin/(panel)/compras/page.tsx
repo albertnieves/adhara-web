@@ -63,13 +63,13 @@ export default async function Purchases({
       <PageHeader eyebrow="Compras" title="Pedidos a proveedor">
         <Link
           href="/admin/compras/proveedores"
-          className="border-line hover:border-ink inline-flex min-h-11 items-center border px-5 text-xs font-semibold tracking-[0.18em] uppercase"
+          className="border-line hover:border-ink tracking-caps inline-flex min-h-11 items-center border px-5 text-xs font-semibold uppercase"
         >
           Proveedores
         </Link>
         <Link
           href="/admin/reposicion"
-          className="border-line hover:border-ink inline-flex min-h-11 items-center border px-5 text-xs font-semibold tracking-[0.18em] uppercase"
+          className="border-line hover:border-ink tracking-caps inline-flex min-h-11 items-center border px-5 text-xs font-semibold uppercase"
         >
           Reposición
         </Link>
@@ -98,7 +98,7 @@ export default async function Purchases({
                 : `/admin/compras?estado=${f.value}`
             }
             aria-current={estado === f.value ? 'page' : undefined}
-            className={`border px-3 py-2 text-xs tracking-[0.12em] uppercase ${estado === f.value ? 'border-ink bg-ink text-ivory' : 'border-line hover:border-ink'}`}
+            className={`tracking-caps-sm border px-3 py-2 text-xs uppercase ${estado === f.value ? 'border-ink bg-ink text-ivory' : 'border-line hover:border-ink'}`}
           >
             {f.label} · {f.count}
           </Link>

@@ -22,7 +22,7 @@ function Mark({ id, className }: { id: string; className: string }) {
 /**
  * - `inline`: emblema ovalado (luna, estrella y dunas) y nombre en una línea.
  *   Escala con el tamaño de letra que se pase en `className` (por defecto
- *   `text-[17px]`): el nombre mide 1em de alto.
+ *   `text-lg`): el nombre mide 1em de alto.
  * - `stacked`: composición completa del original (emblema, nombre en dos
  *   líneas y «Haute Parfumerie Orientale»). El ancho lo marca `className`
  *   (por defecto `w-56`).
@@ -49,7 +49,7 @@ export function Logo({
     <span
       role="img"
       aria-label={BRAND_NAME}
-      className={`inline-flex items-center gap-[0.6em] ${className ?? 'text-[17px]'}`}
+      className={`inline-flex items-center gap-[0.6em] ${className ?? 'text-lg'}`}
     >
       <Mark id="emblem" className="aspect-[374/456] h-[2.1em] w-auto" />
       <Mark id="wordmark" className="aspect-[1476/151] h-[1em] w-auto" />

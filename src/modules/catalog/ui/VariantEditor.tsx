@@ -370,7 +370,7 @@ function VariantCard({
         />
       )}
       <details className="group">
-        <summary className="text-smoke cursor-pointer text-xs tracking-[0.16em] uppercase">
+        <summary className="text-smoke tracking-caps cursor-pointer text-xs uppercase">
           Datos del formato
         </summary>
         <form

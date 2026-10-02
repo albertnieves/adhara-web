@@ -83,7 +83,7 @@ function Gallery({
           </motion.div>
         </AnimatePresence>
         {current?.provisional && (
-          <span className="text-smoke absolute top-4 left-4 text-[0.625rem] tracking-[0.3em] uppercase">
+          <span className="text-smoke text-2xs tracking-caps-lg absolute top-4 left-4 uppercase">
             {t('provisionalImage')}
           </span>
         )}

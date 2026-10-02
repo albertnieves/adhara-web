@@ -103,7 +103,7 @@ export function Counter({
                 setKind(k);
                 setResult(null);
               }}
-              className={`min-h-12 flex-1 border px-4 text-xs font-semibold tracking-[0.18em] uppercase transition-colors ${
+              className={`tracking-caps min-h-12 flex-1 border px-4 text-xs font-semibold uppercase transition-colors ${
                 kind === k
                   ? 'border-ink bg-ink text-ivory'
                   : 'border-line hover:border-ink'
@@ -141,7 +141,7 @@ export function Counter({
       <section className="panel-card space-y-5" aria-label="Ticket">
         <div className="flex items-baseline justify-between gap-4">
           <h2 className="text-2xl font-light">{COUNTER_KIND_LABELS[kind]}</h2>
-          <p className="text-smoke text-xs tracking-[0.14em] uppercase">
+          <p className="text-smoke tracking-caps-sm text-xs uppercase">
             {units} {units === 1 ? 'unidad' : 'unidades'}
           </p>
         </div>
@@ -225,7 +225,7 @@ export function Counter({
                       onClick={() =>
                         edit(setLineQuantity(lines, line.variantId, 0))
                       }
-                      className="text-smoke hover:text-danger ml-auto min-h-11 px-2 text-xs tracking-[0.14em] uppercase"
+                      className="text-smoke hover:text-danger tracking-caps-sm ml-auto min-h-11 px-2 text-xs uppercase"
                     >
                       Quitar
                     </button>
@@ -237,7 +237,7 @@ export function Counter({
         )}
 
         <label className="flex flex-col gap-1.5">
-          <span className="text-smoke text-[0.6875rem] font-semibold tracking-[0.16em] uppercase">
+          <span className="text-smoke text-2xs tracking-caps font-semibold uppercase">
             Nº de ticket del TPV o la caja
           </span>
           <input
@@ -270,7 +270,7 @@ export function Counter({
           type="button"
           onClick={submit}
           disabled={pending || lines.length === 0 || blocked.length > 0}
-          className="bg-ink text-ivory hover:bg-ink-soft inline-flex min-h-14 w-full items-center justify-center px-5 text-xs font-semibold tracking-[0.18em] uppercase transition-colors duration-300 disabled:opacity-50"
+          className="bg-ink text-ivory hover:bg-ink-soft tracking-caps inline-flex min-h-14 w-full items-center justify-center px-5 text-xs font-semibold uppercase transition-colors duration-300 disabled:opacity-50"
         >
           {pending
             ? 'Registrando…'

@@ -179,7 +179,7 @@ export function BulkPricing({
           )}
           <Link
             href="/admin/catalogo/etiquetas"
-            className="link-underline text-xs tracking-[0.16em] uppercase"
+            className="link-underline tracking-caps text-xs uppercase"
           >
             Imprimir etiquetas nuevas
           </Link>
