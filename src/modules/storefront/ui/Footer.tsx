@@ -4,6 +4,7 @@ import { storeContent, STORE_DEFAULTS } from '@/modules/content';
 import { getTranslations } from 'next-intl/server';
 import { Logo } from '@/modules/brand';
 import { Link } from '@/modules/i18n';
+import { FAQ_ANCHOR } from './Faq';
 
 export async function Footer() {
   const data = await readStoreContent('store', 'es');
@@ -36,6 +37,14 @@ export async function Footer() {
                 className="link-underline"
               >
                 {nav('experience')}
+              </Link>
+            </li>
+            <li>
+              <Link
+                href={{ pathname: '/', hash: FAQ_ANCHOR }}
+                className="link-underline"
+              >
+                {t('faq')}
               </Link>
             </li>
           </ul>
