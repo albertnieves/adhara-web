@@ -199,3 +199,94 @@ test('formularios: teclado y errores en la página de referencia (DS-07)', async
   await expect(form.getByText('Formulario válido.')).toBeVisible();
   await expect(email).not.toHaveAttribute('aria-invalid', 'true');
 });
+
+test('superposiciones: foco atrapado, Esc y avisos (DS-08)', async ({
+  page,
+}) => {
+  test.setTimeout(2 * 60_000);
+  await login(page, await user('viewer'));
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/admin/diseno#superposiciones');
+  await expect(page.locator('[aria-busy="true"]:not(button)')).toHaveCount(0);
+  const focusInDialog = () =>
+    page.evaluate(() =>
+      Boolean(document.activeElement?.closest('dialog[open]')),
+    );
+
+  // Diálogo: Intro abre, Tab no sale, Esc cierra y el foco vuelve al botón.
+  const open = page.getByRole('button', { name: 'Abrir diálogo' });
+  await open.focus();
+  await page.keyboard.press('Enter');
+  const dialog = page.getByRole('dialog', { name: 'Renombrar la colección' });
+  await expect(dialog).toBeVisible();
+  await expect(dialog).toHaveAccessibleDescription(/El foco queda dentro/);
+  expect(await focusInDialog()).toBe(true);
+  for (let i = 0; i < 6; i++) {
+    await page.keyboard.press('Tab');
+    expect(await focusInDialog(), `Tab ${i + 1}`).toBe(true);
+  }
+  await page.keyboard.press('Escape');
+  await expect(dialog).toBeHidden();
+  await expect(open).toBeFocused();
+
+  // Confirmación: empieza en «Cancelar», así que Intro no destruye nada.
+  const remove = page.getByRole('button', { name: 'Eliminar borrador' });
+  await remove.focus();
+  await page.keyboard.press('Enter');
+  const confirm = page.getByRole('dialog', {
+    name: '¿Eliminar el borrador de prueba?',
+  });
+  await expect(confirm.getByRole('button', { name: 'Cancelar' })).toBeFocused();
+  await page.keyboard.press('Enter');
+  await expect(confirm).toBeHidden();
+  await expect(page.getByText('Cancelado.')).toBeVisible();
+  await expect(remove).toBeFocused();
+
+  // Confirmar: el aviso de éxito sale en la región de estado.
+  await page.keyboard.press('Enter');
+  await page.keyboard.press('Tab');
+  await expect(
+    confirm.getByRole('button', { name: 'Eliminar', exact: true }),
+  ).toBeFocused();
+  await page.keyboard.press('Enter');
+  await expect(page.getByText('Eliminado (simulado).')).toBeVisible();
+  await expect(
+    page
+      .getByRole('status')
+      .filter({ hasText: 'Borrador de prueba eliminado.' }),
+  ).toBeVisible();
+
+  // Panel oscuro desde la izquierda: Esc y foco de vuelta.
+  const dark = page.getByRole('button', { name: 'Panel oscuro' });
+  await dark.focus();
+  await page.keyboard.press('Enter');
+  const sheet = page.getByRole('dialog', { name: 'Menú de prueba' });
+  await expect(sheet).toBeVisible();
+  await expect(sheet).toHaveAttribute('data-tone', 'dark');
+  await page.keyboard.press('Escape');
+  await expect(sheet).toBeHidden();
+  await expect(dark).toBeFocused();
+
+  // Con «reducir movimiento» el panel no se desplaza (criterio 9).
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.getByRole('button', { name: 'Panel lateral' }).click();
+  const side = page.getByRole('dialog', { name: 'Detalle de prueba' });
+  await expect(side).toBeVisible();
+  const durations = await side.evaluate((el) =>
+    getComputedStyle(el)
+      .transitionDuration.split(',')
+      .map((value) => parseFloat(value)),
+  );
+  expect(Math.max(...durations)).toBeLessThan(0.001);
+  await page.keyboard.press('Escape');
+  await page.emulateMedia({ reducedMotion: null });
+
+  // Error: alerta que se queda hasta cerrarla.
+  await page.getByRole('button', { name: 'Aviso de error' }).click();
+  const alert = page
+    .getByRole('alert')
+    .filter({ hasText: 'No se pudo guardar' });
+  await expect(alert).toBeVisible();
+  await alert.getByRole('button', { name: 'Cerrar aviso' }).click();
+  await expect(alert).toBeHidden();
+});

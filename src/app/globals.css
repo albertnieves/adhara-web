@@ -480,6 +480,54 @@
     }
   }
 
+  /* Diálogo centrado (Dialog): aparece con un leve ascenso y el fondo velado. */
+  .dialog {
+    margin: auto;
+    width: min(32rem, calc(100vw - 2rem));
+    max-height: calc(100dvh - 2rem);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    border: 1px solid var(--color-border);
+    background: var(--color-surface);
+    color: var(--color-fg);
+    padding: 0;
+    text-align: left;
+    white-space: normal;
+    font-size: 1rem;
+    opacity: 0;
+    transform: translateY(0.5rem);
+    transition:
+      opacity var(--duration-base) var(--ease-luxe),
+      transform var(--duration-base) var(--ease-luxe),
+      display var(--duration-base) allow-discrete,
+      overlay var(--duration-base) allow-discrete;
+  }
+  .dialog[open] {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  @starting-style {
+    .dialog[open] {
+      opacity: 0;
+      transform: translateY(0.5rem);
+    }
+  }
+  .dialog::backdrop {
+    background: transparent;
+    transition:
+      background-color var(--duration-base) var(--ease-luxe),
+      display var(--duration-base) allow-discrete,
+      overlay var(--duration-base) allow-discrete;
+  }
+  .dialog[open]::backdrop {
+    background: color-mix(in oklab, var(--color-night) 45%, transparent);
+  }
+  @starting-style {
+    .dialog[open]::backdrop {
+      background: transparent;
+    }
+  }
+
   .toast {
     animation: toast-in var(--duration-base) var(--ease-luxe);
   }

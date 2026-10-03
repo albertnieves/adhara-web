@@ -22,6 +22,7 @@ import type {
 } from '@/components/ui';
 import { ButtonPlayground } from '../ButtonPlayground';
 import { Example } from '../Example';
+import { OverlayPlayground } from '../OverlayPlayground';
 import { Section, SubTitle } from '../Section';
 import { FormComponents } from './FormComponents';
 
@@ -52,7 +53,6 @@ const ICON_SIZES: { size: IconSize; px: number }[] = [
 
 /** Las que añaden las tareas siguientes del plan de la Fase 2. */
 const UPCOMING = [
-  { task: 'DS-08', name: 'Superposiciones y avisos: Dialog, Sheet y Toast' },
   {
     task: 'DS-09',
     name: 'Datos y comercio: Tag, Badge, Price, Table, Card, EmptyState y Skeleton',
@@ -278,6 +278,17 @@ export function ComponentsSection() {
         </Example>
       </ul>
       <FormComponents />
+      <div id="superposiciones" className="scroll-mt-8">
+        <SubTitle>Dialog, Sheet y Toast</SubTitle>
+        <Text size="small" tone="muted" className="mb-4 max-w-3xl">
+          Dialog y Sheet usan el dialog nativo: el resto de la página queda
+          inerte, el foco no sale, Esc o tocar fuera cierran y el foco vuelve al
+          botón que los abrió. useConfirm sustituye a window.confirm y empieza
+          en «Cancelar». Los avisos de éxito se van solos a los 5 s; los errores
+          se quedan hasta cerrarlos. Con «reducir movimiento» nada se desplaza.
+        </Text>
+        <OverlayPlayground />
+      </div>
       <SubTitle>Próximas</SubTitle>
       <ul className="divide-border border-border divide-y border-y">
         {UPCOMING.map((item) => (
