@@ -1,5 +1,19 @@
-import { Eyebrow, Heading, Text } from '@/components/ui';
-import type { HeadingSize, TextSize, TextTone } from '@/components/ui';
+import {
+  Eyebrow,
+  Heading,
+  ICON_NAMES,
+  Icon,
+  StarDivider,
+  StarList,
+  StarLoader,
+  Text,
+} from '@/components/ui';
+import type {
+  HeadingSize,
+  IconSize,
+  TextSize,
+  TextTone,
+} from '@/components/ui';
 import { Section, SubTitle } from '../Section';
 
 const HEADINGS: { size: HeadingSize; use: string }[] = [
@@ -21,9 +35,14 @@ const TEXTS: { size: TextSize; use: string }[] = [
 
 const TONES: TextTone[] = ['muted', 'accent', 'danger', 'success', 'warning'];
 
+const ICON_SIZES: { size: IconSize; px: number }[] = [
+  { size: 'sm', px: 16 },
+  { size: 'md', px: 20 },
+  { size: 'lg', px: 24 },
+];
+
 /** Las que añaden las tareas siguientes del plan de la Fase 2. */
 const UPCOMING = [
-  { task: 'DS-05', name: 'Iconos y marca: Icon, Star y uso del logotipo' },
   { task: 'DS-06', name: 'Acciones: Button, TextLink y SubmitButton' },
   {
     task: 'DS-07',
@@ -126,6 +145,77 @@ export function ComponentsSection() {
           use="En dorado de texto, para destacar."
         >
           <Eyebrow tone="accent">Novedad</Eyebrow>
+        </Example>
+      </ul>
+      <SubTitle>Icon</SubTitle>
+      <Text size="small" tone="muted" className="mb-4 max-w-3xl">
+        Juego propio de trazo fino (D5): 1,5 px a cualquier tamaño y el color
+        del texto. Sin label es decorativo (aria-hidden) y el nombre lo lleva el
+        control; con label es una imagen con nombre.
+      </Text>
+      <ul className="grid grid-cols-2 gap-4 sm:grid-cols-4 lg:grid-cols-6">
+        {ICON_NAMES.map((name) => (
+          <li
+            key={name}
+            className="border-border flex flex-col items-center gap-3 border px-2 py-5"
+          >
+            <Icon name={name} size="lg" />
+            <code className="text-xs">{name}</code>
+          </li>
+        ))}
+      </ul>
+      <ul className="divide-border border-border mt-6 divide-y border-y">
+        <Example
+          code={'<Icon name="arrow" size="sm | md | lg">'}
+          use="16, 20 y 24 px; md por defecto."
+        >
+          <span className="flex items-end gap-6">
+            {ICON_SIZES.map(({ size, px }) => (
+              <span key={size} className="flex flex-col items-center gap-2">
+                <Icon name="arrow" size={size} />
+                <Text as="span" size="caption" tone="muted">
+                  {px} px
+                </Text>
+              </span>
+            ))}
+          </span>
+        </Example>
+        <Example
+          code={'<Icon name="chevron" direction="left | up | down">'}
+          use="Flechas y chevrones apuntan a la derecha salvo que se indique."
+        >
+          <span className="flex gap-6">
+            <Icon name="chevron" direction="left" />
+            <Icon name="chevron" direction="up" />
+            <Icon name="chevron" />
+            <Icon name="chevron" direction="down" />
+          </span>
+        </Example>
+        <Example
+          code={'<Icon name="alert" label="Atención">'}
+          use="Con nombre propio cuando no hay texto al lado."
+        >
+          <span className="text-warning">
+            <Icon name="alert" label="Atención" />
+          </span>
+        </Example>
+      </ul>
+      <SubTitle>Estrella</SubTitle>
+      <ul className="divide-border border-border divide-y border-y">
+        <Example code={'<StarList items={…}>'} use="Viñeta de listas cortas.">
+          <StarList
+            items={['Primera idea', 'Segunda idea', 'Tercera idea']}
+            className="text-sm"
+          />
+        </Example>
+        <Example code={'<StarDivider>'} use="Separador entre bloques.">
+          <StarDivider />
+        </Example>
+        <Example
+          code={'<StarLoader label="Cargando">'}
+          use="Cargador: titila; quieta con «reducir movimiento»."
+        >
+          <StarLoader label="Cargando la demostración" />
         </Example>
       </ul>
       <SubTitle>Próximas</SubTitle>

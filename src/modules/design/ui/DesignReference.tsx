@@ -1,3 +1,4 @@
+import { BrandSection } from './sections/BrandSection';
 import { ColorSection } from './sections/ColorSection';
 import { ComponentsSection } from './sections/ComponentsSection';
 import { LayerSection, MotionSection } from './sections/MotionSection';
@@ -12,6 +13,7 @@ const CONTENTS = [
   { id: 'espacio', label: 'Espacio, radios y líneas' },
   { id: 'movimiento', label: 'Movimiento' },
   { id: 'capas', label: 'Capas' },
+  { id: 'marca', label: 'Marca' },
   { id: 'componentes', label: 'Componentes' },
 ];
 
@@ -46,6 +48,7 @@ export function DesignReference() {
       <SpaceSection />
       <MotionSection />
       <LayerSection />
+      <BrandSection />
       <ComponentsSection />
     </>
   );
