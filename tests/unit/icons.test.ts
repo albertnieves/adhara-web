@@ -17,11 +17,12 @@ import { Logo } from '@/modules/brand';
 const html = renderToStaticMarkup;
 
 describe('Icon', () => {
-  it('tiene el juego de D5', () => {
+  it('tiene el juego de D5 y el de enlace externo (DS-06)', () => {
     expect([...ICON_NAMES].sort()).toEqual(
       [
         'alert',
         'arrow',
+        'external',
         'cart',
         'check',
         'chevron',

@@ -35,7 +35,12 @@ Plan del sistema de diseño en [phases/FASE_2_PLAN.md](phases/FASE_2_PLAN.md), a
 - `Icon` con el juego propio de 12 iconos de trazo fino, y la estrella como viñeta, separador y cargador;
 - reglas del logotipo (tamaño mínimo, margen y fondos) en `/admin/diseno`, con el mínimo garantizado por el componente.
 
-Siguiente tarea: DS-06 (acciones); DS-07 (formularios) y DS-09 (datos y comercio) pueden ir en paralelo.
+**DS-06 hecha (acciones):**
+
+- `Button`, `TextLink` y `SubmitButton` con todos sus estados, comprobados con teclado;
+- los botones de envío del panel ya usan el del sistema.
+
+Siguiente tarea: DS-07 (formularios); DS-08 (superposiciones) y DS-09 (datos y comercio) pueden ir en paralelo.
 
 - **Objetivos:**
   - tokens en dos capas;
@@ -243,5 +248,6 @@ La revisión visual con perfumes se hizo en local con un Supabase simulado que d
 - 02/10: Fase 2, DS-01 a DS-03: red de seguridad (PR #14), tokens y contraste AA (PR #15) y página de referencia `/admin/diseno`.
 - 02/10: Fase 2, DS-04: tipografía con `Heading`, `Text` y `Eyebrow` y escala cerrada.
 - 02/10: Fase 2, DS-05: iconos propios, motivos de la estrella y reglas del logotipo.
+- 03/10: Fase 2, DS-06: botones, enlaces y envío de formularios con estados y teclado.
 
 Ver docs/DEVELOPMENT.md para continuar y docs/DECISIONS.md para las decisiones.

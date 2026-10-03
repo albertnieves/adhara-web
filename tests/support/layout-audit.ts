@@ -203,9 +203,12 @@ export async function auditRoute(
       .catch(() => undefined);
     // Contenido en streaming ya servido: sin el esqueleto de «Cargando».
     await page
-      .waitForFunction(() => !document.querySelector('[aria-busy="true"]'), {
-        timeout: 15_000,
-      })
+      .waitForFunction(
+        () => !document.querySelector('[aria-busy="true"]:not(button)'),
+        {
+          timeout: 15_000,
+        },
+      )
       .catch(() => undefined);
     // Recorre la página para que aparezca lo que se revela al hacer scroll
     // (whileInView); si no, queda con opacidad 0 y fuera de la auditoría.

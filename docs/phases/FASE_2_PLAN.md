@@ -1,6 +1,6 @@
 # Fase 2 — Sistema de diseño: plan
 
-Estado: **en curso**. Plan aprobado el 02/10/2026 (PR #13) con las decisiones D1–D6 recomendadas; DS-01 a DS-05 hechas.
+Estado: **en curso**. Plan aprobado el 02/10/2026 (PR #13) con las decisiones D1–D6 recomendadas; DS-01 a DS-06 hechas.
 
 Base:
 
@@ -193,13 +193,18 @@ DS-01 puede empezar ya. De DS-05 a DS-09 se pueden trabajar en paralelo cuando e
 
 ### Primitivas
 
-- [ ] **DS-06 · Acciones.** Depende de: DS-04, DS-05.
+- [x] **DS-06 · Acciones.** Depende de: DS-04, DS-05.
   - `Button`:
     - variantes principal, secundaria, contorno, sutil y peligro;
     - tamaños sm, md y lg (md y lg de 44 px);
     - estados de carga (con la estrella), deshabilitado y como enlace.
   - `TextLink` con subrayado animado y `SubmitButton` basado en `Button`.
   - Hecho cuando: hay estados en la página de referencia y E2E de teclado.
+  - Hecho el 03/10 (rama `codex/ds-06-acciones`, DECISIONS §99):
+    - `Button` con las cinco variantes sobre los semánticos (valen en todos los tonos), sm de 36 px y md y lg de 44 y 48 px, carga con la estrella, deshabilitado y como enlace;
+    - `TextLink` y `SubmitButton`; el `SubmitButton` del panel ya es el del sistema, con su misma API hasta DS-11;
+    - sección «Button», zona de teclado y «TextLink» en `/admin/diseno`;
+    - E2E de teclado: Intro y Espacio activan, el deshabilitado queda fuera del tabulador, foco de 2 px, la carga no responde y el enlace se sigue con Intro.
 
 - [ ] **DS-07 · Formularios.** Depende de: DS-04.
   - `Field` (etiqueta, ayuda y error con `aria-describedby` y `aria-invalid`).
