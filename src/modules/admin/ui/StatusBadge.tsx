@@ -1,16 +1,14 @@
-const STYLES: Record<string, { label: string; className: string }> = {
-  draft: { label: 'Borrador', className: 'border-mist text-smoke' },
-  published: { label: 'Publicado', className: 'border-success text-success' },
-  archived: { label: 'Archivado', className: 'border-line text-fg-muted' },
+import { Badge } from '@/components/ui';
+import type { BadgeTone } from '@/components/ui';
+
+/** Estado de publicación de un perfume con el `Badge` del sistema (DS-09). */
+const STATUSES: Record<string, { label: string; tone: BadgeTone }> = {
+  draft: { label: 'Borrador', tone: 'neutral' },
+  published: { label: 'Publicado', tone: 'success' },
+  archived: { label: 'Archivado', tone: 'neutral' },
 };
 
 export function StatusBadge({ status }: { status: string }) {
-  const style = STYLES[status] ?? STYLES.draft!;
-  return (
-    <span
-      className={`text-2xs tracking-caps inline-flex items-center border px-2 py-0.5 font-semibold uppercase ${style.className}`}
-    >
-      {style.label}
-    </span>
-  );
+  const { label, tone } = STATUSES[status] ?? STATUSES.draft!;
+  return <Badge tone={tone}>{label}</Badge>;
 }

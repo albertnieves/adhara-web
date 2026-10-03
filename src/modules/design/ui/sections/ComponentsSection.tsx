@@ -24,6 +24,7 @@ import { ButtonPlayground } from '../ButtonPlayground';
 import { Example } from '../Example';
 import { OverlayPlayground } from '../OverlayPlayground';
 import { Section, SubTitle } from '../Section';
+import { DataComponents } from './DataComponents';
 import { FormComponents } from './FormComponents';
 
 const HEADINGS: { size: HeadingSize; use: string }[] = [
@@ -51,20 +52,12 @@ const ICON_SIZES: { size: IconSize; px: number }[] = [
   { size: 'lg', px: 24 },
 ];
 
-/** Las que añaden las tareas siguientes del plan de la Fase 2. */
-const UPCOMING = [
-  {
-    task: 'DS-09',
-    name: 'Datos y comercio: Tag, Badge, Price, Table, Card, EmptyState y Skeleton',
-  },
-];
-
 export function ComponentsSection() {
   return (
     <Section
       id="componentes"
       title="Componentes"
-      intro="Primitivas de src/components/ui, las mismas para la tienda y el panel. Cada tarea del plan añade aquí las suyas con todos sus estados; su className solo coloca (márgenes), el aspecto lo fija el componente."
+      intro="Primitivas de src/components/ui, las mismas para la tienda y el panel. Cada una con todos sus estados; su className solo coloca (márgenes), el aspecto lo fija el componente."
     >
       <SubTitle>Heading</SubTitle>
       <Text size="small" tone="muted" className="mb-4 max-w-3xl">
@@ -289,22 +282,7 @@ export function ComponentsSection() {
         </Text>
         <OverlayPlayground />
       </div>
-      <SubTitle>Próximas</SubTitle>
-      <ul className="divide-border border-border divide-y border-y">
-        {UPCOMING.map((item) => (
-          <li
-            key={item.task}
-            className="flex flex-col gap-1 py-4 sm:flex-row sm:gap-6"
-          >
-            <Text as="span" size="small" tone="muted" className="w-16 shrink-0">
-              {item.task}
-            </Text>
-            <Text as="span" size="small">
-              {item.name}
-            </Text>
-          </li>
-        ))}
-      </ul>
+      <DataComponents />
     </Section>
   );
 }

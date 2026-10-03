@@ -5,6 +5,8 @@
  */
 export { BUTTON_SIZES, BUTTON_VARIANTS, Button, buttonClass } from './Button';
 export type { ButtonSize, ButtonVariant } from './Button';
+export { BADGE_TONES, Badge, Tag } from './Badge';
+export type { BadgeTone } from './Badge';
 export { Checkbox, Radio } from './Choice';
 export { CloseButton, Dialog, useConfirm } from './Dialog';
 export type { ConfirmOptions, OverlayTone } from './Dialog';
@@ -17,10 +19,14 @@ export { ICON_NAMES, Icon } from './Icon';
 export type { IconDirection, IconName, IconSize } from './Icon';
 export { CONTROL_CLASSES, Input, SearchField, Select, Textarea } from './Input';
 export type { InputType } from './Input';
+export { Price } from './Price';
+export type { PriceSize } from './Price';
 export { Sheet } from './Sheet';
 export { StarDivider, StarList, StarLoader } from './StarMotifs';
 export type { HeadingLevel, HeadingSize } from './Heading';
 export { SubmitButton } from './SubmitButton';
+export { Card, EmptyState, Skeleton } from './Surface';
+export { Table, Td, Th } from './Table';
 export { TEXT_SIZES, TEXT_TONES, Text } from './Text';
 export { TextLink } from './TextLink';
 export { Toaster, toast } from './Toast';
