@@ -1,6 +1,6 @@
 # Fase 2 — Sistema de diseño: plan
 
-Estado: **en curso**. Plan aprobado el 02/10/2026 (PR #13) con las decisiones D1–D6 recomendadas; DS-01 a DS-06 hechas.
+Estado: **en curso**. Plan aprobado el 02/10/2026 (PR #13) con las decisiones D1–D6 recomendadas; DS-01 a DS-07 hechas.
 
 Base:
 
@@ -206,11 +206,16 @@ DS-01 puede empezar ya. De DS-05 a DS-09 se pueden trabajar en paralelo cuando e
     - sección «Button», zona de teclado y «TextLink» en `/admin/diseno`;
     - E2E de teclado: Intro y Espacio activan, el deshabilitado queda fuera del tabulador, foco de 2 px, la carga no responde y el enlace se sigue con Intro.
 
-- [ ] **DS-07 · Formularios.** Depende de: DS-04.
+- [x] **DS-07 · Formularios.** Depende de: DS-04.
   - `Field` (etiqueta, ayuda y error con `aria-describedby` y `aria-invalid`).
   - `Input`, `Textarea`, `Select`, `Checkbox`, `Radio` y `SearchField`.
   - Estados de foco, error, deshabilitado y solo lectura, con 44 px de alto.
   - Hecho cuando: hay estados en la página de referencia, E2E de teclado y axe sin infracciones.
+  - Hecho el 03/10 (rama `codex/ds-07-formularios`, DECISIONS §100):
+    - `Field` y `Fieldset`, e `Input`, `Textarea`, `Select`, `Checkbox`, `Radio` y `SearchField` con foco de 2 px, error, deshabilitado y solo lectura, de 44 px y letra de 16 px;
+    - el buscador del panel ya es el `SearchField` del sistema;
+    - sección «Formularios» en `/admin/diseno` con una prueba de validación;
+    - E2E de teclado (Tab salta el deshabilitado, la solo lectura no se edita, Espacio y flechas, errores con foco en el primero) y axe sin infracciones.
 
 - [ ] **DS-08 · Superposiciones y avisos.** Depende de: DS-06.
   - `Dialog`: `<dialog>` nativo, foco atrapado, Esc y foco devuelto.

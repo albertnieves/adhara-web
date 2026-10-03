@@ -5,11 +5,16 @@
  */
 export { BUTTON_SIZES, BUTTON_VARIANTS, Button, buttonClass } from './Button';
 export type { ButtonSize, ButtonVariant } from './Button';
+export { Checkbox, Radio } from './Choice';
 export { Eyebrow } from './Eyebrow';
 export type { EyebrowTone } from './Eyebrow';
+export { Field, Fieldset } from './Field';
+export type { FieldControlProps } from './Field';
 export { HEADING_SIZES, Heading } from './Heading';
 export { ICON_NAMES, Icon } from './Icon';
 export type { IconDirection, IconName, IconSize } from './Icon';
+export { CONTROL_CLASSES, Input, SearchField, Select, Textarea } from './Input';
+export type { InputType } from './Input';
 export { StarDivider, StarList, StarLoader } from './StarMotifs';
 export type { HeadingLevel, HeadingSize } from './Heading';
 export { SubmitButton } from './SubmitButton';
