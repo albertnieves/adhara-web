@@ -339,3 +339,24 @@ Formato de la Fase 0 §16: fecha · contexto · decisión · alternativas descar
       - **`EmptyState`** con la estrella, qué pasa y la acción siguiente; dice «no hay» o «todavía no», nunca rellena.
       - **`Skeleton`** es decorativo (`aria-hidden`) y deja de latir con «reducir movimiento»; quien lo usa anuncia la carga una vez. Así la página de referencia no tiene un `aria-busy` permanente.
       - **Pruebas:** unitarias de `Price` en es, ca y en, con y sin rebaja, con «desde» y con importes redondos, y de los demás componentes. La página de referencia sigue sin infracciones de axe y sin fallos de maquetación a 390, 768, 1280 y 1440 px.
+104.  **Migración de la tienda (DS-10).** Cabecera, pie, portada, colección y filtros, tarjeta, ficha y panel de compra, 404, banner de vista previa y enlace «Saltar al contenido» usan la biblioteca y los semánticos. Sin cambios de contenido ni de rutas.
+      - **Colores:** los de paleta pasan a los semánticos:
+        - `text-smoke` → `text-fg-muted`, `border-line` → `border-border` y `bg-sand` → `bg-surface-sunken`;
+        - el dorado → `accent` (decoración) y `accent-fg` (texto);
+        - las zonas oscuras (portada, menú móvil, tienda, pie y banner) usan `bg-surface text-fg` con `data-tone="dark"`;
+        - la cabecera transparente sobre la portada se pone `data-tone="dark"`.
+        - Solo queda `bg-stage`, el fondo de la escena de producto (también la excepción de `ProductStage` en las guardas).
+      - **Componentes:** `Eyebrow` y `Heading` en todos los títulos, con la escala cerrada:
+        - portada y colección en `display`; secciones de la portada y ficha en `h1`; relacionados en `h2`.
+        - Cambio visible: el nombre del perfume en la ficha y «Castelldefels» pasan de 72 a 60 px.
+      - **Enlaces con aspecto de botón:** `buttonClass` sobre el `Link` de next-intl, porque `Button` con `href` usa el de Next y perdería el prefijo del idioma.
+      - **Colección:**
+        - filtros con `buttonClass` (activo principal, resto de contorno);
+        - `SearchField` y `Select` del sistema: caja de 44 px en lugar de la línea inferior;
+        - `EmptyState` para la colección vacía y para la búsqueda sin resultados, con «Limpiar filtros» como botón.
+      - **Precio y existencias:**
+        - `Price` en la tarjeta y en el panel de compra;
+        - el mensaje `product.from` pasa de «Desde {price}» a la palabra sola y se añade `product.before` («Antes», «Abans», «Was») para el lector de pantalla;
+        - la disponibilidad es un `Badge` («Agotado» en neutro, como era el punto gris; también en la página de referencia);
+        - los formatos miden 44 px.
+      - **Comprobado:** E2E públicos en local (125), con la auditoría de maquetación y axe sin fallos en `/es`, `/ca`, `/en`, la colección en los tres idiomas, la ficha publicada y la 404, a 390, 768, 1280 y 1440 px; capturas revisadas a 390 y 1440 px.

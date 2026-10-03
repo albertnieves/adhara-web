@@ -25,9 +25,9 @@ export function ProductImage({
   if (!media) {
     return (
       <div
-        className={`text-smoke flex h-full w-full flex-col items-center justify-center gap-4 ${className}`}
+        className={`text-fg-muted flex h-full w-full flex-col items-center justify-center gap-4 ${className}`}
       >
-        <Star className="text-gold/60 size-5" />
+        <Star className="text-accent/60 size-5" />
         <span className="font-display tracking-caps-lg text-xl uppercase">
           {brand}
         </span>

@@ -1,5 +1,5 @@
 import { useLocale, useTranslations } from 'next-intl';
-import { formatEuros } from '@/lib/money';
+import { Eyebrow, Heading, Price } from '@/components/ui';
 import type { StorefrontProduct } from '@/modules/catalog';
 import { heroMedia, lowestPrice, variantLabel } from '@/modules/catalog';
 import { Link } from '@/modules/i18n';
@@ -62,15 +62,15 @@ export function ProductCard({
         )}
         <span
           aria-hidden
-          className="bg-gold absolute inset-x-0 bottom-0 h-px origin-left scale-x-0 transition-transform duration-700 ease-(--ease-luxe) group-hover:scale-x-100"
+          className="bg-accent absolute inset-x-0 bottom-0 h-px origin-left scale-x-0 transition-transform duration-700 ease-(--ease-luxe) group-hover:scale-x-100"
         />
       </div>
       <div className="mt-5 min-w-0">
-        <p className="eyebrow">{product.brand.name}</p>
-        <h3 className="font-display mt-1.5 line-clamp-2 text-2xl leading-tight">
+        <Eyebrow>{product.brand.name}</Eyebrow>
+        <Heading level={3} size="h3" className="mt-1.5 line-clamp-2">
           {product.name}
-        </h3>
-        <p className="text-smoke mt-1 text-xs">
+        </Heading>
+        <p className="text-fg-muted mt-1 text-xs">
           {[
             product.concentration
               ? t(`concentration.${product.concentration}`)
@@ -80,12 +80,18 @@ export function ProductCard({
             .filter(Boolean)
             .join(' · ')}
         </p>
-        <p className="mt-3 text-sm tabular-nums">
-          {price === null
-            ? t('product.pricePending')
-            : priced.length > 1
-              ? t('product.from', { price: formatEuros(price, locale) })
-              : formatEuros(price, locale)}
+        <p className="mt-3 text-sm">
+          {price === null ? (
+            t('product.pricePending')
+          ) : (
+            <Price
+              cents={price}
+              from={priced.length > 1}
+              locale={locale}
+              labels={{ from: t('product.from'), before: t('product.before') }}
+              size="sm"
+            />
+          )}
         </p>
       </div>
     </Link>

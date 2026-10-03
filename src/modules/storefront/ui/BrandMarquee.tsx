@@ -3,7 +3,7 @@ export function BrandMarquee({ brands }: { brands: string[] }) {
   if (brands.length === 0) return null;
   const row = [...brands, ...brands, ...brands];
   return (
-    <div className="border-line overflow-hidden border-y py-10">
+    <div className="border-border overflow-hidden border-y py-10">
       <ul className="sr-only">
         {brands.map((brand) => (
           <li key={brand}>{brand}</li>
@@ -19,7 +19,7 @@ export function BrandMarquee({ brands }: { brands: string[] }) {
             className="font-display text-fg-muted flex items-center gap-16 text-5xl font-light italic sm:text-7xl"
           >
             {brand}
-            <span className="text-gold text-base not-italic">✦</span>
+            <span className="text-accent text-base not-italic">✦</span>
           </span>
         ))}
       </div>

@@ -83,7 +83,7 @@ function Gallery({
           </motion.div>
         </AnimatePresence>
         {current?.provisional && (
-          <span className="text-smoke text-2xs tracking-caps-lg absolute top-4 left-4 uppercase">
+          <span className="text-fg-muted text-2xs tracking-caps-lg absolute top-4 left-4 uppercase">
             {t('provisionalImage')}
           </span>
         )}
@@ -97,7 +97,7 @@ function Gallery({
                 onClick={() => setIndex(i)}
                 aria-label={`${i + 1} / ${media.length}`}
                 aria-pressed={i === index}
-                className={`h-px w-10 transition-colors duration-500 ${i === index ? 'bg-ink' : 'bg-line hover:bg-smoke'}`}
+                className={`h-px w-10 transition-colors duration-500 ${i === index ? 'bg-fg' : 'bg-border hover:bg-fg-muted'}`}
               >
                 <span className="block h-6 -translate-y-3" />
               </button>

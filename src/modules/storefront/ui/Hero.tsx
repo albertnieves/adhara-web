@@ -8,6 +8,7 @@ import {
 } from 'motion/react';
 import { useRef } from 'react';
 import Image from 'next/image';
+import { Heading, buttonClass } from '@/components/ui';
 import { Star } from '@/modules/brand';
 import { Link } from '@/modules/i18n';
 
@@ -62,7 +63,7 @@ export function Hero({
     <section
       ref={ref}
       data-tone="dark"
-      className="bg-night text-ivory grain relative isolate flex min-h-svh items-center justify-center overflow-hidden"
+      className="bg-surface text-fg grain relative isolate flex min-h-svh items-center justify-center overflow-hidden"
     >
       {imageUrl && (
         <div className="absolute inset-0 -z-10">
@@ -74,7 +75,7 @@ export function Hero({
             sizes="100vw"
             className="object-cover opacity-30"
           />
-          <div className="bg-night/30 absolute inset-0" />
+          <div className="bg-surface/30 absolute inset-0" />
         </div>
       )}
       {/* Resplandor cálido que respira. */}
@@ -101,7 +102,7 @@ export function Hero({
         {STARS.map((star, index) => (
           <span
             key={index}
-            className="animate-twinkle bg-gold-soft absolute rounded-full"
+            className="animate-twinkle bg-accent-fg absolute rounded-full"
             style={{
               left: `${star.left}%`,
               top: `${star.top}%`,
@@ -117,7 +118,7 @@ export function Hero({
       {/* La estrella del emblema, enorme y tenue, gira con el scroll. */}
       <motion.div
         aria-hidden
-        className="text-gold/10 absolute -z-10"
+        className="text-accent/10 absolute -z-10"
         style={reduced ? undefined : { rotate: starRotate, scale: starScale }}
         initial={reduced ? false : { opacity: 0, scale: 0.6 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -131,7 +132,8 @@ export function Hero({
         style={reduced ? undefined : { y: contentY, opacity: contentOpacity }}
       >
         <motion.p
-          className="eyebrow text-gold-soft!"
+          // El espaciado lo anima motion; el resto, como Eyebrow en dorado.
+          className="text-2xs text-accent-fg font-sans font-normal uppercase"
           initial={reduced ? false : { opacity: 0, letterSpacing: '0.6em' }}
           animate={{ opacity: 1, letterSpacing: '0.32em' }}
           transition={{ duration: 1.6, delay: 0.2, ease: EASE }}
@@ -139,7 +141,7 @@ export function Hero({
           {eyebrow}
         </motion.p>
 
-        <h1 className="text-display mt-8 font-light">
+        <Heading level={1} size="display" className="mt-8">
           {words.map((word, index) => (
             <span
               key={`${word}-${index}`}
@@ -160,18 +162,18 @@ export function Hero({
               </motion.span>
             </span>
           ))}
-        </h1>
+        </Heading>
 
         <motion.div
           aria-hidden
-          className="bg-gold-soft/60 mx-auto mt-10 h-px w-24 origin-center"
+          className="bg-accent-fg/60 mx-auto mt-10 h-px w-24 origin-center"
           initial={reduced ? false : { scaleX: 0 }}
           animate={{ scaleX: 1 }}
           transition={{ duration: 1.4, delay: 1.1, ease: EASE }}
         />
 
         <motion.p
-          className="text-ivory/75 mx-auto mt-10 max-w-xl text-base leading-relaxed sm:text-lg"
+          className="text-fg-muted mx-auto mt-10 max-w-xl text-base leading-relaxed sm:text-lg"
           initial={reduced ? false : { opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1.2, delay: 1.25, ease: EASE }}
@@ -185,7 +187,10 @@ export function Hero({
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1.2, delay: 1.45, ease: EASE }}
         >
-          <Link href="/catalogo" className="btn btn-outline sheen">
+          <Link
+            href="/catalogo"
+            className={buttonClass('outline', 'lg', 'sheen')}
+          >
             {cta}
           </Link>
         </motion.div>
@@ -195,11 +200,11 @@ export function Hero({
         aria-hidden
         className="absolute bottom-8 left-1/2 flex -translate-x-1/2 flex-col items-center gap-3"
       >
-        <span className="text-ivory/50 text-2xs tracking-caps-lg uppercase">
+        <span className="text-fg-muted text-2xs tracking-caps-lg uppercase">
           {scroll}
         </span>
-        <span className="bg-ivory/15 relative h-12 w-px overflow-hidden">
-          <span className="animate-scroll-cue bg-gold-soft absolute inset-0" />
+        <span className="bg-fg/15 relative h-12 w-px overflow-hidden">
+          <span className="animate-scroll-cue bg-accent-fg absolute inset-0" />
         </span>
       </div>
     </section>

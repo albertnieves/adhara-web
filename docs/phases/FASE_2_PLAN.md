@@ -1,6 +1,6 @@
 # Fase 2 — Sistema de diseño: plan
 
-Estado: **en curso**. Plan aprobado el 02/10/2026 (PR #13) con las decisiones D1–D6 recomendadas; DS-01 a DS-09 hechas.
+Estado: **en curso**. Plan aprobado el 02/10/2026 (PR #13) con las decisiones D1–D6 recomendadas; DS-01 a DS-10 hechas.
 
 Base:
 
@@ -245,10 +245,14 @@ DS-01 puede empezar ya. De DS-05 a DS-09 se pueden trabajar en paralelo cuando e
 
 ### Migración
 
-- [ ] **DS-10 · Migrar la tienda.** Depende de: DS-06, DS-07, DS-08 y DS-09.
+- [x] **DS-10 · Migrar la tienda.** Depende de: DS-06, DS-07, DS-08 y DS-09.
   - Cabecera, pie, portada, colección y filtros, tarjeta de perfume, ficha y panel de compra, 404 y banner de vista previa.
   - Sin cambios de contenido ni de rutas.
   - Hecho cuando: los criterios 1, 3, 4, 6 y 7 pasan en las rutas públicas y las capturas están en la PR.
+  - Hecho el 03/10 (rama `codex/ds-10-tienda`, DECISIONS §104):
+    - toda la tienda con los semánticos y la biblioteca (`Eyebrow`, `Heading`, `buttonClass`, `SearchField`, `Select`, `EmptyState`, `Price`, `Badge`); sin `.btn`, `.field` ni `.eyebrow` sueltos;
+    - criterios 1 y 3 en las guardas unitarias; 6 y 7 en los E2E públicos (auditoría y axe) a cuatro anchos;
+    - capturas en el artefacto `auditoria-visual` de la CI.
 
 - [ ] **DS-11 · Migrar el panel.** Depende de: DS-06, DS-07, DS-08 y DS-09.
   - Menú y diseño general, acceso y MFA, y las pantallas de catálogo, inventario, mostrador, compras, reposición, informes, contenido, configuración, equipo y asistente.

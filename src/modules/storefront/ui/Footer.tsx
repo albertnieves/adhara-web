@@ -2,6 +2,7 @@ import NextLink from 'next/link';
 import { readStoreContent } from '@/modules/content/server';
 import { storeContent, STORE_DEFAULTS } from '@/modules/content';
 import { getTranslations } from 'next-intl/server';
+import { Eyebrow } from '@/components/ui';
 import { Logo } from '@/modules/brand';
 import { Link } from '@/modules/i18n';
 import { FAQ_ANCHOR } from './Faq';
@@ -14,7 +15,7 @@ export async function Footer() {
   return (
     <footer
       data-tone="dark"
-      className="bg-night text-ivory relative overflow-hidden"
+      className="bg-surface text-fg relative overflow-hidden"
     >
       <div className="mx-auto grid max-w-[90rem] gap-14 px-5 pt-24 pb-12 sm:px-10 md:grid-cols-[2fr_1fr_1fr]">
         <div className="space-y-6">
@@ -24,7 +25,7 @@ export async function Footer() {
           </p>
         </div>
         <div>
-          <p className="eyebrow text-fg-muted! mb-5">{t('shop')}</p>
+          <Eyebrow className="mb-5">{t('shop')}</Eyebrow>
           <ul className="space-y-3 text-sm">
             <li>
               <Link href="/catalogo" className="link-underline">
@@ -50,7 +51,7 @@ export async function Footer() {
           </ul>
         </div>
         <div>
-          <p className="eyebrow text-fg-muted! mb-5">{t('info')}</p>
+          <Eyebrow className="mb-5">{t('info')}</Eyebrow>
           <address className="text-fg-muted space-y-3 text-sm not-italic">
             <p>
               {store.address}
@@ -95,11 +96,11 @@ export async function Footer() {
           </NextLink>
         </div>
       </div>
-      <div className="border-ivory/10 text-2xs tracking-caps mx-auto flex max-w-[90rem] items-center justify-between border-t px-5 py-6 uppercase sm:px-10">
+      <div className="border-border text-2xs tracking-caps mx-auto flex max-w-[90rem] items-center justify-between border-t px-5 py-6 uppercase sm:px-10">
         <span className="text-fg-muted">
           {t('rights', { year: new Date().getFullYear() })}
         </span>
-        <span className="text-gold-soft">Castelldefels</span>
+        <span className="text-accent-fg">Castelldefels</span>
       </div>
     </footer>
   );

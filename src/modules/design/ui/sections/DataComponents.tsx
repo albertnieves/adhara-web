@@ -32,7 +32,7 @@ const STATES: { group: string; items: { label: string; tone: BadgeTone }[] }[] =
       items: [
         { label: 'Disponible', tone: 'success' },
         { label: 'Últimas unidades', tone: 'warning' },
-        { label: 'Agotado', tone: 'danger' },
+        { label: 'Agotado', tone: 'neutral' },
       ],
     },
     {
@@ -58,7 +58,7 @@ const LABELS = {
 const ROWS = [
   { name: 'Formato A', size: 50, stock: 12, tone: 'success' as const },
   { name: 'Formato B', size: 100, stock: 2, tone: 'warning' as const },
-  { name: 'Formato C', size: 10, stock: 0, tone: 'danger' as const },
+  { name: 'Formato C', size: 10, stock: 0, tone: 'neutral' as const },
 ];
 
 /**

@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { Eyebrow, Heading } from '@/components/ui';
 import { getTranslations } from 'next-intl/server';
 import { listStorefrontProducts } from '@/modules/catalog/server';
 import { CatalogBrowser, Reveal } from '@/modules/storefront';
@@ -31,10 +32,10 @@ export default async function Catalog({
   return (
     <main className="mx-auto max-w-[90rem] px-5 pt-36 pb-32 sm:px-10 sm:pt-44">
       <Reveal className="mb-14 max-w-3xl">
-        <p className="eyebrow">{t('eyebrow')}</p>
-        <h1 className="mt-4 text-6xl leading-none font-light sm:text-8xl">
+        <Eyebrow>{t('eyebrow')}</Eyebrow>
+        <Heading level={1} size="display" className="mt-4">
           {t('title')}
-        </h1>
+        </Heading>
       </Reveal>
       <CatalogBrowser products={products} />
     </main>
