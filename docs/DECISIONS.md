@@ -304,3 +304,17 @@ Formato de la Fase 0 §16: fecha · contexto · decisión · alternativas descar
         - `SearchField` lleva la lupa, un nombre accesible propio y la estrella mientras llegan resultados. El buscador del panel (catálogo e inventario) ya es este.
       - **`Checkbox` y `Radio`:** dibujados con los semánticos y no con el control nativo, que no sigue los tonos oscuros. Caja de 24 px y la etiqueta entera como objetivo táctil de 44 px.
       - **Pruebas:** unitarias de los ocho componentes y E2E de teclado en `/admin/diseno`, con una prueba de formulario que valida, marca los errores y lleva el foco al primero que falla. axe sin infracciones y auditoría sin fallos a 390, 768, 1280 y 1440 px.
+101.  **Superposiciones y avisos (DS-08).**
+      - **`Dialog` y `Sheet`** sobre `<dialog>` con `showModal()`, en un gancho común (`useModal`):
+        - el resto de la página queda inerte; Esc o tocar fuera cierran;
+        - Tab y Mayús+Tab dan la vuelta dentro del diálogo: el nativo deja salir el foco a la barra del navegador tras el último control, y el plan pide foco atrapado;
+        - al abrir, el foco va a `data-autofocus` si lo hay; al cerrar, vuelve al control que lo abrió.
+      - **`Sheet`** pasa de `modules/admin/ui` a la biblioteca, con lado y tono. Los colores salen de `data-tone` (los semánticos), sin variantes propias, y el cierre es el icono de D5. El menú móvil del panel y los movimientos de inventario ya lo usan.
+      - **`Dialog`** centrado, con título, descripción, cuerpo y acciones; entra con un leve ascenso.
+      - **`useConfirm`** sustituye a `window.confirm`: devuelve una promesa y el diálogo que hay que pintar. El foco empieza en «Cancelar», así que Intro por accidente no destruye nada; la acción destructiva usa el botón de peligro. Cambiar los `window.confirm` del panel queda para su migración (DS-11).
+      - **`Toast`** y `Toaster` pasan a la biblioteca:
+        - dos regiones vivas presentes desde el inicio, `status` para el éxito y `alert` para los errores, para que el lector de pantalla anuncie cada aviso;
+        - el éxito se va solo a los 5 s; los errores se quedan hasta cerrarlos (antes desaparecían a los 8 s);
+        - cada aviso tiene botón de cerrar y su icono; el de éxito usa el tono oscuro.
+      - **Movimiento:** con «reducir movimiento» las transiciones duran 0,01 ms (regla global), así que nada se desplaza (criterio 9).
+      - **Pruebas:** unitarias de los tres y E2E en `/admin/diseno`: foco dentro durante seis Tab, Esc y foco devuelto, confirmación con «Cancelar» de inicio, aviso en la región de estado, panel oscuro, «reducir movimiento» y error que se cierra a mano.

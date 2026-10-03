@@ -2,7 +2,7 @@ import Link from 'next/link';
 import type { ReactNode } from 'react';
 import { PanelNav } from '@/modules/admin/ui/PanelNav';
 import type { NavItem } from '@/modules/admin/ui/PanelNav';
-import { Toaster } from '@/modules/admin/ui/Toaster';
+import { Toaster } from '@/components/ui';
 import { ROLE_LABELS, isAllowed } from '@/modules/auth';
 import type { Permission } from '@/modules/auth';
 import { requireStaff, signOut } from '@/modules/auth/server';

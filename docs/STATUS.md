@@ -45,7 +45,12 @@ Plan del sistema de diseño en [phases/FASE_2_PLAN.md](phases/FASE_2_PLAN.md), a
 - `Field`, `Fieldset`, `Input`, `Textarea`, `Select`, `Checkbox`, `Radio` y `SearchField` con foco, error, deshabilitado y solo lectura, comprobados con teclado y axe;
 - el buscador del panel ya usa el del sistema.
 
-Siguiente tarea: DS-08 (superposiciones); DS-09 (datos y comercio) puede ir en paralelo.
+**DS-08 hecha (superposiciones y avisos):**
+
+- `Dialog`, `Sheet`, `useConfirm` y `Toast` con foco atrapado, Esc y foco devuelto, comprobados con teclado;
+- el menú móvil, los paneles de inventario y los avisos del panel ya usan los del sistema.
+
+Siguiente tarea: DS-09 (datos y comercio); después, las migraciones DS-10 (tienda) y DS-11 (panel).
 
 - **Objetivos:**
   - tokens en dos capas;
@@ -255,5 +260,6 @@ La revisión visual con perfumes se hizo en local con un Supabase simulado que d
 - 02/10: Fase 2, DS-05: iconos propios, motivos de la estrella y reglas del logotipo.
 - 03/10: Fase 2, DS-06: botones, enlaces y envío de formularios con estados y teclado.
 - 03/10: Fase 2, DS-07: campos de formulario con etiqueta, ayuda y error accesibles.
+- 03/10: Fase 2, DS-08: diálogos, paneles laterales, confirmaciones y avisos accesibles.
 
 Ver docs/DEVELOPMENT.md para continuar y docs/DECISIONS.md para las decisiones.
