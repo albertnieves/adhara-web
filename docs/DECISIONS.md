@@ -291,3 +291,16 @@ Formato de la Fase 0 §16: fecha · contexto · decisión · alternativas descar
       - mientras carga, el botón no responde;
       - el enlace con aspecto de botón se sigue con Intro.
       - Las esperas de la auditoría y de la página ignoran `aria-busy` en botones, porque la página enseña un botón en carga de forma permanente.
+100.  **Formularios (DS-07).**
+      - **`Field`:** etiqueta, control, ayuda y error. Une la etiqueta con el control (`for`/`id`, con `useId` si el control no trae el suyo) y le añade `aria-describedby` con el error antes que la ayuda, para que el lector de pantalla diga primero qué falla; con error, `aria-invalid`.
+        - El control es un único elemento que `Field` clona; así se escribe como hasta ahora (`<Field label><Input /></Field>`) y vale en Server y Client Components.
+        - `Fieldset` agrupa radios o casillas con su leyenda, ayuda y error.
+      - **Controles de texto:** `Input`, `Textarea`, `Select` y `SearchField` comparten la caja (`CONTROL_CLASSES`):
+        - 44 px de alto y letra de 16 px, para que iOS no amplíe la página al enfocar (el `.input` del panel usa 15 px);
+        - el foco es el contorno global de 2 px (el `.input` del panel lo anula; se corrige al migrar en DS-11);
+        - error con borde rojo, icono y mensaje; deshabilitado con fondo hundido, fuera del tabulador; solo lectura con fondo hundido y borde discontinuo, que se enfoca y se copia;
+        - bordes de 3,1:1 sobre el fondo hundido y 3,8:1 sobre el elevado (1.4.11).
+        - `Select` es el nativo con el chevron propio: teclado y lista del sistema en el móvil.
+        - `SearchField` lleva la lupa, un nombre accesible propio y la estrella mientras llegan resultados. El buscador del panel (catálogo e inventario) ya es este.
+      - **`Checkbox` y `Radio`:** dibujados con los semánticos y no con el control nativo, que no sigue los tonos oscuros. Caja de 24 px y la etiqueta entera como objetivo táctil de 44 px.
+      - **Pruebas:** unitarias de los ocho componentes y E2E de teclado en `/admin/diseno`, con una prueba de formulario que valida, marca los errores y lleva el foco al primero que falla. axe sin infracciones y auditoría sin fallos a 390, 768, 1280 y 1440 px.

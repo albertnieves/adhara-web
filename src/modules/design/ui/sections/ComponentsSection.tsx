@@ -21,7 +21,9 @@ import type {
   TextTone,
 } from '@/components/ui';
 import { ButtonPlayground } from '../ButtonPlayground';
+import { Example } from '../Example';
 import { Section, SubTitle } from '../Section';
+import { FormComponents } from './FormComponents';
 
 const HEADINGS: { size: HeadingSize; use: string }[] = [
   { size: 'display', use: 'Titular de la portada; crece con el ancho.' },
@@ -50,39 +52,12 @@ const ICON_SIZES: { size: IconSize; px: number }[] = [
 
 /** Las que añaden las tareas siguientes del plan de la Fase 2. */
 const UPCOMING = [
-  {
-    task: 'DS-07',
-    name: 'Formularios: Field, Input, Textarea, Select, Checkbox, Radio y SearchField',
-  },
   { task: 'DS-08', name: 'Superposiciones y avisos: Dialog, Sheet y Toast' },
   {
     task: 'DS-09',
     name: 'Datos y comercio: Tag, Badge, Price, Table, Card, EmptyState y Skeleton',
   },
 ];
-
-/** Una fila de la demostración: muestra, uso y cómo se escribe. */
-function Example({
-  code,
-  use,
-  children,
-}: {
-  code: string;
-  use: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <li className="grid gap-3 py-5 md:grid-cols-[minmax(0,1fr)_minmax(0,18rem)] md:items-center md:gap-8">
-      <div className="min-w-0">{children}</div>
-      <div className="flex flex-col gap-1">
-        <code className="text-xs wrap-anywhere">{code}</code>
-        <Text size="caption" tone="muted">
-          {use}
-        </Text>
-      </div>
-    </li>
-  );
-}
 
 export function ComponentsSection() {
   return (
@@ -302,6 +277,7 @@ export function ComponentsSection() {
           </TextLink>
         </Example>
       </ul>
+      <FormComponents />
       <SubTitle>Próximas</SubTitle>
       <ul className="divide-border border-border divide-y border-y">
         {UPCOMING.map((item) => (

@@ -128,3 +128,74 @@ test('acciones: teclado en la página de referencia (DS-06)', async ({
   await page.keyboard.press('Enter');
   await expect(page).toHaveURL(/#acciones$/);
 });
+
+test('formularios: teclado y errores en la página de referencia (DS-07)', async ({
+  page,
+}) => {
+  test.setTimeout(2 * 60_000);
+  await login(page, await user('viewer'));
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/admin/diseno#formularios');
+  await expect(page.locator('[aria-busy="true"]:not(button)')).toHaveCount(0);
+
+  // La etiqueta nombra el control; la ayuda y el error lo describen.
+  await expect(
+    page.getByLabel('Nombre', { exact: true }),
+  ).toHaveAccessibleDescription('Como figura en el pedido.');
+  const mail = page.getByLabel('Correo', { exact: true });
+  await expect(mail).toHaveAttribute('aria-invalid', 'true');
+  await expect(mail).toHaveAccessibleDescription(
+    'Escribe un correo con @ y dominio.',
+  );
+
+  // Tab salta el deshabilitado; el de solo lectura se enfoca y no se edita.
+  await mail.focus();
+  await page.keyboard.press('Tab');
+  const created = page.getByLabel('Creado', { exact: true });
+  await expect(created).toBeFocused();
+  await expect(created).not.toBeEditable();
+  const outline = await page.evaluate(() => {
+    const style = getComputedStyle(document.activeElement!);
+    return `${style.outlineStyle} ${style.outlineWidth}`;
+  });
+  expect(outline).toBe('solid 2px');
+
+  // Espacio marca la casilla.
+  const notify = page.getByRole('checkbox', { name: 'Avisarme por correo' });
+  await notify.focus();
+  await page.keyboard.press('Space');
+  await expect(notify).toBeChecked();
+
+  // Las flechas cambian la elección del grupo y saltan la deshabilitada.
+  await expect(page.getByRole('group', { name: 'Vista' })).toBeVisible();
+  await page.getByRole('radio', { name: 'Tabla' }).focus();
+  await page.keyboard.press('ArrowDown');
+  const cards = page.getByRole('radio', { name: 'Tarjetas' });
+  await expect(cards).toBeChecked();
+  await expect(cards).toBeFocused();
+
+  // Prueba: al validar vacío, errores y foco en el primero que falla.
+  const form = page.getByRole('form', { name: 'Formulario de prueba' });
+  const email = form.getByLabel('Correo electrónico');
+  await form.getByRole('button', { name: 'Validar' }).focus();
+  await page.keyboard.press('Enter');
+  await expect(email).toBeFocused();
+  await expect(email).toHaveAttribute('aria-invalid', 'true');
+  await expect(email).toHaveAccessibleDescription(
+    /^Escribe un correo con @ y dominio\.\s*Solo para esta prueba/,
+  );
+
+  // Se corrige con el teclado y vuelve a validar.
+  await page.keyboard.type('equipo@example.com');
+  await page.keyboard.press('Tab');
+  const terms = form.getByRole('checkbox', {
+    name: 'He leído las condiciones de prueba',
+  });
+  await expect(terms).toBeFocused();
+  await expect(terms).toHaveAttribute('aria-invalid', 'true');
+  await page.keyboard.press('Space');
+  await page.keyboard.press('Tab');
+  await page.keyboard.press('Enter');
+  await expect(form.getByText('Formulario válido.')).toBeVisible();
+  await expect(email).not.toHaveAttribute('aria-invalid', 'true');
+});

@@ -2,17 +2,19 @@
 
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useRef, useTransition } from 'react';
+import { SearchField as SearchInput } from '@/components/ui';
 
 /**
  * Búsqueda que filtra mientras se escribe (actualiza la URL sin recargar).
  * Dentro de un `<form method="get">` sigue funcionando con Intro y sin JS.
+ * El aspecto es el `SearchField` del sistema (DS-07).
  */
 export function SearchField({
   name = 'q',
   defaultValue,
   placeholder,
   label,
-  className = '',
+  className,
 }: {
   name?: string;
   defaultValue?: string;
@@ -41,20 +43,14 @@ export function SearchField({
   }
 
   return (
-    <div className={`relative ${className}`}>
-      <input
-        type="search"
-        name={name}
-        defaultValue={defaultValue}
-        placeholder={placeholder}
-        aria-label={label}
-        onChange={(event) => update(event.target.value)}
-        className="input pr-10"
-      />
-      <span
-        aria-hidden="true"
-        className={`border-ink/40 absolute top-1/2 right-3 size-4 -translate-y-1/2 animate-spin rounded-full border border-t-transparent transition-opacity ${pending ? 'opacity-100' : 'opacity-0'}`}
-      />
-    </div>
+    <SearchInput
+      name={name}
+      defaultValue={defaultValue}
+      placeholder={placeholder}
+      label={label}
+      pending={pending}
+      onChange={(event) => update(event.target.value)}
+      className={className}
+    />
   );
 }
