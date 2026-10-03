@@ -1,6 +1,6 @@
 # Fase 2 — Sistema de diseño: plan
 
-Estado: **en curso**. Plan aprobado el 02/10/2026 (PR #13) con las decisiones D1–D6 recomendadas; DS-01 a DS-08 hechas.
+Estado: **en curso**. Plan aprobado el 02/10/2026 (PR #13) con las decisiones D1–D6 recomendadas; DS-01 a DS-09 hechas.
 
 Base:
 
@@ -229,7 +229,7 @@ DS-01 puede empezar ya. De DS-05 a DS-09 se pueden trabajar en paralelo cuando e
     - avisos en regiones vivas (`status` y `alert`); los errores se quedan hasta cerrarlos;
     - sección en `/admin/diseno` y E2E del criterio 5, con «reducir movimiento».
 
-- [ ] **DS-09 · Datos y comercio.** Depende de: DS-04.
+- [x] **DS-09 · Datos y comercio.** Depende de: DS-04.
   - `Tag` y `Badge`: estados de publicación, de stock y de pedido; sustituye a `StatusBadge`.
   - `Price`:
     - PVP en el formato de cada idioma;
@@ -237,6 +237,11 @@ DS-01 puede empezar ya. De DS-05 a DS-09 se pueden trabajar en paralelo cuando e
     - «desde» y cifras tabulares.
   - `Table`, con la variante apilada de móvil, y `Card`, `EmptyState` y `Skeleton`.
   - Hecho cuando: hay estados en la página de referencia y las pruebas unitarias de `Price` cubren es, ca y en, con y sin rebaja.
+  - Hecho el 03/10 (rama `codex/ds-09-datos`, DECISIONS §103):
+    - `Badge` (cinco tonos) y `Tag`; `StatusBadge` del panel ya usa `Badge`;
+    - `Price` con «antes» accesible, «desde» y cifras tabulares, probado en es, ca y en con y sin rebaja;
+    - `Card`, `Table` (`Th`, `Td`) con ficha en el móvil, `EmptyState` y `Skeleton`;
+    - sección «Datos y comercio» en `/admin/diseno` con los estados de publicación, existencias y pedido.
 
 ### Migración
 

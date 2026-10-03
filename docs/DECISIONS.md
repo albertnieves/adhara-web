@@ -327,3 +327,15 @@ Formato de la Fase 0 §16: fecha · contexto · decisión · alternativas descar
         - cada aviso tiene botón de cerrar y su icono; el de éxito usa el tono oscuro.
       - **Movimiento:** con «reducir movimiento» las transiciones duran 0,01 ms (regla global), así que nada se desplaza (criterio 9).
       - **Pruebas:** unitarias de los tres y E2E en `/admin/diseno`: foco dentro durante seis Tab, Esc y foco devuelto, confirmación con «Cancelar» de inicio, aviso en la región de estado, panel oscuro, «reducir movimiento» y error que se cierra a mano.
+103.  **Datos y comercio (DS-09).**
+      - **`Badge`** es un estado (publicación, existencias, pedido) con cinco tonos: borde y texto del mismo semántico, así que cumple AA en el tono claro y en los oscuros, y el color siempre acompaña a una palabra. `StatusBadge` del panel ya lo usa. **`Tag`** es descriptivo (casa, concentración, público): fondo hundido, sin versalitas ni significado de estado.
+      - **`Price`:**
+        - PVP con `formatEuros` en el formato de cada idioma y cifras tabulares;
+        - el precio anterior solo sale si es mayor (rebaja con la regla Ómnibus de docs/PRICING.md); va tachado y con «antes» (`labels.before`) para el lector de pantalla, que no anuncia el tachado, y un espacio real separa los dos importes;
+        - «desde» cuando hay varios formatos.
+        - Los textos llegan del idioma de la página (la biblioteca no lee mensajes). La ficha y las tarjetas de la tienda pasan a usarlo en DS-10.
+      - **`Card`** sustituye a `.panel-card`; `interactive` marca el borde cuando toda la tarjeta es un enlace.
+      - **`Table`, `Th` y `Td`** sobre `.data-table` y `.stack-table`: leyenda accesible, cabeceras con `scope`, cifras a la derecha y, en el móvil, filas como fichas (`primary` encabeza y `label` nombra cada celda).
+      - **`EmptyState`** con la estrella, qué pasa y la acción siguiente; dice «no hay» o «todavía no», nunca rellena.
+      - **`Skeleton`** es decorativo (`aria-hidden`) y deja de latir con «reducir movimiento»; quien lo usa anuncia la carga una vez. Así la página de referencia no tiene un `aria-busy` permanente.
+      - **Pruebas:** unitarias de `Price` en es, ca y en, con y sin rebaja, con «desde» y con importes redondos, y de los demás componentes. La página de referencia sigue sin infracciones de axe y sin fallos de maquetación a 390, 768, 1280 y 1440 px.
