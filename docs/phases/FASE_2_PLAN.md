@@ -1,6 +1,6 @@
 # Fase 2 — Sistema de diseño: plan
 
-Estado: **en curso**. Plan aprobado el 02/10/2026 (PR #13) con las decisiones D1–D6 recomendadas; DS-01 a DS-07 hechas.
+Estado: **en curso**. Plan aprobado el 02/10/2026 (PR #13) con las decisiones D1–D6 recomendadas; DS-01 a DS-08 hechas.
 
 Base:
 
@@ -217,12 +217,17 @@ DS-01 puede empezar ya. De DS-05 a DS-09 se pueden trabajar en paralelo cuando e
     - sección «Formularios» en `/admin/diseno` con una prueba de validación;
     - E2E de teclado (Tab salta el deshabilitado, la solo lectura no se edita, Espacio y flechas, errores con foco en el primero) y axe sin infracciones.
 
-- [ ] **DS-08 · Superposiciones y avisos.** Depende de: DS-06.
+- [x] **DS-08 · Superposiciones y avisos.** Depende de: DS-06.
   - `Dialog`: `<dialog>` nativo, foco atrapado, Esc y foco devuelto.
   - `Sheet`: se mueve de `modules/admin/ui` a la biblioteca, con lado y tono.
   - `Toast` con `aria-live` y confirmación de acciones destructivas.
   - Respetan `reduced-motion`.
   - Hecho cuando: el criterio 5 pasa en la página de referencia.
+  - Hecho el 03/10 (rama `codex/ds-08-superposiciones`, DECISIONS §101):
+    - `Dialog`, `Sheet` y `useConfirm` sobre `<dialog>` modal con foco atrapado (Tab da la vuelta), Esc, cierre al tocar fuera y foco devuelto;
+    - `Sheet` y `Toast` ya están en la biblioteca y el panel los usa;
+    - avisos en regiones vivas (`status` y `alert`); los errores se quedan hasta cerrarlos;
+    - sección en `/admin/diseno` y E2E del criterio 5, con «reducir movimiento».
 
 - [ ] **DS-09 · Datos y comercio.** Depende de: DS-04.
   - `Tag` y `Badge`: estados de publicación, de stock y de pedido; sustituye a `StatusBadge`.

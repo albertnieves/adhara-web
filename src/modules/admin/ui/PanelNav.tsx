@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
-import { Sheet } from './Sheet';
+import { Sheet } from '@/components/ui';
 
 export type NavItem = {
   href: string;
