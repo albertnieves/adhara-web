@@ -1,5 +1,6 @@
 export { BrandMarquee } from './ui/BrandMarquee';
 export { CatalogBrowser } from './ui/CatalogBrowser';
+export { FAQ_ANCHOR, Faq } from './ui/Faq';
 export { Footer } from './ui/Footer';
 export { Header } from './ui/Header';
 export { Hero } from './ui/Hero';

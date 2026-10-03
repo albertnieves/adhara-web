@@ -92,7 +92,24 @@
     "info": "Información",
     "dev": "Web en desarrollo: contenidos e imágenes provisionales.",
     "rights": "© {year} L’Atelier du Désert",
-    "staffAccess": "Acceso del equipo"
+    "staffAccess": "Acceso del equipo",
+    "faq": "Preguntas frecuentes"
+  },
+  "faq": {
+    "eyebrow": "Dudas",
+    "title": "Preguntas frecuentes",
+    "buyOnlineQ": "¿Puedo comprar online?",
+    "buyOnlineA": "Todavía no. La compra online, con sus envíos y devoluciones, llegará muy pronto y aquí publicaremos sus condiciones. Mientras tanto, te esperamos en la tienda de Castelldefels.",
+    "visitQ": "¿Dónde está la tienda?",
+    "visitA": "En {address}, {city}.",
+    "hours": "Horario",
+    "contact": "Contacto",
+    "selectionQ": "¿Qué perfumes encontraré?",
+    "selectionA": "Una selección de fragancias de casas de Oriente Medio. En la colección puedes filtrarlas por casa y por público: mujer, hombre o unisex.",
+    "concentrationQ": "¿Qué diferencia hay entre eau de toilette, eau de parfum y extrait?",
+    "concentrationA": "La concentración de esencia. De menos a más: eau de cologne, eau de toilette, eau de parfum, parfum y extrait. Cuanto más concentrado, más intenso suele ser y más dura sobre la piel. Los aceites perfumados, muy habituales en la perfumería árabe, normalmente no llevan alcohol y se aplican directamente sobre la piel.",
+    "pricesQ": "¿Los precios incluyen IVA?",
+    "pricesA": "Sí. El precio de cada formato incluye el IVA. Si un perfume tiene varios formatos, la colección muestra el más económico con «Desde»."
   },
   "notFound": {
     "title": "Esta página no existe",

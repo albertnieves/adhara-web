@@ -260,6 +260,7 @@ La revisión visual con perfumes se hizo en local con un Supabase simulado que d
 - 02/10: Fase 2, DS-05: iconos propios, motivos de la estrella y reglas del logotipo.
 - 03/10: Fase 2, DS-06: botones, enlaces y envío de formularios con estados y teclado.
 - 03/10: Fase 2, DS-07: campos de formulario con etiqueta, ayuda y error accesibles.
+- 03/10: preguntas frecuentes plegadas al final de la portada, enlazadas desde el pie (sin reseñas inventadas).
 - 03/10: Fase 2, DS-08: diálogos, paneles laterales, confirmaciones y avisos accesibles.
 
 Ver docs/DEVELOPMENT.md para continuar y docs/DECISIONS.md para las decisiones.

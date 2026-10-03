@@ -9,7 +9,13 @@ import type { Metadata } from 'next';
 import { Link } from '@/modules/i18n';
 import { alternatesMetadata } from '@/modules/i18n/metadata';
 import { requireLocale } from '@/modules/i18n/server';
-import { BrandMarquee, Hero, ProductCard, Reveal } from '@/modules/storefront';
+import {
+  BrandMarquee,
+  Faq,
+  Hero,
+  ProductCard,
+  Reveal,
+} from '@/modules/storefront';
 
 /** La tienda se regenera cada 5 minutos o al publicar desde el panel. */
 export const revalidate = 300;
@@ -179,6 +185,8 @@ export default async function Home({
           )}
         </Reveal>
       </section>
+
+      <Faq store={details} />
     </main>
   );
 }

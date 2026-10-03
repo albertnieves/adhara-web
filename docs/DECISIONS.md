@@ -304,7 +304,16 @@ Formato de la Fase 0 §16: fecha · contexto · decisión · alternativas descar
         - `SearchField` lleva la lupa, un nombre accesible propio y la estrella mientras llegan resultados. El buscador del panel (catálogo e inventario) ya es este.
       - **`Checkbox` y `Radio`:** dibujados con los semánticos y no con el control nativo, que no sigue los tonos oscuros. Caja de 24 px y la etiqueta entera como objetivo táctil de 44 px.
       - **Pruebas:** unitarias de los ocho componentes y E2E de teclado en `/admin/diseno`, con una prueba de formulario que valida, marca los errores y lleva el foco al primero que falla. axe sin infracciones y auditoría sin fallos a 390, 768, 1280 y 1440 px.
-101.  **Superposiciones y avisos (DS-08).**
+101.  **Preguntas frecuentes en la portada (03/10).** El usuario pidió reseñas de Google escritas por IA antes del pie, para sustituirlas más adelante por reseñas reales. No se hacen: serían reseñas falsas presentadas como de clientes, que prohíben las reglas del proyecto («no inventar … reseñas») y la normativa de consumo de la UE y de España. En su lugar, y a petición del usuario, un bloque de preguntas frecuentes que no cargue la página.
+      - **Dónde:** al final de la portada, antes del pie, plegado (`<details name>`: se ve solo la pregunta y se abre una cada vez, sin JavaScript y con teclado). El pie enlaza la sección desde todas las páginas (`/#preguntas-frecuentes`).
+      - **Qué dice:** solo lo que ya consta en la tienda:
+        - la compra online todavía no está disponible; sus envíos y devoluciones se publicarán con ella;
+        - la dirección, el horario y el contacto, desde los datos de la tienda del panel;
+        - qué perfumes hay y cómo filtrarlos en la colección;
+        - la diferencia entre concentraciones (conocimiento general, no datos de producto);
+        - los precios incluyen IVA y «Desde» es el formato más económico.
+      - **Pendiente del negocio:** autenticidad y procedencia, envíos, devoluciones y pruebas en tienda, cuando estén decididas. Las reseñas reales, cuando las haya, con su fuente.
+102.  **Superposiciones y avisos (DS-08).**
       - **`Dialog` y `Sheet`** sobre `<dialog>` con `showModal()`, en un gancho común (`useModal`):
         - el resto de la página queda inerte; Esc o tocar fuera cierran;
         - Tab y Mayús+Tab dan la vuelta dentro del diálogo: el nativo deja salir el foco a la barra del navegador tras el último control, y el plan pide foco atrapado;

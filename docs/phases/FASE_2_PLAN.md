@@ -223,7 +223,7 @@ DS-01 puede empezar ya. De DS-05 a DS-09 se pueden trabajar en paralelo cuando e
   - `Toast` con `aria-live` y confirmación de acciones destructivas.
   - Respetan `reduced-motion`.
   - Hecho cuando: el criterio 5 pasa en la página de referencia.
-  - Hecho el 03/10 (rama `codex/ds-08-superposiciones`, DECISIONS §101):
+  - Hecho el 03/10 (rama `codex/ds-08-superposiciones`, DECISIONS §102):
     - `Dialog`, `Sheet` y `useConfirm` sobre `<dialog>` modal con foco atrapado (Tab da la vuelta), Esc, cierre al tocar fuera y foco devuelto;
     - `Sheet` y `Toast` ya están en la biblioteca y el panel los usa;
     - avisos en regiones vivas (`status` y `alert`); los errores se quedan hasta cerrarlos;
