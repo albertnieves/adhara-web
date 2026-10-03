@@ -266,3 +266,8 @@ Formato de la Fase 0 §16: fecha · contexto · decisión · alternativas descar
       - `Logo` sustituye el tamaño libre por `size` (`sm` o `md`), así que no puede quedar por debajo del mínimo. Sin cambio visual.
     - **Iconos de la aplicación:** `icon.svg` y `apple-icon.png` (180 px, fondo opaco) llevan el emblema en tinta sobre marfil; revisados y sin cambios.
     - **Verificación:** por indicación del usuario («no hagas comprobaciones irrelevantes, las haremos en la siguiente fase») solo `pnpm check` en local, con 17 pruebas unitarias nuevas. Los E2E y la auditoría los ejecuta la CI.
+98. **Idioma de la ruta antes de leer datos.**
+    - **Error:** el registro del servidor mostraba «No se pudo leer el contenido de la tienda» en las ejecuciones de E2E.
+    - **Causa:** el navegador pide `/favicon.ico` por su cuenta. Esa ruta no pasa por el proxy, porque tiene un punto, y Next la resolvía como `[locale]` = `favicon.ico`. El layout respondía 404, pero la portada se renderiza a la vez, consultaba `store_content` con ese idioma y fallaba.
+    - **Arreglo:** `requireLocale` (`src/modules/i18n/server.ts`) responde 404 si el idioma no es es, ca o en y, si lo es, fija el idioma de next-intl. Lo llaman el layout, la portada, la colección, la ficha y los metadatos de la ficha, siempre antes de leer datos.
+    - **Comprobado:** con la suite pública completa en paralelo, el error salía 4 veces en `main` y ninguna con el arreglo. `setup.spec` comprueba ahora que `/favicon.ico` da 404.
