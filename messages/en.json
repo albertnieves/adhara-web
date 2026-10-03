@@ -92,7 +92,24 @@
     "info": "Information",
     "dev": "Website in development: provisional content and images.",
     "rights": "© {year} L’Atelier du Désert",
-    "staffAccess": "Staff access"
+    "staffAccess": "Staff access",
+    "faq": "FAQ"
+  },
+  "faq": {
+    "eyebrow": "Questions",
+    "title": "Frequently asked questions",
+    "buyOnlineQ": "Can I buy online?",
+    "buyOnlineA": "Not yet. Online shopping, with its shipping and returns, is coming very soon and we will publish its terms here. In the meantime, we look forward to seeing you at our shop in Castelldefels.",
+    "visitQ": "Where is the shop?",
+    "visitA": "At {address}, {city}.",
+    "hours": "Opening hours",
+    "contact": "Contact",
+    "selectionQ": "What perfumes will I find?",
+    "selectionA": "A selection of fragrances from Middle Eastern houses. In the collection you can filter them by house and by who they are for: women, men or unisex.",
+    "concentrationQ": "What is the difference between eau de toilette, eau de parfum and extrait?",
+    "concentrationA": "The concentration of perfume essence. From lowest to highest: eau de cologne, eau de toilette, eau de parfum, parfum and extrait. The more concentrated, the more intense it tends to be and the longer it lasts on the skin. Perfume oils, very common in Arabian perfumery, are usually alcohol-free and applied directly to the skin.",
+    "pricesQ": "Do prices include VAT?",
+    "pricesA": "Yes. The price of each size includes VAT. When a perfume comes in several sizes, the collection shows the lowest one with “From”."
   },
   "notFound": {
     "title": "This page does not exist",
