@@ -144,7 +144,7 @@ export default async function PanelLayout({
           className="inline-flex min-h-11 items-center lg:px-3"
           aria-label="Inicio del panel"
         >
-          <Logo className="text-sm" />
+          <Logo size="sm" />
         </Link>
         <PanelNav items={items} footer={shortcuts} />
         <div className="hidden lg:mt-auto lg:flex lg:flex-col lg:items-start lg:gap-1 lg:px-3">

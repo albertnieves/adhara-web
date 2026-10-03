@@ -6,6 +6,9 @@
 export { Eyebrow } from './Eyebrow';
 export type { EyebrowTone } from './Eyebrow';
 export { HEADING_SIZES, Heading } from './Heading';
+export { ICON_NAMES, Icon } from './Icon';
+export type { IconDirection, IconName, IconSize } from './Icon';
+export { StarDivider, StarList, StarLoader } from './StarMotifs';
 export type { HeadingLevel, HeadingSize } from './Heading';
 export { TEXT_SIZES, TEXT_TONES, Text } from './Text';
 export type { TextSize, TextTone } from './Text';
