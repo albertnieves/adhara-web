@@ -281,6 +281,7 @@ Formato de la Fase 0 §16: fecha · contexto · decisión · alternativas descar
       - Por defecto es `type="button"`: no envía formularios por accidente.
       - Con `href` es un enlace; un enlace «deshabilitado» se muestra apagado con `aria-disabled` y fuera del tabulador.
     - **`TextLink`:** el subrayado de `.link-underline`. Si es externo abre otra pestaña con `noopener` y lo anuncia a los lectores de pantalla con `newTabLabel`, en el idioma de la página.
+      - Lleva el icono `external`, que se suma al juego de D5: una flecha dibujada en diagonal. Girar la flecha 45° hacía sobresalir su caja 3 px del enlace, y la auditoría lo detectó en la CI.
     - **`SubmitButton`:** `Button` con el estado de envío del formulario o el de `useAdminAction`. El del panel ya es este, con su misma API (`ghost` pasa a ser el contorno) hasta la migración del panel (DS-11).
       - Cambios visibles en los 36 botones de envío del panel: el contorno es más marcado, el rojo de peligro va entero en el borde y, mientras envía, la estrella acompaña al texto.
     - **Pruebas:** unitarias de `Button` y `TextLink`, y E2E de teclado en `/admin/diseno`:

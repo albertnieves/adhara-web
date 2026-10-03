@@ -69,5 +69,7 @@ describe('TextLink', () => {
     expect(markup).toContain('rel="noopener noreferrer"');
     expect(markup).toContain('opens in a new tab');
     expect(markup).toContain('link-underline');
+    // Icono dibujado en diagonal: un icono girado desborda la caja del enlace.
+    expect(markup).not.toContain('rotate');
   });
 });

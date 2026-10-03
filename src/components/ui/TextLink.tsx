@@ -37,7 +37,7 @@ export function TextLink({
       {children}
       {external && (
         <>
-          <Icon name="arrow" size="sm" className="-rotate-45" />
+          <Icon name="external" size="sm" />
           <span className="sr-only"> ({newTabLabel})</span>
         </>
       )}
