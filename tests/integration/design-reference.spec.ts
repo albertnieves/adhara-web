@@ -26,7 +26,7 @@ test('referencia del sistema de diseño con sesión de encargado', async ({
 
   const response = await page.reload();
   expect(response?.status()).toBe(200);
-  await expect(page.locator('[aria-busy="true"]')).toHaveCount(0);
+  await expect(page.locator('[aria-busy="true"]:not(button)')).toHaveCount(0);
 
   // Todos los tokens tienen valor en el CSS compilado.
   await expect(page.getByText('sin valor', { exact: true })).toHaveCount(0);
@@ -85,4 +85,46 @@ test('referencia del sistema de diseño con sesión de encargado', async ({
       `axe a ${width} px`,
     ).toEqual([]);
   }
+});
+
+test('acciones: teclado en la página de referencia (DS-06)', async ({
+  page,
+}) => {
+  test.setTimeout(2 * 60_000);
+  await login(page, await user('viewer'));
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/admin/diseno#acciones');
+  await expect(page.locator('[aria-busy="true"]:not(button)')).toHaveCount(0);
+
+  // Intro y Espacio activan.
+  const press = page.getByRole('button', { name: 'Pulsar', exact: true });
+  await press.focus();
+  await page.keyboard.press('Enter');
+  await expect(page.getByText('Pulsado 1 vez')).toBeVisible();
+  await page.keyboard.press('Space');
+  await expect(page.getByText('Pulsado 2 veces')).toBeVisible();
+
+  // El deshabilitado no recibe el foco: Tab salta al siguiente.
+  await page.keyboard.press('Tab');
+  await expect(
+    page.getByRole('button', { name: 'Simular guardado' }),
+  ).toBeFocused();
+
+  // Foco visible de 2 px (criterio 5).
+  const outline = await page.evaluate(() => {
+    const style = getComputedStyle(document.activeElement!);
+    return `${style.outlineStyle} ${style.outlineWidth}`;
+  });
+  expect(outline).toBe('solid 2px');
+
+  // Cargando: no responde mientras dura.
+  await page.keyboard.press('Enter');
+  const saving = page.getByRole('button', { name: 'Guardando…' });
+  await expect(saving).toBeDisabled();
+  await expect(saving).toHaveAttribute('aria-busy', 'true');
+
+  // Un enlace con aspecto de botón se sigue con Intro.
+  await page.getByRole('link', { name: 'Ir a acciones' }).focus();
+  await page.keyboard.press('Enter');
+  await expect(page).toHaveURL(/#acciones$/);
 });

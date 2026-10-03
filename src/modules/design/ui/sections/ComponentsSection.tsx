@@ -1,4 +1,7 @@
 import {
+  BUTTON_SIZES,
+  BUTTON_VARIANTS,
+  Button,
   Eyebrow,
   Heading,
   ICON_NAMES,
@@ -7,13 +10,17 @@ import {
   StarList,
   StarLoader,
   Text,
+  TextLink,
 } from '@/components/ui';
 import type {
+  ButtonSize,
+  ButtonVariant,
   HeadingSize,
   IconSize,
   TextSize,
   TextTone,
 } from '@/components/ui';
+import { ButtonPlayground } from '../ButtonPlayground';
 import { Section, SubTitle } from '../Section';
 
 const HEADINGS: { size: HeadingSize; use: string }[] = [
@@ -43,7 +50,6 @@ const ICON_SIZES: { size: IconSize; px: number }[] = [
 
 /** Las que añaden las tareas siguientes del plan de la Fase 2. */
 const UPCOMING = [
-  { task: 'DS-06', name: 'Acciones: Button, TextLink y SubmitButton' },
   {
     task: 'DS-07',
     name: 'Formularios: Field, Input, Textarea, Select, Checkbox, Radio y SearchField',
@@ -216,6 +222,84 @@ export function ComponentsSection() {
           use="Cargador: titila; quieta con «reducir movimiento»."
         >
           <StarLoader label="Cargando la demostración" />
+        </Example>
+      </ul>
+      <SubTitle>Button</SubTitle>
+      <Text size="small" tone="muted" className="mb-4 max-w-3xl">
+        Cinco variantes con los semánticos, así que funcionan en todos los
+        tonos. md y lg miden 44 y 48 px; sm (36 px) es para tablas y barras
+        compactas. Con href es un enlace con aspecto de botón.
+      </Text>
+      <div id="acciones" className="flex scroll-mt-8 flex-col gap-6">
+        {(Object.keys(BUTTON_VARIANTS) as ButtonVariant[]).map((variant) => (
+          <div key={variant} className="flex flex-wrap items-center gap-3">
+            <code className="w-20 shrink-0 text-xs">{variant}</code>
+            {(Object.keys(BUTTON_SIZES) as ButtonSize[]).map((size) => (
+              <Button key={size} variant={variant} size={size}>
+                Añadir {size}
+              </Button>
+            ))}
+          </div>
+        ))}
+      </div>
+      <ul className="divide-border border-border mt-6 divide-y border-y">
+        <Example
+          code={'<Button loading loadingLabel="Enviando…">'}
+          use="Carga: la estrella titila y el botón no responde."
+        >
+          <Button loading loadingLabel="Enviando…">
+            Enviar
+          </Button>
+        </Example>
+        <Example
+          code={'<Button disabled>'}
+          use="Deshabilitado: fuera del tabulador y atenuado."
+        >
+          <Button variant="outline" disabled>
+            No disponible
+          </Button>
+        </Example>
+        <Example
+          code={'<SubmitButton pendingLabel="…">'}
+          use="En formularios: toma el estado de envío del formulario."
+        >
+          <Text size="small" tone="muted">
+            Es el que ya usa el panel en todos sus formularios.
+          </Text>
+        </Example>
+      </ul>
+      <SubTitle>Teclado</SubTitle>
+      <Text size="small" tone="muted" className="mb-4 max-w-3xl">
+        Tab recorre los botones en orden; Intro y Espacio los activan; el foco
+        se ve con 2 px.
+      </Text>
+      <ButtonPlayground />
+      <SubTitle>TextLink</SubTitle>
+      <ul className="divide-border border-border divide-y border-y">
+        <Example
+          code={'<TextLink href="…">'}
+          use="Enlace en el texto: el subrayado se dibuja al pasar o enfocar."
+        >
+          <Text size="small">
+            Consulta la{' '}
+            <TextLink href="#componentes">lista de componentes</TextLink>.
+          </Text>
+        </Example>
+        <Example
+          code={'<TextLink tone="muted">'}
+          use="Atenuado, para pies y ayudas."
+        >
+          <TextLink href="#marca" tone="muted">
+            Reglas de la marca
+          </TextLink>
+        </Example>
+        <Example
+          code={'<TextLink external newTabLabel="…">'}
+          use="Abre otra pestaña y lo anuncia a los lectores de pantalla."
+        >
+          <TextLink href="/es" external>
+            Tienda pública
+          </TextLink>
         </Example>
       </ul>
       <SubTitle>Próximas</SubTitle>

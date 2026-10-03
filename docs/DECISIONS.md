@@ -271,3 +271,22 @@ Formato de la Fase 0 §16: fecha · contexto · decisión · alternativas descar
     - **Causa:** el navegador pide `/favicon.ico` por su cuenta. Esa ruta no pasa por el proxy, porque tiene un punto, y Next la resolvía como `[locale]` = `favicon.ico`. El layout respondía 404, pero la portada se renderiza a la vez, consultaba `store_content` con ese idioma y fallaba.
     - **Arreglo:** `requireLocale` (`src/modules/i18n/server.ts`) responde 404 si el idioma no es es, ca o en y, si lo es, fija el idioma de next-intl. Lo llaman el layout, la portada, la colección, la ficha y los metadatos de la ficha, siempre antes de leer datos.
     - **Comprobado:** con la suite pública completa en paralelo, el error salía 4 veces en `main` y ninguna con el arreglo. `setup.spec` comprueba ahora que `/favicon.ico` da 404.
+99. **Acciones (DS-06).**
+    - **`Button`:** cinco variantes sobre los tokens semánticos, así que valen en el tono claro y en los oscuros sin variantes propias.
+      - Principal: `fg` con texto `fg-inverse`, que se aclara un poco al pasar el ratón (D4: el dorado nunca es fondo de texto).
+      - Secundaria (fondo hundido), contorno (`border-strong`, 3:1) y sutil (sin borde).
+      - Peligro: de contorno rojo y se llena al pasar el ratón, como los botones destructivos del panel; no compite con el principal.
+      - Tamaños: sm de 36 px para tablas y barras compactas, y md y lg de 44 y 48 px (criterio 8).
+      - Carga: la estrella titila, el texto pasa a `loadingLabel`, el botón queda deshabilitado y lleva `aria-busy`.
+      - Por defecto es `type="button"`: no envía formularios por accidente.
+      - Con `href` es un enlace; un enlace «deshabilitado» se muestra apagado con `aria-disabled` y fuera del tabulador.
+    - **`TextLink`:** el subrayado de `.link-underline`. Si es externo abre otra pestaña con `noopener` y lo anuncia a los lectores de pantalla con `newTabLabel`, en el idioma de la página.
+    - **`SubmitButton`:** `Button` con el estado de envío del formulario o el de `useAdminAction`. El del panel ya es este, con su misma API (`ghost` pasa a ser el contorno) hasta la migración del panel (DS-11).
+      - Cambios visibles en los 36 botones de envío del panel: el contorno es más marcado, el rojo de peligro va entero en el borde y, mientras envía, la estrella acompaña al texto.
+    - **Pruebas:** unitarias de `Button` y `TextLink`, y E2E de teclado en `/admin/diseno`:
+      - Intro y Espacio activan;
+      - el deshabilitado queda fuera del tabulador;
+      - el foco tiene 2 px;
+      - mientras carga, el botón no responde;
+      - el enlace con aspecto de botón se sigue con Intro.
+      - Las esperas de la auditoría y de la página ignoran `aria-busy` en botones, porque la página enseña un botón en carga de forma permanente.
