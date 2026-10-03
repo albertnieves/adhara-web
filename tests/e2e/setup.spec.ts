@@ -34,6 +34,9 @@ for (const [locale, path] of [
 }
 test('rutas no soportadas devuelven 404', async ({ request }) => {
   expect((await request.get('/xx')).status()).toBe(404);
+  // El navegador lo pide solo; no pasa por el proxy y antes llegaba a la
+  // portada como idioma «favicon.ico» (DECISIONS §98).
+  expect((await request.get('/favicon.ico')).status()).toBe(404);
 });
 
 test('un perfume inexistente devuelve 404 con la página de la tienda', async ({

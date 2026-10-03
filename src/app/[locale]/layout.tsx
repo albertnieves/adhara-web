@@ -1,15 +1,11 @@
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
-import { hasLocale, NextIntlClientProvider } from 'next-intl';
-import {
-  getMessages,
-  getTranslations,
-  setRequestLocale,
-} from 'next-intl/server';
+import { NextIntlClientProvider } from 'next-intl';
+import { getMessages, getTranslations } from 'next-intl/server';
 import { draftMode } from 'next/headers';
-import { notFound } from 'next/navigation';
 import { BRAND_NAME } from '@/modules/brand';
 import { routing } from '@/modules/i18n';
+import { requireLocale } from '@/modules/i18n/server';
 import { siteUrl } from '@/modules/i18n/seo';
 import { Footer, Header, PreviewBanner } from '@/modules/storefront';
 import { fontVariables } from '../fonts';
@@ -42,8 +38,7 @@ export default async function LocaleLayout({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
-  if (!hasLocale(routing.locales, locale)) notFound();
-  setRequestLocale(locale);
+  requireLocale(locale);
   const [messages, t, draft] = await Promise.all([
     getMessages(),
     getTranslations('nav'),

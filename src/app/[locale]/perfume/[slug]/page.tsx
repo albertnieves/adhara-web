@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { getTranslations, setRequestLocale } from 'next-intl/server';
+import { getTranslations } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { variantLabel } from '@/modules/catalog';
 import {
@@ -9,6 +9,7 @@ import {
 } from '@/modules/catalog/server';
 import { Link } from '@/modules/i18n';
 import { alternatesMetadata } from '@/modules/i18n/metadata';
+import { requireLocale } from '@/modules/i18n/server';
 import { findSceneSlug } from '@/modules/unboxing';
 import {
   ProductCard,
@@ -32,6 +33,7 @@ export async function generateMetadata({
   params: Params;
 }): Promise<Metadata> {
   const { locale, slug } = await params;
+  requireLocale(locale);
   const product = await getStorefrontProduct(slug, locale);
   if (!product) return {};
   // El español es la base (nombre, marca, precio); ca y en cuentan como
@@ -49,7 +51,7 @@ export async function generateMetadata({
 
 export default async function ProductPage({ params }: { params: Params }) {
   const { locale, slug } = await params;
-  setRequestLocale(locale);
+  requireLocale(locale);
   const product = await getStorefrontProduct(slug, locale);
   if (!product) notFound();
 

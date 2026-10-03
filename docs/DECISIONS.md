@@ -252,3 +252,8 @@ Formato de la Fase 0 §16: fecha · contexto · decisión · alternativas descar
       - el logotipo de la cabecera de la tienda y de la pantalla de acceso pasa de 17 a 18 px. El del panel sigue en 14 px.
     - **Excepción permanente:** la etiqueta de estante impresa (`PriceLabelCard`, 63,5 × 38,1 mm) mantiene sus tamaños en pt para coincidir con la hoja. Va escrita con su motivo en `design-guard-exceptions.ts`, y la auditoría la excluye con `data-print-size`.
     - **Guardas:** la prueba cuenta cualquier `text-[…]`, también pt y `clamp()`, que antes no detectaba. No admite ningún `tracking-[…]` y exige tokens en los `letter-spacing` de `globals.css`. La auditoría E2E bloquea cualquier texto visible de menos de 11 px.
+97. **Idioma de la ruta antes de leer datos.**
+    - **Error:** el registro del servidor mostraba «No se pudo leer el contenido de la tienda» en las ejecuciones de E2E.
+    - **Causa:** el navegador pide `/favicon.ico` por su cuenta. Esa ruta no pasa por el proxy, porque tiene un punto, y Next la resolvía como `[locale]` = `favicon.ico`. El layout respondía 404, pero la portada se renderiza a la vez, consultaba `store_content` con ese idioma y fallaba.
+    - **Arreglo:** `requireLocale` (`src/modules/i18n/server.ts`) responde 404 si el idioma no es es, ca o en y, si lo es, fija el idioma de next-intl. Lo llaman el layout, la portada, la colección, la ficha y los metadatos de la ficha, siempre antes de leer datos.
+    - **Comprobado:** con la suite pública completa en paralelo, el error salía 4 veces en `main` y ninguna con el arreglo. `setup.spec` comprueba ahora que `/favicon.ico` da 404.

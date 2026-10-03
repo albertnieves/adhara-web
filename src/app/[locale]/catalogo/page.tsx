@@ -1,8 +1,9 @@
 import type { Metadata } from 'next';
-import { getTranslations, setRequestLocale } from 'next-intl/server';
+import { getTranslations } from 'next-intl/server';
 import { listStorefrontProducts } from '@/modules/catalog/server';
 import { CatalogBrowser, Reveal } from '@/modules/storefront';
 import { alternatesMetadata } from '@/modules/i18n/metadata';
+import { requireLocale } from '@/modules/i18n/server';
 
 export const revalidate = 300;
 
@@ -22,7 +23,7 @@ export default async function Catalog({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
-  setRequestLocale(locale);
+  requireLocale(locale);
   const [t, products] = await Promise.all([
     getTranslations('catalog'),
     listStorefrontProducts(locale),
