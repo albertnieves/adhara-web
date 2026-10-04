@@ -17,7 +17,7 @@ Instalación en el directorio de habilidades del usuario (~/.codex/skills); disp
 
 - PDF: extracción e inspección del catálogo cuando se aporte.
 - Imagegen: media editorial cuando se defina la dirección visual; nunca sustituir evidencia del producto.
-- Graphify: análisis del proyecto al pedir /graphify.
+- Graphify: análisis del proyecto al pedir /graphify. El grafo versionado está en `graphify-out/` (§105).
 - Navegador integrado: inspección y revisión visual. Playwright como dependencia del repo ejecuta pruebas reproducibles locales y CI.
 
 Se revisó la habilidad Playwright CLI de OpenAI, pero no se añadió: el navegador integrado y los tests del proyecto cubren el arranque y evitan duplicar herramientas. Los constructores de sitios alojados en otros servicios no se seleccionan porque el proyecto tiene arquitectura propia Next.js + Supabase + Vercel.

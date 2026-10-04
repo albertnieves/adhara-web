@@ -360,3 +360,11 @@ Formato de la Fase 0 §16: fecha · contexto · decisión · alternativas descar
         - la disponibilidad es un `Badge` («Agotado» en neutro, como era el punto gris; también en la página de referencia);
         - los formatos miden 44 px.
       - **Comprobado:** E2E públicos en local (125), con la auditoría de maquetación y axe sin fallos en `/es`, `/ca`, `/en`, la colección en los tres idiomas, la ficha publicada y la 404, a 390, 768, 1280 y 1440 px; capturas revisadas a 390 y 1440 px.
+
+## Grafo de graphify — 04/10/2026
+
+105. **Grafo de conocimiento del proyecto con graphify 0.9.75** en `graphify-out/`, a petición del usuario («genera un grafo de graphify en el proyecto como PR independiente»).
+     - **Contenido:** `graph.json` (2676 nodos, 7435 aristas, 133 comunidades con nombre), `graph.html` (visor interactivo), `GRAPH_REPORT.md` (nodos centrales, conexiones sorprendentes y preguntas), `manifest.json` y `.graphify_labels.json` para `graphify update`, y `cost.json`.
+     - **Alcance:** 422 archivos de código por AST (con `graphifyy[sql]` para las migraciones) y 41 documentos por extracción semántica. Las 44 imágenes (fotos de producto y borradores del piloto) no se extrajeron: no aportan estructura y cada una exige su propia llamada de visión.
+     - **Fuera de Git:** `graphify-out/cache/` y las rutas locales del intérprete. `graphify-out/` queda fuera de Prettier porque es salida generada.
+     - **Datos:** el grafo solo contiene nombres de símbolos, rutas y conceptos de la documentación ya versionada; no añade costes, proveedores ni secretos que no estén en el repositorio. Es una instantánea: se queda desfasado con el código y se regenera con `graphify update .` (código) o `/graphify .` (todo).
