@@ -1,14 +1,10 @@
 'use client';
 
-import {
-  Field,
-  FormMessage,
-  SubmitButton,
-  useAdminAction,
-} from '@/modules/admin';
+import { FormMessage, useAdminAction } from '@/modules/admin';
 import type { StockWatchSettings } from '../domain/watch-snapshot';
 import { WATCH_SETTING_LIMITS } from '../domain/watch-snapshot';
 import { saveWatchSettings } from '../server/watch-actions';
+import { Field, Input, SubmitButton } from '@/components/ui';
 
 const FIELDS: {
   key: keyof StockWatchSettings;
@@ -52,7 +48,7 @@ export function WatchSettingsForm({
     >
       {FIELDS.map((field) => (
         <Field key={field.key} label={field.label} hint={field.hint}>
-          <input
+          <Input
             name={field.key}
             type="number"
             inputMode="numeric"
@@ -61,13 +57,13 @@ export function WatchSettingsForm({
             min={WATCH_SETTING_LIMITS[field.key].min}
             max={WATCH_SETTING_LIMITS[field.key].max}
             defaultValue={settings[field.key]}
-            className="input tabular-nums"
+            className="tabular-nums"
           />
         </Field>
       ))}
       {editable && (
         <div className="flex flex-wrap items-center gap-4 sm:col-span-2 xl:col-span-4">
-          <SubmitButton pending={pending} variant="ghost">
+          <SubmitButton pending={pending} variant="outline">
             Guardar parámetros
           </SubmitButton>
           <FormMessage state={state} />

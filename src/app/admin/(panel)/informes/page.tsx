@@ -4,6 +4,7 @@ import { PageHeader } from '@/modules/admin';
 import { isAllowed } from '@/modules/auth';
 import type { Permission } from '@/modules/auth';
 import { requirePermission } from '@/modules/auth/server';
+import { cardClass } from '@/components/ui';
 
 export const metadata: Metadata = { title: 'Informes' };
 
@@ -57,7 +58,7 @@ export default async function Reports() {
   return (
     <main>
       <PageHeader eyebrow="Panel" title="Informes" />
-      <p className="text-smoke mb-10 max-w-3xl text-sm leading-relaxed">
+      <p className="text-fg-muted mb-10 max-w-3xl text-sm leading-relaxed">
         Solo lectura, calculados con los movimientos, costes y compras
         registrados. Las ventas se cuentan en unidades: el mostrador no guarda
         importes. Los valores a coste son netos, sin IVA, y solo los ve quien
@@ -68,10 +69,13 @@ export default async function Reports() {
           <li key={report.href}>
             <Link
               href={report.href}
-              className="panel-card hover:bg-surface-raised block h-full transition-colors duration-300"
+              className={cardClass({
+                interactive: true,
+                className: 'block h-full',
+              })}
             >
               <h2 className="text-2xl font-light">{report.title}</h2>
-              <p className="text-smoke mt-3 text-sm leading-relaxed">
+              <p className="text-fg-muted mt-3 text-sm leading-relaxed">
                 {report.description}
               </p>
             </Link>

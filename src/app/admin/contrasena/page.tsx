@@ -1,9 +1,10 @@
 import { redirect } from 'next/navigation';
-import { AuthError, AuthScreen, Field } from '@/modules/admin';
+import { AuthError, AuthScreen } from '@/modules/admin';
 import {
   requireStaffSessionAnyLevel,
   setPassword,
 } from '@/modules/auth/server';
+import { buttonClass, Field, Input } from '@/components/ui';
 
 export default async function AdminPassword({
   searchParams,
@@ -18,7 +19,7 @@ export default async function AdminPassword({
   const { error } = await searchParams;
   return (
     <AuthScreen title="Elige tu contraseña">
-      {email && <p className="text-smoke mb-6 text-sm">Cuenta: {email}</p>}
+      {email && <p className="text-fg-muted mb-6 text-sm">Cuenta: {email}</p>}
       {error && (
         <AuthError>
           {error === 'requisitos'
@@ -28,26 +29,24 @@ export default async function AdminPassword({
       )}
       <form action={setPassword} className="flex flex-col gap-5">
         <Field label="Nueva contraseña" hint="Mínimo 12 caracteres.">
-          <input
+          <Input
             name="password"
             type="password"
             autoComplete="new-password"
             minLength={12}
             required
-            className="input"
           />
         </Field>
         <Field label="Repite la contraseña">
-          <input
+          <Input
             name="confirmation"
             type="password"
             autoComplete="new-password"
             minLength={12}
             required
-            className="input"
           />
         </Field>
-        <button type="submit" className="btn btn-primary mt-4">
+        <button type="submit" className={buttonClass('primary', 'lg', 'mt-4')}>
           Guardar
         </button>
       </form>

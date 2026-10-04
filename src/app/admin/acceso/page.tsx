@@ -1,6 +1,7 @@
 import Link from 'next/link';
-import { AuthError, AuthScreen, Field } from '@/modules/admin';
+import { AuthError, AuthScreen } from '@/modules/admin';
 import { signIn } from '@/modules/auth/server';
+import { buttonClass, Field, Input } from '@/components/ui';
 
 const ERRORS: Record<string, string> = {
   credenciales: 'Email o contraseña incorrectos.',
@@ -20,24 +21,17 @@ export default async function AdminLogin({
       {message && <AuthError>{message}</AuthError>}
       <form action={signIn} className="flex flex-col gap-5">
         <Field label="Email">
-          <input
-            name="email"
-            type="email"
-            autoComplete="username"
-            required
-            className="input"
-          />
+          <Input name="email" type="email" autoComplete="username" required />
         </Field>
         <Field label="Contraseña">
-          <input
+          <Input
             name="password"
             type="password"
             autoComplete="current-password"
             required
-            className="input"
           />
         </Field>
-        <button type="submit" className="btn btn-primary mt-4">
+        <button type="submit" className={buttonClass('primary', 'lg', 'mt-4')}>
           Entrar
         </button>
       </form>

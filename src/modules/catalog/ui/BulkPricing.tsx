@@ -3,10 +3,19 @@
 import Link from 'next/link';
 import { startTransition, useActionState, useState } from 'react';
 import { formatEuros } from '@/lib/money';
-import { Field, SubmitButton } from '@/modules/admin';
 import { MAX_BULK_ROWS, PRICE_ISSUE_LABELS } from '@/modules/pricing';
 import type { BulkRowView, BulkState } from '../server/bulk-pricing';
 import { bulkChangePrices } from '../server/bulk-pricing';
+import {
+  Card,
+  Checkbox,
+  Eyebrow,
+  Field,
+  Input,
+  Select,
+  SubmitButton,
+  Table,
+} from '@/components/ui';
 
 const IDLE: BulkState = { status: 'idle' };
 
@@ -79,13 +88,12 @@ export function BulkPricing({
 
   return (
     <form onSubmit={onSubmit} className="space-y-10">
-      <section className="panel-card grid gap-5 sm:grid-cols-2 xl:grid-cols-5">
+      <Card as="section" className="grid gap-5 sm:grid-cols-2 xl:grid-cols-5">
         <Field label="Marca">
-          <select
+          <Select
             name="brandId"
             value={params.brandId}
             onChange={(e) => set('brandId')(e.target.value)}
-            className="input"
           >
             <option value="">Todas</option>
             {brands.map((brand) => (
@@ -93,66 +101,63 @@ export function BulkPricing({
                 {brand.name}
               </option>
             ))}
-          </select>
+          </Select>
         </Field>
         <Field label="Perfumes">
-          <select
+          <Select
             name="scope"
             value={params.scope}
             onChange={(e) => set('scope')(e.target.value)}
-            className="input"
           >
             <option value="all">Todos</option>
             <option value="published">Solo publicados</option>
-          </select>
+          </Select>
         </Field>
         <Field label="Ajuste">
-          <select
+          <Select
             name="kind"
             value={params.kind}
             onChange={(e) => set('kind')(e.target.value)}
-            className="input"
           >
             <option value="percent">Porcentaje</option>
             <option value="fixed">Importe fijo</option>
-          </select>
+          </Select>
         </Field>
         <Field
           label={params.kind === 'percent' ? 'Porcentaje' : 'Importe (€)'}
           hint={params.kind === 'percent' ? 'Ej.: +5 o -10' : 'Ej.: +2 o -1,50'}
         >
-          <input
+          <Input
             name="value"
             value={params.value}
             onChange={(e) => set('value')(e.target.value)}
             inputMode="decimal"
             required
-            className="input tabular-nums"
+            className="tabular-nums"
           />
         </Field>
         <Field label="Redondeo">
-          <select
+          <Select
             name="ending"
             value={params.ending}
             onChange={(e) => set('ending')(e.target.value)}
-            className="input"
           >
             <option value="ends_95">A ,95 más cercano</option>
             <option value="ends_00">A euro entero</option>
             <option value="exact">Sin redondeo</option>
-          </select>
+          </Select>
         </Field>
         <div className="flex flex-wrap items-center gap-4 sm:col-span-2 xl:col-span-5">
           <SubmitButton
             name="intent"
             value="review"
-            variant="ghost"
+            variant="outline"
             pending={pending}
             pendingLabel="Calculando…"
           >
             Revisar cambios
           </SubmitButton>
-          <p className="text-smoke text-xs">
+          <p className="text-fg-muted text-xs">
             Hasta {MAX_BULK_ROWS} formatos por cambio. Los que están en rebaja
             se cambian desde su ficha (Ómnibus).
           </p>
@@ -162,11 +167,11 @@ export function BulkPricing({
             </p>
           )}
         </div>
-      </section>
+      </Card>
 
       {state.status === 'done' && (
-        <section className="panel-card space-y-3" role="status">
-          <p className="eyebrow">Hecho</p>
+        <Card as="section" className="space-y-3" role="status">
+          <Eyebrow>Hecho</Eyebrow>
           <p className="font-display text-3xl font-light lining-nums">
             {state.message}
           </p>
@@ -183,7 +188,7 @@ export function BulkPricing({
           >
             Imprimir etiquetas nuevas
           </Link>
-        </section>
+        </Card>
       )}
 
       {state.status === 'review' && (
@@ -202,7 +207,11 @@ export function BulkPricing({
             )}
           </div>
           <div className="overflow-x-auto">
-            <table className="data-table min-w-[56rem]">
+            <Table
+              caption="Formatos afectados por el cambio de precio"
+              stacked={false}
+              className="min-w-[56rem]"
+            >
               <thead>
                 <tr>
                   <th className="w-10">
@@ -220,12 +229,11 @@ export function BulkPricing({
                 {rows.map((row) => (
                   <tr
                     key={row.variantId}
-                    className={row.excluded ? 'text-smoke' : ''}
+                    className={row.excluded ? 'text-fg-muted' : ''}
                   >
                     <td>
                       {!row.excluded && (
-                        <input
-                          type="checkbox"
+                        <Checkbox
                           checked={selected.has(row.variantId)}
                           onChange={(e) =>
                             setSelected((s) => {
@@ -235,8 +243,11 @@ export function BulkPricing({
                               return next;
                             })
                           }
-                          aria-label={`Aplicar a ${row.productName} ${row.variantLabel}`}
-                          className="accent-ink size-5"
+                          label={
+                            <span className="sr-only">
+                              Aplicar a {row.productName} {row.variantLabel}
+                            </span>
+                          }
                         />
                       )}
                     </td>
@@ -247,7 +258,7 @@ export function BulkPricing({
                       >
                         {row.productName}
                       </Link>
-                      <span className="text-smoke">
+                      <span className="text-fg-muted">
                         {' '}
                         · {row.brandName} · {row.variantLabel}
                       </span>
@@ -283,30 +294,24 @@ export function BulkPricing({
                       ) : (
                         <div className="space-y-1">
                           {row.confirm.map((code) => (
-                            <label
+                            <Checkbox
                               key={code}
-                              className="flex items-center gap-2"
-                            >
-                              <input
-                                type="checkbox"
-                                name={`confirm:${row.variantId}`}
-                                value={code}
-                                checked={
-                                  confirmed[row.variantId]?.includes(code) ??
-                                  false
-                                }
-                                onChange={(e) =>
-                                  setConfirmed((c) => {
-                                    const list = new Set(c[row.variantId]);
-                                    if (e.target.checked) list.add(code);
-                                    else list.delete(code);
-                                    return { ...c, [row.variantId]: [...list] };
-                                  })
-                                }
-                                className="accent-ink size-5"
-                              />
-                              {PRICE_ISSUE_LABELS[code]}
-                            </label>
+                              name={`confirm:${row.variantId}`}
+                              value={code}
+                              checked={
+                                confirmed[row.variantId]?.includes(code) ??
+                                false
+                              }
+                              onChange={(e) =>
+                                setConfirmed((c) => {
+                                  const list = new Set(c[row.variantId]);
+                                  if (e.target.checked) list.add(code);
+                                  else list.delete(code);
+                                  return { ...c, [row.variantId]: [...list] };
+                                })
+                              }
+                              label={PRICE_ISSUE_LABELS[code]}
+                            />
                           ))}
                         </div>
                       )}
@@ -314,9 +319,9 @@ export function BulkPricing({
                   </tr>
                 ))}
               </tbody>
-            </table>
+            </Table>
           </div>
-          <div className="panel-card flex flex-wrap items-center justify-between gap-4">
+          <Card className="flex flex-wrap items-center justify-between gap-4">
             {/* Solo se envían las filas marcadas y con todo confirmado. */}
             {ready.map((row) => (
               <input
@@ -350,7 +355,7 @@ export function BulkPricing({
             >
               Aplicar {ready.length}
             </SubmitButton>
-          </div>
+          </Card>
         </section>
       )}
     </form>

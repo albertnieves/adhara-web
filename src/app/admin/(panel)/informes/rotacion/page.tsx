@@ -12,6 +12,7 @@ import {
   valueAtCost,
 } from '@/modules/reports';
 import { getInventoryPeriod } from '@/modules/reports/server';
+import { buttonClass, Table } from '@/components/ui';
 
 export const metadata: Metadata = { title: 'Rotación e inmovilizado' };
 
@@ -42,7 +43,7 @@ export default async function RotationReport({
     return (
       <main>
         <PageHeader eyebrow="Informes" title="Rotación e inmovilizado" />
-        <p className="text-smoke">No hay ninguna ubicación activa.</p>
+        <p className="text-fg-muted">No hay ninguna ubicación activa.</p>
       </main>
     );
   }
@@ -82,14 +83,14 @@ export default async function RotationReport({
               key={w}
               href={`/admin/informes/rotacion?dias=${w}`}
               aria-current={w === days ? 'page' : undefined}
-              className={`tracking-caps-sm border px-3 py-2 text-xs uppercase ${w === days ? 'border-ink bg-ink text-ivory' : 'border-line hover:border-ink'}`}
+              className={buttonClass(w === days ? 'primary' : 'outline')}
             >
               {w} días
             </Link>
           ))}
         </nav>
       </PageHeader>
-      <p className="text-smoke mb-10 max-w-3xl text-sm leading-relaxed">
+      <p className="text-fg-muted mb-10 max-w-3xl text-sm leading-relaxed">
         Últimos {days} días (del{' '}
         {period.firstDay.split('-').reverse().join('/')} a hoy). Rotación:
         unidades vendidas entre el stock medio del periodo (media de inicio y
@@ -102,10 +103,14 @@ export default async function RotationReport({
           Más vendidos · {sellers.length}
         </h2>
         {sellers.length === 0 ? (
-          <p className="text-smoke text-sm">Sin ventas en el periodo.</p>
+          <p className="text-fg-muted text-sm">Sin ventas en el periodo.</p>
         ) : (
           <div className="overflow-x-auto">
-            <table className="data-table min-w-[40rem]">
+            <Table
+              caption="Más vendidos"
+              stacked={false}
+              className="min-w-[40rem]"
+            >
               <thead>
                 <tr>
                   <th>Perfume</th>
@@ -123,7 +128,7 @@ export default async function RotationReport({
                     <td className="text-right font-semibold tabular-nums">
                       {r.soldUnits}
                     </td>
-                    <td className="text-smoke text-right tabular-nums">
+                    <td className="text-fg-muted text-right tabular-nums">
                       {ONE_DECIMAL.format(r.rotation.averageStock)}
                     </td>
                     <td className="text-right tabular-nums">
@@ -144,11 +149,11 @@ export default async function RotationReport({
                   </tr>
                 ))}
               </tbody>
-            </table>
+            </Table>
           </div>
         )}
         {sellers.length > TOP && (
-          <p className="text-smoke mt-3 text-sm">
+          <p className="text-fg-muted mt-3 text-sm">
             Se muestran los {TOP} primeros de {sellers.length}.
           </p>
         )}
@@ -158,14 +163,18 @@ export default async function RotationReport({
         <h2 className="mb-2 text-2xl font-light">
           Sin ventas en el periodo · {idle.length}
         </h2>
-        <p className="text-smoke mb-4 text-sm">
+        <p className="text-fg-muted mb-4 text-sm">
           {idleUnits} uds. en tienda
           {canCost && ` · ${formatEuros(idleValue, 'es')} a coste`} que no se
           han vendido en {days} días.
         </p>
         {idle.length > 0 && (
           <div className="overflow-x-auto">
-            <table className="data-table min-w-[36rem]">
+            <Table
+              caption="Sin ventas en el periodo"
+              stacked={false}
+              className="min-w-[36rem]"
+            >
               <thead>
                 <tr>
                   <th>Perfume</th>
@@ -188,7 +197,7 @@ export default async function RotationReport({
                           : formatEuros(r.value, 'es')}
                       </td>
                     )}
-                    <td className="text-smoke text-right tabular-nums">
+                    <td className="text-fg-muted text-right tabular-nums">
                       {r.rotation.daysSinceSale === null
                         ? 'nunca'
                         : `hace ${r.rotation.daysSinceSale} d`}
@@ -196,7 +205,7 @@ export default async function RotationReport({
                   </tr>
                 ))}
               </tbody>
-            </table>
+            </Table>
           </div>
         )}
       </section>

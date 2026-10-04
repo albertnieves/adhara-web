@@ -1,6 +1,6 @@
 'use client';
 
-import { SubmitButton } from '@/modules/admin';
+import { SubmitButton } from '@/components/ui';
 import { deleteProduct } from '../server/actions';
 
 /** Solo borradores: un perfume publicado se archiva, no se borra. */

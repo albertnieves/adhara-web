@@ -1,6 +1,7 @@
 'use client';
 import { useActionState } from 'react';
 import type { EnrollState } from '../server/actions';
+import { buttonClass, Input } from '@/components/ui';
 
 export function TotpEnrollment({
   enroll,
@@ -18,7 +19,11 @@ export function TotpEnrollment({
             No se pudo iniciar el alta. Inténtalo de nuevo.
           </p>
         )}
-        <button type="submit" disabled={pending} className="btn btn-primary">
+        <button
+          type="submit"
+          disabled={pending}
+          className={buttonClass('primary', 'lg')}
+        >
           Configurar la app de autenticación
         </button>
       </form>
@@ -26,7 +31,7 @@ export function TotpEnrollment({
   }
   return (
     <form action={verify} className="flex flex-col gap-4">
-      <p className="text-smoke text-sm leading-relaxed">
+      <p className="text-fg-muted text-sm leading-relaxed">
         Escanea el código con tu app de autenticación (Google Authenticator,
         1Password, Authy…) y escribe el código de 6 cifras.
       </p>
@@ -37,26 +42,26 @@ export function TotpEnrollment({
         alt="Código QR para la app de autenticación"
         width={200}
         height={200}
-        className="border-line bg-surface-raised self-center border p-3"
+        className="border-border bg-surface-raised self-center border p-3"
       />
-      <p className="text-smoke text-xs break-all">
+      <p className="text-fg-muted text-xs break-all">
         Clave manual: <code>{state.secret}</code>
       </p>
       <input type="hidden" name="factorId" value={state.factorId} />
       <label className="flex flex-col gap-1.5">
-        <span className="text-smoke text-2xs tracking-caps font-semibold uppercase">
+        <span className="text-fg-muted text-2xs tracking-caps font-semibold uppercase">
           Código
         </span>
-        <input
+        <Input
           name="code"
           inputMode="numeric"
           autoComplete="one-time-code"
           pattern="[0-9]{6}"
           required
-          className="input tracking-caps-lg text-center text-2xl tabular-nums"
+          className="tracking-caps-lg text-center text-2xl! tabular-nums"
         />
       </label>
-      <button type="submit" className="btn btn-primary">
+      <button type="submit" className={buttonClass('primary', 'lg')}>
         Verificar y activar
       </button>
     </form>

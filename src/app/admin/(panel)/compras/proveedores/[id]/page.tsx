@@ -8,6 +8,7 @@ import { listBrands } from '@/modules/catalog/server/admin';
 import { listVariantDirectory } from '@/modules/inventory/server';
 import { listSupplierTerms, listSuppliers } from '@/modules/purchasing/server';
 import { SupplierForm, SupplierTerms } from '@/modules/purchasing/ui';
+import { Card } from '@/components/ui';
 
 export const metadata: Metadata = { title: 'Proveedor' };
 
@@ -33,19 +34,19 @@ export default async function SupplierPage({
       <PageHeader eyebrow="Proveedor" title={supplier.name}>
         <Link
           href="/admin/compras/proveedores"
-          className="border-line hover:border-ink tracking-caps inline-flex min-h-11 items-center border px-5 text-xs font-semibold uppercase"
+          className="border-border hover:border-fg tracking-caps inline-flex min-h-11 items-center border px-5 text-xs font-semibold uppercase"
         >
           Todos los proveedores
         </Link>
       </PageHeader>
 
-      <section className="panel-card mb-12">
+      <Card as="section" className="mb-12">
         <SupplierForm supplier={supplier} />
-      </section>
+      </Card>
 
       <section>
         <h2 className="mb-2 text-2xl font-light">Formatos que suministra</h2>
-        <p className="text-smoke mb-6 max-w-3xl text-sm">
+        <p className="text-fg-muted mb-6 max-w-3xl text-sm">
           Referencia del proveedor, múltiplo de compra (cajas de 6, de 12…) y
           plazo si difiere del habitual. El proveedor preferente es el que usan
           las propuestas de Reposición.

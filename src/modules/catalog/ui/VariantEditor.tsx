@@ -2,12 +2,7 @@
 
 import { useState } from 'react';
 import { formatEuros, grossToNet, parseEuros } from '@/lib/money';
-import {
-  Field,
-  FormMessage,
-  SubmitButton,
-  useAdminAction,
-} from '@/modules/admin';
+import { FormMessage, useAdminAction } from '@/modules/admin';
 import { VAT_GENERAL_BP, computeMargin } from '@/modules/pricing';
 import {
   addVariant,
@@ -16,6 +11,14 @@ import {
   setVariantPrice,
   updateVariant,
 } from '../server/actions';
+import {
+  Card,
+  Checkbox,
+  Eyebrow,
+  Field,
+  Input,
+  SubmitButton,
+} from '@/components/ui';
 
 export type VariantValues = {
   updated_at: string;
@@ -78,38 +81,30 @@ function DetailsFields({ variant }: { variant?: VariantValues }) {
   return (
     <>
       <Field label="ml">
-        <input
+        <Input
           name="sizeMl"
           type="number"
           min={1}
           max={5000}
           defaultValue={variant?.size_ml ?? ''}
-          className="input"
         />
       </Field>
       <Field label="Etiqueta" hint="Opcional: «Set», «Tester»…">
-        <input
+        <Input
           name="label"
           maxLength={60}
           defaultValue={variant?.label ?? ''}
-          className="input"
         />
       </Field>
       <Field label="SKU">
-        <input
-          name="sku"
-          maxLength={60}
-          defaultValue={variant?.sku ?? ''}
-          className="input"
-        />
+        <Input name="sku" maxLength={60} defaultValue={variant?.sku ?? ''} />
       </Field>
       <Field label="EAN">
-        <input
+        <Input
           name="ean"
           inputMode="numeric"
           maxLength={14}
           defaultValue={variant?.ean ?? ''}
-          className="input"
         />
       </Field>
     </>
@@ -163,23 +158,23 @@ function PriceForm({
         }
       />
       <Field label="PVP (IVA incl.)">
-        <input
+        <Input
           name="price"
           inputMode="decimal"
           placeholder="49,90"
           required
           value={price}
           onChange={(event) => setPrice(event.target.value)}
-          className="input tabular-nums"
+          className="tabular-nums"
         />
       </Field>
       <Field label="Precio anterior" hint="Solo en rebajas (Ómnibus).">
-        <input
+        <Input
           name="compareAt"
           inputMode="decimal"
           value={compareAt}
           onChange={(event) => setCompareAt(event.target.value)}
-          className="input tabular-nums"
+          className="tabular-nums"
         />
       </Field>
       <div className="self-end pb-0.5">
@@ -193,7 +188,7 @@ function PriceForm({
       {liveMargin && (
         <p
           aria-live="polite"
-          className={`text-xs tabular-nums sm:col-span-3 ${liveMargin.negative ? 'text-danger' : 'text-smoke'}`}
+          className={`text-xs tabular-nums sm:col-span-3 ${liveMargin.negative ? 'text-danger' : 'text-fg-muted'}`}
         >
           Margen con este PVP: {liveMargin.text}
         </p>
@@ -201,21 +196,18 @@ function PriceForm({
       {state.status === 'confirm' &&
         state.reviewedInput === `${price}|${compareAt}` &&
         state.confirm && (
-          <fieldset className="border-gold/50 bg-surface-raised/60 flex flex-col gap-2 border p-4 text-sm sm:col-span-3">
+          <fieldset className="border-accent/50 bg-surface-raised/60 flex flex-col gap-2 border p-4 text-sm sm:col-span-3">
             <legend className="px-1 text-xs font-semibold">
               {state.message}
             </legend>
             {state.confirm.map((issue) => (
-              <label key={issue.code} className="flex items-center gap-3">
-                <input
-                  type="checkbox"
-                  name="confirm"
-                  value={issue.code}
-                  required
-                  className="accent-ink size-5"
-                />
-                {issue.label}
-              </label>
+              <Checkbox
+                key={issue.code}
+                name="confirm"
+                value={issue.code}
+                required
+                label={issue.label}
+              />
             ))}
           </fieldset>
         )}
@@ -243,22 +235,22 @@ function CostPanel({
   const retail = variant.retail_price_cents;
   const margin = describeMargin(retail, cost?.costNetCents ?? null);
   return (
-    <div className="border-line border-t pt-6">
+    <div className="border-border border-t pt-6">
       <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1">
-        <p className="eyebrow">Coste y margen</p>
+        <Eyebrow>Coste y margen</Eyebrow>
         <p className="text-fg-muted text-xs">
           Interno · no se muestra en la tienda
         </p>
       </div>
       <dl className="mt-4 grid grid-cols-3 gap-4 text-sm">
         <div>
-          <dt className="text-smoke text-xs">Coste neto</dt>
+          <dt className="text-fg-muted text-xs">Coste neto</dt>
           <dd className="mt-1 tabular-nums">
             {cost ? formatEuros(cost.costNetCents, 'es') : 'Sin registrar'}
           </dd>
         </div>
         <div>
-          <dt className="text-smoke text-xs">PVP sin IVA</dt>
+          <dt className="text-fg-muted text-xs">PVP sin IVA</dt>
           <dd className="mt-1 tabular-nums">
             {retail === null
               ? '—'
@@ -266,7 +258,7 @@ function CostPanel({
           </dd>
         </div>
         <div>
-          <dt className="text-smoke text-xs">Margen</dt>
+          <dt className="text-fg-muted text-xs">Margen</dt>
           <dd
             className={`mt-1 tabular-nums ${margin?.negative ? 'text-danger' : ''}`}
           >
@@ -274,9 +266,7 @@ function CostPanel({
               <>
                 {margin.amount}
                 {margin.percent && (
-                  <span className="block text-xs opacity-70">
-                    {margin.percent}
-                  </span>
+                  <span className="block text-xs">{margin.percent}</span>
                 )}
               </>
             ) : (
@@ -300,19 +290,19 @@ function CostPanel({
           <input type="hidden" name="id" value={variant.id} />
           <input type="hidden" name="productId" value={productId} />
           <Field label={cost ? 'Nuevo coste neto' : 'Coste neto (sin IVA)'}>
-            <input
+            <Input
               name="cost"
               inputMode="decimal"
               placeholder="18,40"
               required
-              className="input tabular-nums"
+              className="tabular-nums"
             />
           </Field>
           <Field label="Nota" hint="Opcional: albarán, factura…">
-            <input name="note" maxLength={200} className="input" />
+            <Input name="note" maxLength={200} />
           </Field>
           <div className="self-end pb-0.5">
-            <SubmitButton variant="ghost" pending={pending}>
+            <SubmitButton variant="outline" pending={pending}>
               Registrar coste
             </SubmitButton>
           </div>
@@ -346,10 +336,10 @@ function VariantCard({
     variant.label?.trim() ||
     (variant.size_ml ? `${variant.size_ml} ml` : 'Formato');
   return (
-    <div className="panel-card space-y-6">
+    <Card className="space-y-6">
       <div className="flex items-center justify-between gap-4">
         <h3 className="font-display text-2xl">{title}</h3>
-        <span className="text-smoke text-sm tabular-nums">
+        <span className="text-fg-muted text-sm tabular-nums">
           {variant.retail_price_cents === null
             ? 'PVP pendiente'
             : formatEuros(variant.retail_price_cents, 'es')}
@@ -370,7 +360,7 @@ function VariantCard({
         />
       )}
       <details className="group">
-        <summary className="text-smoke tracking-caps cursor-pointer text-xs uppercase">
+        <summary className="text-fg-muted tracking-caps cursor-pointer text-xs uppercase">
           Datos del formato
         </summary>
         <form
@@ -380,19 +370,16 @@ function VariantCard({
           <input type="hidden" name="id" value={variant.id} />
           <input type="hidden" name="productId" value={productId} />
           <DetailsFields variant={variant} />
-          <label className="flex items-center gap-3 text-sm sm:col-span-4">
-            <input type="hidden" name="activeField" value="1" />
-            <input
-              type="checkbox"
-              name="active"
-              value="on"
-              defaultChecked={variant.active}
-              className="accent-ink size-5"
-            />
-            Activo (se muestra y se vende)
-          </label>
+          <input type="hidden" name="activeField" value="1" />
+          <Checkbox
+            name="active"
+            value="on"
+            defaultChecked={variant.active}
+            label="Activo (se muestra y se vende)"
+            className="sm:col-span-4"
+          />
           <div className="flex flex-wrap items-center gap-3 sm:col-span-4">
-            <SubmitButton variant="ghost" pending={update.pending}>
+            <SubmitButton variant="outline" pending={update.pending}>
               Guardar formato
             </SubmitButton>
             <FormMessage state={update.state} />
@@ -420,7 +407,7 @@ function VariantCard({
           <FormMessage state={remove.state} />
         </form>
       </details>
-    </div>
+    </Card>
   );
 }
 
@@ -456,13 +443,13 @@ export function VariantEditor({
       ))}
       <form
         onSubmit={add.onSubmit}
-        className="border-line grid gap-4 border border-dashed p-6 sm:grid-cols-4"
+        className="border-border grid gap-4 border border-dashed p-6 sm:grid-cols-4"
       >
         <input type="hidden" name="productId" value={productId} />
-        <p className="eyebrow sm:col-span-4">Nuevo formato</p>
+        <Eyebrow className="sm:col-span-4">Nuevo formato</Eyebrow>
         <DetailsFields />
         <div className="flex flex-wrap items-center gap-3 sm:col-span-4">
-          <SubmitButton variant="ghost" pending={add.pending}>
+          <SubmitButton variant="outline" pending={add.pending}>
             Añadir formato
           </SubmitButton>
           <FormMessage state={add.state} />

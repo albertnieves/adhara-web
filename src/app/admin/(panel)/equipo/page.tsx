@@ -5,6 +5,7 @@ import { ROLE_LABELS, STAFF_ROLES } from '@/modules/auth';
 import type { StaffRole } from '@/modules/auth';
 import { requirePermission } from '@/modules/auth/server';
 import { GrantStaffForm, StaffToggle } from '@/modules/auth/ui/staff-forms';
+import { buttonClass, Card, Table } from '@/components/ui';
 
 export const metadata: Metadata = { title: 'Equipo' };
 
@@ -28,7 +29,11 @@ export default async function Team() {
         </p>
       ) : (
         <div className="mb-14 overflow-x-auto">
-          <table className="data-table min-w-[40rem]">
+          <Table
+            caption="Personal con acceso"
+            stacked={false}
+            className="min-w-[40rem]"
+          >
             <thead>
               <tr>
                 <th>Persona</th>
@@ -46,7 +51,7 @@ export default async function Team() {
                   <td>
                     <p>{member.display_name ?? member.email}</p>
                     {member.display_name && (
-                      <p className="text-smoke text-xs">{member.email}</p>
+                      <p className="text-fg-muted text-xs">{member.email}</p>
                     )}
                   </td>
                   <td className="text-sm">
@@ -55,7 +60,7 @@ export default async function Team() {
                       : member.role}
                     {!member.active && ' · desactivado'}
                   </td>
-                  <td className="text-smoke text-sm">
+                  <td className="text-fg-muted text-sm">
                     {member.last_sign_in_at
                       ? DATE.format(new Date(member.last_sign_in_at))
                       : 'Nunca'}
@@ -71,12 +76,12 @@ export default async function Team() {
                 </tr>
               ))}
             </tbody>
-          </table>
+          </Table>
         </div>
       )}
       <section className="mb-10 space-y-5">
         <h2 className="text-2xl">Invitar a una persona</h2>
-        <p className="text-smoke text-sm">
+        <p className="text-fg-muted text-sm">
           Recibirá un enlace para fijar contraseña y configurar MFA. Para
           reenviar, introduce de nuevo los mismos datos; espera al menos un
           minuto.
@@ -86,27 +91,27 @@ export default async function Team() {
           <p role="alert">No se pudieron leer las invitaciones.</p>
         ) : (
           invites.data.map((invite) => (
-            <div
+            <Card
               key={invite.email}
-              className="panel-card flex flex-wrap items-center justify-between gap-3"
+              className="flex flex-wrap items-center justify-between gap-3"
             >
               <p>
                 {invite.email} · {invite.role} · pendiente de aceptación
               </p>
               <form action={cancelInvite}>
                 <input type="hidden" name="email" value={invite.email} />
-                <button className="btn btn-outline">
+                <button className={buttonClass('outline', 'lg')}>
                   Cancelar acceso pendiente
                 </button>
               </form>
-            </div>
+            </Card>
           ))
         )}
       </section>
       <h2 className="mb-3 text-2xl font-light">
         Dar acceso a una cuenta existente
       </h2>
-      <p className="text-smoke mb-6 max-w-2xl text-sm leading-relaxed">
+      <p className="text-fg-muted mb-6 max-w-2xl text-sm leading-relaxed">
         La cuenta debe existir antes en Supabase (Authentication → Users → Add
         user). Aquí se le asigna el rol; en su primer acceso configurará la
         verificación en dos pasos.

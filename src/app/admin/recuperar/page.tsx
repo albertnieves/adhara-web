@@ -1,6 +1,7 @@
 import Link from 'next/link';
-import { AuthError, AuthScreen, Field } from '@/modules/admin';
+import { AuthError, AuthScreen } from '@/modules/admin';
 import { requestPasswordRecovery } from '@/modules/auth/server/recovery';
+import { buttonClass, Field, Input } from '@/components/ui';
 
 export default async function Recovery({
   searchParams,
@@ -10,7 +11,7 @@ export default async function Recovery({
   const params = await searchParams;
   return (
     <AuthScreen title="Recuperar acceso">
-      <p className="text-smoke text-sm">
+      <p className="text-fg-muted text-sm">
         Te enviaremos un enlace para fijar una contraseña nueva. La verificación
         en dos pasos seguirá siendo necesaria.
       </p>
@@ -29,15 +30,9 @@ export default async function Recovery({
       ) : (
         <form action={requestPasswordRecovery} className="flex flex-col gap-5">
           <Field label="Email">
-            <input
-              name="email"
-              type="email"
-              autoComplete="email"
-              required
-              className="input"
-            />
+            <Input name="email" type="email" autoComplete="email" required />
           </Field>
-          <button type="submit" className="btn btn-primary">
+          <button type="submit" className={buttonClass('primary', 'lg')}>
             Enviar enlace
           </button>
         </form>

@@ -10,7 +10,8 @@ import { admin, login, user } from './support';
 /*
  * Red de seguridad del sistema de diseño (DS-01) en el panel: todas sus
  * pantallas con sesión de administrador del sistema y MFA, a 390, 768, 1280
- * y 1440 px. axe guarda su línea base sin hacer fallar la prueba.
+ * y 1440 px. Desde DS-11 exige además controles de 44 px de alto
+ * (criterio 8) y ninguna infracción de axe (criterio 6).
  */
 
 const ROUTES = [
@@ -56,19 +57,23 @@ test('panel: diseño sin solapes ni desbordes en todas sus pantallas', async ({
   ];
 
   const reports: string[] = [];
-  let violations = 0;
+  const violations: string[] = [];
   for (const path of routes) {
     const name = `panel${path.replace(/^\/admin/, '').replace(/\//g, '-') || '-inicio'}`;
     await test.step(path, async () => {
-      const results = await auditRoute(page, path, name, AUDIT_WIDTHS);
+      const results = await auditRoute(page, path, name, AUDIT_WIDTHS, 200, {
+        minTarget: 44,
+      });
       const report = formatFindings(name, results);
       if (report) reports.push(report);
-      violations += (await axeBaseline(page, path, name)).violations.length;
+      const axe = await axeBaseline(page, path, name);
+      violations.push(
+        ...axe.violations.map(
+          (v) => `${path}: ${v.id} (${v.impact}, ${v.nodes}) ${v.help}`,
+        ),
+      );
     });
   }
-  test.info().annotations.push({
-    type: 'axe',
-    description: `${violations} reglas incumplidas en ${routes.length} pantallas`,
-  });
   expect(reports.join('\n'), reports.join('\n')).toBe('');
+  expect(violations, violations.join('\n')).toEqual([]);
 });

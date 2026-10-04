@@ -3,9 +3,10 @@
 import { startTransition, useActionState, useState } from 'react';
 import { newRequestId } from '@/lib/request-id';
 import type { ActionState } from '@/modules/admin';
-import { Field, FormMessage, IDLE, SubmitButton } from '@/modules/admin';
+import { FormMessage, IDLE } from '@/modules/admin';
 import type { SearchableVariant } from '@/modules/inventory';
 import { receivePurchaseOrder } from '../server/actions';
+import { Checkbox, Field, Input, SubmitButton, Table } from '@/components/ui';
 
 type Line = {
   lineId: number;
@@ -71,7 +72,7 @@ export function ReceiveForm({
     return (
       <div className="space-y-4">
         <FormMessage state={state} />
-        <p className="text-smoke text-sm">
+        <p className="text-fg-muted text-sm">
           {open.length === 0
             ? 'No queda nada por recibir.'
             : 'El pedido está cerrado: no admite más recepciones.'}
@@ -84,7 +85,11 @@ export function ReceiveForm({
     <form onSubmit={onSubmit} className="space-y-5">
       <input type="hidden" name="orderId" value={orderId} />
       <div className="overflow-x-auto">
-        <table className="data-table min-w-[36rem]">
+        <Table
+          caption="Líneas por recibir"
+          stacked={false}
+          className="min-w-[36rem]"
+        >
           <thead>
             <tr>
               <th>Perfume</th>
@@ -100,9 +105,9 @@ export function ReceiveForm({
               return (
                 <tr key={line.lineId}>
                   <td className="text-sm">
-                    <span className="text-smoke">{v?.brandName} · </span>
+                    <span className="text-fg-muted">{v?.brandName} · </span>
                     {v?.productName ?? line.variantId}
-                    <span className="text-smoke"> · {v?.variantLabel}</span>
+                    <span className="text-fg-muted"> · {v?.variantLabel}</span>
                     {line.supplierSku && (
                       <span className="text-fg-muted block text-xs">
                         ref. {line.supplierSku}
@@ -110,11 +115,11 @@ export function ReceiveForm({
                     )}
                   </td>
                   <td className="text-right tabular-nums">{line.ordered}</td>
-                  <td className="text-smoke text-right tabular-nums">
+                  <td className="text-fg-muted text-right tabular-nums">
                     {line.received}
                   </td>
                   <td className="text-right">
-                    <input
+                    <Input
                       key={`${line.lineId}:${line.received}`}
                       name={`qty:${line.lineId}`}
                       type="number"
@@ -123,41 +128,32 @@ export function ReceiveForm({
                       max={pendingUnits}
                       defaultValue={pendingUnits}
                       aria-label="Unidades que llegan"
-                      className="input w-24 text-right tabular-nums"
+                      className="w-24! text-right tabular-nums"
                     />
                   </td>
                 </tr>
               );
             })}
           </tbody>
-        </table>
+        </Table>
       </div>
       <div className="grid items-end gap-4 sm:grid-cols-[1fr_auto]">
         <Field label="Albarán" hint="Nº del albarán o de la entrega.">
-          <input
-            key={round}
-            name="reference"
-            maxLength={120}
-            className="input"
-          />
+          <Input key={round} name="reference" maxLength={120} />
         </Field>
         {canRecordCosts && (
-          <label className="flex min-h-11 items-center gap-2 text-sm">
-            <input
-              type="checkbox"
-              name="recordCosts"
-              defaultChecked
-              className="h-5 w-5"
-            />
-            El coste del pedido pasa a ser el coste vigente
-          </label>
+          <Checkbox
+            name="recordCosts"
+            defaultChecked
+            label="El coste del pedido pasa a ser el coste vigente"
+          />
         )}
       </div>
       <div className="flex flex-wrap items-center gap-4">
         <SubmitButton pending={pending} pendingLabel="Registrando…">
           Registrar recepción
         </SubmitButton>
-        <p className="text-smoke text-xs">
+        <p className="text-fg-muted text-xs">
           Suma stock en la tienda y deja un movimiento con el número del pedido.
           Lo que no llegue queda pendiente.
         </p>

@@ -2,6 +2,30 @@ import type { ReactNode } from 'react';
 import { Star } from '@/modules/brand';
 import { cx } from './cx';
 
+export type CardPadding = 'none' | 'sm' | 'md' | 'lg';
+
+/**
+ * Clases de la tarjeta para cuando el elemento no puede ser un `Card`
+ * (un enlace, un formulario o un `fieldset`), como `buttonClass`.
+ */
+export function cardClass({
+  padding = 'md',
+  interactive = false,
+  className,
+}: {
+  padding?: CardPadding;
+  interactive?: boolean;
+  className?: string;
+} = {}) {
+  return cx(
+    'border-border bg-surface-raised text-fg border',
+    { none: '', sm: 'p-4', md: 'p-6', lg: 'p-8' }[padding],
+    interactive &&
+      'hover:border-fg ease-luxe transition-colors duration-(--duration-fast)',
+    className,
+  );
+}
+
 /**
  * Tarjeta (Fase 2, DS-09; sustituye a `.panel-card`): superficie elevada
  * con borde fino. `interactive` marca el borde al pasar el ratón cuando toda
@@ -13,24 +37,20 @@ export function Card({
   interactive = false,
   className,
   children,
+  ...props
 }: {
   as?: 'div' | 'article' | 'section' | 'li';
-  padding?: 'sm' | 'md' | 'lg';
+  padding?: CardPadding;
   interactive?: boolean;
   /** Solo colocación. */
   className?: string;
   children: ReactNode;
+  role?: string;
+  'aria-label'?: string;
+  'aria-labelledby'?: string;
 }) {
   return (
-    <Tag
-      className={cx(
-        'border-border bg-surface-raised text-fg border',
-        { sm: 'p-4', md: 'p-6', lg: 'p-8' }[padding],
-        interactive &&
-          'hover:border-fg ease-luxe transition-colors duration-(--duration-fast)',
-        className,
-      )}
-    >
+    <Tag {...props} className={cardClass({ padding, interactive, className })}>
       {children}
     </Tag>
   );

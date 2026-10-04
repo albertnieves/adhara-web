@@ -11,6 +11,7 @@ import {
   listAdminProducts,
 } from '@/modules/catalog/server/admin';
 import { enterStorefrontPreview } from '@/modules/storefront/server/preview';
+import { buttonClass, Table } from '@/components/ui';
 
 export const metadata: Metadata = { title: 'Catálogo' };
 
@@ -76,25 +77,31 @@ export default async function CatalogAdmin({
     <main>
       <PageHeader eyebrow="Catálogo" title="Perfumes">
         <form action={enterStorefrontPreview}>
-          <button type="submit" className="panel-btn">
+          <button type="submit" className={buttonClass('outline')}>
             Ver tienda con borradores
           </button>
         </form>
         {canPrice && (
-          <Link href="/admin/catalogo/precios" className="panel-btn">
+          <Link
+            href="/admin/catalogo/precios"
+            className={buttonClass('outline')}
+          >
             Cambiar precios
           </Link>
         )}
-        <Link href="/admin/catalogo/importar" className="panel-btn">
+        <Link
+          href="/admin/catalogo/importar"
+          className={buttonClass('outline')}
+        >
           Importar
         </Link>
-        <Link href="/admin/catalogo/etiquetas" className="panel-btn">
+        <Link
+          href="/admin/catalogo/etiquetas"
+          className={buttonClass('outline')}
+        >
           Etiquetas
         </Link>
-        <Link
-          href="/admin/catalogo/nuevo"
-          className="panel-btn panel-btn-primary"
-        >
+        <Link href="/admin/catalogo/nuevo" className={buttonClass('primary')}>
           Nuevo perfume
         </Link>
       </PageHeader>
@@ -126,7 +133,11 @@ export default async function CatalogAdmin({
                 key={filter.value}
                 href={`/admin/catalogo${params.size ? `?${params}` : ''}`}
                 aria-current={active ? 'page' : undefined}
-                className={`tracking-caps-sm inline-flex min-h-10 items-center gap-1.5 border px-3 text-xs uppercase ${active ? 'border-ink bg-ink text-ivory' : 'border-line hover:border-ink'}`}
+                className={buttonClass(
+                  active ? 'primary' : 'outline',
+                  'md',
+                  'gap-1.5',
+                )}
               >
                 {filter.label} <span className="opacity-60">{count}</span>
               </Link>
@@ -143,14 +154,14 @@ export default async function CatalogAdmin({
       </form>
 
       {products.length === 0 ? (
-        <p className="text-smoke py-16 text-center">
+        <p className="text-fg-muted py-16 text-center">
           {all.length === 0
             ? 'Aún no hay perfumes. Crea el primero o importa el catálogo.'
             : 'Ningún perfume coincide con el filtro.'}
         </p>
       ) : (
         <div className="overflow-x-auto">
-          <table className="data-table stack-table md:min-w-[44rem]">
+          <Table caption="Perfumes del catálogo" className="md:min-w-[44rem]">
             <thead>
               <tr>
                 <th className="w-16" />
@@ -183,7 +194,7 @@ export default async function CatalogAdmin({
                     >
                       {p.name}
                     </Link>
-                    <p className="text-smoke text-xs">
+                    <p className="text-fg-muted text-xs">
                       {p.brandName}
                       {p.featured && (
                         <span className="text-accent-fg"> · destacado</span>
@@ -222,7 +233,7 @@ export default async function CatalogAdmin({
                 </tr>
               ))}
             </tbody>
-          </table>
+          </Table>
         </div>
       )}
     </main>

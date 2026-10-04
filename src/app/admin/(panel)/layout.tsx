@@ -113,7 +113,7 @@ export default async function PanelLayout({
     'catalog.edit',
   );
   const shortcut =
-    'text-ivory/60 hover:text-ivory inline-flex min-h-9 items-center text-left text-xs tracking-caps uppercase';
+    'text-fg-muted hover:text-fg inline-flex min-h-11 items-center text-left text-xs tracking-caps uppercase';
   const shortcuts = (
     <>
       {canPreview && (
@@ -134,10 +134,10 @@ export default async function PanelLayout({
   );
 
   return (
-    <div className="panel-shell min-h-screen lg:grid lg:grid-cols-[15rem_1fr] print:block print:min-h-0">
+    <div className="min-h-screen lg:grid lg:grid-cols-[15rem_1fr] print:block print:min-h-0">
       <aside
         data-tone="dark"
-        className="bg-night text-ivory flex items-center justify-between gap-4 px-5 py-3 lg:sticky lg:top-0 lg:h-screen lg:flex-col lg:items-stretch lg:justify-start lg:gap-8 lg:overflow-y-auto lg:overscroll-contain lg:px-4 lg:py-8 print:hidden"
+        className="bg-surface text-fg flex items-center justify-between gap-4 px-5 py-3 lg:sticky lg:top-0 lg:h-screen lg:flex-col lg:items-stretch lg:justify-start lg:gap-8 lg:overflow-y-auto lg:overscroll-contain lg:px-4 lg:py-8 print:hidden"
       >
         <Link
           href="/admin"
@@ -152,17 +152,17 @@ export default async function PanelLayout({
         </div>
       </aside>
       <div className="min-w-0">
-        <header className="border-line flex flex-wrap items-center justify-between gap-3 border-b px-5 py-3 sm:px-10 print:hidden">
+        <header className="border-border flex flex-wrap items-center justify-between gap-3 border-b px-5 py-3 sm:px-10 print:hidden">
           <p className="text-sm">
             <span className="font-semibold">
               {staff.displayName ?? staff.email}
             </span>
-            <span className="text-smoke"> · {ROLE_LABELS[staff.role]}</span>
+            <span className="text-fg-muted"> · {ROLE_LABELS[staff.role]}</span>
           </p>
           <form action={signOut}>
             <button
               type="submit"
-              className="link-underline text-smoke tracking-caps inline-flex min-h-11 items-center text-xs uppercase"
+              className="link-underline text-fg-muted tracking-caps inline-flex min-h-11 items-center text-xs uppercase"
             >
               Cerrar sesión
             </button>

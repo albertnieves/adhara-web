@@ -48,7 +48,7 @@ function NavList({
               item.soon ? (
                 <li
                   key={item.href}
-                  className="text-fg-muted flex min-h-10 items-center justify-between px-3 text-sm"
+                  className="text-fg-muted flex min-h-11 items-center justify-between px-3 text-sm"
                 >
                   {item.label}
                   <span className="text-2xs tracking-caps-sm uppercase">
@@ -63,10 +63,10 @@ function NavList({
                     aria-current={
                       isActive(pathname, item.href) ? 'page' : undefined
                     }
-                    className={`flex min-h-10 items-center border-l-2 px-3 text-sm transition-colors duration-300 ${
+                    className={`ease-luxe flex min-h-11 items-center border-l-2 px-3 text-sm transition-colors duration-(--duration-base) ${
                       isActive(pathname, item.href)
-                        ? 'bg-ivory/10 text-ivory border-gold'
-                        : 'text-ivory/65 hover:text-ivory hover:bg-ivory/5 border-transparent'
+                        ? 'bg-surface-raised text-fg border-accent'
+                        : 'text-fg-muted hover:text-fg hover:bg-surface-raised border-transparent'
                     }`}
                   >
                     {item.label}
@@ -99,7 +99,7 @@ export function PanelNav({
     <>
       <button
         type="button"
-        className="border-ivory/20 hover:border-ivory text-ivory/85 tracking-caps inline-flex min-h-11 items-center gap-3 border px-4 text-xs uppercase transition-colors lg:hidden"
+        className="border-border-strong hover:border-fg text-fg tracking-caps inline-flex min-h-11 items-center gap-3 border px-4 text-xs uppercase transition-colors lg:hidden"
         aria-expanded={open}
         aria-haspopup="dialog"
         onClick={() => setOpen(true)}
@@ -129,7 +129,7 @@ export function PanelNav({
           />
         </nav>
         {footer && (
-          <div className="border-ivory/10 mt-8 flex flex-col items-start gap-4 border-t pt-6">
+          <div className="border-border mt-8 flex flex-col items-start gap-4 border-t pt-6">
             {footer}
           </div>
         )}

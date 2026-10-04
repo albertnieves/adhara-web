@@ -12,6 +12,7 @@ import {
 } from '@/modules/purchasing';
 import { listPurchaseOrders, listSuppliers } from '@/modules/purchasing/server';
 import { NewOrderForm } from '@/modules/purchasing/ui';
+import { buttonClass, Card, Eyebrow, Table } from '@/components/ui';
 
 export const metadata: Metadata = { title: 'Compras' };
 
@@ -63,20 +64,20 @@ export default async function Purchases({
       <PageHeader eyebrow="Compras" title="Pedidos a proveedor">
         <Link
           href="/admin/compras/proveedores"
-          className="border-line hover:border-ink tracking-caps inline-flex min-h-11 items-center border px-5 text-xs font-semibold uppercase"
+          className="border-border hover:border-fg tracking-caps inline-flex min-h-11 items-center border px-5 text-xs font-semibold uppercase"
         >
           Proveedores
         </Link>
         <Link
           href="/admin/reposicion"
-          className="border-line hover:border-ink tracking-caps inline-flex min-h-11 items-center border px-5 text-xs font-semibold uppercase"
+          className="border-border hover:border-fg tracking-caps inline-flex min-h-11 items-center border px-5 text-xs font-semibold uppercase"
         >
           Reposición
         </Link>
       </PageHeader>
 
-      <section className="panel-card mb-10">
-        <p className="eyebrow mb-4">Nuevo pedido</p>
+      <Card as="section" className="mb-10">
+        <Eyebrow className="mb-4">Nuevo pedido</Eyebrow>
         <NewOrderForm
           suppliers={suppliers
             .filter((s) => s.active)
@@ -86,7 +87,7 @@ export default async function Purchases({
               leadTimeDays: s.leadTimeDays,
             }))}
         />
-      </section>
+      </Card>
 
       <nav className="mb-6 flex flex-wrap gap-2" aria-label="Filtro por estado">
         {filters.map((f) => (
@@ -98,7 +99,7 @@ export default async function Purchases({
                 : `/admin/compras?estado=${f.value}`
             }
             aria-current={estado === f.value ? 'page' : undefined}
-            className={`tracking-caps-sm border px-3 py-2 text-xs uppercase ${estado === f.value ? 'border-ink bg-ink text-ivory' : 'border-line hover:border-ink'}`}
+            className={buttonClass(estado === f.value ? 'primary' : 'outline')}
           >
             {f.label} · {f.count}
           </Link>
@@ -106,14 +107,14 @@ export default async function Purchases({
       </nav>
 
       {visible.length === 0 ? (
-        <p className="text-smoke py-16 text-center">
+        <p className="text-fg-muted py-16 text-center">
           {orders.length === 0
             ? 'Aún no hay pedidos. Crea uno arriba o desde las propuestas de Reposición.'
             : 'Ningún pedido con este filtro.'}
         </p>
       ) : (
         <div className="overflow-x-auto">
-          <table className="data-table stack-table md:min-w-[48rem]">
+          <Table caption="Pedidos a proveedor" className="md:min-w-[48rem]">
             <thead>
               <tr>
                 <th>Pedido</th>
@@ -134,7 +135,7 @@ export default async function Purchases({
                     >
                       {order.number}
                     </Link>
-                    <p className="text-smoke text-xs">
+                    <p className="text-fg-muted text-xs">
                       {DATE.format(new Date(order.createdAt))}
                     </p>
                   </td>
@@ -163,7 +164,7 @@ export default async function Purchases({
                   )}
                   <td
                     data-label="Llegada prevista"
-                    className="text-smoke text-sm"
+                    className="text-fg-muted text-sm"
                   >
                     {order.expectedOn
                       ? DATE.format(new Date(`${order.expectedOn}T12:00:00Z`))
@@ -172,7 +173,7 @@ export default async function Purchases({
                 </tr>
               ))}
             </tbody>
-          </table>
+          </Table>
         </div>
       )}
     </main>

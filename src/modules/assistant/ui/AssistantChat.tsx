@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { buttonClass, Card, Textarea } from '@/components/ui';
 
 type Message = { role: 'user' | 'assistant'; content: string };
 type Event =
@@ -101,19 +102,19 @@ export function AssistantChat({
 
   if (!configured) {
     return (
-      <div className="panel-card text-sm leading-relaxed">
+      <Card className="text-sm leading-relaxed">
         <p className="font-semibold">El asistente aún no está activado.</p>
-        <p className="text-smoke mt-2">
+        <p className="text-fg-muted mt-2">
           Hace falta la clave de la API de Claude (ANTHROPIC_API_KEY) en las
           variables del servidor. Mientras tanto, el informe diario funciona
           igual, sin resumen redactado.
         </p>
-      </div>
+      </Card>
     );
   }
 
   return (
-    <div className="panel-card flex min-h-[28rem] flex-col !p-0">
+    <Card padding="none" className="flex min-h-[28rem] flex-col">
       <div
         className="flex-1 space-y-5 overflow-y-auto px-5 py-5"
         aria-live="polite"
@@ -121,7 +122,7 @@ export function AssistantChat({
       >
         {messages.length === 0 && (
           <div>
-            <p className="text-smoke text-sm">
+            <p className="text-fg-muted text-sm">
               Pregunta por el stock, las ventas en unidades, la reposición o lo
               pendiente del catálogo. El asistente solo consulta: los cambios
               los haces tú en el panel.
@@ -132,7 +133,7 @@ export function AssistantChat({
                   key={suggestion}
                   type="button"
                   onClick={() => ask(suggestion)}
-                  className="border-line hover:border-ink min-h-10 border px-3 text-left text-sm transition-colors"
+                  className="border-border hover:border-fg min-h-11 border px-3 text-left text-sm transition-colors"
                 >
                   {suggestion}
                 </button>
@@ -144,7 +145,7 @@ export function AssistantChat({
           message.role === 'user' ? (
             <p
               key={index}
-              className="bg-sand ml-auto max-w-[85%] px-4 py-3 text-sm"
+              className="bg-surface-sunken ml-auto max-w-[85%] px-4 py-3 text-sm"
             >
               {message.content}
             </p>
@@ -158,10 +159,10 @@ export function AssistantChat({
           ) : null,
         )}
         {status && (
-          <p className="text-smoke flex items-center gap-3 text-sm">
+          <p className="text-fg-muted flex items-center gap-3 text-sm">
             <span
               aria-hidden="true"
-              className="border-ink/40 size-4 animate-spin rounded-full border border-t-transparent"
+              className="border-fg/40 size-4 animate-spin rounded-full border border-t-transparent"
             />
             {status}
           </p>
@@ -174,7 +175,7 @@ export function AssistantChat({
         <div ref={bottom} />
       </div>
       <form
-        className="border-line flex items-end gap-2 border-t p-3"
+        className="border-border flex items-end gap-2 border-t p-3"
         onSubmit={(event) => {
           event.preventDefault();
           void ask(draft);
@@ -183,7 +184,7 @@ export function AssistantChat({
         <label className="sr-only" htmlFor="pregunta-asistente">
           Pregunta al asistente
         </label>
-        <textarea
+        <Textarea
           id="pregunta-asistente"
           value={draft}
           onChange={(event) => setDraft(event.target.value)}
@@ -196,13 +197,13 @@ export function AssistantChat({
           rows={2}
           maxLength={4000}
           placeholder="Escribe tu pregunta…"
-          className="input min-h-11 flex-1 resize-none"
+          className="flex-1 resize-none!"
         />
         {busy ? (
           <button
             type="button"
             onClick={() => controller.current?.abort()}
-            className="panel-btn"
+            className={buttonClass('outline')}
           >
             Parar
           </button>
@@ -210,7 +211,7 @@ export function AssistantChat({
           <button
             type="submit"
             disabled={!draft.trim()}
-            className="panel-btn panel-btn-primary disabled:opacity-40"
+            className={buttonClass('primary')}
           >
             Preguntar
           </button>
@@ -223,11 +224,11 @@ export function AssistantChat({
             setMessages([]);
             setError(null);
           }}
-          className="text-smoke hover:text-ink tracking-caps-sm min-h-10 self-start px-5 pb-3 text-xs uppercase"
+          className="text-fg-muted hover:text-fg tracking-caps-sm min-h-11 self-start px-5 pb-3 text-xs uppercase"
         >
           Nueva conversación
         </button>
       )}
-    </div>
+    </Card>
   );
 }

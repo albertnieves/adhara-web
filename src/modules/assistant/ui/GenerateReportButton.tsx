@@ -1,6 +1,7 @@
 'use client';
 
-import { FormMessage, SubmitButton, useAdminAction } from '@/modules/admin';
+import { SubmitButton } from '@/components/ui';
+import { FormMessage, useAdminAction } from '@/modules/admin';
 import { generateDailyReportNow } from '../server/actions';
 
 /** Guarda el informe del día con el resumen del asistente. */
@@ -18,7 +19,7 @@ export function GenerateReportButton({
       <SubmitButton
         pending={pending}
         pendingLabel="Preparando el informe…"
-        variant="ghost"
+        variant="outline"
       >
         {label}
       </SubmitButton>

@@ -208,16 +208,6 @@
 }
 
 @layer components {
-  /* Siempre en sans, también cuando la etiqueta es un encabezado (h2, h3). */
-  .eyebrow {
-    font-family: var(--font-sans);
-    font-weight: 400;
-    font-size: var(--text-2xs);
-    letter-spacing: var(--tracking-caps-lg);
-    text-transform: uppercase;
-    color: var(--color-fg-muted);
-  }
-
   /* Subrayado dorado que se dibuja al pasar el cursor. */
   .link-underline {
     background-image: linear-gradient(currentColor, currentColor);
@@ -231,44 +221,6 @@
   .link-underline:focus-visible,
   .link-underline[aria-current='page'] {
     background-size: 100% 1px;
-  }
-
-  .btn {
-    position: relative;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.75rem;
-    overflow: hidden;
-    padding: 1rem 2.25rem;
-    font-size: var(--text-2xs);
-    font-weight: 600;
-    letter-spacing: var(--tracking-caps-lg);
-    text-transform: uppercase;
-    transition:
-      background-color var(--duration-base) var(--ease-luxe),
-      color var(--duration-base) var(--ease-luxe),
-      border-color var(--duration-base) var(--ease-luxe);
-  }
-  /* D4: el dorado no es fondo de texto; el principal pasa a tinta suave. */
-  .btn-primary {
-    background: var(--color-ink);
-    color: var(--color-ivory);
-  }
-  .btn-primary:hover {
-    background: var(--color-ink-soft);
-  }
-  .btn-outline {
-    border: 1px solid currentColor;
-  }
-  .btn-outline:hover {
-    background: var(--color-ivory);
-    color: var(--color-ink);
-    border-color: var(--color-ivory);
-  }
-  .btn:disabled {
-    cursor: not-allowed;
-    opacity: 0.45;
   }
 
   /* Destello que recorre un elemento (sobre fondos oscuros). */
@@ -300,20 +252,6 @@
     opacity: 0.07;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   }
-
-  .field {
-    width: 100%;
-    border: 0;
-    border-bottom: 1px solid var(--color-border-strong);
-    background: transparent;
-    padding: 0.75rem 0;
-    font-size: 0.9375rem;
-    transition: border-color var(--duration-base) var(--ease-luxe);
-  }
-  .field:focus {
-    outline: none;
-    border-color: var(--color-fg);
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -329,24 +267,6 @@
 
 /* Panel de administración: mismas bases, controles más explícitos. */
 @layer components {
-  .input {
-    width: 100%;
-    min-height: 2.75rem;
-    border: 1px solid var(--color-border-strong);
-    background: var(--color-surface-raised);
-    padding: 0.5rem 0.75rem;
-    font-size: 0.9375rem;
-    transition: border-color var(--duration-fast) var(--ease-luxe);
-  }
-  .input:focus {
-    outline: none;
-    border-color: var(--color-fg);
-  }
-  .panel-card {
-    border: 1px solid var(--color-border);
-    background: var(--color-surface-raised);
-    padding: 1.5rem;
-  }
   .data-table {
     width: 100%;
     border-collapse: collapse;
@@ -376,47 +296,6 @@
       var(--color-surface-raised) 60%,
       transparent
     );
-  }
-
-  /* Botones del panel: mismo alto táctil (44 px) en tablet y escritorio. */
-  .panel-btn {
-    display: inline-flex;
-    min-height: 2.75rem;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    border: 1px solid var(--color-border);
-    padding: 0 1.25rem;
-    font-size: 0.75rem;
-    font-weight: 600;
-    letter-spacing: var(--tracking-caps);
-    text-transform: uppercase;
-    transition:
-      border-color var(--duration-fast) var(--ease-luxe),
-      background-color var(--duration-fast) var(--ease-luxe),
-      color var(--duration-fast) var(--ease-luxe);
-  }
-  .panel-btn:hover {
-    border-color: var(--color-fg);
-  }
-  .panel-btn-primary {
-    border-color: var(--color-ink);
-    background: var(--color-ink);
-    color: var(--color-ivory);
-  }
-  .panel-btn-primary:hover {
-    border-color: var(--color-ink-soft);
-    background: var(--color-ink-soft);
-  }
-  .panel-btn-sm {
-    min-height: 2.25rem;
-    padding: 0 0.75rem;
-    font-size: var(--text-2xs);
-    letter-spacing: var(--tracking-caps-sm);
-  }
-  .panel-shell input[type='checkbox'] {
-    width: 1.25rem;
-    height: 1.25rem;
   }
 
   /* Panel lateral (Sheet): entra desde el borde, sin recortar la tabla. */

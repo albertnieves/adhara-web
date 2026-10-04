@@ -195,10 +195,16 @@ export function ComponentsSection() {
       <SubTitle>Button</SubTitle>
       <Text size="small" tone="muted" className="mb-4 max-w-3xl">
         Cinco variantes con los semánticos, así que funcionan en todos los
-        tonos. md y lg miden 44 y 48 px; sm (36 px) es para tablas y barras
-        compactas. Con href es un enlace con aspecto de botón.
+        tonos. md y lg miden 44 y 48 px; sm (36 px) es para controles
+        secundarios de la tienda, nunca en el panel (criterio 8). Con href es un
+        enlace con aspecto de botón.
       </Text>
-      <div id="acciones" className="flex scroll-mt-8 flex-col gap-6">
+      {/* Muestra el tamaño sm a propósito: la auditoría del panel no le exige 44 px. */}
+      <div
+        id="acciones"
+        data-target-demo
+        className="flex scroll-mt-8 flex-col gap-6"
+      >
         {(Object.keys(BUTTON_VARIANTS) as ButtonVariant[]).map((variant) => (
           <div key={variant} className="flex flex-wrap items-center gap-3">
             <code className="w-20 shrink-0 text-xs">{variant}</code>

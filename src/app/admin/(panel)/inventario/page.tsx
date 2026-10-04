@@ -7,6 +7,7 @@ import { requirePermission } from '@/modules/auth/server';
 import { MOVEMENT_PERMISSIONS, MOVEMENT_TYPES } from '@/modules/inventory';
 import { getDefaultLocation, listStock } from '@/modules/inventory/server';
 import { StockActions } from '@/modules/inventory/ui';
+import { buttonClass, Table } from '@/components/ui';
 
 export const metadata: Metadata = { title: 'Inventario' };
 
@@ -29,7 +30,7 @@ export default async function Inventory({
     return (
       <main>
         <PageHeader eyebrow="Inventario" title="Stock" />
-        <p className="text-smoke">No hay ninguna ubicación activa.</p>
+        <p className="text-fg-muted">No hay ninguna ubicación activa.</p>
       </main>
     );
   }
@@ -52,7 +53,7 @@ export default async function Inventory({
   return (
     <main>
       <PageHeader eyebrow={location.name} title="Inventario">
-        <Link href="/admin/movimientos" className="panel-btn">
+        <Link href="/admin/movimientos" className={buttonClass('outline')}>
           Historial
         </Link>
       </PageHeader>
@@ -77,7 +78,9 @@ export default async function Inventory({
                   : ''
               }`}
               aria-current={filtro === f.value ? 'page' : undefined}
-              className={`tracking-caps-sm inline-flex min-h-10 items-center border px-3 text-xs uppercase ${filtro === f.value ? 'border-ink bg-ink text-ivory' : 'border-line hover:border-ink'}`}
+              className={buttonClass(
+                filtro === f.value ? 'primary' : 'outline',
+              )}
             >
               {f.label}
             </Link>
@@ -85,7 +88,7 @@ export default async function Inventory({
         </nav>
         {filtro && <input type="hidden" name="filtro" value={filtro} />}
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-6">
-          <p className="text-smoke tracking-caps-sm text-xs uppercase">
+          <p className="text-fg-muted tracking-caps-sm text-xs uppercase">
             {units} uds. en tienda
           </p>
           <SearchField
@@ -98,14 +101,14 @@ export default async function Inventory({
       </form>
 
       {visible.length === 0 ? (
-        <p className="text-smoke py-16 text-center">
+        <p className="text-fg-muted py-16 text-center">
           {rows.length === 0
             ? 'No hay formatos todavía: añádelos desde el catálogo.'
             : 'Nada que mostrar con este filtro.'}
         </p>
       ) : (
         <div className="overflow-x-auto">
-          <table className="data-table stack-table md:min-w-[48rem]">
+          <Table caption="Stock de la tienda" className="md:min-w-[48rem]">
             <thead>
               <tr>
                 <th>Perfume</th>
@@ -128,7 +131,7 @@ export default async function Inventory({
                       >
                         {r.productName}
                       </Link>
-                      <p className="text-smoke text-xs">{r.brandName}</p>
+                      <p className="text-fg-muted text-xs">{r.brandName}</p>
                     </td>
                     <td data-label="Formato" className="text-sm">
                       <span>
@@ -149,7 +152,7 @@ export default async function Inventory({
                     </td>
                     <td
                       data-label="Reservado"
-                      className="text-smoke text-right tabular-nums"
+                      className="text-fg-muted text-right tabular-nums"
                     >
                       {r.reserved}
                     </td>
@@ -183,7 +186,7 @@ export default async function Inventory({
                 );
               })}
             </tbody>
-          </table>
+          </Table>
         </div>
       )}
     </main>

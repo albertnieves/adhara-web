@@ -47,6 +47,40 @@ const RULES = {
   tracking: [/\btracking-\[/g],
 };
 
+/** Clases de componente anteriores a la biblioteca (criterio 4, DS-11). */
+const LEGACY_CLASSES = [
+  'btn',
+  'btn-primary',
+  'btn-outline',
+  'panel-btn',
+  'panel-btn-primary',
+  'panel-btn-sm',
+  'input',
+  'panel-card',
+  'field',
+  'eyebrow',
+];
+
+/**
+ * Colores de la capa de paleta: fuera de los tokens se usan los semánticos
+ * (fg, surface, border, accent…), que cambian con el tono. Solo se permite
+ * `stage`, el fondo de la escena de producto.
+ */
+const PALETTE_TOKENS =
+  'ivory|paper|sand|ink|ink-soft|night|night-raised|smoke|mist|line|line-strong|line-dark|line-strong-dark|gold|gold-deep|gold-soft|oud|indigo-night|forest';
+const PALETTE_UTILITY = new RegExp(
+  `(?<![\\w-])(?:[a-z0-9-]+:)*(?:bg|text|border|border-[tblrxy]|ring|fill|stroke|from|to|via|outline|decoration|divide|placeholder|shadow|accent|caret)-(?:${PALETTE_TOKENS})(?:/\\d+)?(?![\\w-])`,
+  'g',
+);
+
+/** Clases escritas en `className` (literal o plantilla) de cada archivo. */
+function classNames(text: string) {
+  return [
+    ...text.matchAll(/className="([^"]*)"/g),
+    ...text.matchAll(/className=\{`([^`]*)`\}/g),
+  ].flatMap((m) => m[1]!.split(/\s+/).filter(Boolean));
+}
+
 function counts(patterns: RegExp[]) {
   const result: Record<string, number> = {};
   for (const file of FILES) {
@@ -93,6 +127,25 @@ describe('guardas del sistema de diseño', () => {
           !line.includes('data:image/svg+xml'),
       );
     expect(loose).toEqual([]);
+  });
+
+  it('sin clases sueltas del sistema anterior (criterio 4)', () => {
+    const legacy = new Set(LEGACY_CLASSES);
+    const found = FILES.flatMap((file) =>
+      classNames(readFileSync(join(ROOT, file), 'utf8'))
+        .filter((name) => legacy.has(name))
+        .map((name) => `${file}: .${name}`),
+    );
+    expect(found).toEqual([]);
+    const css = readFileSync(join(ROOT, 'src/app/globals.css'), 'utf8');
+    const defined = LEGACY_CLASSES.filter((name) =>
+      new RegExp(`\\.${name}(?![\\w-])`).test(css),
+    );
+    expect(defined).toEqual([]);
+  });
+
+  it('solo colores semánticos fuera de los tokens (DS-10 y DS-11)', () => {
+    expect(counts([PALETTE_UTILITY])).toEqual({});
   });
 
   it('la niebla no se usa como color de texto', () => {

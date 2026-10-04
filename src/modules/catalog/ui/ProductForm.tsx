@@ -2,18 +2,21 @@
 
 import { useState } from 'react';
 import type { ActionState } from '@/modules/admin';
-import {
-  Field,
-  FormMessage,
-  SubmitButton,
-  useAdminAction,
-} from '@/modules/admin';
+import { FormMessage, useAdminAction } from '@/modules/admin';
 import { UNBOXING_SCENES } from '@/modules/unboxing';
 import {
   AUDIENCES,
   CONCENTRATIONS,
   CONCENTRATION_NAMES,
 } from '../domain/product';
+import {
+  Checkbox,
+  Field,
+  Input,
+  Select,
+  SubmitButton,
+  Textarea,
+} from '@/components/ui';
 
 const AUDIENCE_LABELS: Record<string, string> = {
   women: 'Mujer',
@@ -52,124 +55,103 @@ export function ProductForm({
       <input type="hidden" name="expected" value={values.updatedAt ?? ''} />
       {values.id && <input type="hidden" name="id" value={values.id} />}
       <Field label="Nombre" className="md:col-span-2">
-        <input
+        <Input
           name="name"
           required
           maxLength={120}
           defaultValue={values.name}
-          className="input font-display text-xl"
+          className="font-display! text-xl!"
         />
       </Field>
-      <Field label="Marca">
-        {newBrand ? (
-          <input
-            name="newBrand"
-            placeholder="Nombre de la nueva marca"
-            maxLength={80}
-            className="input"
-            required
-          />
-        ) : (
-          <select
-            name="brandId"
-            defaultValue={values.brandId}
-            className="input"
-            required
-          >
-            <option value="">Elige una marca</option>
-            {brands.map((brand) => (
-              <option key={brand.id} value={brand.id}>
-                {brand.name}
-              </option>
-            ))}
-          </select>
-        )}
+      <div className="flex flex-col gap-1.5">
+        <Field label="Marca">
+          {newBrand ? (
+            <Input
+              name="newBrand"
+              placeholder="Nombre de la nueva marca"
+              maxLength={80}
+              required
+            />
+          ) : (
+            <Select name="brandId" defaultValue={values.brandId} required>
+              <option value="">Elige una marca</option>
+              {brands.map((brand) => (
+                <option key={brand.id} value={brand.id}>
+                  {brand.name}
+                </option>
+              ))}
+            </Select>
+          )}
+        </Field>
         {brands.length > 0 && (
           <button
             type="button"
             onClick={() => setNewBrand((v) => !v)}
-            className="link-underline text-smoke inline-flex min-h-10 items-center self-start text-xs"
+            className="link-underline text-fg-muted inline-flex min-h-11 items-center self-start text-xs"
           >
             {newBrand ? 'Elegir una marca existente' : '+ Nueva marca'}
           </button>
         )}
-      </Field>
+      </div>
       <Field label="Concentración">
-        <select
-          name="concentration"
-          defaultValue={values.concentration ?? ''}
-          className="input"
-        >
+        <Select name="concentration" defaultValue={values.concentration ?? ''}>
           <option value="">Sin indicar</option>
           {CONCENTRATIONS.map((c) => (
             <option key={c} value={c}>
               {CONCENTRATION_NAMES[c]}
             </option>
           ))}
-        </select>
+        </Select>
       </Field>
       <Field label="Para">
-        <select
-          name="audience"
-          defaultValue={values.audience ?? ''}
-          className="input"
-        >
+        <Select name="audience" defaultValue={values.audience ?? ''}>
           <option value="">Sin indicar</option>
           {AUDIENCES.map((a) => (
             <option key={a} value={a}>
               {AUDIENCE_LABELS[a]}
             </option>
           ))}
-        </select>
+        </Select>
       </Field>
       <Field
         label="Escena 3D de unboxing"
         hint="Solo los perfumes del piloto tienen escena por ahora."
       >
-        <select
-          name="unboxingScene"
-          defaultValue={values.unboxingScene ?? ''}
-          className="input"
-        >
+        <Select name="unboxingScene" defaultValue={values.unboxingScene ?? ''}>
           <option value="">Sin escena (imagen)</option>
           {UNBOXING_SCENES.map((scene) => (
             <option key={scene} value={scene}>
               {scene}
             </option>
           ))}
-        </select>
+        </Select>
       </Field>
       <Field
         label="Procedencia de los datos"
         hint="Por ejemplo: «CATALOGO global 2026, p. 12». No se muestra en la tienda."
         className="md:col-span-2"
       >
-        <textarea
+        <Textarea
           name="sourceRef"
           rows={2}
           maxLength={500}
           defaultValue={values.sourceRef ?? ''}
-          className="input"
         />
       </Field>
       <Field label="Orden en la colección" hint="Menor primero.">
-        <input
+        <Input
           name="position"
           type="number"
           min={0}
           defaultValue={values.position}
-          className="input"
         />
       </Field>
-      <label className="flex items-center gap-3 self-end pb-3 text-sm">
-        <input
-          name="featured"
-          type="checkbox"
-          defaultChecked={values.featured}
-          className="accent-ink size-5"
-        />
-        Destacado en la portada
-      </label>
+      <Checkbox
+        name="featured"
+        defaultChecked={values.featured}
+        label="Destacado en la portada"
+        className="self-end"
+      />
       <div className="flex flex-col gap-4 md:col-span-2">
         <FormMessage state={state} />
         <div>

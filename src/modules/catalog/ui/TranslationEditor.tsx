@@ -1,13 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import {
-  Field,
-  FormMessage,
-  SubmitButton,
-  useAdminAction,
-} from '@/modules/admin';
+import { FormMessage, useAdminAction } from '@/modules/admin';
 import { saveTranslation } from '../server/actions';
+import { Field, Input, SubmitButton, Textarea } from '@/components/ui';
 
 const LOCALES = [
   { code: 'es', label: 'Español' },
@@ -36,27 +32,26 @@ function TranslationForm({
       <input type="hidden" name="productId" value={productId} />
       <input type="hidden" name="locale" value={locale} />
       <Field label="Frase corta" hint="Se muestra bajo el nombre en la ficha.">
-        <input
+        <Input
           name="tagline"
           maxLength={200}
           defaultValue={value?.tagline ?? ''}
-          className="input"
         />
       </Field>
       <Field
         label="Descripción"
         hint="Solo información verificada (catálogo o fuente oficial)."
       >
-        <textarea
+        <Textarea
           name="description"
           rows={6}
           maxLength={4000}
           defaultValue={value?.description ?? ''}
-          className="input leading-relaxed"
+          className="leading-relaxed"
         />
       </Field>
       <div className="flex flex-wrap items-center gap-3">
-        <SubmitButton pending={pending} variant="ghost">
+        <SubmitButton pending={pending} variant="outline">
           Guardar texto
         </SubmitButton>
         <FormMessage state={state} />
@@ -75,7 +70,7 @@ export function TranslationEditor({
   const [active, setActive] = useState<string>('es');
   return (
     <div>
-      <div role="tablist" className="border-line mb-6 flex gap-1 border-b">
+      <div role="tablist" className="border-border mb-6 flex gap-1 border-b">
         {LOCALES.map((locale) => (
           <button
             key={locale.code}
@@ -83,10 +78,10 @@ export function TranslationEditor({
             role="tab"
             aria-selected={active === locale.code}
             onClick={() => setActive(locale.code)}
-            className={`tracking-caps -mb-px border-b-2 px-4 py-3 text-xs uppercase ${
+            className={`tracking-caps -mb-px min-h-11 border-b-2 px-4 py-3 text-xs uppercase ${
               active === locale.code
-                ? 'border-ink text-ink'
-                : 'text-smoke border-transparent'
+                ? 'border-fg text-fg'
+                : 'text-fg-muted border-transparent'
             }`}
           >
             {locale.label}

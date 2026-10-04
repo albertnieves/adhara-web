@@ -13,6 +13,7 @@ import {
   lastDaysPeriod,
 } from '@/modules/reports';
 import { getPurchasesReport } from '@/modules/reports/server';
+import { Eyebrow, Input, Table } from '@/components/ui';
 
 export const metadata: Metadata = { title: 'Compras por proveedor' };
 
@@ -21,7 +22,7 @@ const DAYS = new Intl.NumberFormat('es-ES', { maximumFractionDigits: 1 });
 function LeadTime({ check }: { check: LeadTimeCheck }) {
   switch (check.kind) {
     case 'no_data':
-      return <span className="text-smoke">Sin recepciones</span>;
+      return <span className="text-fg-muted">Sin recepciones</span>;
     case 'no_declared':
       return (
         <span>
@@ -43,7 +44,7 @@ function LeadTime({ check }: { check: LeadTimeCheck }) {
           }
         >
           {DAYS.format(check.realDays)} d
-          <span className="text-smoke block text-xs">
+          <span className="text-fg-muted block text-xs">
             declarado {check.declaredDays} d
             {check.kind === 'slower' && ' · tarda más'}
             {check.kind === 'faster' && ' · llega antes'}
@@ -72,33 +73,23 @@ export default async function PurchasesReport({
   return (
     <main>
       <PageHeader eyebrow="Informes" title="Compras por proveedor" />
-      <form className="border-line mb-8 flex flex-wrap items-end gap-x-6 gap-y-4 border-y py-5">
+      <form className="border-border mb-8 flex flex-wrap items-end gap-x-6 gap-y-4 border-y py-5">
         <label className="flex flex-col gap-2">
-          <span className="eyebrow">Desde</span>
-          <input
-            type="date"
-            name="desde"
-            defaultValue={period.firstDay}
-            className="input"
-          />
+          <Eyebrow as="span">Desde</Eyebrow>
+          <Input type="date" name="desde" defaultValue={period.firstDay} />
         </label>
         <label className="flex flex-col gap-2">
-          <span className="eyebrow">Hasta</span>
-          <input
-            type="date"
-            name="hasta"
-            defaultValue={period.lastDay}
-            className="input"
-          />
+          <Eyebrow as="span">Hasta</Eyebrow>
+          <Input type="date" name="hasta" defaultValue={period.lastDay} />
         </label>
         <button
           type="submit"
-          className="border-line hover:border-ink tracking-caps inline-flex min-h-11 items-center border px-5 text-xs font-semibold uppercase"
+          className="border-border hover:border-fg tracking-caps inline-flex min-h-11 items-center border px-5 text-xs font-semibold uppercase"
         >
           Ver
         </button>
       </form>
-      <p className="text-smoke mb-8 max-w-3xl text-sm leading-relaxed">
+      <p className="text-fg-muted mb-8 max-w-3xl text-sm leading-relaxed">
         Pedidos enviados y recepciones del periodo. Plazo real: de la fecha en
         que se marcó como pedido a su primera recepción, en los pedidos cuya
         primera recepción cae en el periodo. Si difiere del declarado en más de{' '}
@@ -107,12 +98,16 @@ export default async function PurchasesReport({
       </p>
 
       {suppliers.length === 0 ? (
-        <p className="text-smoke py-16 text-center">
+        <p className="text-fg-muted py-16 text-center">
           No hay proveedores ni compras en el periodo.
         </p>
       ) : (
         <div className="overflow-x-auto">
-          <table className="data-table min-w-[44rem]">
+          <Table
+            caption="Compras por proveedor"
+            stacked={false}
+            className="min-w-[44rem]"
+          >
             <thead>
               <tr>
                 <th>Proveedor</th>
@@ -142,7 +137,7 @@ export default async function PurchasesReport({
                   <td className="text-right tabular-nums">
                     {s.unitsReceived}
                     {s.receipts > 0 && (
-                      <p className="text-smoke text-xs">
+                      <p className="text-fg-muted text-xs">
                         {s.receipts}{' '}
                         {s.receipts === 1 ? 'recepción' : 'recepciones'}
                       </p>
@@ -171,7 +166,7 @@ export default async function PurchasesReport({
                 </tr>
               ))}
             </tbody>
-          </table>
+          </Table>
         </div>
       )}
     </main>

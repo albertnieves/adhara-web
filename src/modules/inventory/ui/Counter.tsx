@@ -18,6 +18,7 @@ import {
 import type { CounterResult } from '../server/counter';
 import { recordCounterTicket } from '../server/counter';
 import { VariantSearch } from './VariantSearch';
+import { buttonClass, Card, Input } from '@/components/ui';
 
 type Pending = { requestId: string; signature: string };
 
@@ -103,11 +104,11 @@ export function Counter({
                 setKind(k);
                 setResult(null);
               }}
-              className={`tracking-caps min-h-12 flex-1 border px-4 text-xs font-semibold uppercase transition-colors ${
-                kind === k
-                  ? 'border-ink bg-ink text-ivory'
-                  : 'border-line hover:border-ink'
-              }`}
+              className={buttonClass(
+                kind === k ? 'primary' : 'outline',
+                'md',
+                'min-h-12 flex-1',
+              )}
             >
               {COUNTER_KIND_LABELS[k]}
             </button>
@@ -124,34 +125,34 @@ export function Counter({
                 {item.available} disp.
               </span>
               {item.priceCents !== null && (
-                <span className="text-smoke block">
+                <span className="text-fg-muted block">
                   {formatEuros(item.priceCents, 'es')}
                 </span>
               )}
             </>
           )}
         />
-        <p className="text-smoke text-xs leading-relaxed">
+        <p className="text-fg-muted text-xs leading-relaxed">
           Con un lector de códigos, escanea directamente en el buscador. El
           panel no emite tickets: registra lo que se vende en la caja o el TPV
           para que el stock de la web sea real.
         </p>
       </section>
 
-      <section className="panel-card space-y-5" aria-label="Ticket">
+      <Card as="section" className="space-y-5" aria-label="Ticket">
         <div className="flex items-baseline justify-between gap-4">
           <h2 className="text-2xl font-light">{COUNTER_KIND_LABELS[kind]}</h2>
-          <p className="text-smoke tracking-caps-sm text-xs uppercase">
+          <p className="text-fg-muted tracking-caps-sm text-xs uppercase">
             {units} {units === 1 ? 'unidad' : 'unidades'}
           </p>
         </div>
 
         {lines.length === 0 ? (
-          <p className="text-smoke py-8 text-center text-sm">
+          <p className="text-fg-muted py-8 text-center text-sm">
             Busca o escanea un perfume para añadirlo.
           </p>
         ) : (
-          <ul className="divide-line border-line divide-y border-y">
+          <ul className="divide-border border-border divide-y border-y">
             {lines.map((line) => {
               const item = byId.get(line.variantId);
               const short = blocked.includes(line.variantId);
@@ -165,12 +166,12 @@ export function Counter({
                 >
                   <div className="min-w-0 text-sm">
                     <p>
-                      <span className="text-smoke">
+                      <span className="text-fg-muted">
                         {item?.brandName ?? '—'} ·{' '}
                       </span>
                       {item?.productName ?? line.variantId}
                     </p>
-                    <p className="text-smoke text-xs">
+                    <p className="text-fg-muted text-xs">
                       {item?.variantLabel}
                       {item?.priceCents != null &&
                         ` · PVP ${formatEuros(item.priceCents, 'es')}`}
@@ -190,11 +191,11 @@ export function Counter({
                           ),
                         )
                       }
-                      className="border-line hover:border-ink h-11 w-11 border text-lg"
+                      className="border-border hover:border-fg h-11 w-11 border text-lg"
                     >
                       −
                     </button>
-                    <input
+                    <Input
                       type="number"
                       inputMode="numeric"
                       min={1}
@@ -210,13 +211,13 @@ export function Counter({
                           ),
                         )
                       }
-                      className="input h-11 w-16 text-center tabular-nums"
+                      className="h-11 w-16! text-center tabular-nums"
                     />
                     <button
                       type="button"
                       aria-label="Una unidad más"
                       onClick={() => edit(addToTicket(lines, line.variantId))}
-                      className="border-line hover:border-ink h-11 w-11 border text-lg"
+                      className="border-border hover:border-fg h-11 w-11 border text-lg"
                     >
                       +
                     </button>
@@ -225,7 +226,7 @@ export function Counter({
                       onClick={() =>
                         edit(setLineQuantity(lines, line.variantId, 0))
                       }
-                      className="text-smoke hover:text-danger tracking-caps-sm ml-auto min-h-11 px-2 text-xs uppercase"
+                      className="text-fg-muted hover:text-danger tracking-caps-sm ml-auto min-h-11 px-2 text-xs uppercase"
                     >
                       Quitar
                     </button>
@@ -237,10 +238,10 @@ export function Counter({
         )}
 
         <label className="flex flex-col gap-1.5">
-          <span className="text-smoke text-2xs tracking-caps font-semibold uppercase">
+          <span className="text-fg-muted text-2xs tracking-caps font-semibold uppercase">
             Nº de ticket del TPV o la caja
           </span>
-          <input
+          <Input
             value={ticketRef}
             onChange={(event) => {
               setTicketRef(event.target.value);
@@ -248,7 +249,6 @@ export function Counter({
             }}
             maxLength={MAX_TICKET_REF}
             autoComplete="off"
-            className="input"
           />
           <span className="text-fg-muted text-xs">
             Opcional, pero permite cuadrar el stock con la caja.
@@ -270,7 +270,7 @@ export function Counter({
           type="button"
           onClick={submit}
           disabled={pending || lines.length === 0 || blocked.length > 0}
-          className="bg-ink text-ivory hover:bg-ink-soft tracking-caps inline-flex min-h-14 w-full items-center justify-center px-5 text-xs font-semibold uppercase transition-colors duration-300 disabled:opacity-50"
+          className={buttonClass('primary', 'md', 'min-h-14 w-full')}
         >
           {pending
             ? 'Registrando…'
@@ -291,7 +291,7 @@ export function Counter({
             {result.message}
           </p>
         )}
-      </section>
+      </Card>
     </div>
   );
 }

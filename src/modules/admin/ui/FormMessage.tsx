@@ -6,7 +6,7 @@ export function FormMessage({ state }: { state: ActionState }) {
     state.status === 'ok'
       ? 'border-success/30 text-success'
       : state.status === 'confirm'
-        ? 'border-gold/50 text-ink'
+        ? 'border-accent/50 text-fg'
         : 'border-danger/30 text-danger';
   return (
     <p

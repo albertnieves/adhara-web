@@ -4,6 +4,7 @@ import { PageHeader, PrintButton } from '@/modules/admin';
 import { requirePermission } from '@/modules/auth/server';
 import { listBrands, listPriceLabels } from '@/modules/catalog/server/admin';
 import { PriceLabelCard } from '@/modules/catalog/ui';
+import { buttonClass, Checkbox, Eyebrow, Select } from '@/components/ui';
 
 export const metadata: Metadata = { title: 'Etiquetas de precio' };
 
@@ -43,7 +44,7 @@ export default async function PriceLabels({
       <div className="print:hidden">
         <Link
           href={productId ? `/admin/catalogo/${productId}` : '/admin/catalogo'}
-          className="link-underline text-smoke tracking-caps text-xs uppercase"
+          className="link-underline text-fg-muted tracking-caps text-xs uppercase"
         >
           ← {productId ? 'Perfume' : 'Catálogo'}
         </Link>
@@ -58,13 +59,13 @@ export default async function PriceLabels({
             </PrintButton>
           </PageHeader>
         </div>
-        <p className="text-smoke -mt-4 mb-8 max-w-2xl text-sm leading-relaxed">
+        <p className="text-fg-muted -mt-4 mb-8 max-w-2xl text-sm leading-relaxed">
           Una etiqueta por formato activo con PVP. En rebaja se muestra el
           precio anterior validado con Ómnibus. Tamaño de hoja adhesiva A4 de 3
           × 7 (63,5 × 38,1 mm); en papel normal, recorta por las líneas.
         </p>
 
-        <form className="border-line mb-10 flex flex-wrap items-end gap-x-6 gap-y-4 border-y py-5">
+        <form className="border-border mb-10 flex flex-wrap items-end gap-x-6 gap-y-4 border-y py-5">
           {productId && (
             <input type="hidden" name="producto" value={productId} />
           )}
@@ -80,11 +81,11 @@ export default async function PriceLabels({
             </p>
           ) : (
             <label className="flex flex-col gap-2">
-              <span className="eyebrow">Marca</span>
-              <select
+              <Eyebrow as="span">Marca</Eyebrow>
+              <Select
                 name="marca"
                 defaultValue={brandId ?? ''}
-                className="input min-w-48"
+                className="min-w-48"
               >
                 <option value="">Todas</option>
                 {brands.map((brand) => (
@@ -92,41 +93,34 @@ export default async function PriceLabels({
                     {brand.name}
                   </option>
                 ))}
-              </select>
+              </Select>
             </label>
           )}
           <label className="flex flex-col gap-2">
-            <span className="eyebrow">Perfumes</span>
-            <select
+            <Eyebrow as="span">Perfumes</Eyebrow>
+            <Select
               name="estado"
               defaultValue={publishedOnly ? 'publicados' : ''}
-              className="input min-w-48"
+              className="min-w-48"
             >
               <option value="">En tienda (borradores y publicados)</option>
               <option value="publicados">Solo publicados online</option>
-            </select>
+            </Select>
           </label>
-          <label className="flex min-h-11 items-center gap-3 text-sm">
-            <input
-              type="checkbox"
-              name="adhesiva"
-              value="1"
-              defaultChecked={!cutLines}
-              className="accent-ink size-5"
-            />
-            Hoja adhesiva (sin líneas de corte)
-          </label>
-          <button
-            type="submit"
-            className="border-ink hover:bg-ink hover:text-ivory tracking-caps min-h-11 border px-5 text-xs font-semibold uppercase transition-colors"
-          >
+          <Checkbox
+            name="adhesiva"
+            value="1"
+            defaultChecked={!cutLines}
+            label="Hoja adhesiva (sin líneas de corte)"
+          />
+          <button type="submit" className={buttonClass('outline')}>
             Aplicar
           </button>
         </form>
       </div>
 
       {labels.length === 0 ? (
-        <p className="font-display text-smoke max-w-lg text-2xl font-light">
+        <p className="font-display text-fg-muted max-w-lg text-2xl font-light">
           No hay formatos activos con PVP para esta selección. Fija el PVP desde
           la ficha de cada perfume.
         </p>

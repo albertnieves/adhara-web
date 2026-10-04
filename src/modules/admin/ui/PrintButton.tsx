@@ -1,5 +1,7 @@
 'use client';
 
+import { buttonClass } from '@/components/ui';
+
 export function PrintButton({
   children = 'Imprimir',
   disabled = false,
@@ -12,7 +14,7 @@ export function PrintButton({
       type="button"
       disabled={disabled}
       onClick={() => window.print()}
-      className="bg-ink text-ivory hover:bg-ink-soft tracking-caps inline-flex min-h-11 items-center px-5 text-xs font-semibold uppercase transition-colors disabled:opacity-40"
+      className={buttonClass('primary')}
     >
       {children}
     </button>

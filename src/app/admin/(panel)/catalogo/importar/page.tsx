@@ -13,14 +13,14 @@ export default async function ImportCatalogPage() {
     <main>
       <Link
         href="/admin/catalogo"
-        className="link-underline text-smoke tracking-caps text-xs uppercase"
+        className="link-underline text-fg-muted tracking-caps text-xs uppercase"
       >
         ← Catálogo
       </Link>
       <div className="mt-6">
         <PageHeader eyebrow="Catálogo" title="Importar catálogo" />
       </div>
-      <p className="text-smoke -mt-4 mb-10 max-w-3xl text-sm leading-relaxed">
+      <p className="text-fg-muted -mt-4 mb-10 max-w-3xl text-sm leading-relaxed">
         Para cargar perfumes, formatos y PVP desde un catálogo (por ejemplo, el
         PDF del proveedor pasado a CSV). Primero se revisa fila a fila y no se
         aplica nada hasta que confirmas. Se reconocen las marcas, perfumes y
