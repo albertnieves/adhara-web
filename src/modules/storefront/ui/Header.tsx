@@ -4,6 +4,7 @@ import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { useLocale, useTranslations } from 'next-intl';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { Eyebrow } from '@/components/ui';
 import { Logo } from '@/modules/brand';
 import { Link, routing, usePathname } from '@/modules/i18n';
 
@@ -69,22 +70,26 @@ export function Header() {
 
   return (
     <header
-      className={`fixed inset-x-0 top-0 z-40 transition-[background-color,color,border-color,backdrop-filter] duration-700 ease-(--ease-luxe) ${
+      // Sobre el vídeo de la portada, los semánticos del tono oscuro.
+      data-tone={transparent ? 'dark' : undefined}
+      className={`text-fg fixed inset-x-0 top-0 z-40 border-b transition-[background-color,color,border-color,backdrop-filter] duration-700 ease-(--ease-luxe) ${
         transparent
-          ? 'text-ivory border-b border-transparent bg-transparent'
-          : 'text-ink border-line bg-ivory/85 border-b backdrop-blur-md'
+          ? 'border-transparent bg-transparent'
+          : 'border-border bg-surface/85 backdrop-blur-md'
       }`}
     >
       <div className="mx-auto grid h-18 max-w-[90rem] grid-cols-[1fr_auto_1fr] items-center px-5 sm:px-10">
         <nav aria-label={t('menu')} className="flex items-center gap-8">
           <button
             type="button"
-            className="eyebrow text-current! md:hidden"
+            className="min-h-11 md:hidden"
             aria-expanded={open}
             aria-controls="mobile-menu"
             onClick={() => setOpen((value) => !value)}
           >
-            {open ? t('close') : t('menu')}
+            <Eyebrow as="span" tone="inherit">
+              {open ? t('close') : t('menu')}
+            </Eyebrow>
           </button>
           <Link
             href="/catalogo"
@@ -119,7 +124,7 @@ export function Header() {
             id="mobile-menu"
             key="menu"
             data-tone="dark"
-            className="bg-night text-ivory fixed inset-0 top-18 z-30 flex flex-col justify-between px-6 pt-12 pb-10 md:hidden"
+            className="bg-surface text-fg fixed inset-0 top-18 z-30 flex flex-col justify-between px-6 pt-12 pb-10 md:hidden"
             initial={
               reduced ? { opacity: 0 } : { clipPath: 'inset(0 0 100% 0)' }
             }
@@ -149,7 +154,7 @@ export function Header() {
               ))}
             </ul>
             <div>
-              <p className="eyebrow text-fg-muted! mb-4">{t('language')}</p>
+              <Eyebrow className="mb-4">{t('language')}</Eyebrow>
               <LanguageLinks
                 pathname={pathname}
                 onNavigate={() => setOpen(false)}

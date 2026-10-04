@@ -55,7 +55,12 @@ Plan del sistema de diseño en [phases/FASE_2_PLAN.md](phases/FASE_2_PLAN.md), a
 - `Badge`, `Tag`, `Price`, `Card`, `Table`, `EmptyState` y `Skeleton`, con `Price` probado en es, ca y en con y sin rebaja;
 - los estados de publicación del panel ya usan `Badge`.
 
-Primitivas completas. Siguiente tarea: las migraciones DS-10 (tienda) y DS-11 (panel), que pueden ir en paralelo.
+**DS-10 hecha (tienda):**
+
+- toda la tienda usa la biblioteca y los colores semánticos, sin clases sueltas;
+- auditoría de maquetación y axe sin fallos en las rutas públicas de los tres idiomas.
+
+Siguiente tarea: DS-11 (migrar el panel); después, el cierre DS-12.
 
 - **Objetivos:**
   - tokens en dos capas;
@@ -268,5 +273,6 @@ La revisión visual con perfumes se hizo en local con un Supabase simulado que d
 - 03/10: preguntas frecuentes plegadas al final de la portada, enlazadas desde el pie (sin reseñas inventadas).
 - 03/10: Fase 2, DS-08: diálogos, paneles laterales, confirmaciones y avisos accesibles.
 - 03/10: Fase 2, DS-09: estados, etiquetas, precio, tarjetas, tablas, vacíos y carga.
+- 03/10: Fase 2, DS-10: la tienda pasa a la biblioteca y a los colores semánticos.
 
 Ver docs/DEVELOPMENT.md para continuar y docs/DECISIONS.md para las decisiones.

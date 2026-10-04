@@ -3,6 +3,14 @@
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { useTranslations } from 'next-intl';
 import { useDeferredValue, useMemo, useState } from 'react';
+import {
+  Button,
+  EmptyState,
+  Eyebrow,
+  SearchField,
+  Select,
+  buttonClass,
+} from '@/components/ui';
 import type { Audience, StorefrontProduct } from '@/modules/catalog';
 import { AUDIENCES, lowestPrice } from '@/modules/catalog';
 import { ProductCard } from './ProductCard';
@@ -48,11 +56,8 @@ function Chip({
       type="button"
       onClick={onClick}
       aria-pressed={active}
-      className={`text-2xs tracking-caps border px-4 py-2 uppercase transition-colors duration-500 ${
-        active
-          ? 'border-ink bg-ink text-ivory'
-          : 'border-line hover:border-ink text-ink'
-      }`}
+      // Filtro activo como botón principal; el resto, de contorno.
+      className={buttonClass(active ? 'primary' : 'outline', 'sm')}
     >
       {children}
     </button>
@@ -96,16 +101,12 @@ export function CatalogBrowser({
   const filtered = Boolean(query || brand || audience);
 
   if (products.length === 0) {
-    return (
-      <p className="text-smoke font-display mx-auto max-w-lg py-24 text-center text-2xl font-light">
-        {t('empty')}
-      </p>
-    );
+    return <EmptyState title={t('empty')} className="my-12" />;
   }
 
   return (
     <div>
-      <div className="border-line flex flex-col gap-6 border-y py-6 lg:flex-row lg:items-center lg:justify-between">
+      <div className="border-border flex flex-col gap-6 border-y py-6 lg:flex-row lg:items-center lg:justify-between">
         <div className="flex flex-wrap items-center gap-2">
           <Chip active={brand === null} onClick={() => setBrand(null)}>
             {t('allBrands')}
@@ -134,56 +135,54 @@ export function CatalogBrowser({
       </div>
 
       <div className="mt-8 flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
-        <label className="block w-full max-w-sm">
-          <span className="sr-only">{t('search')}</span>
-          <input
-            type="search"
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-            placeholder={t('search')}
-            className="field placeholder:text-fg-muted"
-          />
-        </label>
+        <SearchField
+          label={t('search')}
+          value={query}
+          onChange={(event) => setQuery(event.target.value)}
+          placeholder={t('search')}
+          className="w-full max-w-sm"
+        />
         <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
-          <p className="text-smoke tracking-caps text-xs whitespace-nowrap uppercase tabular-nums">
+          <p className="text-fg-muted tracking-caps text-xs whitespace-nowrap uppercase tabular-nums">
             {t('count', { count: visible.length })}
           </p>
           <label className="flex items-center gap-3">
-            <span className="eyebrow">{t('sort')}</span>
-            <select
+            <Eyebrow as="span">{t('sort')}</Eyebrow>
+            <Select
               value={sort}
               onChange={(event) => setSort(event.target.value as Sort)}
-              className="border-line border-b bg-transparent py-1 text-sm focus:outline-none"
+              className="w-60"
             >
               {SORTS.map((option) => (
                 <option key={option.value} value={option.value}>
                   {t(option.label)}
                 </option>
               ))}
-            </select>
+            </Select>
           </label>
         </div>
       </div>
 
       {visible.length === 0 ? (
-        <div className="py-24 text-center">
-          <p className="font-display text-smoke text-2xl font-light">
-            {t('emptyFiltered')}
-          </p>
-          {filtered && (
-            <button
-              type="button"
-              className="link-underline tracking-caps mt-6 text-xs uppercase"
-              onClick={() => {
-                setQuery('');
-                setBrand(null);
-                setAudience(null);
-              }}
-            >
-              {t('clear')}
-            </button>
-          )}
-        </div>
+        <EmptyState
+          className="mt-12"
+          title={t('emptyFiltered')}
+          action={
+            filtered && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setQuery('');
+                  setBrand(null);
+                  setAudience(null);
+                }}
+              >
+                {t('clear')}
+              </Button>
+            )
+          }
+        />
       ) : (
         <motion.ul
           layout={!reduced}

@@ -1,3 +1,4 @@
+import { Eyebrow, Heading } from '@/components/ui';
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import { notFound } from 'next/navigation';
@@ -81,27 +82,27 @@ export default async function ProductPage({ params }: { params: Params }) {
           <Reveal>
             <Link
               href="/catalogo"
-              className="link-underline text-smoke text-2xs tracking-caps-lg uppercase"
+              className="link-underline text-fg-muted text-2xs tracking-caps-lg uppercase"
             >
               ← {t('product.back')}
             </Link>
-            <p className="eyebrow mt-12">{product.brand.name}</p>
-            <h1 className="mt-3 text-6xl leading-[0.95] font-light sm:text-7xl">
+            <Eyebrow className="mt-12">{product.brand.name}</Eyebrow>
+            <Heading level={1} size="h1" className="mt-3">
               {product.name}
-            </h1>
+            </Heading>
             {product.concentration && (
-              <p className="text-smoke font-display mt-4 text-xl italic">
+              <p className="text-fg-muted font-display mt-4 text-xl italic">
                 {t(`concentration.${product.concentration}`)}
               </p>
             )}
             {product.tagline && (
-              <p className="text-smoke mt-6 max-w-md leading-relaxed">
+              <p className="text-fg-muted mt-6 max-w-md leading-relaxed">
                 {product.tagline}
               </p>
             )}
           </Reveal>
 
-          <Reveal delay={0.1} className="border-line mt-12 border-t pt-10">
+          <Reveal delay={0.1} className="border-border mt-12 border-t pt-10">
             <PurchasePanel
               variants={product.variants}
               availability={availability}
@@ -109,28 +110,34 @@ export default async function ProductPage({ params }: { params: Params }) {
           </Reveal>
 
           {product.description && (
-            <Reveal delay={0.15} className="border-line mt-12 border-t pt-10">
-              <h2 className="eyebrow mb-4">{t('product.description')}</h2>
+            <Reveal delay={0.15} className="border-border mt-12 border-t pt-10">
+              <Eyebrow as="h2" className="mb-4">
+                {t('product.description')}
+              </Eyebrow>
               <p className="leading-relaxed whitespace-pre-line">
                 {product.description}
               </p>
             </Reveal>
           )}
 
-          <Reveal delay={0.2} className="border-line mt-12 border-t pt-10">
-            <h2 className="eyebrow mb-6">{t('product.details')}</h2>
+          <Reveal delay={0.2} className="border-border mt-12 border-t pt-10">
+            <Eyebrow as="h2" className="mb-6">
+              {t('product.details')}
+            </Eyebrow>
             <dl className="grid grid-cols-[auto_1fr] gap-x-10 gap-y-4 text-sm">
-              <dt className="text-smoke">{t('product.brand')}</dt>
+              <dt className="text-fg-muted">{t('product.brand')}</dt>
               <dd>{product.brand.name}</dd>
               {product.concentration && (
                 <>
-                  <dt className="text-smoke">{t('product.concentration')}</dt>
+                  <dt className="text-fg-muted">
+                    {t('product.concentration')}
+                  </dt>
                   <dd>{t(`concentration.${product.concentration}`)}</dd>
                 </>
               )}
               {sizes.length > 0 && (
                 <>
-                  <dt className="text-smoke">{t('product.size')}</dt>
+                  <dt className="text-fg-muted">{t('product.size')}</dt>
                   <dd>{sizes.join(' · ')}</dd>
                 </>
               )}
@@ -140,11 +147,11 @@ export default async function ProductPage({ params }: { params: Params }) {
       </div>
 
       {related.length > 0 && (
-        <section className="border-line mx-auto max-w-[90rem] border-t px-5 py-28 sm:px-10">
+        <section className="border-border mx-auto max-w-[90rem] border-t px-5 py-28 sm:px-10">
           <Reveal>
-            <h2 className="mb-14 text-4xl font-light sm:text-5xl">
+            <Heading level={2} size="h2" className="mb-14">
               {t('product.related', { brand: product.brand.name })}
-            </h2>
+            </Heading>
           </Reveal>
           <ul className="grid gap-x-6 gap-y-16 sm:grid-cols-2 lg:grid-cols-4">
             {related.map((item, index) => (

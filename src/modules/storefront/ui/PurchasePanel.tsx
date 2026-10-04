@@ -3,14 +3,15 @@
 import { AnimatePresence, motion } from 'motion/react';
 import { useLocale, useTranslations } from 'next-intl';
 import { useState } from 'react';
-import { formatEuros } from '@/lib/money';
+import { Badge, Button, Eyebrow, Price } from '@/components/ui';
+import type { BadgeTone } from '@/components/ui';
 import type { Availability, ProductVariant } from '@/modules/catalog';
 import { variantLabel } from '@/modules/catalog';
 
-const DOT: Record<Availability, string> = {
-  in_stock: 'bg-success',
-  low_stock: 'bg-gold',
-  out_of_stock: 'bg-mist',
+const TONE: Record<Availability, BadgeTone> = {
+  in_stock: 'success',
+  low_stock: 'warning',
+  out_of_stock: 'neutral',
 };
 const LABEL: Record<Availability, 'inStock' | 'lowStock' | 'outOfStock'> = {
   in_stock: 'inStock',
@@ -38,7 +39,7 @@ export function PurchasePanel({
         <AnimatePresence mode="wait" initial={false}>
           <motion.p
             key={selected?.id ?? 'none'}
-            className="font-display text-4xl font-light lining-nums tabular-nums"
+            className="flex flex-wrap items-baseline gap-x-3"
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
@@ -46,18 +47,19 @@ export function PurchasePanel({
           >
             {selected?.priceCents != null ? (
               <>
-                {formatEuros(selected.priceCents, locale)}
-                {selected.compareAtCents != null && (
-                  <s className="text-fg-muted ml-4 text-2xl">
-                    {formatEuros(selected.compareAtCents, locale)}
-                  </s>
-                )}
-                <span className="text-smoke text-2xs tracking-caps ml-3 align-middle font-normal uppercase">
-                  {t('vat')}
-                </span>
+                <Price
+                  cents={selected.priceCents}
+                  compareAtCents={selected.compareAtCents}
+                  locale={locale}
+                  labels={{ from: t('from'), before: t('before') }}
+                  size="lg"
+                />
+                <Eyebrow as="span">{t('vat')}</Eyebrow>
               </>
             ) : (
-              <span className="text-smoke text-2xl">{t('pricePending')}</span>
+              <span className="text-fg-muted font-display text-2xl">
+                {t('pricePending')}
+              </span>
             )}
           </motion.p>
         </AnimatePresence>
@@ -65,7 +67,9 @@ export function PurchasePanel({
 
       {variants.length > 0 && (
         <fieldset>
-          <legend className="eyebrow mb-3">{t('size')}</legend>
+          <legend className="mb-3">
+            <Eyebrow as="span">{t('size')}</Eyebrow>
+          </legend>
           <div className="flex flex-wrap gap-2">
             {variants.map((variant) => (
               <button
@@ -73,10 +77,10 @@ export function PurchasePanel({
                 type="button"
                 aria-pressed={variant.id === selectedId}
                 onClick={() => setSelectedId(variant.id)}
-                className={`tracking-caps min-w-20 border px-4 py-3 text-xs transition-colors duration-500 ${
+                className={`tracking-caps ease-luxe min-h-11 min-w-20 border px-4 text-xs transition-colors duration-(--duration-base) ${
                   variant.id === selectedId
-                    ? 'border-ink bg-ink text-ivory'
-                    : 'border-line hover:border-ink'
+                    ? 'border-fg bg-fg text-fg-inverse'
+                    : 'border-border-strong hover:border-fg'
                 }`}
               >
                 {variantLabel(variant)}
@@ -86,18 +90,15 @@ export function PurchasePanel({
         </fieldset>
       )}
 
-      {status && (
-        <p className="tracking-caps flex items-center gap-3 text-xs uppercase">
-          <span className={`size-1.5 rounded-full ${DOT[status]}`} />
-          {t(LABEL[status])}
-        </p>
-      )}
+      {status && <Badge tone={TONE[status]}>{t(LABEL[status])}</Badge>}
 
       <div className="space-y-4">
-        <button type="button" disabled className="btn btn-primary w-full">
+        <Button size="lg" disabled className="w-full">
           {t('buySoon')}
-        </button>
-        <p className="text-smoke text-sm leading-relaxed">{t('storeNote')}</p>
+        </Button>
+        <p className="text-fg-muted text-sm leading-relaxed">
+          {t('storeNote')}
+        </p>
       </div>
     </div>
   );

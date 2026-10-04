@@ -50,7 +50,7 @@ export default async function LocaleLayout({
         <NextIntlClientProvider locale={locale} messages={messages}>
           <a
             href="#contenido"
-            className="bg-ink text-ivory sr-only z-50 px-4 py-2 focus:not-sr-only focus:fixed focus:top-4 focus:left-4"
+            className="bg-fg text-fg-inverse sr-only z-50 px-4 py-2 focus:not-sr-only focus:fixed focus:top-4 focus:left-4"
           >
             {t('skip')}
           </a>
