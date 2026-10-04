@@ -7,3 +7,4 @@ test-results/
 next-env.d.ts
 pilot/animation-prototype/
 audit-output/
+graphify-out/

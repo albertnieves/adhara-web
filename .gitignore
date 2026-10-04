@@ -15,3 +15,8 @@ supabase/.branches/
 
 .pnpm-store/
 audit-output/
+
+# graphify: caché y rutas locales del intérprete (el grafo sí se versiona)
+graphify-out/cache/
+graphify-out/.graphify_python
+graphify-out/.graphify_root
