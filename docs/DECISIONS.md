@@ -76,7 +76,7 @@
     - Se usan con `<use>` y `currentColor`: un archivo en caché, que no infla el HTML y hereda el color (marfil sobre fondo oscuro, tinta sobre claro).
     - `BRAND_NAME` y `BRAND_TAGLINE` en `modules/brand` alimentan los títulos, el panel y el nombre del factor TOTP que ven las apps de autenticación.
     - Los textos descriptivos («Perfumería árabe…») y la paleta y tipografías de la web no cambian.
-    - Los identificadores internos (repositorio, paquete, `adhara-dev`, proyecto de Vercel) conservan `adhara` para no romper integraciones.
+    - Los identificadores internos (repositorio, paquete, `adhara-dev`) conservan `adhara` para no romper integraciones. El proyecto de Vercel se renombró a `altier-web` el 05/10 (§108).
 
 ## Publicación y compra — 30/09/2026
 
@@ -391,3 +391,10 @@ Formato de la Fase 0 §16: fecha · contexto · decisión · alternativas descar
      - **axe pasa a bloquear** en las rutas públicas y en el panel (criterio 6); hasta DS-10 solo guardaba la línea base en el panel y una anotación en la tienda.
      - **Pendiente de decidir en la revisión:** los tonos de colección (D3) y si los filtros de la colección (36 px) cuentan como controles principales de la tienda.
      - **Siguiente fase:** checkout con pago con tarjeta (F10/A5) en cuanto estén los datos del TPV virtual y el proveedor de correo (§82); después, producción (F17).
+
+## Vercel — 05/10/2026
+
+108. **Proyecto de Vercel `altier-web` como único despliegue.** A petición del usuario («quiero que el proyecto de vercel tenga otro nombre: altier-web […] que sea el único deployment»).
+     - `adhara-web` se renombra a `altier-web` (mismo id `prj_i8BphtVWLp68IZtvH9GrKlDRjK5L`, mismas variables, Git y protección) y se añade `altier-web.vercel.app`. `adhara-web.vercel.app` se mantiene mientras siga en la configuración de Auth de Supabase.
+     - El proyecto `soapbrxnd` (sin relación con la tienda) queda pausado, no borrado; borrarlo es irreversible y lo decide el usuario.
+     - El equipo de Vercel se llama SOAPBRXND porque es el equipo por defecto de la cuenta Hobby; no se puede mover el proyecto a otro equipo sin plan Pro. Cambiar su nombre y su URL (`soapbrxnd`) se hace en el panel de Vercel (Settings → General) y cambia las URL `*-soapbrxnd.vercel.app` de los despliegues.
