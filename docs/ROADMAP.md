@@ -27,6 +27,7 @@ Estados: **hecha**, **cerrada con excepciones** (criterios cumplidos salvo excep
 
 ## Siguiente paso
 
+- **Bloque «Escaparate» (F5, F6, F13 y parte de F15 y F16):** lo que no espera a terceros, para presentar la web al cliente. Plan pendiente de aprobar en [phases/ESCAPARATE_PLAN.md](phases/ESCAPARATE_PLAN.md).
 - **Fase 2:** la cierra la revisión visual del usuario en la Preview de la PR de cierre ([informe](phases/FASE_2_REPORT.md)).
 - **Prioridad de negocio acordada con el usuario el 01/10:** checkout con pago con tarjeta (A5/F10) en cuanto lleguen los datos del TPV virtual, y mensajes (A6.1) cuando haya proveedor de correo. Lo que hace falta está en [STATUS.md](STATUS.md), «Pendiente del usuario» (puntos 6 a 9).
 - En paralelo, la Fase 3 (importar el CSV del catálogo con costes y revisar marcas y fotos), que hace el usuario desde el panel.
