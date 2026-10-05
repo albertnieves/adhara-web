@@ -16,6 +16,7 @@ import {
   summarize,
 } from '@/modules/reports';
 import { getInventoryPeriod } from '@/modules/reports/server';
+import { buttonClass, Card, Eyebrow, Table } from '@/components/ui';
 
 export const metadata: Metadata = { title: 'Existencias y cierre' };
 
@@ -28,7 +29,7 @@ function Value({
 }) {
   if (!canCost) return null;
   return (
-    <p className="text-smoke mt-2 text-xs">
+    <p className="text-fg-muted mt-2 text-xs">
       {totals.units > 0 && totals.unitsWithoutCost === totals.units
         ? 'Sin coste registrado'
         : `${formatEuros(totals.valueCents, 'es')} a coste`}
@@ -58,7 +59,7 @@ export default async function InventoryReport({
     return (
       <main>
         <PageHeader eyebrow="Informes" title="Existencias y cierre" />
-        <p className="text-smoke">No hay ninguna ubicación activa.</p>
+        <p className="text-fg-muted">No hay ninguna ubicación activa.</p>
       </main>
     );
   }
@@ -95,27 +96,27 @@ export default async function InventoryReport({
       >
         <Link
           href={`/admin/informes/inventario?mes=${shiftMonth(month, -1)}`}
-          className="border-line hover:border-ink tracking-caps inline-flex min-h-11 items-center border px-4 text-xs font-semibold uppercase"
+          className="border-border hover:border-fg tracking-caps inline-flex min-h-11 items-center border px-4 text-xs font-semibold uppercase"
         >
           ← Anterior
         </Link>
         {!open && (
           <Link
             href={`/admin/informes/inventario?mes=${shiftMonth(month, 1)}`}
-            className="border-line hover:border-ink tracking-caps inline-flex min-h-11 items-center border px-4 text-xs font-semibold uppercase"
+            className="border-border hover:border-fg tracking-caps inline-flex min-h-11 items-center border px-4 text-xs font-semibold uppercase"
           >
             Siguiente →
           </Link>
         )}
         <a
           href={`/admin/informes/inventario/exportar?mes=${month}`}
-          className="bg-ink text-ivory hover:bg-ink-soft tracking-caps inline-flex min-h-11 items-center px-5 text-xs font-semibold uppercase transition-colors"
+          className={buttonClass('primary')}
         >
           CSV para la gestoría
         </a>
       </PageHeader>
 
-      <p className="text-smoke mb-8 max-w-3xl text-sm leading-relaxed">
+      <p className="text-fg-muted mb-8 max-w-3xl text-sm leading-relaxed">
         Del {period.firstDay.split('-').reverse().join('/')} al{' '}
         {period.lastDay.split('-').reverse().join('/')}
         {open && ' (mes en curso: las finales son las de hoy)'}. Iniciales +
@@ -134,32 +135,36 @@ export default async function InventoryReport({
 
       <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {stats.map((stat) => (
-          <div key={stat.label} className="panel-card">
-            <p className="eyebrow">{stat.label}</p>
+          <Card key={stat.label}>
+            <Eyebrow>{stat.label}</Eyebrow>
             <p className="font-display mt-3 text-5xl font-light lining-nums tabular-nums">
               {stat.units}
             </p>
             {stat.totals && <Value totals={stat.totals} canCost={canCost} />}
-          </div>
+          </Card>
         ))}
       </section>
 
       {canCost && total.closing.unitsWithLaterCost > 0 && (
-        <p className="text-smoke mt-6 text-sm">
+        <p className="text-fg-muted mt-6 text-sm">
           {total.closing.unitsWithLaterCost} uds. finales se valoran con un
           coste registrado después del cierre (no había coste a esa fecha).
         </p>
       )}
 
       {groups.length === 0 ? (
-        <p className="text-smoke py-16 text-center">
+        <p className="text-fg-muted py-16 text-center">
           No hay existencias ni movimientos en este mes.
         </p>
       ) : (
         <section className="mt-12">
           <h2 className="mb-4 text-2xl font-light">Por marca</h2>
           <div className="overflow-x-auto">
-            <table className="data-table min-w-[44rem]">
+            <Table
+              caption="Existencias del mes por marca"
+              stacked={false}
+              className="min-w-[44rem]"
+            >
               <thead>
                 <tr>
                   <th>Marca</th>
@@ -181,7 +186,7 @@ export default async function InventoryReport({
                     <td className="text-sm">
                       {g.label}
                       {g.key !== 'total' && (
-                        <span className="text-smoke text-xs">
+                        <span className="text-fg-muted text-xs">
                           {' '}
                           · {g.formats}{' '}
                           {g.formats === 1 ? 'formato' : 'formatos'}
@@ -219,7 +224,7 @@ export default async function InventoryReport({
                   </tr>
                 ))}
               </tbody>
-            </table>
+            </Table>
           </div>
         </section>
       )}

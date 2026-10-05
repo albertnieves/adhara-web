@@ -3,6 +3,7 @@
 import { useId, useState } from 'react';
 import type { SearchableVariant } from '../domain/counter';
 import { findByCode, searchVariants } from '../domain/counter';
+import { CONTROL_CLASSES, Eyebrow } from '@/components/ui';
 
 /**
  * Buscador de formatos para pantallas táctiles. Un lector de códigos USB o
@@ -51,8 +52,8 @@ export function VariantSearch<T extends SearchableVariant>({
 
   return (
     <div className="flex flex-col gap-2">
-      <label htmlFor={id} className="eyebrow">
-        {label}
+      <label htmlFor={id}>
+        <Eyebrow as="span">{label}</Eyebrow>
       </label>
       <input
         id={id}
@@ -67,7 +68,7 @@ export function VariantSearch<T extends SearchableVariant>({
         autoFocus={autoFocus}
         autoComplete="off"
         enterKeyHint="search"
-        className="input min-h-12 text-base"
+        className={`${CONTROL_CLASSES} min-h-12 text-base`}
       />
       {notice && (
         <p role="status" className="text-danger text-sm">
@@ -75,7 +76,7 @@ export function VariantSearch<T extends SearchableVariant>({
         </p>
       )}
       {results.length > 0 && (
-        <ul className="border-line divide-line bg-surface-raised/70 max-h-80 divide-y overflow-y-auto border">
+        <ul className="border-border divide-border bg-surface-raised/70 max-h-80 divide-y overflow-y-auto border">
           {results.map((item) => {
             const disabled = isDisabled?.(item) ?? false;
             return (
@@ -87,9 +88,12 @@ export function VariantSearch<T extends SearchableVariant>({
                   className="hover:bg-surface-raised flex min-h-12 w-full items-center justify-between gap-4 px-4 py-2 text-left text-sm transition-colors disabled:opacity-40"
                 >
                   <span>
-                    <span className="text-smoke">{item.brandName} · </span>
+                    <span className="text-fg-muted">{item.brandName} · </span>
                     {item.productName}
-                    <span className="text-smoke"> · {item.variantLabel}</span>
+                    <span className="text-fg-muted">
+                      {' '}
+                      · {item.variantLabel}
+                    </span>
                     {item.sku && (
                       <span className="text-fg-muted block text-xs">
                         {item.sku}

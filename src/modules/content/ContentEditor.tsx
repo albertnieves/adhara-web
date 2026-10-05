@@ -1,15 +1,21 @@
 'use client';
 import { useEffect, useState } from 'react';
-import {
-  Field,
-  FormMessage,
-  SubmitButton,
-  useAdminAction,
-} from '@/modules/admin';
+import { FormMessage, useAdminAction } from '@/modules/admin';
 import { editContent } from './actions';
 import { FIELD_LABELS } from './domain';
 import type { ContentKind } from './domain';
 import type { ContentDocument } from './server';
+import {
+  Card,
+  cardClass,
+  Checkbox,
+  CONTROL_CLASSES,
+  Field,
+  Input,
+  Select,
+  SubmitButton,
+  Textarea,
+} from '@/components/ui';
 
 export function ContentEditor({
   kind,
@@ -67,7 +73,7 @@ export function ContentEditor({
   );
   return (
     <div data-content-editor className="space-y-8">
-      <p className="text-smoke text-sm">
+      <p className="text-fg-muted text-sm">
         Revisión {document.revision} ·{' '}
         {document.published_revision === document.revision
           ? 'Publicada'
@@ -77,7 +83,7 @@ export function ContentEditor({
       <form
         onSubmit={action.onSubmit}
         onChange={() => setDirty(true)}
-        className="panel-card grid gap-5 md:grid-cols-2"
+        className={cardClass({ className: 'grid gap-5 md:grid-cols-2' })}
       >
         {hidden}
         {Object.entries(document.payload)
@@ -93,15 +99,14 @@ export function ContentEditor({
               }
             >
               {['heroLead', 'storeBody', 'hours'].includes(key) ? (
-                <textarea
+                <Textarea
                   name={key}
                   defaultValue={value}
                   maxLength={4000}
                   rows={4}
-                  className="input"
                 />
               ) : (
-                <input
+                <Input
                   name={key}
                   defaultValue={value}
                   maxLength={4000}
@@ -111,7 +116,6 @@ export function ContentEditor({
                     'address',
                     'city',
                   ].includes(key)}
-                  className="input"
                 />
               )}
             </Field>
@@ -131,14 +135,14 @@ export function ContentEditor({
                 type="file"
                 name="image"
                 accept="image/jpeg,image/png,image/webp,image/avif"
-                className="input"
+                className={CONTROL_CLASSES}
               />
             </Field>
             {document.payload.imagePath && (
-              <label className="flex items-center gap-3">
-                <input type="checkbox" name="removeImage" />
-                Retirar imagen en la siguiente publicación
-              </label>
+              <Checkbox
+                name="removeImage"
+                label="Retirar imagen en la siguiente publicación"
+              />
             )}
           </>
         )}
@@ -149,7 +153,7 @@ export function ContentEditor({
           <SubmitButton
             name="intent"
             value="publish"
-            variant="ghost"
+            variant="outline"
             pending={action.pending}
             disabled={
               dirty || document.revision === document.published_revision
@@ -161,35 +165,35 @@ export function ContentEditor({
           <FormMessage state={action.state} />
         </div>
       </form>
-      <section className="panel-card space-y-4">
+      <Card as="section" className="space-y-4">
         <h2 className="text-2xl">Historial</h2>
-        <p className="text-smoke text-sm">
+        <p className="text-fg-muted text-sm">
           Restaurar crea un borrador nuevo; no cambia la tienda hasta
           publicarlo.
         </p>
         <form onSubmit={action.onSubmit} className="flex flex-wrap gap-4">
           {hidden}
           <Field label="Revisión anterior">
-            <select name="revisionId" className="input">
+            <Select name="revisionId">
               {document.history.map((row) => (
                 <option key={row.id} value={row.id}>
                   Rev. {row.revision} · {row.action} ·{' '}
                   {new Date(row.at).toLocaleString('es-ES')}
                 </option>
               ))}
-            </select>
+            </Select>
           </Field>
           <SubmitButton
             name="intent"
             value="restore"
             pending={action.pending}
             disabled={dirty}
-            variant="ghost"
+            variant="outline"
           >
             Restaurar como borrador
           </SubmitButton>
         </form>
-      </section>
+      </Card>
     </div>
   );
 }

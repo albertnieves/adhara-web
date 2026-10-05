@@ -8,6 +8,7 @@ import { getVariantCosts } from '@/modules/catalog/server/admin';
 import { PROVISIONAL_PRICING_POLICY, VAT_GENERAL_BP } from '@/modules/pricing';
 import { isBelowMin, marginRows, marginsByBrand } from '@/modules/reports';
 import { listAllVariants } from '@/modules/reports/server';
+import { Table } from '@/components/ui';
 
 export const metadata: Metadata = { title: 'Márgenes' };
 
@@ -53,7 +54,7 @@ export default async function MarginsReport() {
   return (
     <main>
       <PageHeader eyebrow="Informes" title="Márgenes" />
-      <p className="text-smoke mb-10 max-w-3xl text-sm leading-relaxed">
+      <p className="text-fg-muted mb-10 max-w-3xl text-sm leading-relaxed">
         Margen teórico: PVP sin IVA ({VAT_GENERAL_BP / 100} %) menos el coste
         neto vigente de cada formato activo, sobre el PVP sin IVA. No incluye
         descuentos, envíos ni comisiones. Margen mínimo provisional:{' '}
@@ -65,7 +66,11 @@ export default async function MarginsReport() {
       <section>
         <h2 className="mb-4 text-2xl font-light">Por marca</h2>
         <div className="overflow-x-auto">
-          <table className="data-table min-w-[36rem]">
+          <Table
+            caption="Margen teórico por marca"
+            stacked={false}
+            className="min-w-[36rem]"
+          >
             <thead>
               <tr>
                 <th>Marca</th>
@@ -98,7 +103,7 @@ export default async function MarginsReport() {
                 </tr>
               ))}
             </tbody>
-          </table>
+          </Table>
         </div>
       </section>
 
@@ -107,9 +112,9 @@ export default async function MarginsReport() {
           Por debajo del margen mínimo · {below.length}
         </h2>
         {below.length === 0 ? (
-          <p className="text-smoke text-sm">Ningún formato.</p>
+          <p className="text-fg-muted text-sm">Ningún formato.</p>
         ) : (
-          <ul className="divide-line border-line divide-y border-y">
+          <ul className="divide-border border-border divide-y border-y">
             {below.map((r) => (
               <li key={r.variantId}>
                 <Link
@@ -117,7 +122,7 @@ export default async function MarginsReport() {
                   className="hover:bg-surface-raised/60 flex items-center justify-between gap-4 py-3 text-sm"
                 >
                   <span>
-                    <span className="text-smoke">{r.brandName} · </span>
+                    <span className="text-fg-muted">{r.brandName} · </span>
                     {r.label}
                   </span>
                   <span className="text-danger tabular-nums">

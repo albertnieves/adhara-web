@@ -17,6 +17,7 @@ import {
   listMovements,
   listStock,
 } from '@/modules/inventory/server';
+import { buttonClass, cardClass, Eyebrow } from '@/components/ui';
 
 function Stat({
   label,
@@ -32,14 +33,20 @@ function Stat({
   tone?: 'default' | 'alert';
 }) {
   const body = (
-    <div className="panel-card hover:bg-surface-raised h-full !p-4 transition-colors duration-300 sm:!p-6">
-      <p className="eyebrow !tracking-caps sm:!tracking-caps-lg">{label}</p>
+    <div
+      className={cardClass({
+        padding: 'sm',
+        interactive: Boolean(href),
+        className: 'h-full sm:p-6',
+      })}
+    >
+      <Eyebrow className="tracking-caps! sm:tracking-caps-lg!">{label}</Eyebrow>
       <p
         className={`font-display mt-2 text-4xl font-light lining-nums tabular-nums sm:mt-3 sm:text-5xl ${tone === 'alert' ? 'text-danger' : ''}`}
       >
         {value}
       </p>
-      {note && <p className="text-smoke mt-2 text-xs">{note}</p>}
+      {note && <p className="text-fg-muted mt-2 text-xs">{note}</p>}
     </div>
   );
   return href ? (
@@ -139,30 +146,30 @@ export default async function AdminHome() {
           className="mb-8 grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:gap-3"
         >
           {can('inventory.sell_in_store') && (
-            <Link
-              className="panel-btn panel-btn-primary"
-              href="/admin/mostrador"
-            >
+            <Link className={buttonClass('primary')} href="/admin/mostrador">
               Mostrador
             </Link>
           )}
           {canCatalog && (
-            <Link className="panel-btn" href="/admin/catalogo">
+            <Link className={buttonClass('outline')} href="/admin/catalogo">
               Editar catálogo
             </Link>
           )}
           {can('pricing.edit_retail') && (
-            <Link className="panel-btn" href="/admin/catalogo/precios">
+            <Link
+              className={buttonClass('outline')}
+              href="/admin/catalogo/precios"
+            >
               Revisar precios
             </Link>
           )}
           {can('inventory.receive') && (
-            <Link className="panel-btn" href="/admin/inventario">
+            <Link className={buttonClass('outline')} href="/admin/inventario">
               Recibir mercancía
             </Link>
           )}
           {can('content.edit') && (
-            <Link className="panel-btn" href="/admin/contenido">
+            <Link className={buttonClass('outline')} href="/admin/contenido">
               Editar portada
             </Link>
           )}
@@ -172,10 +179,10 @@ export default async function AdminHome() {
         <section
           aria-labelledby="informe-diario"
           data-tone="dark"
-          className="bg-night text-ivory mb-8 grid gap-6 px-6 py-6 sm:px-8 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-start"
+          className="bg-surface text-fg mb-8 grid gap-6 px-6 py-6 sm:px-8 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-start"
         >
           <div className="min-w-0">
-            <p className="text-gold-soft text-2xs tracking-caps font-semibold uppercase">
+            <p className="text-accent-fg text-2xs tracking-caps font-semibold uppercase">
               Asistente · informe diario
             </p>
             <h2
@@ -189,11 +196,11 @@ export default async function AdminHome() {
                   : 'Aún no hay informes guardados'}
             </h2>
             {latest?.summary ? (
-              <p className="text-ivory/80 mt-3 line-clamp-6 text-sm leading-relaxed whitespace-pre-line">
+              <p className="text-fg-muted mt-3 line-clamp-6 text-sm leading-relaxed whitespace-pre-line">
                 {latest.summary}
               </p>
             ) : latest ? (
-              <ul className="text-ivory/80 mt-3 space-y-1 text-sm">
+              <ul className="text-fg-muted mt-3 space-y-1 text-sm">
                 {latest.report.tasks
                   .filter((task) => can(DAILY_TASK_PERMISSIONS[task.key]))
                   .slice(0, 4)
@@ -207,16 +214,13 @@ export default async function AdminHome() {
                 ) && <li>Nada pendiente en ese informe.</li>}
               </ul>
             ) : (
-              <p className="text-ivory/70 mt-3 text-sm">
+              <p className="text-fg-muted mt-3 text-sm">
                 Cada mañana se guardará el del día anterior. Mientras tanto,
                 puedes verlo en directo.
               </p>
             )}
           </div>
-          <Link
-            href="/admin/asistente"
-            className="border-ivory/30 hover:border-ivory tracking-caps inline-flex min-h-11 items-center justify-center border px-5 text-xs font-semibold uppercase transition-colors"
-          >
+          <Link href="/admin/asistente" className={buttonClass('outline')}>
             Abrir el asistente
           </Link>
         </section>
@@ -288,7 +292,7 @@ export default async function AdminHome() {
         {canCatalog && missingPrice.length > 0 && (
           <section>
             <h2 className="mb-4 text-2xl font-light">Pendientes de precio</h2>
-            <ul className="divide-line border-line divide-y border-y">
+            <ul className="divide-border border-border divide-y border-y">
               {missingPrice.slice(0, 8).map((p) => (
                 <li key={p.id}>
                   <Link
@@ -296,10 +300,10 @@ export default async function AdminHome() {
                     className="hover:bg-surface-raised/60 flex items-center justify-between gap-4 py-3 text-sm"
                   >
                     <span>
-                      <span className="text-smoke">{p.brandName} · </span>
+                      <span className="text-fg-muted">{p.brandName} · </span>
                       {p.name}
                     </span>
-                    <span className="text-smoke text-xs">
+                    <span className="text-fg-muted text-xs">
                       {p.variants.length === 0
                         ? 'Sin formatos'
                         : p.variants
@@ -329,12 +333,12 @@ export default async function AdminHome() {
               </Link>
             </div>
             {movements.length === 0 ? (
-              <p className="text-smoke text-sm">
+              <p className="text-fg-muted text-sm">
                 Aún no hay movimientos. Registra la primera recepción desde
                 Inventario. Unidades en tienda: {units}.
               </p>
             ) : (
-              <ul className="divide-line border-line divide-y border-y">
+              <ul className="divide-border border-border divide-y border-y">
                 {movements.map((m) => (
                   <li
                     key={m.id}
@@ -342,7 +346,7 @@ export default async function AdminHome() {
                   >
                     <span>
                       {MOVEMENT_LABELS[m.type as MovementType] ?? m.type}
-                      <span className="text-smoke">
+                      <span className="text-fg-muted">
                         {' '}
                         · {m.brandName} {m.productName} {m.variantLabel}
                       </span>

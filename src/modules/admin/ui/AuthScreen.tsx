@@ -12,9 +12,9 @@ export function AuthScreen({
     <div className="grid min-h-screen lg:grid-cols-2">
       <div
         data-tone="dark"
-        className="bg-night text-ivory grain relative hidden items-center justify-center overflow-hidden lg:flex"
+        className="bg-surface text-fg grain relative hidden items-center justify-center overflow-hidden lg:flex"
       >
-        <Star className="text-gold/10 absolute size-[36rem]" />
+        <Star className="text-accent/10 absolute size-[36rem]" />
         <div className="relative text-center">
           <Logo variant="stacked" className="w-72" />
           <p className="text-fg-muted tracking-caps-lg mt-6 text-xs uppercase">

@@ -46,26 +46,26 @@ export function PriceLabelCard({
     // pantalla y del mínimo de 11 px de la auditoría.
     <article
       data-print-size
-      className={`text-ink bg-surface-raised flex h-[38.1mm] w-[63.5mm] break-inside-avoid flex-col justify-between overflow-hidden px-[3.5mm] py-[3mm] ${cutLines ? 'border-line border-[0.2mm]' : ''}`}
+      className={`text-fg bg-surface-raised flex h-[38.1mm] w-[63.5mm] break-inside-avoid flex-col justify-between overflow-hidden px-[3.5mm] py-[3mm] ${cutLines ? 'border-border border-[0.2mm]' : ''}`}
     >
       <header className="flex items-center justify-between gap-[2mm]">
         <p className="tracking-caps-lg truncate text-[6pt] uppercase">
           {label.brandName}
         </p>
-        <Star className="text-gold size-[2.4mm] shrink-0" />
+        <Star className="text-accent size-[2.4mm] shrink-0" />
       </header>
       <div className="min-w-0">
         <h2 className="font-display line-clamp-2 text-[14pt] leading-[1.02]">
           {label.productName}
         </h2>
         {details && (
-          <p className="text-smoke mt-[0.8mm] truncate text-[6.5pt]">
+          <p className="text-fg-muted mt-[0.8mm] truncate text-[6.5pt]">
             {details}
           </p>
         )}
       </div>
       <footer className="flex items-end justify-between gap-[2mm]">
-        <p className="text-smoke text-[5.5pt] leading-[1.3] tabular-nums">
+        <p className="text-fg-muted text-[5.5pt] leading-[1.3] tabular-nums">
           {perHundred !== null && (
             <span className="block">
               {formatEuros(perHundred, 'es')} / 100 ml
@@ -75,14 +75,14 @@ export function PriceLabelCard({
         </p>
         <div className="text-right leading-none">
           {label.compareAtCents !== null && (
-            <p className="text-smoke text-[6.5pt] lining-nums tabular-nums">
+            <p className="text-fg-muted text-[6.5pt] lining-nums tabular-nums">
               Antes <s>{formatEuros(label.compareAtCents, 'es')}</s>
             </p>
           )}
           <p className="font-display text-[17pt] lining-nums tabular-nums">
             {formatEuros(label.priceCents, 'es')}
           </p>
-          <p className="text-smoke tracking-caps-sm mt-[0.8mm] text-[5pt] uppercase">
+          <p className="text-fg-muted tracking-caps-sm mt-[0.8mm] text-[5pt] uppercase">
             IVA incl.
           </p>
         </div>

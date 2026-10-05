@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { FINDING_LABELS, SEVERITY_LABELS } from '@/modules/inventory';
 import { BUCKET_LABELS, REPORT_BUCKETS } from '@/modules/reports';
 import type { DailyReport, DailyTaskKey } from '../domain/daily-report';
+import { Eyebrow } from '@/components/ui';
 
 const DATE = new Intl.DateTimeFormat('es-ES', {
   weekday: 'long',
@@ -29,8 +30,8 @@ function Figure({
   tone?: 'alert';
 }) {
   return (
-    <div className="border-line border-t pt-3">
-      <p className="text-smoke text-2xs tracking-caps-sm font-semibold break-words hyphens-auto uppercase">
+    <div className="border-border border-t pt-3">
+      <p className="text-fg-muted text-2xs tracking-caps-sm font-semibold break-words hyphens-auto uppercase">
         {label}
       </p>
       <p
@@ -61,9 +62,9 @@ export function DailyReportView({
         <section
           aria-label="Resumen del asistente"
           data-tone="dark"
-          className="border-gold bg-night text-ivory border-l-2 px-6 py-5"
+          className="border-accent bg-surface text-fg border-l-2 px-6 py-5"
         >
-          <p className="text-gold-soft text-2xs tracking-caps font-semibold uppercase">
+          <p className="text-accent-fg text-2xs tracking-caps font-semibold uppercase">
             Resumen del asistente
           </p>
           <div className="mt-3 text-sm leading-relaxed whitespace-pre-line">
@@ -77,11 +78,11 @@ export function DailyReportView({
           Qué hay que hacer
         </h2>
         {tasks.length === 0 ? (
-          <p className="text-smoke mt-3 text-sm">
+          <p className="text-fg-muted mt-3 text-sm">
             Nada pendiente con los datos de este informe.
           </p>
         ) : (
-          <ul className="divide-line border-line mt-4 divide-y border-y">
+          <ul className="divide-border border-border mt-4 divide-y border-y">
             {tasks.map((task) => (
               <li key={task.key}>
                 <Link
@@ -111,7 +112,7 @@ export function DailyReportView({
         <h2 id="actividad" className="text-2xl font-light">
           Actividad del día
         </h2>
-        <p className="text-smoke mt-1 text-sm">
+        <p className="text-fg-muted mt-1 text-sm">
           {activity.movements === 0
             ? 'Sin movimientos de stock.'
             : `${activity.movements} movimientos${activity.storeTickets ? ` · ${activity.storeTickets} tickets de mostrador` : ''}.`}
@@ -127,7 +128,7 @@ export function DailyReportView({
         </div>
         {activity.topSold.length > 0 && (
           <div className="mt-6">
-            <h3 className="eyebrow">Más vendidos</h3>
+            <Eyebrow as="h3">Más vendidos</Eyebrow>
             <ol className="mt-2 space-y-1 text-sm">
               {activity.topSold.map((row) => (
                 <li
@@ -135,7 +136,7 @@ export function DailyReportView({
                   className="flex justify-between gap-4"
                 >
                   <span>
-                    <span className="text-smoke">{row.brand} · </span>
+                    <span className="text-fg-muted">{row.brand} · </span>
                     {row.product} {row.variant}
                   </span>
                   <span className="tabular-nums">{row.units} uds.</span>
@@ -162,7 +163,7 @@ export function DailyReportView({
             <Figure label="Stock bajo" value={stock.low.count} tone="alert" />
           </div>
           {watch.items.length > 0 && (
-            <ul className="divide-line border-line mt-6 divide-y border-y text-sm">
+            <ul className="divide-border border-border mt-6 divide-y border-y text-sm">
               {watch.items.map((row) => (
                 <li
                   key={`${row.kind}-${row.product}-${row.variant}`}
@@ -170,12 +171,12 @@ export function DailyReportView({
                 >
                   <span className="min-w-0">
                     {row.product} {row.variant}
-                    <span className="text-smoke block text-xs">
+                    <span className="text-fg-muted block text-xs">
                       {row.brand} · {FINDING_LABELS[row.kind]}
                     </span>
                   </span>
                   <span
-                    className={`tracking-caps-sm shrink-0 text-xs uppercase ${row.severity === 'critical' ? 'text-danger' : 'text-smoke'}`}
+                    className={`tracking-caps-sm shrink-0 text-xs uppercase ${row.severity === 'critical' ? 'text-danger' : 'text-fg-muted'}`}
                   >
                     {SEVERITY_LABELS[row.severity]}
                     {row.proposedUnits ? ` · pedir ${row.proposedUnits}` : ''}

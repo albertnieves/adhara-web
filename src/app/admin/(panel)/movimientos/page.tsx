@@ -9,6 +9,7 @@ import {
 } from '@/modules/inventory';
 import type { MovementSearch, MovementType } from '@/modules/inventory';
 import { listMovements } from '@/modules/inventory/server';
+import { buttonClass, Eyebrow, Input, Select, Table } from '@/components/ui';
 
 export const metadata: Metadata = { title: 'Movimientos' };
 
@@ -39,27 +40,27 @@ export default async function Movements({
       <PageHeader eyebrow="Inventario" title="Movimientos">
         <a
           href={`/admin/movimientos/exportar${query ? `?${query}` : ''}`}
-          className="border-line hover:border-ink tracking-caps inline-flex min-h-11 items-center border px-5 text-xs font-semibold uppercase"
+          className="border-border hover:border-fg tracking-caps inline-flex min-h-11 items-center border px-5 text-xs font-semibold uppercase"
         >
           Exportar CSV
         </a>
       </PageHeader>
-      <p className="text-smoke mb-8 max-w-2xl text-sm leading-relaxed">
+      <p className="text-fg-muted mb-8 max-w-2xl text-sm leading-relaxed">
         Registro de solo lectura: los movimientos no se editan ni se borran. Un
         error se corrige con un ajuste que queda también registrado. La
         exportación incluye todos los movimientos del filtro (para Excel).
       </p>
 
-      <form className="border-line mb-8 flex flex-wrap items-end gap-x-6 gap-y-4 border-y py-5">
+      <form className="border-border mb-8 flex flex-wrap items-end gap-x-6 gap-y-4 border-y py-5">
         {filter.productId && (
           <input type="hidden" name="perfume" value={filter.productId} />
         )}
         <label className="flex flex-col gap-2">
-          <span className="eyebrow">Tipo</span>
-          <select
+          <Eyebrow as="span">Tipo</Eyebrow>
+          <Select
             name="tipo"
             defaultValue={filter.type ?? ''}
-            className="input min-w-52"
+            className="min-w-52"
           >
             <option value="">Todos</option>
             {MOVEMENT_TYPES.map((type) => (
@@ -67,30 +68,25 @@ export default async function Movements({
                 {MOVEMENT_LABELS[type]}
               </option>
             ))}
-          </select>
+          </Select>
         </label>
         <label className="flex flex-col gap-2">
-          <span className="eyebrow">Desde</span>
-          <input
+          <Eyebrow as="span">Desde</Eyebrow>
+          <Input
             type="date"
             name="desde"
             defaultValue={filter.search.get('desde') ?? ''}
-            className="input"
           />
         </label>
         <label className="flex flex-col gap-2">
-          <span className="eyebrow">Hasta</span>
-          <input
+          <Eyebrow as="span">Hasta</Eyebrow>
+          <Input
             type="date"
             name="hasta"
             defaultValue={filter.search.get('hasta') ?? ''}
-            className="input"
           />
         </label>
-        <button
-          type="submit"
-          className="border-ink hover:bg-ink hover:text-ivory tracking-caps min-h-11 border px-5 text-xs font-semibold uppercase transition-colors"
-        >
+        <button type="submit" className={buttonClass('outline')}>
           Filtrar
         </button>
         {query && (
@@ -112,14 +108,17 @@ export default async function Movements({
       )}
 
       {movements.length === 0 ? (
-        <p className="text-smoke py-16 text-center">
+        <p className="text-fg-muted py-16 text-center">
           {query
             ? 'Ningún movimiento con estos filtros.'
             : 'Aún no hay movimientos.'}
         </p>
       ) : (
         <div className="overflow-x-auto">
-          <table className="data-table stack-table md:min-w-[48rem]">
+          <Table
+            caption="Historial de movimientos"
+            className="md:min-w-[48rem]"
+          >
             <thead>
               <tr>
                 <th>Fecha</th>
@@ -135,7 +134,7 @@ export default async function Movements({
                 <tr key={m.id}>
                   <td
                     data-label="Fecha"
-                    className="text-smoke text-xs whitespace-nowrap"
+                    className="text-fg-muted text-xs whitespace-nowrap"
                   >
                     {DATE.format(new Date(m.createdAt))}
                   </td>
@@ -149,13 +148,13 @@ export default async function Movements({
                     >
                       {m.productName}
                     </Link>{' '}
-                    <span className="text-smoke">
+                    <span className="text-fg-muted">
                       · {m.brandName} · {m.variantLabel}
                     </span>
                   </td>
                   <td
                     data-label="Cambio"
-                    className={`text-right tabular-nums ${m.deltaOnHand < 0 ? 'text-danger' : m.deltaOnHand > 0 ? 'text-success' : 'text-smoke'}`}
+                    className={`text-right tabular-nums ${m.deltaOnHand < 0 ? 'text-danger' : m.deltaOnHand > 0 ? 'text-success' : 'text-fg-muted'}`}
                   >
                     {m.deltaOnHand > 0 ? '+' : ''}
                     {m.deltaOnHand}
@@ -163,15 +162,15 @@ export default async function Movements({
                   <td data-label="Queda" className="text-right tabular-nums">
                     {m.onHandAfter}
                   </td>
-                  <td data-label="Motivo" className="text-smoke text-xs">
+                  <td data-label="Motivo" className="text-fg-muted text-xs">
                     {[m.reason, m.reference].filter(Boolean).join(' · ')}
                   </td>
                 </tr>
               ))}
             </tbody>
-          </table>
+          </Table>
           {movements.length === LIMIT && (
-            <p className="text-smoke mt-4 text-sm">
+            <p className="text-fg-muted mt-4 text-sm">
               Se muestran los {LIMIT} más recientes; filtra por fechas o exporta
               el CSV para verlos todos.
             </p>

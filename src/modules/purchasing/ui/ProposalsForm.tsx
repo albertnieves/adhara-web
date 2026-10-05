@@ -2,9 +2,16 @@
 
 import Link from 'next/link';
 import { startTransition, useActionState } from 'react';
-import { FormMessage, SubmitButton } from '@/modules/admin';
+import { FormMessage } from '@/modules/admin';
 import type { ProposalsState } from '../server/actions';
 import { createOrdersFromProposals } from '../server/actions';
+import {
+  cardClass,
+  Checkbox,
+  Eyebrow,
+  Input,
+  SubmitButton,
+} from '@/components/ui';
 
 export type ProposalGroupView = {
   supplier: { id: string; name: string };
@@ -37,14 +44,19 @@ export function ProposalsForm({ groups }: { groups: ProposalGroupView[] }) {
       className="space-y-6"
     >
       {groups.map((group) => (
-        <fieldset key={group.supplier.id} className="panel-card space-y-3">
-          <legend className="eyebrow px-1">{group.supplier.name}</legend>
+        <fieldset
+          key={group.supplier.id}
+          className={cardClass({ className: 'space-y-3' })}
+        >
+          <Eyebrow as="legend" className="px-1">
+            {group.supplier.name}
+          </Eyebrow>
           <input
             type="hidden"
             name={`name:${group.supplier.id}`}
             value={group.supplier.name}
           />
-          <ul className="divide-line divide-y">
+          <ul className="divide-border divide-y">
             {group.lines.map((line) => {
               const key = `${group.supplier.id}:${line.variantId}`;
               return (
@@ -52,23 +64,22 @@ export function ProposalsForm({ groups }: { groups: ProposalGroupView[] }) {
                   key={key}
                   className="flex flex-wrap items-center justify-between gap-3 py-3"
                 >
-                  <label className="flex min-w-0 flex-1 items-start gap-3 text-sm">
-                    <input
-                      type="checkbox"
-                      name={`pick:${key}`}
-                      defaultChecked
-                      className="mt-0.5 h-5 w-5 shrink-0"
-                    />
-                    <span>
-                      {line.label}
-                      <span className="text-smoke block text-xs">
-                        {line.reason}
+                  <Checkbox
+                    name={`pick:${key}`}
+                    defaultChecked
+                    label={
+                      <span>
+                        {line.label}
+                        <span className="text-fg-muted block text-xs">
+                          {line.reason}
+                        </span>
                       </span>
-                    </span>
-                  </label>
+                    }
+                    className="min-w-0 flex-1"
+                  />
                   <label className="flex items-center gap-2 text-xs">
-                    <span className="text-smoke">Pedir</span>
-                    <input
+                    <span className="text-fg-muted">Pedir</span>
+                    <Input
                       name={`qty:${key}`}
                       type="number"
                       inputMode="numeric"
@@ -77,7 +88,7 @@ export function ProposalsForm({ groups }: { groups: ProposalGroupView[] }) {
                       step={1}
                       defaultValue={line.quantity}
                       aria-label={`Unidades a pedir de ${line.label}`}
-                      className="input w-24 text-right tabular-nums"
+                      className="w-24! text-right tabular-nums"
                     />
                     {line.packSize && line.packSize > 1 && (
                       <span className="text-fg-muted">x{line.packSize}</span>
@@ -93,7 +104,7 @@ export function ProposalsForm({ groups }: { groups: ProposalGroupView[] }) {
         <SubmitButton pending={pending} pendingLabel="Creando…">
           Crear borradores de pedido
         </SubmitButton>
-        <p className="text-smoke text-xs">
+        <p className="text-fg-muted text-xs">
           Solo crea borradores: no se envía nada al proveedor.
         </p>
       </div>

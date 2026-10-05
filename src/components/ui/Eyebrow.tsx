@@ -20,7 +20,7 @@ export function Eyebrow({
   className,
   children,
 }: {
-  as?: 'p' | 'span' | 'h2' | 'h3';
+  as?: 'p' | 'span' | 'h2' | 'h3' | 'dt' | 'legend';
   tone?: EyebrowTone;
   id?: string;
   /** Solo márgenes y colocación. */

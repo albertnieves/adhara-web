@@ -22,7 +22,7 @@ export const BUTTON_VARIANTS: Record<ButtonVariant, string> = {
     'border border-danger text-danger hover:bg-danger hover:text-fg-inverse',
 };
 
-/** sm para tablas y barras compactas (36 px); md y lg, 44 y 48 px. */
+/** sm (36 px) para controles secundarios de la tienda, nunca en el panel; md y lg, 44 y 48 px. */
 export const BUTTON_SIZES: Record<ButtonSize, string> = {
   sm: 'min-h-9 px-3 text-2xs tracking-caps-sm',
   md: 'min-h-11 px-5 text-xs tracking-caps',

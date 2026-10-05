@@ -8,6 +8,7 @@ import type { SearchableVariant } from '@/modules/inventory';
 import { VariantSearch } from '@/modules/inventory/ui';
 import { orderCostCents } from '../domain/orders';
 import { savePurchaseOrderLines } from '../server/actions';
+import { buttonClass, Input, Table } from '@/components/ui';
 
 type Row = {
   variantId: string;
@@ -127,10 +128,14 @@ export function OrderLinesEditor({
         }
       />
       {rows.length === 0 ? (
-        <p className="text-smoke text-sm">El pedido aún no tiene líneas.</p>
+        <p className="text-fg-muted text-sm">El pedido aún no tiene líneas.</p>
       ) : (
         <div className="overflow-x-auto">
-          <table className="data-table min-w-[40rem]">
+          <Table
+            caption="Líneas del pedido"
+            stacked={false}
+            className="min-w-[40rem]"
+          >
             <thead>
               <tr>
                 <th>Perfume</th>
@@ -149,15 +154,18 @@ export function OrderLinesEditor({
                 return (
                   <tr key={row.variantId}>
                     <td className="text-sm">
-                      <span className="text-smoke">{v?.brandName} · </span>
+                      <span className="text-fg-muted">{v?.brandName} · </span>
                       {v?.productName ?? row.variantId}
-                      <span className="text-smoke"> · {v?.variantLabel}</span>
+                      <span className="text-fg-muted">
+                        {' '}
+                        · {v?.variantLabel}
+                      </span>
                     </td>
-                    <td className="text-smoke text-sm">
+                    <td className="text-fg-muted text-sm">
                       {t?.supplierSku ?? '—'}
                     </td>
                     <td className="text-right">
-                      <input
+                      <Input
                         type="number"
                         inputMode="numeric"
                         min={1}
@@ -172,7 +180,7 @@ export function OrderLinesEditor({
                           })
                         }
                         aria-label="Unidades"
-                        className="input w-24 text-right tabular-nums"
+                        className="w-24! text-right tabular-nums"
                       />
                       {offPack && (
                         <p className="text-danger mt-1 text-xs">
@@ -182,7 +190,7 @@ export function OrderLinesEditor({
                     </td>
                     {canCost && (
                       <td className="text-right">
-                        <input
+                        <Input
                           inputMode="decimal"
                           value={row.unitCost}
                           placeholder="vigente"
@@ -193,7 +201,7 @@ export function OrderLinesEditor({
                             })
                           }
                           aria-label="Coste neto por unidad"
-                          className="input w-28 text-right tabular-nums"
+                          className="w-28! text-right tabular-nums"
                         />
                       </td>
                     )}
@@ -207,7 +215,7 @@ export function OrderLinesEditor({
                             ),
                           )
                         }
-                        className="text-smoke hover:text-danger tracking-caps-sm min-h-11 px-2 text-xs uppercase"
+                        className="text-fg-muted hover:text-danger tracking-caps-sm min-h-11 px-2 text-xs uppercase"
                       >
                         Quitar
                       </button>
@@ -216,7 +224,7 @@ export function OrderLinesEditor({
                 );
               })}
             </tbody>
-          </table>
+          </Table>
         </div>
       )}
       <div className="flex flex-wrap items-center gap-4">
@@ -224,11 +232,11 @@ export function OrderLinesEditor({
           type="button"
           onClick={save}
           disabled={pending || !dirty}
-          className="bg-ink text-ivory hover:bg-ink-soft tracking-caps inline-flex min-h-11 items-center justify-center px-5 text-xs font-semibold uppercase transition-colors duration-300 disabled:opacity-50"
+          className={buttonClass('primary')}
         >
           {pending ? 'Guardando…' : 'Guardar líneas'}
         </button>
-        <p className="text-smoke text-sm">
+        <p className="text-fg-muted text-sm">
           {units} {units === 1 ? 'unidad' : 'unidades'}
           {canCost &&
             (total === null

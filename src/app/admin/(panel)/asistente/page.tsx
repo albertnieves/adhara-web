@@ -23,6 +23,7 @@ import { GenerateReportButton } from '@/modules/assistant/ui/GenerateReportButto
 import { isAllowed } from '@/modules/auth';
 import { requirePermission } from '@/modules/auth/server';
 import { madridDay } from '@/modules/reports';
+import { buttonClass } from '@/components/ui';
 
 export const metadata: Metadata = { title: 'Asistente' };
 
@@ -64,7 +65,10 @@ export default async function AssistantPage({
   return (
     <main>
       <PageHeader eyebrow="Asistente de inventario" title="Informe del día">
-        <a href="#preguntar" className="panel-btn xl:hidden">
+        <a
+          href="#preguntar"
+          className={buttonClass('outline', 'md', 'xl:hidden')}
+        >
           Preguntar ↓
         </a>
       </PageHeader>
@@ -81,7 +85,7 @@ export default async function AssistantPage({
                     : `/admin/asistente?dia=${s.day}`
                 }
                 aria-current={s.day === day ? 'page' : undefined}
-                className={`tracking-caps-sm inline-flex min-h-10 items-center border px-3 text-xs uppercase ${s.day === day ? 'border-ink bg-ink text-ivory' : 'border-line hover:border-ink'}`}
+                className={buttonClass(s.day === day ? 'primary' : 'outline')}
               >
                 {s.label}
               </Link>
@@ -89,7 +93,7 @@ export default async function AssistantPage({
           </nav>
 
           <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-            <p className="text-smoke text-sm first-letter:uppercase">
+            <p className="text-fg-muted text-sm first-letter:uppercase">
               {reportDayLabel(day)}
               {day === today && ' · hasta ahora'}
               <span className="block text-xs">
@@ -119,7 +123,7 @@ export default async function AssistantPage({
               visibleTasks={visibleTasks}
             />
           ) : (
-            <p className="text-smoke">No hay ninguna ubicación activa.</p>
+            <p className="text-fg-muted">No hay ninguna ubicación activa.</p>
           )}
         </div>
 

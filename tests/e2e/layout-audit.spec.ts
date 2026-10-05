@@ -39,11 +39,9 @@ async function check(page: Page, path: string, name: string, status = 200) {
   const results = await auditRoute(page, path, name, AUDIT_WIDTHS, status);
   const report = formatFindings(name, results);
   expect(report, report).toBe('');
+  // Criterio 6: sin infracciones de axe (WCAG 2.2 AA).
   const axe = await axeBaseline(page, path, name);
-  test.info().annotations.push({
-    type: 'axe',
-    description: `${axe.violations.length} reglas incumplidas`,
-  });
+  expect(axe.violations, JSON.stringify(axe.violations, null, 2)).toEqual([]);
 }
 
 for (const [path, name, status] of ROUTES) {
@@ -79,7 +77,7 @@ test('la auditoría detecta solapes, desbordes, letra y controles pequeños', as
       <p style="font-size: 9px; margin-top: 40px">Texto diminuto</p>
       <div data-print-size><p style="font-size: 6pt">Etiqueta impresa</p></div>
     </main>`);
-  const { blocking } = await page.evaluate(collectLayoutIssues);
+  const { blocking } = await page.evaluate(collectLayoutIssues, 24);
   const kinds = blocking.map((issue) => issue.split(':')[0]);
   expect(kinds).toContain('desplazamiento horizontal');
   expect(kinds).toContain('solape');

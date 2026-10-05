@@ -2,13 +2,16 @@
 
 import { useState } from 'react';
 import type { ActionState } from '@/modules/admin';
-import { Sheet, toast } from '@/components/ui';
 import {
+  buttonClass,
   Field,
-  FormMessage,
+  Input,
+  Select,
+  Sheet,
   SubmitButton,
-  useAdminAction,
-} from '@/modules/admin';
+  toast,
+} from '@/components/ui';
+import { FormMessage, useAdminAction } from '@/modules/admin';
 import { MOVEMENT_LABELS } from '../domain/labels';
 import type { MovementType } from '../domain/movements';
 import { isSignedMovement, requiresReason } from '../domain/movements';
@@ -86,7 +89,7 @@ export function StockActions(props: Props) {
 
   return (
     <div className="flex justify-end">
-      <div className="flex flex-wrap justify-end gap-1 md:flex-nowrap">
+      <div className="flex flex-wrap justify-end gap-1">
         {tabs
           .filter((tab) => tab.show)
           .map((tab) => (
@@ -98,7 +101,11 @@ export function StockActions(props: Props) {
                 setRequestId(crypto.randomUUID());
                 setOpen(tab.id);
               }}
-              className={`panel-btn panel-btn-sm ${open === tab.id ? 'panel-btn-primary' : ''}`}
+              className={buttonClass(
+                open === tab.id ? 'primary' : 'outline',
+                'md',
+                'px-3!',
+              )}
             >
               {tab.label}
             </button>
@@ -111,7 +118,7 @@ export function StockActions(props: Props) {
         title={open ? TITLES[open] : ''}
         description={
           <>
-            <span className="text-ink">{props.title}</span>
+            <span className="text-fg">{props.title}</span>
             <span className="block tabular-nums">
               En tienda {props.onHand} · reservado {props.reserved} · disponible{' '}
               {props.onHand - props.reserved}
@@ -131,20 +138,19 @@ export function StockActions(props: Props) {
             <input type="hidden" name="onHand" value={props.onHand} />
             <input type="hidden" name="reserved" value={props.reserved} />
             <Field label="Tipo">
-              <select
+              <Select
                 name="type"
                 value={type}
                 onChange={(event) =>
                   setType(event.target.value as MovementType)
                 }
-                className="input"
               >
                 {props.movementTypes.map((t) => (
                   <option key={t} value={t}>
                     {MOVEMENT_LABELS[t]}
                   </option>
                 ))}
-              </select>
+              </Select>
             </Field>
             <Field
               label="Unidades"
@@ -154,28 +160,27 @@ export function StockActions(props: Props) {
                   : 'Siempre en positivo.'
               }
             >
-              <input
+              <Input
                 name="quantity"
                 type="number"
                 required
                 step={1}
                 min={isSignedMovement(type) ? undefined : 1}
                 defaultValue={1}
-                className="input tabular-nums"
+                className="tabular-nums"
               />
             </Field>
             <Field
               label={requiresReason(type) ? 'Motivo (obligatorio)' : 'Motivo'}
             >
-              <input
+              <Input
                 name="reason"
                 maxLength={300}
                 required={requiresReason(type)}
-                className="input"
               />
             </Field>
             <Field label="Referencia" hint="Albarán, ticket…">
-              <input name="reference" maxLength={120} className="input" />
+              <Input name="reference" maxLength={120} />
             </Field>
             <SubmitButton pending={movement.pending}>Registrar</SubmitButton>
             {movement.state.status !== 'ok' && (
@@ -195,17 +200,17 @@ export function StockActions(props: Props) {
               label="Unidades contadas"
               hint={`El sistema tiene ${props.onHand}. Se registra la diferencia.`}
             >
-              <input
+              <Input
                 name="counted"
                 type="number"
                 min={0}
                 required
                 defaultValue={props.onHand}
-                className="input tabular-nums"
+                className="tabular-nums"
               />
             </Field>
             <Field label="Nota">
-              <input name="reason" maxLength={300} className="input" />
+              <Input name="reason" maxLength={300} />
             </Field>
             <SubmitButton pending={stocktake.pending}>
               Guardar recuento
@@ -223,12 +228,12 @@ export function StockActions(props: Props) {
               label="Avisar cuando queden"
               hint="Vacío: sin aviso (solo al agotarse)."
             >
-              <input
+              <Input
                 name="reorderPoint"
                 type="number"
                 min={0}
                 defaultValue={props.reorderPoint ?? ''}
-                className="input tabular-nums"
+                className="tabular-nums"
               />
             </Field>
             <SubmitButton pending={reorder.pending}>Guardar</SubmitButton>

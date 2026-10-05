@@ -1,6 +1,7 @@
 'use client';
 
-import { FormMessage, SubmitButton, useAdminAction } from '@/modules/admin';
+import { SubmitButton } from '@/components/ui';
+import { FormMessage, useAdminAction } from '@/modules/admin';
 import { setProductStatus } from '../server/actions';
 
 /** Publicar, retirar o archivar. La base de datos exige PVP para publicar. */
@@ -21,16 +22,20 @@ export function StatusActions({
           {
             status: 'draft',
             label: 'Retirar de la tienda',
-            variant: 'ghost' as const,
+            variant: 'outline' as const,
           },
-          { status: 'archived', label: 'Archivar', variant: 'ghost' as const },
+          {
+            status: 'archived',
+            label: 'Archivar',
+            variant: 'outline' as const,
+          },
         ]
       : status === 'archived'
         ? [
             {
               status: 'draft',
               label: 'Recuperar como borrador',
-              variant: 'ghost' as const,
+              variant: 'outline' as const,
             },
           ]
         : [
@@ -42,7 +47,7 @@ export function StatusActions({
             {
               status: 'archived',
               label: 'Archivar',
-              variant: 'ghost' as const,
+              variant: 'outline' as const,
             },
           ];
   return (

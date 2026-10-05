@@ -3,12 +3,22 @@
 import Link from 'next/link';
 import { startTransition, useActionState, useState } from 'react';
 import { formatEuros } from '@/lib/money';
-import { Field, SubmitButton } from '@/modules/admin';
 import type { PlannedRow } from '../domain/import';
 import { IMPORT_COLUMNS } from '../domain/import';
 import { CONCENTRATION_NAMES } from '../domain/product';
 import type { ImportState } from '../server/import';
 import { importCatalog } from '../server/import';
+import {
+  Card,
+  Checkbox,
+  Eyebrow,
+  Field,
+  Input,
+  Select,
+  SubmitButton,
+  Table,
+  Textarea,
+} from '@/components/ui';
 
 const IDLE: ImportState = { status: 'idle' };
 
@@ -42,10 +52,10 @@ function Chip({
   children: React.ReactNode;
 }) {
   const tones = {
-    default: 'border-line',
-    new: 'border-gold/60 text-ink',
+    default: 'border-border',
+    new: 'border-accent/60 text-fg',
     warn: 'border-danger/50 text-danger',
-    muted: 'border-line text-smoke',
+    muted: 'border-border text-fg-muted',
   };
   return (
     <span
@@ -133,14 +143,14 @@ export function CatalogImport({ canSetPrices }: { canSetPrices: boolean }) {
 
   return (
     <form onSubmit={onSubmit} className="space-y-10">
-      <section className="panel-card space-y-6">
+      <Card as="section" className="space-y-6">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
-            <p className="eyebrow">1 · Archivo</p>
-            <p className="text-smoke mt-2 max-w-2xl text-sm leading-relaxed">
+            <Eyebrow>1 · Archivo</Eyebrow>
+            <p className="text-fg-muted mt-2 max-w-2xl text-sm leading-relaxed">
               CSV con cabecera (separado por «;» o «,»). Columnas:{' '}
-              <span className="text-ink">{IMPORT_COLUMNS.join(', ')}</span>.
-              Solo «marca» y «nombre» son obligatorias. Nada se publica: todo lo
+              <span className="text-fg">{IMPORT_COLUMNS.join(', ')}</span>. Solo
+              «marca» y «nombre» son obligatorias. Nada se publica: todo lo
               nuevo queda en borrador.
             </p>
           </div>
@@ -152,11 +162,13 @@ export function CatalogImport({ canSetPrices }: { canSetPrices: boolean }) {
             Descargar plantilla
           </button>
         </div>
-        <label className="border-line hover:border-ink flex cursor-pointer flex-col items-center justify-center gap-2 border border-dashed px-6 py-8 text-center text-sm transition-colors">
+        <label className="border-border hover:border-fg flex cursor-pointer flex-col items-center justify-center gap-2 border border-dashed px-6 py-8 text-center text-sm transition-colors">
           <span className="font-display text-2xl font-light">
             {fileName ?? 'Elegir archivo CSV'}
           </span>
-          <span className="text-smoke text-xs">o pega el contenido debajo</span>
+          <span className="text-fg-muted text-xs">
+            o pega el contenido debajo
+          </span>
           <input
             type="file"
             accept=".csv,text/csv,text/plain"
@@ -170,47 +182,45 @@ export function CatalogImport({ canSetPrices }: { canSetPrices: boolean }) {
           />
         </label>
         <Field label="Contenido CSV">
-          <textarea
+          <Textarea
             name="csv"
             value={csv}
             onChange={(event) => setCsv(event.target.value)}
             rows={8}
             spellCheck={false}
             placeholder={`${IMPORT_COLUMNS.join(';')}\n…`}
-            className="input font-mono text-xs leading-relaxed"
+            className="font-mono! text-xs! leading-relaxed"
           />
         </Field>
         <Field
           label="Origen por defecto"
           hint="Se guarda como procedencia en las filas sin «origen». Por ejemplo: CATALOGO global 2026."
         >
-          <input
+          <Input
             name="source"
             value={source}
             onChange={(event) => setSource(event.target.value)}
             maxLength={200}
-            className="input"
           />
         </Field>
         <Field
           label="Costes del archivo"
           hint="Solo si el CSV trae la columna «coste». Se guardan netos, sin IVA, y solo los ve quien tiene permiso de costes."
         >
-          <select
+          <Select
             name="costVat"
             value={costVat}
             onChange={(event) => setCostVat(event.target.value)}
-            className="input"
           >
             <option value="net">Sin IVA (netos)</option>
             <option value="gross">Con IVA del 21 % (se pasan a netos)</option>
-          </select>
+          </Select>
         </Field>
         <div className="flex flex-wrap items-center gap-4">
           <SubmitButton
             name="intent"
             value="review"
-            variant="ghost"
+            variant="outline"
             pending={pending}
             pendingLabel="Revisando…"
           >
@@ -222,11 +232,11 @@ export function CatalogImport({ canSetPrices }: { canSetPrices: boolean }) {
             </p>
           )}
         </div>
-      </section>
+      </Card>
 
       {state.status === 'done' && (
-        <section className="panel-card space-y-4" role="status">
-          <p className="eyebrow">Hecho</p>
+        <Card as="section" className="space-y-4" role="status">
+          <Eyebrow>Hecho</Eyebrow>
           <p className="font-display text-3xl font-light lining-nums">
             {state.message}
           </p>
@@ -259,14 +269,14 @@ export function CatalogImport({ canSetPrices }: { canSetPrices: boolean }) {
           >
             Ver borradores
           </Link>
-        </section>
+        </Card>
       )}
 
       {plan && (
         <section className="space-y-6">
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div>
-              <p className="eyebrow">2 · Revisión</p>
+              <Eyebrow>2 · Revisión</Eyebrow>
               {!upToDate && (
                 <p className="text-danger mt-2 text-sm">
                   Has cambiado el CSV, el origen o los costes: vuelve a
@@ -289,8 +299,8 @@ export function CatalogImport({ canSetPrices }: { canSetPrices: boolean }) {
                 ['Filas con error', plan.summary.errors],
               ] as const
             ).map(([label, value]) => (
-              <div key={label} className="panel-card p-4!">
-                <dt className="text-smoke text-xs">{label}</dt>
+              <Card key={label} padding="sm">
+                <dt className="text-fg-muted text-xs">{label}</dt>
                 <dd
                   className={`font-display mt-1 text-3xl font-light lining-nums tabular-nums ${
                     value > 0 &&
@@ -302,11 +312,11 @@ export function CatalogImport({ canSetPrices }: { canSetPrices: boolean }) {
                 >
                   {value}
                 </dd>
-              </div>
+              </Card>
             ))}
           </dl>
           {state.status === 'review' && state.unknownColumns.length > 0 && (
-            <p className="text-smoke text-sm">
+            <p className="text-fg-muted text-sm">
               Columnas ignoradas: {state.unknownColumns.join(', ')}.
             </p>
           )}
@@ -319,7 +329,7 @@ export function CatalogImport({ canSetPrices }: { canSetPrices: boolean }) {
               <ul className="space-y-1 text-sm">
                 {plan.errors.map((error) => (
                   <li key={`${error.line}-${error.message}`}>
-                    <span className="text-smoke tabular-nums">
+                    <span className="text-fg-muted tabular-nums">
                       Línea {error.line}:
                     </span>{' '}
                     {error.message}
@@ -331,7 +341,11 @@ export function CatalogImport({ canSetPrices }: { canSetPrices: boolean }) {
 
           {plan.rows.length > 0 && (
             <div className="overflow-x-auto">
-              <table className="data-table min-w-[48rem]">
+              <Table
+                caption="Revisión de la importación, fila a fila"
+                stacked={false}
+                className="min-w-[48rem]"
+              >
                 <thead>
                   <tr>
                     <th>Línea</th>
@@ -345,12 +359,14 @@ export function CatalogImport({ canSetPrices }: { canSetPrices: boolean }) {
                 <tbody>
                   {plan.rows.map((row) => (
                     <tr key={row.line}>
-                      <td className="text-smoke tabular-nums">{row.line}</td>
+                      <td className="text-fg-muted tabular-nums">{row.line}</td>
                       <td>
-                        <span className="text-smoke">{row.brand.name} · </span>
+                        <span className="text-fg-muted">
+                          {row.brand.name} ·{' '}
+                        </span>
                         {row.product.name}
                         {row.row.concentration && (
-                          <span className="text-smoke">
+                          <span className="text-fg-muted">
                             {' '}
                             · {CONCENTRATION_NAMES[row.row.concentration]}
                           </span>
@@ -386,22 +402,23 @@ export function CatalogImport({ canSetPrices }: { canSetPrices: boolean }) {
                     </tr>
                   ))}
                 </tbody>
-              </table>
+              </Table>
             </div>
           )}
 
           {plan.rows.length > 0 && (
-            <div className="panel-card flex flex-wrap items-center justify-between gap-4">
-              <label className="flex items-center gap-3 text-sm">
-                <input
-                  type="checkbox"
-                  name="confirm"
-                  checked={confirmed}
-                  onChange={(event) => setConfirmed(event.target.checked)}
-                  className="accent-ink size-5"
-                />
-                He revisado las {plan.rows.length} filas; crear como borradores.
-              </label>
+            <Card className="flex flex-wrap items-center justify-between gap-4">
+              <Checkbox
+                name="confirm"
+                checked={confirmed}
+                onChange={(event) => setConfirmed(event.target.checked)}
+                label={
+                  <>
+                    He revisado las {plan.rows.length} filas; crear como
+                    borradores.{' '}
+                  </>
+                }
+              />
               <SubmitButton
                 name="intent"
                 value="apply"
@@ -411,10 +428,10 @@ export function CatalogImport({ canSetPrices }: { canSetPrices: boolean }) {
               >
                 Importar
               </SubmitButton>
-            </div>
+            </Card>
           )}
           {!canSetPrices && plan.summary.pricesToSet > 0 && (
-            <p className="text-smoke text-sm">
+            <p className="text-fg-muted text-sm">
               Tu rol no puede fijar PVP: se importarán los formatos sin precio.
             </p>
           )}

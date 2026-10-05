@@ -1,12 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import {
-  Field,
-  FormMessage,
-  SubmitButton,
-  useAdminAction,
-} from '@/modules/admin';
+import { FormMessage, useAdminAction } from '@/modules/admin';
 import { ORDER_ACTION_LABELS } from '../domain/labels';
 import type { PurchaseOrderAction } from '../domain/orders';
 import {
@@ -14,6 +9,7 @@ import {
   createPurchaseOrder,
   updatePurchaseOrder,
 } from '../server/actions';
+import { Field, Input, Select, SubmitButton } from '@/components/ui';
 
 /** Nuevo borrador de pedido: proveedor, fecha prevista y notas. */
 export function NewOrderForm({
@@ -24,7 +20,7 @@ export function NewOrderForm({
   const { state, pending, onSubmit } = useAdminAction(createPurchaseOrder);
   if (suppliers.length === 0) {
     return (
-      <p className="text-smoke text-sm">
+      <p className="text-fg-muted text-sm">
         Primero da de alta un proveedor en{' '}
         <Link href="/admin/compras/proveedores" className="underline">
           Proveedores
@@ -39,7 +35,7 @@ export function NewOrderForm({
       className="grid items-end gap-4 sm:grid-cols-2 xl:grid-cols-[1fr_12rem_1fr_auto]"
     >
       <Field label="Proveedor">
-        <select name="supplierId" required defaultValue="" className="input">
+        <Select name="supplierId" required defaultValue="">
           <option value="" disabled>
             Elige un proveedor
           </option>
@@ -49,13 +45,13 @@ export function NewOrderForm({
               {s.leadTimeDays !== null ? ` · ${s.leadTimeDays} días` : ''}
             </option>
           ))}
-        </select>
+        </Select>
       </Field>
       <Field label="Llegada prevista">
-        <input name="expectedOn" type="date" className="input" />
+        <Input name="expectedOn" type="date" />
       </Field>
       <Field label="Notas">
-        <input name="notes" maxLength={1000} className="input" />
+        <Input name="notes" maxLength={1000} />
       </Field>
       <SubmitButton pending={pending}>Crear borrador</SubmitButton>
       <div className="sm:col-span-2 xl:col-span-4">
@@ -88,33 +84,22 @@ export function OrderHeaderForm({
       <input type="hidden" name="orderId" value={orderId} />
       <input type="hidden" name="revision" value={revision} />
       <Field label="Llegada prevista">
-        <input
-          name="expectedOn"
-          type="date"
-          defaultValue={expectedOn ?? ''}
-          className="input"
-        />
+        <Input name="expectedOn" type="date" defaultValue={expectedOn ?? ''} />
       </Field>
       <Field
         label="Ref. del proveedor"
         hint="Su número de pedido o confirmación."
       >
-        <input
+        <Input
           name="supplierReference"
           maxLength={80}
           defaultValue={supplierReference ?? ''}
-          className="input"
         />
       </Field>
       <Field label="Notas">
-        <input
-          name="notes"
-          maxLength={1000}
-          defaultValue={notes ?? ''}
-          className="input"
-        />
+        <Input name="notes" maxLength={1000} defaultValue={notes ?? ''} />
       </Field>
-      <SubmitButton pending={pending} variant="ghost">
+      <SubmitButton pending={pending} variant="outline">
         Guardar
       </SubmitButton>
       <div className="sm:col-span-2 xl:col-span-4">
@@ -179,7 +164,7 @@ export function OrderStatusActions({
               ? 'primary'
               : action === 'delete' || action === 'cancel'
                 ? 'danger'
-                : 'ghost'
+                : 'outline'
           }
         >
           {action === 'delete'

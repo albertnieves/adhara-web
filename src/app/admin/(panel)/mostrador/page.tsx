@@ -27,7 +27,7 @@ export default async function CounterPage() {
     return (
       <main>
         <PageHeader eyebrow="Tienda" title="Mostrador" />
-        <p className="text-smoke">No hay ninguna ubicación activa.</p>
+        <p className="text-fg-muted">No hay ninguna ubicación activa.</p>
       </main>
     );
   }
@@ -43,7 +43,7 @@ export default async function CounterPage() {
       <PageHeader eyebrow={location.name} title="Mostrador">
         <Link
           href="/admin/movimientos?tipo=SALE_STORE"
-          className="border-line hover:border-ink tracking-caps inline-flex min-h-11 items-center border px-5 text-xs font-semibold uppercase"
+          className="border-border hover:border-fg tracking-caps inline-flex min-h-11 items-center border px-5 text-xs font-semibold uppercase"
         >
           Ventas en el historial
         </Link>
@@ -54,11 +54,11 @@ export default async function CounterPage() {
       <section className="mt-14">
         <h2 className="mb-4 text-2xl font-light">Últimas operaciones</h2>
         {sales.length === 0 ? (
-          <p className="text-smoke text-sm">
+          <p className="text-fg-muted text-sm">
             Aún no hay ventas ni devoluciones de mostrador.
           </p>
         ) : (
-          <ul className="divide-line border-line divide-y border-y">
+          <ul className="divide-border border-border divide-y border-y">
             {sales.map((sale) => (
               <li
                 key={sale.id}
@@ -73,13 +73,13 @@ export default async function CounterPage() {
                     >
                       {COUNTER_KIND_LABELS[sale.kind]}
                     </span>
-                    <span className="text-smoke">
+                    <span className="text-fg-muted">
                       {' '}
                       · {TIME.format(new Date(sale.createdAt))}
                       {sale.ticketRef && ` · ticket ${sale.ticketRef}`}
                     </span>
                   </p>
-                  <ul className="text-smoke mt-1 text-xs">
+                  <ul className="text-fg-muted mt-1 text-xs">
                     {sale.lines.map((line) => (
                       <li key={line.label}>
                         {line.quantity} × {line.label}

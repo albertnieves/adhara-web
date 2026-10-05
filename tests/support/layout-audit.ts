@@ -9,9 +9,10 @@ import { join } from 'node:path';
  *
  * Bloquean: desplazamiento horizontal de la página, cajas de contenido que
  * se pisan, texto que se sale de su caja, texto de menos de 11 px (criterio
- * 3, desde DS-04) y controles de menos de 24 × 24 px (WCAG 2.5.8). Solo se
- * anotan: recortes con overflow oculto y controles de menos de 44 px, que se
- * corrigen en las tareas siguientes de la fase.
+ * 3, desde DS-04) y controles de menos de 24 × 24 px (WCAG 2.5.8); en el
+ * panel, de menos de 44 px de alto (criterio 8, desde DS-11). Solo se anotan
+ * los recortes con overflow oculto y, en la tienda, los controles de menos de
+ * 44 px que no son los principales.
  */
 
 export const AUDIT_WIDTHS = [390, 768, 1280, 1440] as const;
@@ -31,8 +32,13 @@ export function auditOutputDir() {
   return process.env.AUDIT_OUTPUT_DIR ?? 'audit-output';
 }
 
-/** Se ejecuta en la página: no puede usar nada de fuera de la función. */
-export function collectLayoutIssues(): LayoutFindings {
+/**
+ * Se ejecuta en la página: no puede usar nada de fuera de la función.
+ * `minTarget` es el alto mínimo que bloquea (44 en el panel); por debajo de
+ * 24 px bloquea siempre. Las demostraciones de tamaños de la página de
+ * referencia (`data-target-demo`) solo cumplen los 24 px.
+ */
+export function collectLayoutIssues(minTarget = 24): LayoutFindings {
   const MAX = 20;
   const describe = (el: Element) => {
     const text = (
@@ -167,6 +173,10 @@ export function collectLayoutIssues(): LayoutFindings {
     const size = `${Math.round(rect.width)}×${Math.round(rect.height)}`;
     if (rect.width < 24 || rect.height < 24)
       blocking.push(`control de menos de 24 px: ${describe(el)} ${size}`);
+    else if (rect.height < minTarget && !el.closest('[data-target-demo]'))
+      blocking.push(
+        `control de menos de ${minTarget} px: ${describe(el)} ${size}`,
+      );
     else if (rect.height < 44)
       notes.push(`control de menos de 44 px: ${describe(el)} ${size}`);
   }
@@ -184,6 +194,7 @@ export async function auditRoute(
   name: string,
   widths: readonly number[] = AUDIT_WIDTHS,
   expectedStatus = 200,
+  { minTarget = 24 }: { minTarget?: number } = {},
 ) {
   // El diseño final, sin animaciones de entrada a medias.
   await page.emulateMedia({ reducedMotion: 'reduce' });
@@ -244,7 +255,7 @@ export async function auditRoute(
     const landed = new URL(page.url()).pathname;
     if (landed !== new URL(path, page.url()).pathname)
       throw new Error(`${path} redirigió a ${landed}`);
-    const findings = await page.evaluate(collectLayoutIssues);
+    const findings = await page.evaluate(collectLayoutIssues, minTarget);
     results.push({ width, findings });
     if (process.env.AUDIT_SCREENSHOTS === '1') {
       const dir = join(auditOutputDir(), 'capturas');
@@ -267,9 +278,9 @@ export type AxeSummary = {
 };
 
 /**
- * Línea base de accesibilidad: guarda las infracciones de la página actual y
- * las devuelve. En DS-01 no hace fallar la prueba; los criterios de la fase
- * exigen llegar a cero antes del cierre.
+ * Accesibilidad con axe: guarda las infracciones de la página actual y las
+ * devuelve. Las pruebas exigen cero (criterio 6): la tienda desde DS-10 y el
+ * panel desde DS-11.
  */
 export async function axeBaseline(
   page: Page,

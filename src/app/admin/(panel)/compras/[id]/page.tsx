@@ -25,6 +25,7 @@ import {
   OrderStatusActions,
   ReceiveForm,
 } from '@/modules/purchasing/ui';
+import { Eyebrow, Table } from '@/components/ui';
 
 export const metadata: Metadata = { title: 'Pedido de compra' };
 
@@ -48,7 +49,7 @@ function Section({
   className?: string;
 }) {
   return (
-    <section className={`border-line border-t py-10 ${className}`}>
+    <section className={`border-border border-t py-10 ${className}`}>
       <h2 className="mb-6 text-2xl font-light">{title}</h2>
       {children}
     </section>
@@ -103,7 +104,11 @@ export default async function PurchaseOrderPage({
 
   const linesTable = (
     <div className="overflow-x-auto">
-      <table className="data-table min-w-[40rem]">
+      <Table
+        caption="Líneas del pedido"
+        stacked={false}
+        className="min-w-[40rem]"
+      >
         <thead>
           <tr>
             <th>Perfume</th>
@@ -117,7 +122,9 @@ export default async function PurchaseOrderPage({
           {lines.map((line) => (
             <tr key={line.lineId}>
               <td className="text-sm">{name(line.variantId)}</td>
-              <td className="text-smoke text-sm">{line.supplierSku ?? '—'}</td>
+              <td className="text-fg-muted text-sm">
+                {line.supplierSku ?? '—'}
+              </td>
               <td className="text-right tabular-nums">
                 {line.quantityOrdered}
               </td>
@@ -136,9 +143,9 @@ export default async function PurchaseOrderPage({
             </tr>
           ))}
         </tbody>
-      </table>
+      </Table>
       {canCost && (
-        <p className="text-smoke mt-3 text-right text-sm">
+        <p className="text-fg-muted mt-3 text-right text-sm">
           {total === null
             ? 'Coste total: falta el coste de alguna línea.'
             : `Coste total ${formatEuros(total, 'es')} sin IVA`}
@@ -155,7 +162,7 @@ export default async function PurchaseOrderPage({
       >
         <Link
           href="/admin/compras"
-          className="border-line hover:border-ink tracking-caps inline-flex min-h-11 items-center border px-5 text-xs font-semibold uppercase print:hidden"
+          className="border-border hover:border-fg tracking-caps inline-flex min-h-11 items-center border px-5 text-xs font-semibold uppercase print:hidden"
         >
           Todos los pedidos
         </Link>
@@ -166,13 +173,13 @@ export default async function PurchaseOrderPage({
 
       <dl className="mb-8 grid gap-4 text-sm sm:grid-cols-2 xl:grid-cols-4">
         <div>
-          <dt className="eyebrow">Estado</dt>
+          <Eyebrow as="dt">Estado</Eyebrow>
           <dd className="mt-1 font-semibold">
             {ORDER_STATUS_LABELS[order.status]}
           </dd>
         </div>
         <div>
-          <dt className="eyebrow">Proveedor</dt>
+          <Eyebrow as="dt">Proveedor</Eyebrow>
           <dd className="mt-1">
             <Link
               href={`/admin/compras/proveedores/${order.supplierId}`}
@@ -183,11 +190,11 @@ export default async function PurchaseOrderPage({
           </dd>
         </div>
         <div>
-          <dt className="eyebrow">Entrega en</dt>
+          <Eyebrow as="dt">Entrega en</Eyebrow>
           <dd className="mt-1">{order.locationName}</dd>
         </div>
         <div>
-          <dt className="eyebrow">Fechas</dt>
+          <Eyebrow as="dt">Fechas</Eyebrow>
           <dd className="mt-1">
             Creado {DATE.format(new Date(order.createdAt))}
             {order.orderedAt &&
@@ -235,12 +242,12 @@ export default async function PurchaseOrderPage({
             <div className="hidden print:block">{linesTable}</div>
           </>
         ) : lines.length === 0 ? (
-          <p className="text-smoke text-sm">El pedido no tiene líneas.</p>
+          <p className="text-fg-muted text-sm">El pedido no tiene líneas.</p>
         ) : (
           linesTable
         )}
         {(order.expectedOn || order.supplierReference || order.notes) && (
-          <p className="text-smoke mt-4 hidden text-sm print:block">
+          <p className="text-fg-muted mt-4 hidden text-sm print:block">
             {order.expectedOn &&
               `Llegada prevista: ${DATE.format(new Date(`${order.expectedOn}T12:00:00Z`))}. `}
             {order.supplierReference && `Ref.: ${order.supplierReference}. `}
@@ -269,7 +276,7 @@ export default async function PurchaseOrderPage({
 
       {receipts.length > 0 && (
         <Section title="Recepciones" className="print:hidden">
-          <ul className="divide-line border-line divide-y border-y">
+          <ul className="divide-border border-border divide-y border-y">
             {receipts.map((receipt) => (
               <li
                 key={receipt.id}
@@ -277,7 +284,7 @@ export default async function PurchaseOrderPage({
               >
                 <span>
                   {DATE_TIME.format(new Date(receipt.at))}
-                  <span className="text-smoke">
+                  <span className="text-fg-muted">
                     {receipt.reference && ` · albarán ${receipt.reference}`}
                     {receipt.actorName && ` · ${receipt.actorName}`}
                     {receipt.costsRecorded > 0 &&

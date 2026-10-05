@@ -3,6 +3,7 @@ import { MOVEMENT_LABELS } from '../domain/labels';
 import type { MovementType } from '../domain/movements';
 import type { MovementRow, StockRow } from '../server/admin';
 import { StockActions } from './StockActions';
+import { Eyebrow, Table } from '@/components/ui';
 
 const DATE = new Intl.DateTimeFormat('es-ES', {
   dateStyle: 'short',
@@ -32,7 +33,7 @@ export function ProductStock({
 }) {
   if (rows.length === 0) {
     return (
-      <p className="text-smoke text-sm">
+      <p className="text-fg-muted text-sm">
         Añade un formato para poder registrar stock.
       </p>
     );
@@ -41,7 +42,7 @@ export function ProductStock({
   return (
     <div className="space-y-10">
       <div className="overflow-x-auto">
-        <table className="data-table stack-table md:min-w-[40rem]">
+        <Table caption="Stock por formato" className="md:min-w-[40rem]">
           <thead>
             <tr>
               <th>Formato</th>
@@ -76,7 +77,7 @@ export function ProductStock({
                   </td>
                   <td
                     data-label="Reservado"
-                    className="text-smoke text-right tabular-nums"
+                    className="text-fg-muted text-right tabular-nums"
                   >
                     {row.reserved}
                   </td>
@@ -110,15 +111,15 @@ export function ProductStock({
               );
             })}
           </tbody>
-        </table>
-        <p className="text-smoke tracking-caps-sm mt-3 text-xs uppercase">
+        </Table>
+        <p className="text-fg-muted tracking-caps-sm mt-3 text-xs uppercase">
           {total} {total === 1 ? 'unidad' : 'unidades'} en tienda
         </p>
       </div>
 
       <div>
         <div className="mb-3 flex items-end justify-between gap-4">
-          <h3 className="eyebrow">Últimos movimientos</h3>
+          <Eyebrow as="h3">Últimos movimientos</Eyebrow>
           {movements.length > 0 && (
             <Link
               href={`/admin/movimientos?perfume=${productId}`}
@@ -129,23 +130,23 @@ export function ProductStock({
           )}
         </div>
         {movements.length === 0 ? (
-          <p className="text-smoke text-sm">
+          <p className="text-fg-muted text-sm">
             Sin movimientos todavía. Registra la primera recepción desde
             «Movimiento».
           </p>
         ) : (
-          <ul className="divide-line border-line divide-y border-y text-sm">
+          <ul className="divide-border border-border divide-y border-y text-sm">
             {movements.map((m) => (
               <li
                 key={m.id}
                 className="grid grid-cols-[auto_1fr_auto] items-baseline gap-x-4 py-2.5"
               >
-                <span className="text-smoke text-xs whitespace-nowrap tabular-nums">
+                <span className="text-fg-muted text-xs whitespace-nowrap tabular-nums">
                   {DATE.format(new Date(m.createdAt))}
                 </span>
                 <span className="min-w-0">
                   {MOVEMENT_LABELS[m.type as MovementType] ?? m.type}
-                  <span className="text-smoke"> · {m.variantLabel}</span>
+                  <span className="text-fg-muted"> · {m.variantLabel}</span>
                   {(m.reason || m.reference) && (
                     <span className="text-fg-muted block truncate text-xs">
                       {[m.reason, m.reference].filter(Boolean).join(' · ')}
@@ -153,7 +154,7 @@ export function ProductStock({
                   )}
                 </span>
                 <span
-                  className={`text-right tabular-nums ${m.deltaOnHand < 0 ? 'text-danger' : m.deltaOnHand > 0 ? 'text-success' : 'text-smoke'}`}
+                  className={`text-right tabular-nums ${m.deltaOnHand < 0 ? 'text-danger' : m.deltaOnHand > 0 ? 'text-success' : 'text-fg-muted'}`}
                 >
                   {m.deltaOnHand > 0 ? '+' : ''}
                   {m.deltaOnHand}

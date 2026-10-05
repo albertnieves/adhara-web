@@ -44,14 +44,14 @@ function Section({
     <section
       id={id}
       aria-labelledby={`${id}-titulo`}
-      className="border-line grid scroll-mt-16 gap-6 border-t py-10 sm:gap-8 sm:py-12 xl:grid-cols-[16rem_1fr]"
+      className="border-border grid scroll-mt-16 gap-6 border-t py-10 sm:gap-8 sm:py-12 xl:grid-cols-[16rem_1fr]"
     >
       <div>
         <h2 id={`${id}-titulo`} className="text-2xl font-light">
           {title}
         </h2>
         {description && (
-          <p className="text-smoke mt-2 text-sm leading-relaxed">
+          <p className="text-fg-muted mt-2 text-sm leading-relaxed">
             {description}
           </p>
         )}
@@ -107,7 +107,7 @@ export default async function EditProduct({
     <main>
       <Link
         href="/admin/catalogo"
-        className="link-underline text-smoke tracking-caps text-xs uppercase"
+        className="link-underline text-fg-muted tracking-caps text-xs uppercase"
       >
         ← Catálogo
       </Link>
@@ -120,7 +120,7 @@ export default async function EditProduct({
           />
         </PageHeader>
       </div>
-      <div className="mb-4 flex flex-wrap items-center gap-x-5 gap-y-1 text-sm [&_a]:inline-flex [&_a]:min-h-10 [&_a]:items-center [&_button]:min-h-10">
+      <div className="mb-4 flex flex-wrap items-center gap-x-5 gap-y-1 text-sm [&_a]:inline-flex [&_a]:min-h-11 [&_a]:items-center [&_button]:min-h-11">
         <StatusBadge status={product.status} />
         <Link
           href={`/admin/catalogo/${product.id}/vista-previa`}
@@ -166,7 +166,7 @@ export default async function EditProduct({
 
       <nav
         aria-label="Secciones de la ficha"
-        className="border-line bg-ivory/95 sticky top-0 z-20 -mx-5 mb-2 flex gap-1 overflow-x-auto border-b px-5 py-2 backdrop-blur sm:-mx-10 sm:px-10 print:hidden"
+        className="border-border bg-surface/95 sticky top-0 z-20 -mx-5 mb-2 flex gap-1 overflow-x-auto border-b px-5 py-2 backdrop-blur sm:-mx-10 sm:px-10 print:hidden"
       >
         {[
           ['formatos', 'Formatos y PVP'],
@@ -178,7 +178,7 @@ export default async function EditProduct({
           <a
             key={anchor}
             href={`#${anchor}`}
-            className="text-smoke hover:text-ink hover:border-line tracking-caps-sm inline-flex min-h-10 shrink-0 items-center border border-transparent px-3 text-xs whitespace-nowrap uppercase transition-colors"
+            className="text-fg-muted hover:text-fg hover:border-border tracking-caps-sm inline-flex min-h-11 shrink-0 items-center border border-transparent px-3 text-xs whitespace-nowrap uppercase transition-colors"
           >
             {label}
           </a>

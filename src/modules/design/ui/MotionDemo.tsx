@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { DURATION_TOKENS } from '../domain/tokens';
+import { buttonClass } from '@/components/ui';
 
 /**
  * Las tres duraciones con la curva de la marca. Con «reducir movimiento» el
@@ -14,7 +15,7 @@ export function MotionDemo() {
       <div>
         <button
           type="button"
-          className="panel-btn"
+          className={buttonClass('outline')}
           aria-pressed={moved}
           onClick={() => setMoved((value) => !value)}
         >

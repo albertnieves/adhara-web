@@ -19,6 +19,7 @@ import {
 } from '@/modules/purchasing/server';
 import type { ProposalGroupView } from '@/modules/purchasing/ui';
 import { ProposalsForm } from '@/modules/purchasing/ui';
+import { Card, Eyebrow, Table } from '@/components/ui';
 
 export const metadata: Metadata = { title: 'Reposición' };
 
@@ -26,7 +27,7 @@ const SEVERITIES: FindingSeverity[] = ['critical', 'warning', 'info'];
 const TONE: Record<FindingSeverity, string> = {
   critical: 'text-danger',
   warning: 'text-warning',
-  info: 'text-smoke',
+  info: 'text-fg-muted',
 };
 
 const REORDER_KINDS = new Set(['out_of_stock', 'below_min', 'low_cover']);
@@ -60,7 +61,7 @@ export default async function Replenishment() {
     return (
       <main>
         <PageHeader eyebrow="Inventario" title="Reposición" />
-        <p className="text-smoke">No hay ninguna ubicación activa.</p>
+        <p className="text-fg-muted">No hay ninguna ubicación activa.</p>
       </main>
     );
   }
@@ -136,12 +137,12 @@ export default async function Replenishment() {
       <PageHeader eyebrow={location.name} title="Reposición">
         <Link
           href="/admin/inventario"
-          className="border-line hover:border-ink tracking-caps inline-flex min-h-11 items-center border px-5 text-xs font-semibold uppercase"
+          className="border-border hover:border-fg tracking-caps inline-flex min-h-11 items-center border px-5 text-xs font-semibold uppercase"
         >
           Inventario
         </Link>
       </PageHeader>
-      <p className="text-smoke mb-10 max-w-3xl text-sm leading-relaxed">
+      <p className="text-fg-muted mb-10 max-w-3xl text-sm leading-relaxed">
         El vigilante revisa el stock cada vez que abres esta página, con las
         ventas de los últimos {watch.settings.salesWindowDays} días, los plazos
         de los proveedores y lo que ya está pedido. No compra ni cambia nada:
@@ -151,21 +152,21 @@ export default async function Replenishment() {
 
       <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {SEVERITIES.map((severity) => (
-          <div key={severity} className="panel-card">
-            <p className="eyebrow">{SEVERITY_LABELS[severity]}</p>
+          <Card key={severity}>
+            <Eyebrow>{SEVERITY_LABELS[severity]}</Eyebrow>
             <p
               className={`font-display mt-3 text-5xl font-light lining-nums tabular-nums ${summary.bySeverity[severity] ? TONE[severity] : ''}`}
             >
               {summary.bySeverity[severity]}
             </p>
-          </div>
+          </Card>
         ))}
-        <div className="panel-card">
-          <p className="eyebrow">Propuestas de compra</p>
+        <Card>
+          <Eyebrow>Propuestas de compra</Eyebrow>
           <p className="font-display mt-3 text-5xl font-light lining-nums tabular-nums">
             {summary.reorderProposals}
           </p>
-        </div>
+        </Card>
       </section>
 
       {canPurchase && (groups.length > 0 || withoutSupplier.length > 0) && (
@@ -173,9 +174,9 @@ export default async function Replenishment() {
           <h2 className="text-2xl font-light">Proponer pedidos</h2>
           <ProposalsForm groups={groups} />
           {withoutSupplier.length > 0 && (
-            <div className="panel-card">
-              <p className="eyebrow">Sin proveedor de reposición</p>
-              <p className="text-smoke mt-2 text-sm">
+            <Card>
+              <Eyebrow>Sin proveedor de reposición</Eyebrow>
+              <p className="text-fg-muted mt-2 text-sm">
                 Asigna un proveedor (o marca uno como preferente) en{' '}
                 <Link href="/admin/compras/proveedores" className="underline">
                   Proveedores
@@ -187,13 +188,13 @@ export default async function Replenishment() {
                   <li key={variantId}>{label(variantId)}</li>
                 ))}
               </ul>
-            </div>
+            </Card>
           )}
         </section>
       )}
 
       {watch.findings.length === 0 ? (
-        <p className="text-smoke py-16 text-center">
+        <p className="text-fg-muted py-16 text-center">
           Todo en orden: ningún formato necesita atención.
         </p>
       ) : (
@@ -206,7 +207,11 @@ export default async function Replenishment() {
                 {SEVERITY_LABELS[severity]} · {rows.length}
               </h2>
               <div className="overflow-x-auto">
-                <table className="data-table min-w-[38rem]">
+                <Table
+                  caption={SEVERITY_LABELS[severity]}
+                  stacked={false}
+                  className="min-w-[38rem]"
+                >
                   <thead>
                     <tr>
                       <th>Perfume</th>
@@ -239,14 +244,14 @@ export default async function Replenishment() {
                           </td>
                           <td className="text-sm">
                             {FINDING_LABELS[f.kind]}
-                            <p className="text-smoke text-xs">
+                            <p className="text-fg-muted text-xs">
                               {describeFinding(f)}
                             </p>
                           </td>
                           <td className="text-right tabular-nums">
                             {(level?.onHand ?? 0) - (level?.reserved ?? 0)}
                           </td>
-                          <td className="text-smoke text-right tabular-nums">
+                          <td className="text-fg-muted text-right tabular-nums">
                             {facts?.unitsSold ?? 0}
                           </td>
                           <td className="text-right tabular-nums">
@@ -257,7 +262,7 @@ export default async function Replenishment() {
                             ) : (
                               '—'
                             )}
-                            <p className="text-smoke text-xs font-normal">
+                            <p className="text-fg-muted text-xs font-normal">
                               {proposalNote(f, facts, level)}
                             </p>
                           </td>
@@ -265,16 +270,16 @@ export default async function Replenishment() {
                       );
                     })}
                   </tbody>
-                </table>
+                </Table>
               </div>
             </section>
           );
         })
       )}
 
-      <section className="border-line mt-16 border-t pt-10">
+      <section className="border-border mt-16 border-t pt-10">
         <h2 className="mb-2 text-2xl font-light">Parámetros del vigilante</h2>
-        <p className="text-smoke mb-6 max-w-3xl text-sm">
+        <p className="text-fg-muted mb-6 max-w-3xl text-sm">
           Provisionales hasta que los fije el negocio.{' '}
           {can('settings.manage')
             ? 'Los cambios se aplican al momento y quedan en la auditoría.'

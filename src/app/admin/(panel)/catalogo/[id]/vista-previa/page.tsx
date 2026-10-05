@@ -8,6 +8,7 @@ import { requirePermission } from '@/modules/auth/server';
 import { getAdminProduct } from '@/modules/catalog/server/admin';
 import { ProductStage, PurchasePanel } from '@/modules/storefront';
 import { findSceneSlug } from '@/modules/unboxing';
+import { Eyebrow } from '@/components/ui';
 
 export const metadata: Metadata = { title: 'Vista previa' };
 
@@ -49,7 +50,7 @@ export default async function ProductPreview({
   return (
     <NextIntlClientProvider locale="es" messages={messages}>
       <main className="-mx-5 -my-10 sm:-mx-10">
-        <div className="bg-gold/15 flex flex-wrap items-center justify-between gap-3 px-5 py-3 text-xs sm:px-10">
+        <div className="bg-accent/15 flex flex-wrap items-center justify-between gap-3 px-5 py-3 text-xs sm:px-10">
           <span>
             Vista previa ·{' '}
             {product.status === 'published' ? 'publicado' : 'no publicado'}
@@ -70,20 +71,20 @@ export default async function ProductPreview({
             brand={product.brand.name}
           />
           <div className="px-5 py-12 sm:px-10">
-            <p className="eyebrow">{product.brand.name}</p>
+            <Eyebrow>{product.brand.name}</Eyebrow>
             <h1 className="mt-3 text-6xl leading-[0.95] font-light">
               {product.name}
             </h1>
             {text?.tagline && (
-              <p className="text-smoke mt-6 max-w-md leading-relaxed">
+              <p className="text-fg-muted mt-6 max-w-md leading-relaxed">
                 {text.tagline}
               </p>
             )}
-            <div className="border-line mt-10 border-t pt-8">
+            <div className="border-border mt-10 border-t pt-8">
               <PurchasePanel variants={variants} availability={{}} />
             </div>
             {text?.description && (
-              <p className="border-line mt-10 border-t pt-8 leading-relaxed whitespace-pre-line">
+              <p className="border-border mt-10 border-t pt-8 leading-relaxed whitespace-pre-line">
                 {text.description}
               </p>
             )}

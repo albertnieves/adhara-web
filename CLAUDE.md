@@ -46,4 +46,4 @@ No desplegar a producción por defecto ni ejecutar `supabase db reset` contra `a
 
 ## Documentos
 
-[README](README.md) · [Estado](docs/STATUS.md) · [Roadmap](docs/ROADMAP.md) · [Decisiones](docs/DECISIONS.md) · [Arquitectura](docs/ARCHITECTURE.md) · [Base de datos](docs/DATABASE.md) · [Seguridad](docs/SECURITY.md) · [Idiomas](docs/I18N.md) · [Precios](docs/PRICING.md) · [Research](docs/PRODUCT_RESEARCH.md) · [Panel](docs/ADMIN_PLAN.md) · [Guía del panel](docs/ADMIN_OPERATIONS.md) · [Habilidades](docs/SKILLS.md) · [Informe de la Fase 1](docs/phases/FASE_1_REPORT.md)
+[README](README.md) · [Estado](docs/STATUS.md) · [Roadmap](docs/ROADMAP.md) · [Decisiones](docs/DECISIONS.md) · [Arquitectura](docs/ARCHITECTURE.md) · [Base de datos](docs/DATABASE.md) · [Sistema de diseño](docs/DESIGN_SYSTEM.md) · [Seguridad](docs/SECURITY.md) · [Idiomas](docs/I18N.md) · [Precios](docs/PRICING.md) · [Research](docs/PRODUCT_RESEARCH.md) · [Panel](docs/ADMIN_PLAN.md) · [Guía del panel](docs/ADMIN_OPERATIONS.md) · [Habilidades](docs/SKILLS.md) · [Informe de la Fase 1](docs/phases/FASE_1_REPORT.md) · [Informe de la Fase 2](docs/phases/FASE_2_REPORT.md)

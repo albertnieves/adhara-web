@@ -4,6 +4,7 @@ import { contentLocale } from '@/modules/content/domain';
 import { getAdminContent } from '@/modules/content/server';
 import { ContentEditor } from '@/modules/content/ContentEditor';
 import { enterStorefrontPreview } from '@/modules/storefront/server/preview';
+import { buttonClass } from '@/components/ui';
 export default async function ContentPage({
   searchParams,
 }: {
@@ -16,7 +17,9 @@ export default async function ContentPage({
       <PageHeader eyebrow="Contenido" title="Portada de la tienda">
         <form action={enterStorefrontPreview}>
           <input type="hidden" name="path" value={`/${locale}`} />
-          <button className="btn btn-outline">Vista previa del borrador</button>
+          <button className={buttonClass('outline', 'lg')}>
+            Vista previa del borrador
+          </button>
         </form>
       </PageHeader>
       <nav aria-label="Idioma del contenido" className="mb-6 flex gap-5">

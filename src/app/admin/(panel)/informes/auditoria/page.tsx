@@ -11,6 +11,7 @@ import {
   isAuditArea,
 } from '@/modules/reports';
 import { listAuditEntries, listStaffNames } from '@/modules/reports/server';
+import { Eyebrow, Input, Select, Table } from '@/components/ui';
 
 export const metadata: Metadata = { title: 'Auditoría' };
 
@@ -91,71 +92,69 @@ export default async function AuditLog({
   return (
     <main>
       <PageHeader eyebrow="Informes" title="Auditoría" />
-      <p className="text-smoke mb-8 max-w-3xl text-sm leading-relaxed">
+      <p className="text-fg-muted mb-8 max-w-3xl text-sm leading-relaxed">
         Registro de solo inserción: nadie puede cambiarlo ni borrarlo. Los
         cambios de coste se anotan sin importes. Las entradas sin persona son
         cargas de datos hechas fuera del panel.
       </p>
-      <form className="border-line mb-8 flex flex-wrap items-end gap-x-6 gap-y-4 border-y py-5">
+      <form className="border-border mb-8 flex flex-wrap items-end gap-x-6 gap-y-4 border-y py-5">
         <label className="flex flex-col gap-2">
-          <span className="eyebrow">Área</span>
-          <select name="area" defaultValue={area} className="input min-w-48">
+          <Eyebrow as="span">Área</Eyebrow>
+          <Select name="area" defaultValue={area} className="min-w-48">
             <option value="">Todas</option>
             {Object.entries(AUDIT_AREAS).map(([key, label]) => (
               <option key={key} value={key}>
                 {label}
               </option>
             ))}
-          </select>
+          </Select>
         </label>
         <label className="flex flex-col gap-2">
-          <span className="eyebrow">Persona</span>
-          <select
-            name="persona"
-            defaultValue={actorId}
-            className="input min-w-48"
-          >
+          <Eyebrow as="span">Persona</Eyebrow>
+          <Select name="persona" defaultValue={actorId} className="min-w-48">
             <option value="">Todas</option>
             {[...names.entries()].map(([id, name]) => (
               <option key={id} value={id}>
                 {name}
               </option>
             ))}
-          </select>
+          </Select>
         </label>
         <label className="flex flex-col gap-2">
-          <span className="eyebrow">Desde</span>
-          <input
+          <Eyebrow as="span">Desde</Eyebrow>
+          <Input
             type="date"
             name="desde"
             defaultValue={range ? params.desde : ''}
-            className="input"
           />
         </label>
         <label className="flex flex-col gap-2">
-          <span className="eyebrow">Hasta</span>
-          <input
+          <Eyebrow as="span">Hasta</Eyebrow>
+          <Input
             type="date"
             name="hasta"
             defaultValue={range ? params.hasta : ''}
-            className="input"
           />
         </label>
         <button
           type="submit"
-          className="border-line hover:border-ink tracking-caps inline-flex min-h-11 items-center border px-5 text-xs font-semibold uppercase"
+          className="border-border hover:border-fg tracking-caps inline-flex min-h-11 items-center border px-5 text-xs font-semibold uppercase"
         >
           Filtrar
         </button>
       </form>
 
       {entries.length === 0 ? (
-        <p className="text-smoke py-16 text-center">
+        <p className="text-fg-muted py-16 text-center">
           Ninguna entrada con estos filtros.
         </p>
       ) : (
         <div className="overflow-x-auto">
-          <table className="data-table min-w-[40rem]">
+          <Table
+            caption="Registro de auditoría"
+            stacked={false}
+            className="min-w-[40rem]"
+          >
             <thead>
               <tr>
                 <th>Fecha</th>
@@ -170,7 +169,7 @@ export default async function AuditLog({
                 const areaKey = auditArea(e.action);
                 return (
                   <tr key={e.id} className="align-top">
-                    <td className="text-smoke text-sm whitespace-nowrap tabular-nums">
+                    <td className="text-fg-muted text-sm whitespace-nowrap tabular-nums">
                       {DATE.format(new Date(e.at))}
                     </td>
                     <td className="text-sm">
@@ -180,24 +179,24 @@ export default async function AuditLog({
                     </td>
                     <td className="text-sm">
                       <code>{e.action}</code>
-                      <p className="text-smoke text-xs">
+                      <p className="text-fg-muted text-xs">
                         {areaKey ? AUDIT_AREAS[areaKey] : e.entity}
                         {e.entityId && ` · ${shortId(e.entityId)}`}
                       </p>
                     </td>
                     <td className="text-xs">
                       {changes.length === 0 ? (
-                        <span className="text-smoke">—</span>
+                        <span className="text-fg-muted">—</span>
                       ) : (
                         <ul className="space-y-0.5">
                           {changes.slice(0, 6).map((c) => (
                             <li key={c.key}>
-                              <span className="text-smoke">{c.key}:</span>{' '}
+                              <span className="text-fg-muted">{c.key}:</span>{' '}
                               {short(c.before)} → {short(c.after)}
                             </li>
                           ))}
                           {changes.length > 6 && (
-                            <li className="text-smoke">
+                            <li className="text-fg-muted">
                               y {changes.length - 6} más
                             </li>
                           )}
@@ -208,7 +207,7 @@ export default async function AuditLog({
                 );
               })}
             </tbody>
-          </table>
+          </Table>
         </div>
       )}
 

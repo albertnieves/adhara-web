@@ -1,8 +1,8 @@
-# Estado real — 02/10/2026
+# Estado real — 04/10/2026
 
-**Tienda visual (es/ca/en) y panel de administración operativos sobre `adhara-dev`, desplegados en Vercel, que sigue siendo privado (Vercel Authentication). `main` incluye las fases R y S (PR #9), la entrega de acceso y edición de Codex (PR #10) y el panel con el asistente (PR #11); sus 17 migraciones están aplicadas en `adhara-dev` (comprobado el 02/10). La tienda muestra 50 perfumes publicados con PVP. La Fase 1 está cerrada (PR #12): sus 19 criterios están cumplidos o con una excepción escrita ([informe](phases/FASE_1_REPORT.md)). La Fase 2 (sistema de diseño) está en curso ([plan](phases/FASE_2_PLAN.md)).**
+**Tienda visual (es/ca/en) y panel de administración operativos sobre `adhara-dev`, desplegados en Vercel, que sigue siendo privado (Vercel Authentication). `main` incluye las fases R y S (PR #9), la entrega de acceso y edición de Codex (PR #10) y el panel con el asistente (PR #11); sus 17 migraciones están aplicadas en `adhara-dev` (comprobado el 02/10). La tienda muestra 50 perfumes publicados con PVP. La Fase 1 está cerrada (PR #12): sus 19 criterios están cumplidos o con una excepción escrita ([informe](phases/FASE_1_REPORT.md)). La Fase 2 (sistema de diseño) está terminada a falta de la revisión visual del usuario ([informe](phases/FASE_2_REPORT.md)): 12 de 13 criterios cumplidos. Siguiente: checkout con pago con tarjeta, que espera los datos del TPV virtual (ver «Pendiente del usuario»).**
 
-## Fase 2 en curso (02/10)
+## Fase 2: cierre técnico (04/10), a falta de la revisión visual
 
 Plan del sistema de diseño en [phases/FASE_2_PLAN.md](phases/FASE_2_PLAN.md), aprobado (PR #13) con las decisiones D1–D6 recomendadas (DECISIONS §92).
 
@@ -60,7 +60,13 @@ Plan del sistema de diseño en [phases/FASE_2_PLAN.md](phases/FASE_2_PLAN.md), a
 - toda la tienda usa la biblioteca y los colores semánticos, sin clases sueltas;
 - auditoría de maquetación y axe sin fallos en las rutas públicas de los tres idiomas.
 
-Siguiente tarea: DS-11 (migrar el panel); después, el cierre DS-12.
+**DS-11 hecha (panel):**
+
+- todo el panel usa la biblioteca (`Input`, `Select`, `Checkbox`, `Field`, `SubmitButton`, `buttonClass`, `Card`, `Table`, `Eyebrow`, `Skeleton`) y los colores semánticos;
+- sin `.btn`, `.panel-btn`, `.input`, `.panel-card`, `.field` ni `.eyebrow`, y sin colores de paleta: lo vigila una prueba unitaria;
+- controles del panel de 44 px, comprobado por la auditoría con sesión, y axe sin infracciones en las 24 pantallas del panel y en la tienda, ahora como prueba que falla.
+
+**DS-12 hecha (cierre):** guía [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md), informe [phases/FASE_2_REPORT.md](phases/FASE_2_REPORT.md) y decisiones §106–107. **Falta tu revisión visual en la Preview** (criterio 13): `/admin/diseno`, los tonos de colección (D3) y las capturas del artefacto `auditoria-visual`. Se aprueba por escrito en la PR de cierre.
 
 - **Objetivos:**
   - tokens en dos capas;
@@ -238,9 +244,18 @@ La revisión visual con perfumes se hizo en local con un Supabase simulado que d
 3. Decidir cuándo abrir la web a Agustín: con Vercel Authentication para todo, solo entra quien tiene cuenta en el equipo de Vercel (en Hobby, solo el titular).
 4. Asistente: configurar en Vercel, solo servidor y para Production y Preview, `ANTHROPIC_API_KEY` (de la cuenta de Anthropic del negocio), `CRON_SECRET` (valor aleatorio largo) y `SUPABASE_SECRET_KEY`; opcional `ASSISTANT_DAILY_LIMIT`. No pegar ninguna clave en el chat. La migración ya está aplicada.
 5. Dar de alta los proveedores reales (Compras → Proveedores) para que Reposición proponga cantidades.
-6. Datos del TPV para cobrar con tarjeta y elección del proveedor de correo (checkout, avisos y envío del informe diario por email).
-7. Decisiones de la fase R: proveedores, plazos y múltiplos; si hay TPV; parámetros del vigilante; si el coste del pedido debe pasar a ser el vigente al recibir (PLAN_TIENDA_REPOSICION.md).
-8. Decisiones de la fase S: criterio de valoración que pide la gestoría para el cierre de existencias y margen mínimo (PLAN_INFORMES.md).
+6. **Pago con tarjeta (Visa) en la web.** El datáfono de la tienda no sirve para cobrar online: hace falta un **TPV virtual** de comercio electrónico del banco (en España casi todos usan Redsys). Pedir al banco y guardar, sin pegarlo en el chat:
+   - número de comercio (FUC, 9 dígitos) y número de terminal;
+   - clave de firma SHA-256 de pruebas y la real (se ponen como variables de servidor en Vercel);
+   - integración **por redirección** (la tarjeta se teclea en la página del banco, nunca en la nuestra), con EMV 3DS, moneda EUR, Visa y Mastercard, notificación online por HTTP y devoluciones activadas; Bizum, Apple Pay o Google Pay si se quieren;
+   - acceso al portal de Redsys (Canales) para ver operaciones y devolver.
+     Alternativa si el banco tarda: Stripe (cuenta verificada con el IBAN del negocio). Decisiones para el checkout: solo recogida en tienda al principio o también envíos (zonas, tarifas, envío gratis, transportista); qué hacer si llega un pago sin stock (devolución automática o manual); y quién emite las facturas.
+7. **Correo transaccional** para confirmaciones de pedido y avisos (recomendado Resend), con acceso al DNS del dominio para SPF y DKIM y el remitente (p. ej. `pedidos@…`).
+8. **Datos legales para vender online** (LSSI y consumo): titular (razón social o autónomo), NIF, domicilio, teléfono y email de contacto y datos registrales; con ellos se redactan aviso legal, privacidad, cookies, condiciones de venta y envíos y devoluciones (desistimiento de 14 días), a revisar por la asesoría.
+9. **Producción:** dominio con acceso a su DNS; plan Pro de Vercel (Hobby no admite uso comercial); proyecto `adhara-prod` en Supabase (plan con copias diarias); derechos de las fotos oficiales o fotos propias; y la MFA del administrador de la tienda.
+10. Decisiones de la fase R: proveedores, plazos y múltiplos; si hay TPV; parámetros del vigilante; si el coste del pedido debe pasar a ser el vigente al recibir (PLAN_TIENDA_REPOSICION.md).
+11. Decisiones de la fase S: criterio de valoración que pide la gestoría para el cierre de existencias y margen mínimo (PLAN_INFORMES.md).
+12. **Revisión visual de la Fase 2** (criterio 13) en la Preview de la PR de cierre: `/admin/diseno` (incluidos los tonos de colección, D3), la tienda y el panel; y decidir si los filtros de la colección (36 px) deben pasar a 44 px. Aprobarla por escrito en la PR cierra la fase.
 
 ## Pendiente técnico
 
@@ -274,5 +289,6 @@ La revisión visual con perfumes se hizo en local con un Supabase simulado que d
 - 03/10: Fase 2, DS-08: diálogos, paneles laterales, confirmaciones y avisos accesibles.
 - 03/10: Fase 2, DS-09: estados, etiquetas, precio, tarjetas, tablas, vacíos y carga.
 - 03/10: Fase 2, DS-10: la tienda pasa a la biblioteca y a los colores semánticos.
+- 04/10: Fase 2, DS-11 y DS-12: el panel pasa a la biblioteca, axe y objetivos de 44 px bloquean, guía e informe de la fase; falta la revisión visual del usuario.
 
 Ver docs/DEVELOPMENT.md para continuar y docs/DECISIONS.md para las decisiones.

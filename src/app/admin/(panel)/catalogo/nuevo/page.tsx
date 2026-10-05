@@ -15,14 +15,14 @@ export default async function NewProduct() {
     <main className="max-w-3xl">
       <Link
         href="/admin/catalogo"
-        className="link-underline text-smoke tracking-caps text-xs uppercase"
+        className="link-underline text-fg-muted tracking-caps text-xs uppercase"
       >
         ← Catálogo
       </Link>
       <div className="mt-6">
         <PageHeader eyebrow="Catálogo" title="Nuevo perfume" />
       </div>
-      <p className="text-smoke mb-8 text-sm leading-relaxed">
+      <p className="text-fg-muted mb-8 text-sm leading-relaxed">
         Se crea como borrador. Después podrás añadir formatos, PVP, imágenes y
         textos, y publicarlo cuando esté completo.
       </p>

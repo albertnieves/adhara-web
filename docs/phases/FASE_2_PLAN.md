@@ -1,6 +1,6 @@
 # Fase 2 — Sistema de diseño: plan
 
-Estado: **en curso**. Plan aprobado el 02/10/2026 (PR #13) con las decisiones D1–D6 recomendadas; DS-01 a DS-10 hechas.
+Estado: **DS-00 a DS-12 hechas; cierre pendiente de la revisión visual del usuario (criterio 13)**. Plan aprobado el 02/10/2026 (PR #13) con las decisiones D1–D6 recomendadas. Informe en [FASE_2_REPORT.md](FASE_2_REPORT.md).
 
 Base:
 
@@ -254,20 +254,25 @@ DS-01 puede empezar ya. De DS-05 a DS-09 se pueden trabajar en paralelo cuando e
     - criterios 1 y 3 en las guardas unitarias; 6 y 7 en los E2E públicos (auditoría y axe) a cuatro anchos;
     - capturas en el artefacto `auditoria-visual` de la CI.
 
-- [ ] **DS-11 · Migrar el panel.** Depende de: DS-06, DS-07, DS-08 y DS-09.
+- [x] **DS-11 · Migrar el panel.** Depende de: DS-06, DS-07, DS-08 y DS-09.
   - Menú y diseño general, acceso y MFA, y las pantallas de catálogo, inventario, mostrador, compras, reposición, informes, contenido, configuración, equipo y asistente.
   - Eliminar `.btn`, `.panel-btn`, `.input`, `.panel-card` y los colores sueltos. La lista de excepciones de DS-02 queda vacía.
   - El indicador «Cargando» ya se corrigió en DS-02 (`role="status"`).
   - Hecho cuando: los criterios 1, 4, 6, 7 y 8 pasan en el panel con sesión (`e2e.yml`).
+  - Hecho el 04/10 (rama `claude/sweet-dirac-j3qy2o`, DECISIONS §106):
+    - todo el panel con `Input`, `Select`, `Textarea`, `Checkbox`, `Field`, `SubmitButton`, `buttonClass`, `Card`/`cardClass`, `Table`, `Eyebrow` y `Skeleton`, y los semánticos con `data-tone="dark"` en las zonas oscuras;
+    - sin `.btn`, `.panel-btn`, `.input`, `.panel-card`, `.field` ni `.eyebrow`, ni en las pantallas ni en `globals.css`, y sin colores de paleta salvo `stage` (guardas en `design-guard.test.ts`);
+    - la auditoría del panel bloquea controles de menos de 44 px y axe bloquea cualquier infracción en el panel y en la tienda.
 
 ### Cierre
 
-- [ ] **DS-12 · Documentación, revisión y cierre.** Depende de: DS-10 y DS-11.
+- [x] **DS-12 · Documentación, revisión y cierre.** Depende de: DS-10 y DS-11.
   - `docs/DESIGN_SYSTEM.md`: principios, tokens, matriz de contraste, uso de cada componente con lo que se hace y lo que no, y movimiento.
   - DECISIONS, STATUS y ROADMAP al día.
   - Revisión visual del usuario en la Preview (criterio 13).
   - Informe `docs/phases/FASE_2_REPORT.md` con los criterios 1 a 13 y su evidencia.
   - Hecho cuando: todos los criterios están cumplidos o tienen una excepción aceptada por escrito.
+  - Hecho el 04/10 (DECISIONS §107): `docs/DESIGN_SYSTEM.md`, [FASE_2_REPORT.md](FASE_2_REPORT.md) con los 13 criterios y su evidencia, y STATUS, ROADMAP y DECISIONS al día. 12 de 13 criterios cumplidos; el 13 (revisión visual) queda pendiente del usuario en la PR de cierre.
 
 ## 7. En paralelo: preparación de la Fase 3
 
