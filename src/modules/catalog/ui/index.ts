@@ -7,3 +7,4 @@ export { DeleteProductButton } from './DeleteProductButton';
 export { PriceLabelCard } from './PriceLabelCard';
 export { CatalogImport } from './CatalogImport';
 export { BulkPricing } from './BulkPricing';
+export { ScentProfileEditor } from './ScentProfileEditor';

@@ -1,6 +1,16 @@
-# Estado real — 04/10/2026
+# Estado real — 09/10/2026
 
 **Tienda visual (es/ca/en) y panel de administración operativos sobre `adhara-dev`, desplegados en Vercel, que sigue siendo privado (Vercel Authentication). `main` incluye las fases R y S (PR #9), la entrega de acceso y edición de Codex (PR #10) y el panel con el asistente (PR #11); sus 17 migraciones están aplicadas en `adhara-dev` (comprobado el 02/10). La tienda muestra 50 perfumes publicados con PVP. La Fase 1 está cerrada (PR #12): sus 19 criterios están cumplidos o con una excepción escrita ([informe](phases/FASE_1_REPORT.md)). La Fase 2 (sistema de diseño) está terminada a falta de la revisión visual del usuario ([informe](phases/FASE_2_REPORT.md)): 12 de 13 criterios cumplidos. Siguiente: checkout con pago con tarjeta, que espera los datos del TPV virtual (ver «Pendiente del usuario»).**
+
+## Catálogo olfativo, suscripción a promociones y tienda sin etiquetas provisionales (09/10, rama `claude/adoring-mayer-jvv46o`)
+
+A petición del usuario, para acercar la web a producción. Decisiones §108–111. **Las dos migraciones nuevas (`20261009150000`, `20261009150100`) y la carga de perfiles (`supabase/data/20261009_perfiles_olfativos.sql`) están validadas en Supabase local y pendientes de aplicar en `adhara-dev` con autorización del usuario**; hasta entonces, la tienda desplegada muestra el catálogo olfativo sin perfiles y la suscripción responde con error.
+
+- **Catálogo olfativo sin compra** (`/es/catalogo-olfativo`, `/ca/cataleg-olfactiu`, `/en/scent-catalogue` y ficha por perfume): pirámide de salida, corazón y fondo, familias, rueda de estaciones, día y noche, huella olfativa y perfumes afines; filtros por familia, estación y momento y búsqueda por nota. Sin precio ni compra. Enlazado en la cabecera y el pie.
+- **Research de notas:** 47 de los 50 perfumes publicados, cada uno con su fuente (distribuidor oficial en España o web de la marca); estación y momento solo cuando la fuente los indica. Sin perfil: Pharaoh Ramesses II, Game of Spades Blind Bid y Yara Aceite Concentrado (sin fuente). Vocabulario de 123 notas en es, ca y en. Editable en Panel → Catálogo → ficha → «Perfil olfativo».
+- **Suscripción «Club L’Atelier»** antes del pie en todas las páginas: email y consentimiento expreso; lista propia en la base (`newsletter_subscribers`, sin acceso público) y envío a Sender si se configura `SENDER_API_TOKEN`. Panel → Suscriptores: lista, CSV, baja, borrado y «Enviar pendientes a Sender».
+- **Sin etiquetas provisionales** en la tienda: fuera «Imagen provisional», «Vista 3D provisional» y «Web en desarrollo».
+- **Comprobado en local** (Supabase local con los 50 perfumes publicados copiados de `adhara-dev`, sin costes): pgTAP 293/293 en 9 archivos (30 nuevas); tipos generados iguales; unitarias 306/306; E2E de la tienda 135 pasan y 41 omitidas (las de móvil de la auditoría); recorridos autenticados 17/17, con la auditoría de las 25 pantallas del panel; axe sin infracciones en las rutas nuevas; sin desbordamiento a 390 y 1440 px.
 
 ## Fase 2: cierre técnico (04/10), a falta de la revisión visual
 
@@ -239,6 +249,8 @@ La revisión visual con perfumes se hizo en local con un Supabase simulado que d
 
 ## Pendiente del usuario
 
+0. **Catálogo olfativo y suscripción (09/10):** autorizar que se apliquen en `adhara-dev` las migraciones `20261009150000` y `20261009150100` y la carga `20261009_perfiles_olfativos.sql`; crear en Sender un token de API (y un grupo «Web») y ponerlos en Vercel, solo servidor, como `SENDER_API_TOKEN` y `SENDER_GROUP_ID`; activar en Sender la doble confirmación o un correo de bienvenida; y que la asesoría revise el texto de privacidad de la suscripción junto con los textos legales (punto 8).
+
 1. Configurar la verificación en dos pasos del administrador de la tienda (la pide el primer acceso; la del administrador del sistema ya está activa) y proteger `main` en GitHub: PR obligatoria y `CI`, `Database` y `E2E` en verde.
 2. Importar el CSV del catálogo desde Panel → Catálogo → Importar, indicando si los precios del PDF llevan IVA. Los perfumes ya existen y 16 ya tienen su único formato, así que la revisión debe mostrar 0 perfumes nuevos, 408 formatos y 424 costes. Revisar después las marcas «por revisar», los 6 perfumes sin marca y las fotos (Panel → Catálogo, o la vista previa de la tienda).
 3. Decidir cuándo abrir la web a Agustín: con Vercel Authentication para todo, solo entra quien tiene cuenta en el equipo de Vercel (en Hobby, solo el titular).
@@ -290,5 +302,6 @@ La revisión visual con perfumes se hizo en local con un Supabase simulado que d
 - 03/10: Fase 2, DS-09: estados, etiquetas, precio, tarjetas, tablas, vacíos y carga.
 - 03/10: Fase 2, DS-10: la tienda pasa a la biblioteca y a los colores semánticos.
 - 04/10: Fase 2, DS-11 y DS-12: el panel pasa a la biblioteca, axe y objetivos de 44 px bloquean, guía e informe de la fase; falta la revisión visual del usuario.
+- 09/10: catálogo olfativo sin compra con research de notas, suscripción a promociones con Sender y tienda sin etiquetas provisionales.
 
 Ver docs/DEVELOPMENT.md para continuar y docs/DECISIONS.md para las decisiones.

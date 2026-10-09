@@ -54,6 +54,12 @@ const SECTIONS: (NavItem & { permission?: Permission })[] = [
     group: 'Web',
   },
   {
+    href: '/admin/suscriptores',
+    label: 'Suscriptores',
+    permission: 'customers.view',
+    group: 'Web',
+  },
+  {
     href: '/admin/asistente',
     label: 'Asistente',
     permission: 'agent.use',

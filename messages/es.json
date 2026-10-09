@@ -1,7 +1,7 @@
 {
   "meta": {
     "title": "L’Atelier du Désert · Perfumería árabe",
-    "description": "Perfumería árabe en Castelldefels. Web en desarrollo."
+    "description": "Perfumería árabe en Castelldefels: fragancias de las grandes casas de Oriente Medio, con su pirámide olfativa y la experiencia de la tienda."
   },
   "nav": {
     "collection": "Colección",
@@ -10,7 +10,8 @@
     "close": "Cerrar",
     "language": "Idioma",
     "skip": "Saltar al contenido",
-    "home": "Inicio"
+    "home": "Inicio",
+    "scentCatalog": "Catálogo olfativo"
   },
   "home": {
     "heroEyebrow": "Perfumería árabe · Castelldefels",
@@ -79,19 +80,33 @@
     "details": "Detalles",
     "brand": "Casa",
     "concentration": "Concentración",
-    "provisionalImage": "Imagen provisional",
     "noImage": "Imagen próximamente",
     "scene": "Animación 3D de {name}",
     "sceneReplay": "Repetir",
     "sceneDrag": "Arrastra para girar",
-    "sceneProvisional": "Vista 3D provisional",
     "related": "También de {brand}"
+  },
+  "newsletter": {
+    "eyebrow": "Club L’Atelier",
+    "title": "Descuentos exclusivos en tu correo",
+    "lead": "Suscríbete y recibe antes que nadie promociones exclusivas, novedades y lanzamientos de la tienda.",
+    "email": "Tu email",
+    "placeholder": "nombre@email.com",
+    "consent": "Acepto recibir por email promociones y novedades de L’Atelier du Désert.",
+    "submit": "Suscribirme",
+    "pending": "Enviando…",
+    "success": "¡Gracias! Ya formas parte del club. Pronto recibirás nuestras promociones.",
+    "invalidEmail": "Revisa el email: no parece válido.",
+    "consentRequired": "Marca la casilla para que podamos enviarte las promociones.",
+    "busy": "Ahora mismo hay muchas altas. Inténtalo de nuevo en un minuto.",
+    "error": "No hemos podido apuntarte ahora mismo. Inténtalo de nuevo en unos minutos.",
+    "privacy": "Responsable: L’Atelier du Désert. Finalidad: enviarte promociones por email; los envíos se gestionan con Sender, nuestro proveedor de email. Puedes darte de baja desde cualquier correo y ejercer tus derechos de acceso, rectificación y supresión escribiéndonos.",
+    "privacyContact": "Escríbenos a <mail>{email}</mail>."
   },
   "footer": {
     "tagline": "Perfumería árabe en Castelldefels.",
     "shop": "Tienda",
     "info": "Información",
-    "dev": "Web en desarrollo: contenidos e imágenes provisionales.",
     "rights": "© {year} L’Atelier du Désert",
     "staffAccess": "Acceso del equipo",
     "faq": "Preguntas frecuentes"
@@ -115,5 +130,77 @@
   "notFound": {
     "title": "Esta página no existe",
     "cta": "Volver al inicio"
+  },
+  "scent": {
+    "eyebrow": "Catálogo olfativo",
+    "title": "El atlas de las fragancias",
+    "lead": "Notas de salida, corazón y fondo, familias olfativas y el mejor momento para cada perfume. Un catálogo para descubrir y comparar con calma.",
+    "sourceNote": "Las notas, familias y estaciones proceden de la ficha oficial de cada casa o de su distribuidor oficial en España.",
+    "search": "Buscar por perfume, casa o nota",
+    "familyFilter": "Familia olfativa",
+    "seasonFilter": "Estación",
+    "timeFilter": "Momento",
+    "clear": "Limpiar filtros",
+    "count": "{count, plural, =0 {Ninguna fragancia} one {# fragancia} other {# fragancias}}",
+    "empty": "El catálogo se está preparando con datos verificados. Vuelve pronto.",
+    "emptyFiltered": "Ninguna fragancia coincide con estos filtros.",
+    "top": "Salida",
+    "topHint": "Los primeros minutos: la primera impresión.",
+    "heart": "Corazón",
+    "heartHint": "Las horas centrales: el carácter del perfume.",
+    "base": "Fondo",
+    "baseHint": "La estela que permanece al final del día.",
+    "keyNotes": "Notas principales",
+    "keyNotesHint": "La casa las presenta juntas, sin separarlas por pisos.",
+    "pyramidEyebrow": "Pirámide olfativa",
+    "pyramidTitle": "Cómo evoluciona en la piel",
+    "footprint": "Huella olfativa",
+    "footprintHint": "Las notas del perfume agrupadas por su naturaleza.",
+    "notesCount": "{count, plural, one {# nota} other {# notas}}",
+    "whenEyebrow": "Cuándo llevarlo",
+    "whenTitle": "Estaciones y momentos",
+    "recommended": "recomendada",
+    "notIndicated": "no indicada",
+    "similarEyebrow": "Afinidades",
+    "similarTitle": "Si te gusta {name}",
+    "back": "Volver al catálogo olfativo",
+    "visit": "Ven a descubrirlo en persona a nuestra tienda de Castelldefels: te ayudamos a encontrar tu fragancia."
+  },
+  "family": {
+    "citrus": "Cítrica",
+    "fresh": "Fresca",
+    "aquatic": "Acuática",
+    "floral": "Floral",
+    "fruity": "Frutal",
+    "gourmand": "Gourmand",
+    "oriental": "Oriental",
+    "amber": "Ambarada",
+    "woody": "Amaderada",
+    "aromatic": "Aromática",
+    "spicy": "Especiada",
+    "musky": "Almizclada"
+  },
+  "season": {
+    "spring": "Primavera",
+    "summer": "Verano",
+    "autumn": "Otoño",
+    "winter": "Invierno"
+  },
+  "timeOfDay": {
+    "day": "Día",
+    "night": "Noche"
+  },
+  "noteGroup": {
+    "citrus": "Cítricos",
+    "fruity": "Frutales",
+    "floral": "Florales",
+    "aromatic": "Aromáticas y verdes",
+    "spicy": "Especias",
+    "gourmand": "Gourmand",
+    "woody": "Maderas",
+    "amber": "Ámbar y resinas",
+    "leather": "Cuero y tabaco",
+    "musky": "Almizcles",
+    "aquatic": "Marinas y luminosas"
   }
 }

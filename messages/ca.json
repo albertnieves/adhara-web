@@ -1,7 +1,7 @@
 {
   "meta": {
     "title": "L’Atelier du Désert · Perfumeria àrab",
-    "description": "Perfumeria àrab a Castelldefels. Web en desenvolupament."
+    "description": "Perfumeria àrab a Castelldefels: fragàncies de les grans cases de l’Orient Mitjà, amb la seva piràmide olfactiva i l’experiència de la botiga."
   },
   "nav": {
     "collection": "Col·lecció",
@@ -10,7 +10,8 @@
     "close": "Tanca",
     "language": "Idioma",
     "skip": "Salta al contingut",
-    "home": "Inici"
+    "home": "Inici",
+    "scentCatalog": "Catàleg olfactiu"
   },
   "home": {
     "heroEyebrow": "Perfumeria àrab · Castelldefels",
@@ -79,19 +80,33 @@
     "details": "Detalls",
     "brand": "Casa",
     "concentration": "Concentració",
-    "provisionalImage": "Imatge provisional",
     "noImage": "Imatge aviat",
     "scene": "Animació 3D de {name}",
     "sceneReplay": "Repeteix",
     "sceneDrag": "Arrossega per girar",
-    "sceneProvisional": "Vista 3D provisional",
     "related": "També de {brand}"
+  },
+  "newsletter": {
+    "eyebrow": "Club L’Atelier",
+    "title": "Descomptes exclusius al teu correu",
+    "lead": "Subscriu-t’hi i rep abans que ningú promocions exclusives, novetats i llançaments de la botiga.",
+    "email": "El teu correu",
+    "placeholder": "nom@correu.com",
+    "consent": "Accepto rebre per correu promocions i novetats de L’Atelier du Désert.",
+    "submit": "Subscriure’m",
+    "pending": "Enviant…",
+    "success": "Gràcies! Ja formes part del club. Aviat rebràs les nostres promocions.",
+    "invalidEmail": "Revisa el correu: no sembla vàlid.",
+    "consentRequired": "Marca la casella perquè et puguem enviar les promocions.",
+    "busy": "Ara mateix hi ha moltes altes. Torna-ho a provar d’aquí a un minut.",
+    "error": "Ara mateix no t’hem pogut apuntar. Torna-ho a provar d’aquí a uns minuts.",
+    "privacy": "Responsable: L’Atelier du Désert. Finalitat: enviar-te promocions per correu; els enviaments es gestionen amb Sender, el nostre proveïdor de correu. Pots donar-te de baixa des de qualsevol correu i exercir els teus drets d’accés, rectificació i supressió escrivint-nos.",
+    "privacyContact": "Escriu-nos a <mail>{email}</mail>."
   },
   "footer": {
     "tagline": "Perfumeria àrab a Castelldefels.",
     "shop": "Botiga",
     "info": "Informació",
-    "dev": "Web en desenvolupament: continguts i imatges provisionals.",
     "rights": "© {year} L’Atelier du Désert",
     "staffAccess": "Accés de l’equip",
     "faq": "Preguntes freqüents"
@@ -115,5 +130,77 @@
   "notFound": {
     "title": "Aquesta pàgina no existeix",
     "cta": "Torna a l’inici"
+  },
+  "scent": {
+    "eyebrow": "Catàleg olfactiu",
+    "title": "L’atles de les fragàncies",
+    "lead": "Notes de sortida, cor i fons, famílies olfactives i el millor moment per a cada perfum. Un catàleg per descobrir i comparar amb calma.",
+    "sourceNote": "Les notes, famílies i estacions provenen de la fitxa oficial de cada casa o del seu distribuïdor oficial a Espanya.",
+    "search": "Cerca per perfum, casa o nota",
+    "familyFilter": "Família olfactiva",
+    "seasonFilter": "Estació",
+    "timeFilter": "Moment",
+    "clear": "Neteja els filtres",
+    "count": "{count, plural, =0 {Cap fragància} one {# fragància} other {# fragàncies}}",
+    "empty": "El catàleg s’està preparant amb dades verificades. Torna aviat.",
+    "emptyFiltered": "Cap fragància no coincideix amb aquests filtres.",
+    "top": "Sortida",
+    "topHint": "Els primers minuts: la primera impressió.",
+    "heart": "Cor",
+    "heartHint": "Les hores centrals: el caràcter del perfum.",
+    "base": "Fons",
+    "baseHint": "L’estela que perdura al final del dia.",
+    "keyNotes": "Notes principals",
+    "keyNotesHint": "La casa les presenta juntes, sense separar-les per pisos.",
+    "pyramidEyebrow": "Piràmide olfactiva",
+    "pyramidTitle": "Com evoluciona a la pell",
+    "footprint": "Empremta olfactiva",
+    "footprintHint": "Les notes del perfum agrupades segons la seva naturalesa.",
+    "notesCount": "{count, plural, one {# nota} other {# notes}}",
+    "whenEyebrow": "Quan portar-lo",
+    "whenTitle": "Estacions i moments",
+    "recommended": "recomanada",
+    "notIndicated": "no indicada",
+    "similarEyebrow": "Afinitats",
+    "similarTitle": "Si t’agrada {name}",
+    "back": "Torna al catàleg olfactiu",
+    "visit": "Vine a descobrir-lo en persona a la nostra botiga de Castelldefels: t’ajudem a trobar la teva fragància."
+  },
+  "family": {
+    "citrus": "Cítrica",
+    "fresh": "Fresca",
+    "aquatic": "Aquàtica",
+    "floral": "Floral",
+    "fruity": "Afruitada",
+    "gourmand": "Gourmand",
+    "oriental": "Oriental",
+    "amber": "Ambrada",
+    "woody": "Llenyosa",
+    "aromatic": "Aromàtica",
+    "spicy": "Especiada",
+    "musky": "Mesquerada"
+  },
+  "season": {
+    "spring": "Primavera",
+    "summer": "Estiu",
+    "autumn": "Tardor",
+    "winter": "Hivern"
+  },
+  "timeOfDay": {
+    "day": "Dia",
+    "night": "Nit"
+  },
+  "noteGroup": {
+    "citrus": "Cítrics",
+    "fruity": "Fruites",
+    "floral": "Florals",
+    "aromatic": "Aromàtiques i verdes",
+    "spicy": "Espècies",
+    "gourmand": "Gourmand",
+    "woody": "Fustes",
+    "amber": "Ambre i resines",
+    "leather": "Cuir i tabac",
+    "musky": "Mescs",
+    "aquatic": "Marines i lluminoses"
   }
 }

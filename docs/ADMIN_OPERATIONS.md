@@ -26,6 +26,16 @@ Para PVP: escribir, revisar, confirmar avisos y aplicar. La revisión caduca en 
 
 Para recibir mercancía: Inventario → formato → Movimiento → Recepción, con unidades y referencia. El reintento del mismo formulario no duplica stock. Para una segunda operación intencionada con los mismos valores, cerrar y abrir el formulario. Corregir errores con movimientos compensatorios o recuentos; nunca borrando el historial. Mostrador, Compras, Reposición e Informes conservan los flujos de las fases R/S.
 
+## Perfil olfativo y catálogo olfativo
+
+Catálogo → ficha del perfume → «Perfil olfativo». Las notas se escriben como claves separadas por comas (`bergamot, rose`); la lista «Notas disponibles» da cada clave con su nombre. Una clave que no existe no se guarda: si hace falta una nota nueva, se añade al vocabulario del código con su nombre en es, ca y en. La URL `https` de la fuente es obligatoria y las estaciones y el momento solo se marcan si la fuente los indica. El catálogo olfativo de la tienda (`/es/catalogo-olfativo`) se actualiza al guardar; no muestra precio ni compra.
+
+## Suscriptores a promociones
+
+Web → Suscriptores muestra las altas de la sección «Club L’Atelier» de la tienda (con `customers.view`), su idioma, fecha y estado: pendiente, en Sender o baja. «Exportar CSV» descarga la lista para importarla en Sender o abrirla en Excel. Con `customers.manage` (MFA) se puede dar de baja o borrar (derecho de supresión); si Sender está conectado, el cambio se hace también allí.
+
+Para conectar Sender: crear en Sender un token de API (Settings → API access tokens) y, si se quiere, un grupo «Web»; en Vercel, solo servidor, `SENDER_API_TOKEN` y `SENDER_GROUP_ID` (el id del grupo). Desde entonces cada alta se envía a Sender al momento; las que fallen quedan pendientes y se envían con «Enviar pendientes a Sender». Las campañas y los descuentos se preparan y envían en Sender. Las bajas que la gente haga desde el enlace de los correos quedan en Sender. No pegar el token en el chat.
+
 ## Moverse por el panel
 
 En escritorio, el menú lateral agrupa las secciones (Tienda, Web, Análisis y Administración) y tiene su propio desplazamiento si no cabe en alto. En tablet vertical y móvil, «Menú» abre un panel con las mismas secciones, la vista previa y la tienda pública; se cierra con la ×, con Esc o tocando fuera.

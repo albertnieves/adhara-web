@@ -55,11 +55,6 @@ export function ProductCard({
             />
           </div>
         )}
-        {media?.provisional && (
-          <span className="text-fg-muted text-2xs tracking-caps absolute top-3 left-3 uppercase">
-            {t('product.provisionalImage')}
-          </span>
-        )}
         <span
           aria-hidden
           className="bg-accent absolute inset-x-0 bottom-0 h-px origin-left scale-x-0 transition-transform duration-700 ease-(--ease-luxe) group-hover:scale-x-100"

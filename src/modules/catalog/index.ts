@@ -22,3 +22,29 @@ export type {
   ProductVariant,
   StorefrontProduct,
 } from './domain/product';
+export {
+  NOTES,
+  NOTE_GROUPS,
+  SCENT_FAMILIES,
+  SCENT_FAMILY_NAMES,
+  SEASONS,
+  SEASON_NAMES,
+  TIMES_OF_DAY,
+  TIME_OF_DAY_NAMES,
+  allNotes,
+  hasNotes,
+  isNoteKey,
+  noteName,
+  normalizeSearch,
+  parseNoteList,
+  profileMatchesNote,
+  toScentProfile,
+} from './domain/scent';
+export type {
+  NoteGroup,
+  NoteKey,
+  ScentFamily,
+  ScentProfile,
+  Season,
+  TimeOfDay,
+} from './domain/scent';

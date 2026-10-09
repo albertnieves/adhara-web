@@ -380,3 +380,91 @@ test('asistente: informe del día según el rol y chat desactivado sin clave', a
   ).toBeVisible();
   await context.close();
 });
+
+test('suscriptores: la tienda los ve, exporta, da de baja y borra', async ({
+  page,
+}) => {
+  const email = `suscriptor-${randomUUID()}@example.com`;
+  const { error } = await admin.rpc('newsletter_subscribe', {
+    p_email: email,
+    p_locale: 'ca',
+    p_consent_version: 'promos-2026-10',
+  });
+  expect(error).toBeNull();
+
+  await login(page, await user('store_admin'));
+  await page.goto('/admin/suscriptores');
+  const row = page.getByRole('row').filter({ hasText: email });
+  await expect(row).toContainText('Català');
+  await expect(row).toContainText('Pendiente');
+  // Sin SENDER_API_TOKEN, el panel explica cómo conectarlo.
+  await expect(page.getByText('Sender no está conectado')).toBeVisible();
+
+  const csv = await page.request.get('/admin/suscriptores/exportar');
+  expect(csv.headers()['content-type']).toContain('text/csv');
+  expect(await csv.text()).toContain(email);
+
+  await row.getByRole('button', { name: 'Dar de baja' }).click();
+  await page
+    .getByRole('dialog')
+    .getByRole('button', { name: 'Dar de baja' })
+    .click();
+  await expect(row).toContainText('Baja');
+
+  await row.getByRole('button', { name: 'Borrar' }).click();
+  await page
+    .getByRole('dialog')
+    .getByRole('button', { name: 'Borrar' })
+    .click();
+  await expect(row).toHaveCount(0);
+  const left = await admin
+    .from('newsletter_subscribers')
+    .select('id')
+    .eq('email', email);
+  expect(left.data).toEqual([]);
+});
+
+test('suscriptores: el encargado no los ve ni los exporta', async ({
+  page,
+}) => {
+  await login(page, await user('viewer'));
+  await page.goto('/admin/suscriptores');
+  await expect(
+    page.getByRole('heading', { name: '404', exact: true }),
+  ).toBeVisible();
+  const csv = await page.request.get('/admin/suscriptores/exportar');
+  expect(csv.status()).toBe(404);
+});
+
+test('perfil olfativo: exige notas del vocabulario y fuente, y llega a la tienda', async ({
+  page,
+}) => {
+  const { data: product } = await admin
+    .from('products')
+    .select('id, slug')
+    .eq('slug', 'perfume-centinela')
+    .single();
+  test.skip(!product, 'Sin el perfume centinela de tests/fixtures');
+  await login(page, await user('store_admin'));
+  await page.goto(`/admin/catalogo/${product!.id}#perfil-olfativo`);
+  const section = page.locator('#perfil-olfativo');
+  await section.getByLabel('Salida').fill('bergamot, nota-inventada');
+  await section.getByLabel('Corazón').fill('jasmine');
+  await section.getByLabel('Fondo').fill('oud, white-musk');
+  await section
+    .getByLabel('Fuente (URL https)')
+    .fill('https://example.invalid/fuente');
+  await section.getByRole('button', { name: 'Guardar perfil' }).click();
+  await expect(section.getByText(/nota-inventada/)).toBeVisible();
+
+  await section.getByLabel('Salida').fill('bergamot');
+  await section.getByRole('button', { name: 'Guardar perfil' }).click();
+  await expect(section.getByText('Perfil olfativo guardado.')).toBeVisible();
+
+  await page.goto(`/es/catalogo-olfativo/${product!.slug}`);
+  const pyramid = page.getByRole('region', {
+    name: 'Cómo evoluciona en la piel',
+  });
+  await expect(pyramid.getByText('Jazmín')).toBeVisible();
+  await expect(pyramid.getByText('Almizcle blanco')).toBeVisible();
+});

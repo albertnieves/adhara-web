@@ -6,6 +6,8 @@ import { fetchAll } from '@/lib/supabase/paginate';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 import type { Availability, StorefrontProduct } from '../domain/product';
 import { AVAILABILITY, isAudience, isConcentration } from '../domain/product';
+import type { ScentProfile } from '../domain/scent';
+import { toScentProfile } from '../domain/scent';
 
 /*
  * Lecturas de la tienda con el cliente anónimo: RLS solo devuelve perfumes
@@ -176,3 +178,50 @@ export async function getAvailability(
       .map((row) => [row.variant_id, row.status as Availability]),
   );
 }
+
+const SCENT_SELECT =
+  'product_id, top_notes, heart_notes, base_notes, key_notes, families, seasons, times_of_day, source_url';
+
+/**
+ * Perfiles olfativos por perfume (catálogo olfativo). RLS solo devuelve los de
+ * perfumes publicados, o también borradores en la vista previa del personal.
+ * Si la lectura falla, el catálogo se muestra sin perfiles.
+ */
+export const listScentProfiles = cache(
+  async (): Promise<Record<string, ScentProfile>> => {
+    const source = await storefrontSource();
+    if (!source) return {};
+    try {
+      const data = await fetchAll((from, to) =>
+        source.supabase
+          .from('product_scent_profiles')
+          .select(SCENT_SELECT)
+          .order('product_id')
+          .range(from, to),
+      );
+      return Object.fromEntries(
+        data.map((row) => [row.product_id, toScentProfile(row)]),
+      );
+    } catch (error) {
+      console.error('[catalog] no se pudieron leer los perfiles', error);
+      return {};
+    }
+  },
+);
+
+export const getScentProfile = cache(
+  async (productId: string): Promise<ScentProfile | null> => {
+    const source = await storefrontSource();
+    if (!source) return null;
+    const { data, error } = await source.supabase
+      .from('product_scent_profiles')
+      .select(SCENT_SELECT)
+      .eq('product_id', productId)
+      .maybeSingle();
+    if (error) {
+      console.error('[catalog] no se pudo leer el perfil', error.message);
+      return null;
+    }
+    return data ? toScentProfile(data) : null;
+  },
+);
