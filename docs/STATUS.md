@@ -202,7 +202,7 @@ Todas son provisionales (`provisional = true`) y guardan su procedencia: `origin
 
 ### Despliegue
 
-Vercel `adhara-web` (equipo SOAPBRXND, Hobby), funciones en París (cdg1), todos los despliegues protegidos con Vercel Authentication. Variables públicas de Supabase (`adhara-dev`) configuradas para Preview, Production y Development. Production está en `06aacb1` (PR #11, READY); la PR #12 tiene su Preview en READY.
+Vercel `altier-web` (antes `adhara-web`; equipo SOAPBRXND, Hobby; único proyecto activo, `soapbrxnd` pausado, DECISIONS §112), funciones en París (cdg1), todos los despliegues protegidos con Vercel Authentication. Variables públicas de Supabase (`adhara-dev`) configuradas para Preview, Production y Development. Production está en `06aacb1` (PR #11, READY); la PR #12 tiene su Preview en READY.
 
 ## Validación ejecutada (29/09–02/10/2026)
 

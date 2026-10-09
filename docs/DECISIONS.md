@@ -76,7 +76,7 @@
     - Se usan con `<use>` y `currentColor`: un archivo en caché, que no infla el HTML y hereda el color (marfil sobre fondo oscuro, tinta sobre claro).
     - `BRAND_NAME` y `BRAND_TAGLINE` en `modules/brand` alimentan los títulos, el panel y el nombre del factor TOTP que ven las apps de autenticación.
     - Los textos descriptivos («Perfumería árabe…») y la paleta y tipografías de la web no cambian.
-    - Los identificadores internos (repositorio, paquete, `adhara-dev`, proyecto de Vercel) conservan `adhara` para no romper integraciones.
+    - Los identificadores internos (repositorio, paquete, `adhara-dev`) conservan `adhara` para no romper integraciones. El proyecto de Vercel se renombró a `altier-web` el 05/10 (§112).
 
 ## Publicación y compra — 30/09/2026
 
@@ -410,3 +410,10 @@ Formato de la Fase 0 §16: fecha · contexto · decisión · alternativas descar
      - **Doble confirmación (double opt-in):** no se implementa en la web; Sender puede enviar la confirmación con su automatización de bienvenida. Recomendable activarlo allí antes de la primera campaña.
 110. **Fuera las etiquetas provisionales de la tienda**, a petición del usuario («quita todas las etiquetas de prueba, temporal, provisional»): «Imagen provisional» en las tarjetas y la galería, «Vista 3D provisional» en la escena y el texto «Web en desarrollo» de la descripción de la web (y la clave sin usar del pie). `product_media.provisional` se mantiene como dato interno de procedencia (PRODUCT_RESEARCH) y el panel lo sigue mostrando. La web sigue con `noindex` hasta abrirla al público (pendiente 3 y 9): no es una etiqueta visible, es la decisión de mantenerla privada.
 111. **Lo que encontraron las pruebas.** El formulario de suscripción vaciaba el email tras un error (reinicio automático de los formularios de React 19); ahora se envía como los del panel, sin reinicio, y sigue funcionando sin JavaScript. axe marcaba el `aria-label` de la escena 3D en un `div` sin rol: el lienzo lleva `role="img"`. En el listado olfativo, el nombre de marca que sustituye a una foto que falta no tenía contraste sobre el tono oscuro: el listado va en tono claro y solo la cabecera en `oud`.
+
+## Vercel — 05/10/2026
+
+112. **Proyecto de Vercel `altier-web` como único despliegue.** A petición del usuario («quiero que el proyecto de vercel tenga otro nombre: altier-web […] que sea el único deployment»).
+     - `adhara-web` se renombra a `altier-web` (mismo id `prj_i8BphtVWLp68IZtvH9GrKlDRjK5L`, mismas variables, Git y protección) y se añade `altier-web.vercel.app`. `adhara-web.vercel.app` se mantiene mientras siga en la configuración de Auth de Supabase.
+     - El proyecto `soapbrxnd` (sin relación con la tienda) queda pausado, no borrado; borrarlo es irreversible y lo decide el usuario.
+     - El equipo de Vercel se llama SOAPBRXND porque es el equipo por defecto de la cuenta Hobby; no se puede mover el proyecto a otro equipo sin plan Pro. Cambiar su nombre y su URL (`soapbrxnd`) se hace en el panel de Vercel (Settings → General) y cambia las URL `*-soapbrxnd.vercel.app` de los despliegues.
