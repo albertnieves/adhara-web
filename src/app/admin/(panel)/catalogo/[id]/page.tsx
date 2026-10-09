@@ -14,6 +14,7 @@ import {
   DeleteProductButton,
   MediaManager,
   ProductForm,
+  ScentProfileEditor,
   StatusActions,
   TranslationEditor,
   VariantEditor,
@@ -71,9 +72,16 @@ export default async function EditProduct({
   const staff = await requirePermission('catalog.edit');
   const [{ id }, { error }] = await Promise.all([params, searchParams]);
   if (!/^[0-9a-f-]{36}$/.test(id)) notFound();
-  const [product, brands] = await Promise.all([
+  const [product, brands, scent] = await Promise.all([
     getAdminProduct(staff.supabase, id),
     listBrands(staff.supabase),
+    staff.supabase
+      .from('product_scent_profiles')
+      .select(
+        'top_notes, heart_notes, base_notes, key_notes, families, seasons, times_of_day, source_url, source_note',
+      )
+      .eq('product_id', id)
+      .maybeSingle(),
   ]);
   if (!product) notFound();
   const can = (p: Parameters<typeof isAllowed>[1]) =>
@@ -174,6 +182,7 @@ export default async function EditProduct({
           ['datos', 'Datos'],
           ['imagenes', 'Imágenes'],
           ['textos', 'Textos'],
+          ['perfil-olfativo', 'Perfil olfativo'],
         ].map(([anchor, label]) => (
           <a
             key={anchor}
@@ -264,6 +273,14 @@ export default async function EditProduct({
           productId={product.id}
           translations={product.translations}
         />
+      </Section>
+
+      <Section
+        id="perfil-olfativo"
+        title="Perfil olfativo"
+        description="Notas, familias, estaciones y momento del catálogo olfativo de la tienda. Solo con una fuente oficial: sin fuente, el perfume se muestra sin perfil."
+      >
+        <ScentProfileEditor productId={product.id} value={scent.data} />
       </Section>
 
       {product.status === 'draft' && (

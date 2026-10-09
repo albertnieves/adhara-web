@@ -32,7 +32,6 @@ function Gallery({
   name: string;
   brand: string;
 }) {
-  const t = useTranslations('product');
   const [index, setIndex] = useState(0);
   const current = media[index] ?? null;
   const reduced = useReducedMotion();
@@ -82,11 +81,6 @@ function Gallery({
             />
           </motion.div>
         </AnimatePresence>
-        {current?.provisional && (
-          <span className="text-fg-muted text-2xs tracking-caps-lg absolute top-4 left-4 uppercase">
-            {t('provisionalImage')}
-          </span>
-        )}
       </motion.div>
       {media.length > 1 && (
         <ul className="flex justify-center gap-3 pb-6">
@@ -132,7 +126,6 @@ export function ProductStage({
             scene: t('scene', { name }),
             replay: t('sceneReplay'),
             dragHint: t('sceneDrag'),
-            provisional: t('sceneProvisional'),
           }}
           fallback={gallery}
         />

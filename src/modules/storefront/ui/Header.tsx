@@ -99,6 +99,15 @@ export function Header() {
             {t('collection')}
           </Link>
           <Link
+            href="/catalogo-olfativo"
+            className="link-underline text-2xs tracking-caps-lg hidden uppercase md:inline"
+            aria-current={
+              pathname.startsWith('/catalogo-olfativo') ? 'page' : undefined
+            }
+          >
+            {t('scentCatalog')}
+          </Link>
+          <Link
             href={{ pathname: '/', hash: 'experiencia' }}
             className="link-underline text-2xs tracking-caps-lg hidden uppercase md:inline"
           >
@@ -136,6 +145,10 @@ export function Header() {
               {[
                 { href: '/' as const, label: t('home') },
                 { href: '/catalogo' as const, label: t('collection') },
+                {
+                  href: '/catalogo-olfativo' as const,
+                  label: t('scentCatalog'),
+                },
               ].map((item, index) => (
                 <motion.li
                   key={item.href}

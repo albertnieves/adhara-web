@@ -22,6 +22,10 @@ const ROUTES: [path: string, name: string, status?: number][] = [
   ['/es/catalogo', 'coleccion-es'],
   ['/ca/cataleg', 'coleccion-ca'],
   ['/en/catalog', 'coleccion-en'],
+  ['/es/catalogo-olfativo', 'catalogo-olfativo-es'],
+  ['/ca/cataleg-olfactiu', 'catalogo-olfativo-ca'],
+  ['/en/scent-catalogue', 'catalogo-olfativo-en'],
+  ['/es/catalogo-olfativo/no-existe', 'catalogo-olfativo-404', 404],
   ['/es/perfume/no-existe', 'ficha-404', 404],
   ['/admin/acceso', 'panel-acceso'],
   ['/admin/recuperar', 'panel-recuperar'],
@@ -60,6 +64,7 @@ test('diseño sin solapes ni desbordes en una ficha publicada', async ({
   await check(page, `/es/perfume/${slug}`, 'ficha-es');
   await check(page, `/ca/perfum/${slug}`, 'ficha-ca');
   await check(page, `/en/fragrance/${slug}`, 'ficha-en');
+  await check(page, `/es/catalogo-olfativo/${slug}`, 'ficha-olfativa-es');
 });
 
 test('la auditoría detecta solapes, desbordes, letra y controles pequeños', async ({

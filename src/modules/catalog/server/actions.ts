@@ -24,6 +24,12 @@ import {
   PRODUCT_STATUSES,
   slugify,
 } from '../domain/product';
+import {
+  SCENT_FAMILIES,
+  SEASONS,
+  TIMES_OF_DAY,
+  parseNoteList,
+} from '../domain/scent';
 
 /*
  * Acciones del catálogo. Cada una comprueba el permiso en servidor; RLS y los
@@ -534,6 +540,87 @@ export async function saveTranslation(
   if (error) return fail(describeDbError(error));
   refreshStorefront(t.productId);
   return ok('Texto guardado.');
+}
+
+const scentInput = z.object({
+  productId: z.uuid(),
+  sourceUrl: z
+    .string()
+    .trim()
+    .max(500)
+    .regex(/^https:\/\/\S+$/),
+  sourceNote: optionalText(500),
+});
+
+/**
+ * Perfil olfativo (catálogo olfativo de la tienda). Las notas se escriben
+ * como claves del vocabulario (domain/scent.ts) y la fuente es obligatoria:
+ * nunca se guardan notas sin procedencia.
+ */
+export async function saveScentProfile(
+  _: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  const { supabase } = await requirePermission('catalog.edit');
+  if (formData.get('intent') === 'delete') {
+    const productId = z.uuid().safeParse(formData.get('productId'));
+    if (!productId.success) return fail('Perfume no válido.');
+    const { error } = await supabase
+      .from('product_scent_profiles')
+      .delete()
+      .eq('product_id', productId.data);
+    if (error) return fail(describeDbError(error));
+    await supabase.rpc('record_audit_event', {
+      action: 'catalog.scent_profile_deleted',
+      entity: 'product',
+      entity_id: productId.data,
+    });
+    refreshStorefront(productId.data);
+    return ok('Perfil olfativo eliminado.');
+  }
+  const parsed = scentInput.safeParse({
+    productId: formData.get('productId'),
+    sourceUrl: formData.get('sourceUrl') ?? '',
+    sourceNote: formData.get('sourceNote') ?? '',
+  });
+  if (!parsed.success)
+    return fail('Indica la URL https de la fuente de las notas.');
+  const tiers = (['top', 'heart', 'base', 'key'] as const).map((tier) =>
+    parseNoteList(String(formData.get(tier) ?? '')),
+  );
+  const unknown = [...new Set(tiers.flatMap((t) => t.unknown))];
+  if (unknown.length > 0)
+    return fail(
+      `Notas que no están en el vocabulario: ${unknown.join(', ')}. Usa las claves de la lista o pide que se añadan.`,
+    );
+  const pick = <T extends string>(values: readonly T[], name: string) =>
+    formData
+      .getAll(name)
+      .map(String)
+      .filter((v): v is T => values.includes(v as T));
+  const [top, heart, base, key] = tiers.map((t) => t.notes);
+  const row = {
+    product_id: parsed.data.productId,
+    top_notes: top!,
+    heart_notes: heart!,
+    base_notes: base!,
+    key_notes: key!,
+    families: pick(SCENT_FAMILIES, 'families'),
+    seasons: pick(SEASONS, 'seasons'),
+    times_of_day: pick(TIMES_OF_DAY, 'times'),
+    source_url: parsed.data.sourceUrl,
+    source_note: parsed.data.sourceNote,
+  };
+  const { error } = await supabase.from('product_scent_profiles').upsert(row);
+  if (error) return fail(describeDbError(error));
+  await supabase.rpc('record_audit_event', {
+    action: 'catalog.scent_profile_saved',
+    entity: 'product',
+    entity_id: row.product_id,
+    after: { source_url: row.source_url },
+  });
+  refreshStorefront(row.product_id);
+  return ok('Perfil olfativo guardado.');
 }
 
 const IMAGE_TYPES: Record<string, string> = {
