@@ -3,6 +3,7 @@ import { Eyebrow, Heading } from '@/components/ui';
 import { Star } from '@/modules/brand';
 import { storeContent, STORE_DEFAULTS } from '@/modules/content';
 import { readStoreContent } from '@/modules/content/server';
+import { Link } from '@/modules/i18n';
 import { NewsletterSignup } from './NewsletterSignup';
 
 /** Sección de suscripción a las promociones, justo antes del pie. */
@@ -42,7 +43,14 @@ export async function NewsletterSection() {
                     {chunks}
                   </a>
                 ),
-              })}
+              })}{' '}
+            {t.rich('privacyMore', {
+              link: (chunks) => (
+                <Link href="/privacidad" className="link-underline">
+                  {chunks}
+                </Link>
+              ),
+            })}
           </p>
         </div>
       </div>

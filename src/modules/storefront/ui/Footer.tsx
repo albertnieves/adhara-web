@@ -1,23 +1,26 @@
 import NextLink from 'next/link';
 import { readStoreContent } from '@/modules/content/server';
 import { storeContent, STORE_DEFAULTS } from '@/modules/content';
-import { getTranslations } from 'next-intl/server';
+import { getLocale, getTranslations } from 'next-intl/server';
 import { Eyebrow } from '@/components/ui';
 import { Logo } from '@/modules/brand';
 import { Link } from '@/modules/i18n';
+import type { Locale } from '@/modules/i18n/seo';
+import { LEGAL_COPY, LEGAL_DOCUMENTS, LEGAL_PATHS } from '@/modules/legal';
 import { FAQ_ANCHOR } from './Faq';
 
 export async function Footer() {
   const data = await readStoreContent('store', 'es');
   const store = data ? storeContent.parse(data.payload) : STORE_DEFAULTS;
   const t = await getTranslations('footer');
+  const legal = LEGAL_COPY[(await getLocale()) as Locale];
   const nav = await getTranslations('nav');
   return (
     <footer
       data-tone="dark"
       className="bg-surface text-fg relative overflow-hidden"
     >
-      <div className="mx-auto grid max-w-[90rem] gap-14 px-5 pt-24 pb-12 sm:px-10 md:grid-cols-[2fr_1fr_1fr]">
+      <div className="mx-auto grid max-w-[90rem] gap-14 px-5 pt-24 pb-12 sm:px-10 md:grid-cols-2 lg:grid-cols-[2fr_1fr_1fr_1fr]">
         <div className="space-y-6">
           <Logo variant="stacked" />
           <p className="text-fg-muted max-w-xs text-sm leading-relaxed">
@@ -100,6 +103,18 @@ export async function Footer() {
             {t('staffAccess')}
           </NextLink>
         </div>
+        <nav aria-label={t('legal')}>
+          <Eyebrow className="mb-5">{t('legal')}</Eyebrow>
+          <ul className="space-y-3 text-sm">
+            {LEGAL_DOCUMENTS.map((doc) => (
+              <li key={doc}>
+                <Link href={LEGAL_PATHS[doc]} className="link-underline">
+                  {legal.documents[doc].title}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
       </div>
       <div className="border-border text-2xs tracking-caps mx-auto flex max-w-[90rem] items-center justify-between border-t px-5 py-6 uppercase sm:px-10">
         <span className="text-fg-muted">

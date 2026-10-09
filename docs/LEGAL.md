@@ -1,0 +1,62 @@
+# Textos legales — guía de revisión
+
+Borrador del 09/10/2026 de los cinco textos legales de la tienda, en español, catalán e inglés y visibles en la web para revisarlos con el cliente. **No son asesoramiento jurídico:** antes de abrir la web al público (y siempre antes de activar la compra online) debe revisarlos la asesoría. Decisión en [DECISIONS.md](DECISIONS.md) §113.
+
+## Dónde se ven
+
+Enlazados en el pie de todas las páginas (columna «Legal»), y la política de privacidad también desde el aviso de la suscripción.
+
+| Texto                  | es                          | ca                             | en                         |
+| ---------------------- | --------------------------- | ------------------------------ | -------------------------- |
+| Aviso legal            | `/es/aviso-legal`           | `/ca/avis-legal`               | `/en/legal-notice`         |
+| Condiciones de venta   | `/es/condiciones-de-venta`  | `/ca/condicions-de-venda`      | `/en/terms-of-sale`        |
+| Política de privacidad | `/es/privacidad`            | `/ca/privacitat`               | `/en/privacy-policy`       |
+| Política de cookies    | `/es/cookies`               | `/ca/galetes`                  | `/en/cookie-policy`        |
+| Envíos y devoluciones  | `/es/envios-y-devoluciones` | `/ca/enviaments-i-devolucions` | `/en/shipping-and-returns` |
+
+Las condiciones de venta y los envíos llevan arriba un aviso: la compra online aún no está disponible y se aplicarán cuando se active.
+
+## Cómo se modifican
+
+- **Texto:** `src/modules/legal/content/es.ts` (referencia), `ca.ts` y `en.ts`, con las mismas secciones. Una prueba (`tests/unit/legal.test.ts`) falla si los idiomas no tienen las mismas secciones, marcadores y enlaces.
+- **Datos que faltan:** `src/modules/legal/domain/entity.ts` (`LEGAL_ENTITY`). Mientras un dato vale `null`, la página muestra un recuadro «Pendiente: …» en su lugar. Al rellenarlo desaparece en los tres idiomas.
+- **Correo, teléfono y dirección de la tienda:** Panel → Configuración (los mismos que el pie). Hoy el correo y el teléfono están vacíos, así que salen como pendientes.
+- **Fecha de la versión:** `LEGAL_UPDATED_AT` en el mismo archivo; se cambia con cada revisión de fondo.
+- Marcadores: `{campo}` inserta un dato; `[texto](doc:privacy#derechos)` enlaza otro texto legal; `[texto](https://…)` enlaza fuera.
+
+## Datos que tiene que dar el cliente
+
+| Dato                                                                          | Dónde aparece                                       |
+| ----------------------------------------------------------------------------- | --------------------------------------------------- |
+| Titular: razón social o nombre y apellidos del autónomo                       | Todos                                               |
+| NIF / CIF                                                                     | Aviso legal, condiciones, privacidad                |
+| Domicilio social o fiscal                                                     | Aviso legal, condiciones, privacidad, desistimiento |
+| Datos registrales (Registro Mercantil) o «no inscrita»                        | Aviso legal                                         |
+| Email y teléfono de contacto (en el panel)                                    | Todos                                               |
+| Dominio definitivo                                                            | Aviso legal                                         |
+| Zonas de envío                                                                | Condiciones, envíos                                 |
+| Tarifa de envío e importe para envío gratis                                   | Envíos                                              |
+| Plazo de entrega y transportista                                              | Envíos, privacidad (destinatarios)                  |
+| Medios de pago (tarjeta por TPV virtual, Bizum…)                              | Condiciones                                         |
+| Si se adhiere al arbitraje de consumo (Junta Arbitral de Consum de Catalunya) | Condiciones                                         |
+
+## Decisiones tomadas en el borrador (confirmar con el cliente)
+
+1. **Perfumes desprecintados sin desistimiento** (art. 103.e TRLGDCU): si se retira el precinto o el celofán, no hay devolución por desistimiento. No afecta a la garantía.
+2. **Gastos de devolución a cargo del cliente** en el desistimiento (art. 108.1); en productos dañados o equivocados, a cargo de la tienda.
+3. **Recogida gratuita en la tienda** de Castelldefels como opción de entrega, y devoluciones a la misma dirección.
+4. **Venta solo a mayores de edad**; Club L’Atelier desde 14 años (art. 7 LOPDGDD).
+5. **Garantía legal de 3 años**, sin garantía comercial adicional.
+6. **Sin aviso de cookies:** la web solo usa cookies técnicas (`NEXT_LOCALE`, la sesión del equipo, la vista previa y la de Vercel mientras la web es privada), exentas por el art. 22.2 LSSI. **Si se añade analítica, publicidad, un mapa incrustado o un píxel, hace falta un aviso con consentimiento previo y actualizar la política.**
+7. **Proveedores citados en privacidad:** Vercel (París), Supabase (Fráncfort) y Sender (Lituania). El asistente del panel (Anthropic) no se cita porque no trata datos de clientes; si llegan los mensajes con borradores de IA (A6.3), hay que añadirlo.
+8. **Sin plataforma ODR europea:** dejó de existir el 20/07/2025, así que no se enlaza.
+9. Los textos están en los tres idiomas sin cláusula de prevalencia (el Código de consumo de Cataluña exige la información también en catalán).
+
+## Qué falta revisar con la asesoría
+
+- Todo el texto, en especial condiciones de venta, desistimiento y privacidad.
+- Si el registro de consentimientos del Club y su conservación tras la baja son suficientes.
+- Contratos de encargo de tratamiento (DPA) con Vercel, Supabase y Sender, y más adelante con el banco, el transportista y el proveedor de email.
+- Registro de actividades de tratamiento (documento interno, no se publica).
+- Hojas oficiales de reclamación en la tienda y el cartel que las anuncia.
+- Al activar la compra online: repasar condiciones, envíos y privacidad con los datos reales del checkout y enviar las condiciones en el email de confirmación (soporte duradero).

@@ -101,7 +101,8 @@
     "busy": "Ahora mismo hay muchas altas. Inténtalo de nuevo en un minuto.",
     "error": "No hemos podido apuntarte ahora mismo. Inténtalo de nuevo en unos minutos.",
     "privacy": "Responsable: L’Atelier du Désert. Finalidad: enviarte promociones por email; los envíos se gestionan con Sender, nuestro proveedor de email. Puedes darte de baja desde cualquier correo y ejercer tus derechos de acceso, rectificación y supresión escribiéndonos.",
-    "privacyContact": "Escríbenos a <mail>{email}</mail>."
+    "privacyContact": "Escríbenos a <mail>{email}</mail>.",
+    "privacyMore": "Más información en la <link>política de privacidad</link>."
   },
   "footer": {
     "tagline": "Perfumería árabe en Castelldefels.",
@@ -109,7 +110,8 @@
     "info": "Información",
     "rights": "© {year} L’Atelier du Désert",
     "staffAccess": "Acceso del equipo",
-    "faq": "Preguntas frecuentes"
+    "faq": "Preguntas frecuentes",
+    "legal": "Legal"
   },
   "faq": {
     "eyebrow": "Dudas",

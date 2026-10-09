@@ -417,3 +417,13 @@ Formato de la Fase 0 §16: fecha · contexto · decisión · alternativas descar
      - `adhara-web` se renombra a `altier-web` (mismo id `prj_i8BphtVWLp68IZtvH9GrKlDRjK5L`, mismas variables, Git y protección) y se añade `altier-web.vercel.app`. `adhara-web.vercel.app` se mantiene mientras siga en la configuración de Auth de Supabase.
      - El proyecto `soapbrxnd` (sin relación con la tienda) queda pausado, no borrado; borrarlo es irreversible y lo decide el usuario.
      - El equipo de Vercel se llama SOAPBRXND porque es el equipo por defecto de la cuenta Hobby; no se puede mover el proyecto a otro equipo sin plan Pro. Cambiar su nombre y su URL (`soapbrxnd`) se hace en el panel de Vercel (Settings → General) y cambia las URL `*-soapbrxnd.vercel.app` de los despliegues.
+
+## Textos legales — 09/10/2026
+
+113. **Textos legales en borrador, visibles en la web**, a petición del usuario («prepara los términos legales, política de privacidad, cookies, envíos y devoluciones […] para luego hacer revisión con el cliente; quiero que esto sea visible en la web primero»). Guía de revisión en [LEGAL.md](LEGAL.md).
+     - **Cinco textos** en es, ca y en con rutas traducidas: aviso legal, condiciones de venta, privacidad, cookies y envíos y devoluciones (con el modelo de formulario de desistimiento). Enlazados en una columna «Legal» del pie y, la privacidad, desde el aviso de la suscripción.
+     - **En el código y no en la base** (`src/modules/legal`): son textos que cambian poco y deben revisarse por PR, con historial; no necesitan migración en `adhara-dev`. Una prueba exige las mismas secciones, marcadores y enlaces en los tres idiomas.
+     - **Sin datos inventados:** titular, NIF, domicilio social, registro, dominio, envíos, pagos y arbitraje valen `null` en `LEGAL_ENTITY` y la página muestra «Pendiente: …» en su lugar (pendiente 8). Correo, teléfono y dirección salen del panel, como el pie.
+     - **Decisiones de negocio supuestas** (perfumes desprecintados sin desistimiento, devolución a cargo del cliente, recogida en tienda, mayoría de edad para comprar, 14 años para el Club) listadas en LEGAL.md para confirmarlas con el cliente.
+     - **Sin aviso de cookies:** solo hay cookies técnicas (idioma, sesión y vista previa del equipo, protección de Vercel), exentas por el art. 22.2 LSSI. Cualquier analítica o contenido de terceros obliga a añadir consentimiento previo.
+     - No es asesoramiento jurídico: la asesoría debe revisarlos antes de abrir la web al público.
