@@ -19,7 +19,7 @@ const DATA = new URL(
   import.meta.url,
 );
 const MIGRATION = new URL(
-  '../../supabase/migrations/20261009150000_scent_profiles.sql',
+  '../../supabase/migrations/20261009161818_scent_profiles.sql',
   import.meta.url,
 );
 

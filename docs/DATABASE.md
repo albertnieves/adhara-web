@@ -35,8 +35,8 @@ Una migración por tema, aplicadas en `adhara-dev` con el conector de Supabase y
 | `20260930224000` | Compras a proveedor, mostrador y vigilante de reposición                                                             |
 | `20261001090000` | Informes (existencias, cierre, compras)                                                                              |
 | `20261002044249` | Informe diario y uso del asistente                                                                                   |
-| `20261009150000` | Perfil olfativo de cada perfume (catálogo olfativo de la tienda)                                                     |
-| `20261009150100` | Suscriptores a promociones y alta pública `newsletter_subscribe`                                                     |
+| `20261009161818` | Perfil olfativo de cada perfume (catálogo olfativo de la tienda)                                                     |
+| `20261009164152` | Suscriptores a promociones y alta pública `newsletter_subscribe`                                                     |
 
 No hay `seed.sql`: los datos de referencia (permisos, matriz de roles, ubicación de la tienda, parámetros del vigilante) viven en las migraciones. Las cargas de datos reales están en `supabase/data/` y se aplicaron una vez en `adhara-dev`; no forman parte de `db reset`.
 
