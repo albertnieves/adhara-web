@@ -254,6 +254,45 @@ export type Database = {
           },
         ];
       };
+      newsletter_subscribers: {
+        Row: {
+          consent_version: string;
+          consented_at: string;
+          created_at: string;
+          email: string;
+          id: string;
+          locale: string;
+          sender_synced_at: string | null;
+          source: string;
+          unsubscribed_at: string | null;
+          updated_at: string;
+        };
+        Insert: {
+          consent_version: string;
+          consented_at?: string;
+          created_at?: string;
+          email: string;
+          id?: string;
+          locale: string;
+          sender_synced_at?: string | null;
+          source?: string;
+          unsubscribed_at?: string | null;
+          updated_at?: string;
+        };
+        Update: {
+          consent_version?: string;
+          consented_at?: string;
+          created_at?: string;
+          email?: string;
+          id?: string;
+          locale?: string;
+          sender_synced_at?: string | null;
+          source?: string;
+          unsubscribed_at?: string | null;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
       permissions: {
         Row: {
           code: string;
@@ -311,6 +350,56 @@ export type Database = {
             foreignKeyName: 'product_media_product_id_fkey';
             columns: ['product_id'];
             isOneToOne: false;
+            referencedRelation: 'products';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      product_scent_profiles: {
+        Row: {
+          base_notes: string[];
+          families: string[];
+          heart_notes: string[];
+          key_notes: string[];
+          product_id: string;
+          seasons: string[];
+          source_note: string | null;
+          source_url: string;
+          times_of_day: string[];
+          top_notes: string[];
+          updated_at: string;
+        };
+        Insert: {
+          base_notes?: string[];
+          families?: string[];
+          heart_notes?: string[];
+          key_notes?: string[];
+          product_id: string;
+          seasons?: string[];
+          source_note?: string | null;
+          source_url: string;
+          times_of_day?: string[];
+          top_notes?: string[];
+          updated_at?: string;
+        };
+        Update: {
+          base_notes?: string[];
+          families?: string[];
+          heart_notes?: string[];
+          key_notes?: string[];
+          product_id?: string;
+          seasons?: string[];
+          source_note?: string | null;
+          source_url?: string;
+          times_of_day?: string[];
+          top_notes?: string[];
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'product_scent_profiles_product_id_fkey';
+            columns: ['product_id'];
+            isOneToOne: true;
             referencedRelation: 'products';
             referencedColumns: ['id'];
           },
@@ -1111,6 +1200,15 @@ export type Database = {
           valid_from: string;
           valid_to: string;
         }[];
+      };
+      newsletter_subscribe: {
+        Args: {
+          p_consent_version: string;
+          p_email: string;
+          p_locale: string;
+          p_source?: string;
+        };
+        Returns: undefined;
       };
       record_audit_event: {
         Args: {

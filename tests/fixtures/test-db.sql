@@ -39,4 +39,12 @@ insert into internal.supplier_variants (supplier_id, variant_id, supplier_sku) v
 update public.products set status = 'published'
   where id = '00000000-0000-4000-8000-00000000ce02';
 
+-- Perfil olfativo ficticio para tests/e2e/newsletter-scent.spec.ts.
+insert into public.product_scent_profiles
+  (product_id, top_notes, heart_notes, base_notes, families, seasons,
+   times_of_day, source_url)
+values
+  ('00000000-0000-4000-8000-00000000ce02', '{bergamot}', '{rose}', '{amber}',
+   '{floral}', '{winter}', '{night}', 'https://example.invalid/centinela');
+
 commit;

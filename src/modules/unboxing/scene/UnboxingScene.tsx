@@ -43,6 +43,7 @@ export function UnboxingScene({
         position: [0, 1, 6],
       }}
       gl={{ antialias: true }}
+      role="img"
       aria-label={label}
     >
       {/*

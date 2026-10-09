@@ -18,6 +18,8 @@ Procedencia simplificada (DECISIONS §30), sin las tablas de claims, fuentes y c
 | Marca deducida          | `source_ref` marcado «por revisar»                             | Páginas 2–26 del PDF, donde el catálogo no indica la marca (DECISIONS §54)                                                                            |
 | Coste                   | `internal.variant_cost_records.note`                           | Albarán o importación del CSV del catálogo                                                                                                            |
 
+| Perfil olfativo | `product_scent_profiles.source_url` y `source_note` | Pirámide y «Época del año recomendada» de la ficha de orientfragance.com; pirámide de armaf.com o lattafa-usa.com cuando el distribuidor no la tiene |
+
 Todas las imágenes actuales son provisionales hasta tener fotos propias y revisar los derechos de las oficiales antes de abrir la web al público.
 
 ## Orígenes de un dato (Fase 4)
@@ -42,7 +44,20 @@ Fabricante > distribuidor oficial > tienda especializada > base de datos de perf
 4. La completitud se recalcula por grupos de campos (identificación, perfil olfativo, variante comercial, media y contenido).
 5. La investigación asistida por IA solo crea claims propuestos con su evidencia, nunca aceptados.
 
-La taxonomía de familias olfativas y notas no se siembra: se construirá desde el research para no inventarla (DECISIONS §86).
+La taxonomía de familias olfativas y notas no se siembra: se construirá desde el research para no inventarla (DECISIONS §86). El primer paso es el vocabulario de notas del catálogo olfativo (`src/modules/catalog/domain/scent.ts`), que solo contiene las notas que aparecen en las fuentes de los perfiles cargados (DECISIONS §108).
+
+## Perfiles olfativos (09/10/2026)
+
+Research de los 50 perfumes publicados, para el catálogo olfativo de la tienda. Datos en `supabase/data/20261009_perfiles_olfativos.sql`.
+
+- **Fuente principal:** la ficha del distribuidor oficial en España (orientfragance.com), la misma que da el PVP. Se leyó en JSON (`/products/<handle>.json`) para copiar las notas sin errores de transcripción.
+- **Sin ficha del distribuidor:** la web de la marca (armaf.com para Club de Nuit Intense y su Limited Edition; lattafa-usa.com para Asad, Khamrah y Yara).
+- **Notas:** las que da la fuente, en su piso (salida, corazón, fondo). Si la fuente no las separa (Miss Sakura), van como notas principales. Las genéricas de la fuente («cítricos», «maderas nobles», «flores») se guardan como tales, sin concretarlas.
+- **Familias:** las categorías que la propia tienda del distribuidor asigna al perfume (Amaderado, Cítrico, Oriental, Floral, Gourmand, Fresco, Acuático) o su bloque «Familia olfativa»; en lattafa-usa.com, la familia de su descripción (Amber, Aromatic Spicy).
+- **Estación y momento:** solo cuando la ficha tiene «Época del año recomendada» u otra indicación explícita («noches de invierno», «uso diurno»). «Uso diario» no se interpreta como «día».
+- **Estuches** (The Collection, Little Garden): solo la época que indica la fuente, sin pirámide.
+- **Sin fuente, sin perfil:** Pharaoh Ramesses II, Game of Spades Blind Bid (la marca no publica notas) y Yara Aceite Concentrado (comprado como «Yara Rosa 20 ml»; ni el distribuidor ni la marca lo venden). Se muestran en el catálogo sin pirámide.
+- **Fragrantica y Parfumo** (votos de la comunidad sobre estaciones) bloquean el acceso automático; no se usaron.
 
 ## Pendiente para completar este documento
 

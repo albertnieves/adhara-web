@@ -7,6 +7,7 @@ import { BRAND_NAME } from '@/modules/brand';
 import { routing } from '@/modules/i18n';
 import { requireLocale } from '@/modules/i18n/server';
 import { siteUrl } from '@/modules/i18n/seo';
+import { NewsletterSection } from '@/modules/newsletter/server';
 import { Footer, Header, PreviewBanner } from '@/modules/storefront';
 import { fontVariables } from '../fonts';
 import '../globals.css';
@@ -56,6 +57,7 @@ export default async function LocaleLayout({
           </a>
           <Header />
           <div id="contenido">{children}</div>
+          <NewsletterSection />
           <Footer />
           {draft.isEnabled && <PreviewBanner />}
         </NextIntlClientProvider>

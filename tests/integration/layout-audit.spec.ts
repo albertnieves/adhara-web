@@ -34,6 +34,7 @@ const ROUTES = [
   '/admin/informes/compras',
   '/admin/informes/auditoria',
   '/admin/contenido',
+  '/admin/suscriptores',
   '/admin/configuracion',
   '/admin/equipo',
   '/admin/asistente',
