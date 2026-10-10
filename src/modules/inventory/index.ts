@@ -50,12 +50,17 @@ export {
   MAX_LINE_QUANTITY,
   MAX_TICKET_LINES,
   MAX_TICKET_REF,
+  MAX_UNIT_PRICE_CENTS,
   addToTicket,
   findByCode,
+  linePrice,
+  linesAboveRetail,
   linesWithoutStock,
   normalizeSearch,
   searchVariants,
+  setLinePrice,
   setLineQuantity,
+  ticketTotal,
   ticketUnits,
 } from './domain/counter';
 export type {

@@ -118,10 +118,19 @@ export default async function PanelLayout({
     { role: staff.role, aal: 'aal2' },
     'catalog.edit',
   );
+  const canControl = isAllowed(
+    { role: staff.role, aal: 'aal2' },
+    'business.control',
+  );
   const shortcut =
     'text-fg-muted hover:text-fg inline-flex min-h-11 items-center text-left text-xs tracking-caps uppercase';
   const shortcuts = (
     <>
+      {canControl && (
+        <Link href="/admin/control" className={shortcut}>
+          Control del negocio
+        </Link>
+      )}
       {canPreview && (
         <form action={enterStorefrontPreview}>
           <button type="submit" className={shortcut}>

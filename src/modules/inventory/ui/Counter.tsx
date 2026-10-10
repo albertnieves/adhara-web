@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useMemo, useState, useTransition } from 'react';
-import { formatEuros } from '@/lib/money';
+import { formatEuros, parseEuros } from '@/lib/money';
 import { newRequestId } from '@/lib/request-id';
 import type { CounterItem, CounterKind, TicketLine } from '../domain/counter';
 import {
@@ -11,8 +11,12 @@ import {
   MAX_LINE_QUANTITY,
   MAX_TICKET_REF,
   addToTicket,
+  linePrice,
+  linesAboveRetail,
   linesWithoutStock,
+  setLinePrice,
   setLineQuantity,
+  ticketTotal,
   ticketUnits,
 } from '../domain/counter';
 import type { CounterResult } from '../server/counter';
@@ -22,10 +26,16 @@ import { buttonClass, Card, Input } from '@/components/ui';
 
 type Pending = { requestId: string; signature: string };
 
+/** Céntimos → «29,95» para el campo de precio. */
+function priceText(cents: number): string {
+  return (cents / 100).toFixed(2).replace('.', ',');
+}
+
 /**
- * Mostrador para la tablet: buscar o escanear, ajustar unidades y descontar.
- * La misma clave de petición se reutiliza si se reintenta el mismo ticket
- * (doble toque, red lenta) y cambia en cuanto cambia el ticket.
+ * Mostrador para la tablet: buscar o escanear, ajustar unidades y precio, y
+ * descontar. Cada línea cobra el PVP salvo que se indique otro precio (un
+ * descuento). La misma clave de petición se reutiliza si se reintenta el mismo
+ * ticket (doble toque, red lenta) y cambia en cuanto cambia el ticket.
  */
 export function Counter({
   items,
@@ -41,16 +51,44 @@ export function Counter({
   const [kind, setKind] = useState<CounterKind>('sale');
   const [lines, setLines] = useState<TicketLine[]>([]);
   const [ticketRef, setTicketRef] = useState('');
+  // Lo tecleado en cada precio, para no perder un «29,» a medio escribir.
+  const [priceDrafts, setPriceDrafts] = useState<Record<string, string>>({});
   const [result, setResult] = useState<CounterResult | null>(null);
   const [pendingRequest, setPendingRequest] = useState<Pending | null>(null);
   const [pending, startTransition] = useTransition();
 
   const blocked = linesWithoutStock(lines, byId, kind);
+  const aboveRetail = linesAboveRetail(lines, byId);
+  const invalidPrice = lines
+    .filter((line) => {
+      const draft = priceDrafts[line.variantId]?.trim();
+      return Boolean(draft) && parseEuros(draft!) === null;
+    })
+    .map((line) => line.variantId);
   const units = ticketUnits(lines);
+  const total = ticketTotal(lines, byId);
   const signature = JSON.stringify([kind, lines, ticketRef.trim()]);
+
+  function editPrice(variantId: string, text: string) {
+    setPriceDrafts({ ...priceDrafts, [variantId]: text });
+    const cents = text.trim() ? parseEuros(text) : null;
+    if (text.trim() && cents === null) {
+      setResult(null);
+      return;
+    }
+    edit(setLinePrice(lines, variantId, cents));
+  }
 
   function edit(next: TicketLine[]) {
     setLines(next);
+    // Una línea quitada pierde su precio escrito: si vuelve, cobra el PVP.
+    setPriceDrafts((drafts) =>
+      Object.fromEntries(
+        Object.entries(drafts).filter(([id]) =>
+          next.some((line) => line.variantId === id),
+        ),
+      ),
+    );
     setResult(null);
   }
 
@@ -72,6 +110,7 @@ export function Counter({
         setResult(response);
         if (response.status === 'ok') {
           setLines([]);
+          setPriceDrafts({});
           setTicketRef('');
           setPendingRequest(null);
         }
@@ -134,8 +173,9 @@ export function Counter({
         />
         <p className="text-fg-muted text-xs leading-relaxed">
           Con un lector de códigos, escanea directamente en el buscador. El
-          panel no emite tickets: registra lo que se vende en la caja o el TPV
-          para que el stock de la web sea real.
+          panel no emite tickets: registra lo que se vende en la caja o el TPV,
+          con el precio cobrado, para que el stock de la web y las ventas sean
+          reales. Si hay descuento, escribe el precio por unidad cobrado.
         </p>
       </section>
 
@@ -156,13 +196,17 @@ export function Counter({
             {lines.map((line) => {
               const item = byId.get(line.variantId);
               const short = blocked.includes(line.variantId);
+              const badPrice =
+                aboveRetail.includes(line.variantId) ||
+                invalidPrice.includes(line.variantId);
+              const price = linePrice(line, item);
               const failed =
                 result?.status === 'error' &&
                 result.variantId === line.variantId;
               return (
                 <li
                   key={line.variantId}
-                  className={`space-y-2 py-3 ${short || failed ? 'text-danger' : ''}`}
+                  className={`space-y-2 py-3 ${short || failed || badPrice ? 'text-danger' : ''}`}
                 >
                   <div className="min-w-0 text-sm">
                     <p>
@@ -231,10 +275,55 @@ export function Counter({
                       Quitar
                     </button>
                   </div>
+                  <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+                    <label className="flex items-center gap-2 text-xs">
+                      <span className="text-fg-muted">Precio/ud.</span>
+                      <Input
+                        inputMode="decimal"
+                        autoComplete="off"
+                        value={priceDrafts[line.variantId] ?? ''}
+                        placeholder={
+                          item?.priceCents != null
+                            ? priceText(item.priceCents)
+                            : 'Sin PVP'
+                        }
+                        aria-invalid={badPrice || undefined}
+                        onChange={(event) =>
+                          editPrice(line.variantId, event.target.value)
+                        }
+                        className={`h-11 w-28! text-right tabular-nums ${badPrice ? 'border-danger' : ''}`}
+                      />
+                      <span className="text-fg-muted">€</span>
+                    </label>
+                    <span
+                      className={`ml-auto text-sm tabular-nums ${badPrice ? 'text-danger' : ''}`}
+                    >
+                      {price === null
+                        ? 'Sin precio'
+                        : formatEuros(price * line.quantity, 'es')}
+                    </span>
+                  </div>
                 </li>
               );
             })}
           </ul>
+        )}
+
+        {lines.length > 0 && (
+          <div className="flex items-baseline justify-between gap-4">
+            <p className="text-fg-muted text-2xs tracking-caps font-semibold uppercase">
+              {kind === 'sale' ? 'Total cobrado' : 'Total devuelto'} (IVA incl.)
+            </p>
+            <p className="font-display text-3xl font-light tabular-nums">
+              {formatEuros(total.totalCents, 'es')}
+            </p>
+          </div>
+        )}
+        {total.unpriced.length > 0 && (
+          <p className="text-fg-muted text-xs">
+            Hay líneas sin PVP: indica el precio cobrado para que cuenten en las
+            ventas.
+          </p>
         )}
 
         <label className="flex flex-col gap-1.5">
@@ -255,6 +344,14 @@ export function Counter({
           </span>
         </label>
 
+        {(aboveRetail.length > 0 || invalidPrice.length > 0) && (
+          <p className="text-danger text-sm" role="alert">
+            {invalidPrice.length > 0
+              ? 'Revisa el precio de las líneas en rojo (por ejemplo, 29,95).'
+              : 'El precio cobrado no puede superar el PVP: solo se aplican descuentos.'}
+          </p>
+        )}
+
         {blocked.length > 0 && (
           <p className="text-danger text-sm" role="alert">
             No hay unidades suficientes en el sistema para las líneas en rojo.
@@ -269,7 +366,13 @@ export function Counter({
         <button
           type="button"
           onClick={submit}
-          disabled={pending || lines.length === 0 || blocked.length > 0}
+          disabled={
+            pending ||
+            lines.length === 0 ||
+            blocked.length > 0 ||
+            aboveRetail.length > 0 ||
+            invalidPrice.length > 0
+          }
           className={buttonClass('primary', 'md', 'min-h-14 w-full')}
         >
           {pending

@@ -1,7 +1,8 @@
 /**
  * Mostrador: ventas y devoluciones de la tienda física desde la tablet. El
- * panel no emite tickets ni guarda importes; descuenta unidades y guarda el
- * nº de ticket del TPV o de la caja. La venta se aplica en SQL todo o nada
+ * panel no emite tickets: descuenta unidades, guarda el precio cobrado por
+ * línea (el PVP, o menos si hubo descuento; DECISIONS §114) y el nº de ticket
+ * del TPV o de la caja. La venta se aplica en SQL todo o nada
  * (admin_record_store_sale); aquí se preparan las líneas y se avisa antes.
  */
 
@@ -29,12 +30,20 @@ export type SearchableVariant = {
 };
 
 export type CounterItem = SearchableVariant & {
-  /** PVP con IVA, solo como referencia para quien atiende. */
+  /** PVP con IVA vigente: el precio por defecto de cada línea. */
   priceCents: number | null;
   available: number;
 };
 
-export type TicketLine = { variantId: string; quantity: number };
+export type TicketLine = {
+  variantId: string;
+  quantity: number;
+  /** Precio cobrado por unidad con IVA; sin él, el PVP vigente. */
+  unitPriceCents?: number | null;
+};
+
+/** Tope del precio por unidad (el de la función SQL). */
+export const MAX_UNIT_PRICE_CENTS = 10_000_000;
 
 /** Minúsculas sin tildes ni espacios sobrantes, para buscar. */
 export function normalizeSearch(text: string): string {
@@ -138,5 +147,59 @@ export function linesWithoutStock(
     .filter(
       (line) => line.quantity > (items.get(line.variantId)?.available ?? 0),
     )
+    .map((line) => line.variantId);
+}
+
+/** Cambia el precio cobrado de una línea; null vuelve al PVP. */
+export function setLinePrice(
+  lines: readonly TicketLine[],
+  variantId: string,
+  unitPriceCents: number | null,
+): TicketLine[] {
+  return lines.map((line) =>
+    line.variantId === variantId ? { ...line, unitPriceCents } : line,
+  );
+}
+
+/** Precio por unidad que se cobrará: el indicado o el PVP; null si no hay. */
+export function linePrice(
+  line: TicketLine,
+  item: CounterItem | undefined,
+): number | null {
+  return line.unitPriceCents ?? item?.priceCents ?? null;
+}
+
+/** Importe del ticket con IVA y líneas sin precio (ni indicado ni PVP). */
+export function ticketTotal(
+  lines: readonly TicketLine[],
+  items: ReadonlyMap<string, CounterItem>,
+): { totalCents: number; unpriced: string[] } {
+  let totalCents = 0;
+  const unpriced: string[] = [];
+  for (const line of lines) {
+    const price = linePrice(line, items.get(line.variantId));
+    if (price === null) unpriced.push(line.variantId);
+    else totalCents += price * line.quantity;
+  }
+  return { totalCents, unpriced };
+}
+
+/**
+ * Líneas con un precio por encima del PVP. Solo se cobran descuentos: un
+ * precio mayor suele ser un cero de más. SQL lo vuelve a comprobar.
+ */
+export function linesAboveRetail(
+  lines: readonly TicketLine[],
+  items: ReadonlyMap<string, CounterItem>,
+): string[] {
+  return lines
+    .filter((line) => {
+      const retail = items.get(line.variantId)?.priceCents ?? null;
+      return (
+        line.unitPriceCents != null &&
+        retail !== null &&
+        line.unitPriceCents > retail
+      );
+    })
     .map((line) => line.variantId);
 }

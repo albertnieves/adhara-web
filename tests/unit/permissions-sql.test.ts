@@ -15,6 +15,15 @@ const sql = readFileSync(
   'utf8',
 );
 
+// Permisos añadidos después, con su asignación (control del negocio, DECISIONS §113).
+const later = readFileSync(
+  new URL(
+    '../../supabase/migrations/20261010120000_business_control.sql',
+    import.meta.url,
+  ),
+  'utf8',
+);
+
 const guards = readFileSync(
   new URL(
     '../../supabase/migrations/20260930220818_admin_mfa_guards.sql',
@@ -28,14 +37,19 @@ const allowedAal1 = [
   ),
 ].map((match) => match[1]);
 
-function valuesOf(table: string): string[][] {
-  const block = sql.split(`insert into public.${table}`)[1]?.split(';')[0];
+function valuesIn(source: string, table: string): string[][] {
+  const block = source.split(`insert into public.${table}`)[1]?.split(';')[0];
   if (!block) throw new Error(`Sin datos para ${table}`);
   return [...block.matchAll(/\(([^()]+)\)/g)]
     .slice(1)
     .map((row) =>
       (row[1] ?? '').split(',').map((cell) => cell.trim().replace(/'/g, '')),
     );
+}
+
+/** Filas de la siembra inicial seguidas de las de migraciones posteriores. */
+function valuesOf(table: string): string[][] {
+  return [...valuesIn(sql, table), ...valuesIn(later, table)];
 }
 
 describe('la migración refleja la matriz de permisos del código', () => {

@@ -4,10 +4,14 @@ import {
   MAX_LINE_QUANTITY,
   addToTicket,
   findByCode,
+  linePrice,
+  linesAboveRetail,
   linesWithoutStock,
   normalizeSearch,
   searchVariants,
+  setLinePrice,
   setLineQuantity,
+  ticketTotal,
   ticketUnits,
 } from '@/modules/inventory';
 
@@ -92,5 +96,51 @@ describe('líneas del ticket', () => {
     ];
     expect(linesWithoutStock(lines, byId, 'sale')).toEqual(['khamrah', 'club']);
     expect(linesWithoutStock(lines, byId, 'return')).toEqual([]);
+  });
+});
+
+describe('precio cobrado en el mostrador', () => {
+  const byId = new Map([
+    ['a', item({ variantId: 'a', priceCents: 4950 })],
+    ['b', item({ variantId: 'b', priceCents: null })],
+  ]);
+
+  it('cada línea cobra el PVP salvo que se indique otro precio', () => {
+    const lines = addToTicket(addToTicket([], 'a', 2), 'b');
+    expect(linePrice(lines[0]!, byId.get('a'))).toBe(4950);
+    const discounted = setLinePrice(lines, 'a', 3995);
+    expect(linePrice(discounted[0]!, byId.get('a'))).toBe(3995);
+    expect(setLinePrice(discounted, 'a', null)[0]!.unitPriceCents).toBeNull();
+    // Cambiar unidades conserva el precio indicado.
+    expect(addToTicket(discounted, 'a')[0]).toEqual({
+      variantId: 'a',
+      quantity: 3,
+      unitPriceCents: 3995,
+    });
+  });
+
+  it('total del ticket y líneas sin precio', () => {
+    const lines = setLinePrice(
+      addToTicket(addToTicket([], 'a', 2), 'b'),
+      'a',
+      4000,
+    );
+    expect(ticketTotal(lines, byId)).toEqual({
+      totalCents: 8000,
+      unpriced: ['b'],
+    });
+    expect(ticketTotal(setLinePrice(lines, 'b', 1500), byId)).toEqual({
+      totalCents: 9500,
+      unpriced: [],
+    });
+  });
+
+  it('no se cobra por encima del PVP; sin PVP, cualquier precio', () => {
+    const lines = setLinePrice(
+      setLinePrice(addToTicket(addToTicket([], 'a'), 'b'), 'a', 49500),
+      'b',
+      99900,
+    );
+    expect(linesAboveRetail(lines, byId)).toEqual(['a']);
   });
 });

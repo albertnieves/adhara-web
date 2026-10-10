@@ -26,6 +26,8 @@ Para PVP: escribir, revisar, confirmar avisos y aplicar. La revisión caduca en 
 
 Para recibir mercancía: Inventario → formato → Movimiento → Recepción, con unidades y referencia. El reintento del mismo formulario no duplica stock. Para una segunda operación intencionada con los mismos valores, cerrar y abrir el formulario. Corregir errores con movimientos compensatorios o recuentos; nunca borrando el historial. Mostrador, Compras, Reposición e Informes conservan los flujos de las fases R/S.
 
+En el Mostrador, cada línea cobra el PVP salvo que se escriba otro precio por unidad en «Precio/ud.» (un descuento; nunca por encima del PVP). El ticket muestra el total con IVA, y las últimas operaciones, su importe. Ese precio es el que suman las ventas del control; las ventas anteriores a este cambio se estiman con el PVP.
+
 ## Perfil olfativo y catálogo olfativo
 
 Catálogo → ficha del perfume → «Perfil olfativo». Las notas se escriben como claves separadas por comas (`bergamot, rose`); la lista «Notas disponibles» da cada clave con su nombre. Una clave que no existe no se guarda: si hace falta una nota nueva, se añade al vocabulario del código con su nombre en es, ca y en. La URL `https` de la fuente es obligatoria y las estaciones y el momento solo se marcan si la fuente los indica. El catálogo olfativo de la tienda (`/es/catalogo-olfativo`) se actualiza al guardar; no muestra precio ni compra.
@@ -35,6 +37,16 @@ Catálogo → ficha del perfume → «Perfil olfativo». Las notas se escriben c
 Web → Suscriptores muestra las altas de la sección «Club L’Atelier» de la tienda (con `customers.view`), su idioma, fecha y estado: pendiente, en Sender o baja. «Exportar CSV» descarga la lista para importarla en Sender o abrirla en Excel. Con `customers.manage` (MFA) se puede dar de baja o borrar (derecho de supresión); si Sender está conectado, el cambio se hace también allí.
 
 Para conectar Sender: crear en Sender un token de API (Settings → API access tokens) y, si se quiere, un grupo «Web»; en Vercel, solo servidor, `SENDER_API_TOKEN` y `SENDER_GROUP_ID` (el id del grupo). Desde entonces cada alta se envía a Sender al momento; las que fallen quedan pendientes y se envían con «Enviar pendientes a Sender». Las campañas y los descuentos se preparan y envían en Sender. Las bajas que la gente haga desde el enlace de los correos quedan en Sender. No pegar el token en el chat.
+
+## Control del negocio y del proyecto
+
+Solo para el administrador del sistema con MFA (permiso `business.control`): «Control del negocio», en el pie del menú del panel, abre `/admin/control`, una sección aparte con su propio menú. «Panel de la tienda» vuelve al panel.
+
+- **Resumen:** ventas sin IVA, margen bruto, costes y beneficio del mes con su evolución en 12 meses; tareas abiertas, vencidas y que esperan al cliente; lo pendiente de cobrar y el balance del proyecto; lo urgente y las próximas entregas.
+- **Ventas y beneficio:** mes a mes (6, 12 o 24 meses) unidades, ventas con y sin IVA, coste de lo vendido, margen, costes del negocio, beneficio y compras recibidas, y lo más vendido. Lo estimado con el PVP y las unidades sin coste se señalan: registra los costes que falten en Catálogo o al recibir un pedido.
+- **Costes:** gastos fijos o puntuales sin IVA, del negocio (alquiler, asesoría, suministros…: restan del beneficio) o del proyecto (dominio, alojamiento, servicios…). Mensual, anual (se carga cada año en el mes de inicio) o puntual. Cuando un coste deja de pagarse, ponle fecha de fin en vez de borrarlo, para que siga contando en los meses pasados.
+- **Tareas:** con área, estado, prioridad, responsable (yo, cliente u otra persona) y fecha límite. «Hecha» la cierra desde la lista; las hechas se ven en «Hechas».
+- **Entregas:** cada entrega al cliente con su estado, fechas, referencia (PR o enlace), importe sin IVA y facturación (por facturar, facturada, cobrada, no se factura o sin decidir).
 
 ## Moverse por el panel
 

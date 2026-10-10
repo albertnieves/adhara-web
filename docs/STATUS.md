@@ -1,6 +1,19 @@
-# Estado real — 09/10/2026
+# Estado real — 10/10/2026
 
 **Tienda visual (es/ca/en) y panel de administración operativos sobre `adhara-dev`, desplegados en Vercel, que sigue siendo privado (Vercel Authentication). `main` incluye las fases R y S (PR #9), la entrega de acceso y edición de Codex (PR #10) y el panel con el asistente (PR #11); sus 17 migraciones están aplicadas en `adhara-dev` (comprobado el 02/10). La tienda muestra 50 perfumes publicados con PVP. La Fase 1 está cerrada (PR #12): sus 19 criterios están cumplidos o con una excepción escrita ([informe](phases/FASE_1_REPORT.md)). La Fase 2 (sistema de diseño) está terminada a falta de la revisión visual del usuario ([informe](phases/FASE_2_REPORT.md)): 12 de 13 criterios cumplidos. Siguiente: checkout con pago con tarjeta, que espera los datos del TPV virtual (ver «Pendiente del usuario»).**
+
+## Control del negocio y del proyecto (10/10, rama `claude/serene-dirac-rsrqcx`)
+
+A petición del usuario: un panel aparte para gestionar el cliente y el negocio. Decisiones §113–117; guía en [ADMIN_OPERATIONS.md](ADMIN_OPERATIONS.md#control-del-negocio-y-del-proyecto). **La migración `20261010120000_business_control.sql` está validada en Supabase local y pendiente de aplicar en `adhara-dev` con autorización del usuario**; hasta entonces, el control y el mostrador desplegados fallarían al leer sus tablas y columnas nuevas, así que esta rama no debe desplegarse antes que la migración.
+
+- **`/admin/control`**, sección aparte con su propio menú, solo para el administrador del sistema con MFA (permiso nuevo `business.control`; el administrador de la tienda recibe 404). Enlazada como «Control del negocio» en el pie del menú del panel.
+  - **Resumen:** ventas sin IVA, margen, costes y beneficio del mes y su evolución en 12 meses; tareas abiertas, vencidas y del cliente; pendiente de cobrar y balance del proyecto; lo urgente y las próximas entregas.
+  - **Ventas y beneficio:** cuenta de resultados mes a mes (6, 12 o 24 meses) con compras recibidas y lo más vendido.
+  - **Costes:** fijos y puntuales del negocio o del proyecto, mensuales, anuales o puntuales, con lo pagado cada mes.
+  - **Tareas** y **Entregas** al cliente, con importe y estado de facturación.
+- **El mostrador guarda el precio cobrado** por línea (PVP por defecto, descuento si se escribe otro, nunca por encima del PVP) y muestra el total. Las ventas anteriores se estiman con el PVP vigente.
+- **Carga inicial opcional** `supabase/data/20261010_control_inicial.sql`: 15 tareas de «Pendiente del usuario» y 8 entregas (6 fusionadas con su PR, la de esta rama y el checkout), sin importes ni costes.
+- **Comprobado en local** (Supabase local reiniciado, en el orden de la CI): pgTAP 329/329 en 10 archivos (36 nuevas); tipos generados iguales; `db lint` sin errores; concurrencia correcta (también el mostrador); unitarias 330/330 (24 nuevas); `pnpm check` correcto; E2E de la tienda 171 pasan y 15 omitidas (una ejecución anterior tuvo un fallo intermitente en el catálogo olfativo, ajeno a este cambio, que pasa al repetirla); recorridos autenticados 19/19, con los del control (venta con descuento en el mostrador, costes, tareas, entregas y 404 para el administrador de la tienda) y la auditoría de diseño y axe de 33 pantallas del panel, las 8 del control incluidas.
 
 ## Catálogo olfativo, suscripción a promociones y tienda sin etiquetas provisionales (09/10, rama `claude/adoring-mayer-jvv46o`)
 
@@ -248,6 +261,8 @@ El 30/09 la misma cuenta se reactivó temporalmente (rol de tienda) para validar
 La revisión visual con perfumes se hizo en local con un Supabase simulado que devolvía los 4 perfumes del piloto como publicados y **sin precio**; no se modificó la base de datos.
 
 ## Pendiente del usuario
+
+- **Control del negocio (10/10):** autorizar que se aplique en `adhara-dev` la migración `20261010120000_business_control.sql` (antes de desplegar la rama) y, si se quiere, la carga `20261010_control_inicial.sql`; después, dar de alta los costes reales (alquiler, servicios, asesoría…) y completar importes y facturación de las entregas en `/admin/control`.
 
 0. **Catálogo olfativo y suscripción (09/10):** autorizar que se apliquen en `adhara-dev` las migraciones `20261009150000` y `20261009150100` y la carga `20261009_perfiles_olfativos.sql`; crear en Sender un token de API (y un grupo «Web») y ponerlos en Vercel, solo servidor, como `SENDER_API_TOKEN` y `SENDER_GROUP_ID`; activar en Sender la doble confirmación o un correo de bienvenida; y que la asesoría revise el texto de privacidad de la suscripción junto con los textos legales (punto 8).
 

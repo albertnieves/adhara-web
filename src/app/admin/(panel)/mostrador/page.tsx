@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { formatEuros } from '@/lib/money';
 import { PageHeader } from '@/modules/admin';
 import { COUNTER_KIND_LABELS } from '@/modules/inventory';
 import {
@@ -87,9 +88,14 @@ export default async function CounterPage() {
                     ))}
                   </ul>
                 </div>
-                <span className="tabular-nums">
+                <span className="text-right tabular-nums">
                   {sale.kind === 'sale' ? '−' : '+'}
                   {sale.units}
+                  {sale.amountCents !== null && (
+                    <span className="text-fg-muted block text-xs">
+                      {formatEuros(sale.amountCents, 'es')}
+                    </span>
+                  )}
                 </span>
               </li>
             ))}

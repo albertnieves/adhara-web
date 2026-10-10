@@ -27,6 +27,7 @@ Proyecto de desarrollo: **`adhara-dev`** (ref `xgpsislololgbakzcmad`), región `
 | 20261002044249 | Asistente (aplicada en `adhara-dev` el 02/10): `daily_reports` (lectura con `agent.use`, escritura solo del servidor), `assistant_usage` (solo inserción), `admin_open_purchase_orders` sin proveedor ni costes y lectura del vigilante también para la tarea programada (`service_role`) |
 | 20261009150000 | Perfil olfativo: `product_scent_profiles` (lectura pública de publicados; escritura `catalog.edit` o `research.edit`), notas como claves del vocabulario y fuente `https` obligatoria                                                                                                     |
 | 20261009150100 | Suscriptores a promociones: `newsletter_subscribers` (sin acceso público; `customers.view` lee y `customers.manage` da de baja o borra) y alta pública `newsletter_subscribe`                                                                                                             |
+| 20261010120000 | Control del negocio (`/admin/control`): permiso `business.control`, precio cobrado en `store_sale_lines` (sin superar el PVP) y tareas, costes y entregas en `internal` con funciones `admin_control_*`                                                                                   |
 
 La matriz de permisos se genera desde `src/modules/auth/domain/permissions.ts`; `tests/unit/permissions-sql.test.ts` falla si ambas divergen. Del mismo modo, `tests/unit/inventory-sql.test.ts` compara tipos, efectos, permisos y motivos de los movimientos con `src/modules/inventory/domain/movements.ts`.
 
@@ -34,7 +35,7 @@ Los tipos de `src/lib/supabase/database.types.ts` se generan desde `adhara-dev` 
 
 ## Pruebas de base de datos
 
-`tests/database/*.test.sql` son pruebas pgTAP para `supabase test db` (`pnpm test:db`). Crean usuarios ficticios dentro de una transacción que se revierte y cubren anon, usuario sin personal (cliente), `viewer`, `store_admin` y `system_admin`, con y sin MFA (aal2). Se ejecutan en cada PR y en `main` en `db.yml`, sobre Supabase local recién reiniciado (`supabase db reset`). Resultado del 09/10 (CLI 2.118.0): 293/293 en 9 archivos.
+`tests/database/*.test.sql` son pruebas pgTAP para `supabase test db` (`pnpm test:db`). Crean usuarios ficticios dentro de una transacción que se revierte y cubren anon, usuario sin personal (cliente), `viewer`, `store_admin` y `system_admin`, con y sin MFA (aal2). Se ejecutan en cada PR y en `main` en `db.yml`, sobre Supabase local recién reiniciado (`supabase db reset`). Resultado del 10/10 (CLI 2.118.0): 329/329 en 10 archivos.
 
 | Archivo                 | Pruebas | Qué cubre                                                                                                                                                                     |
 | ----------------------- | ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -47,6 +48,7 @@ Los tipos de `src/lib/supabase/database.types.ts` se generan desde `adhara-dev` 
 | `06_assistant`          | 24      | Informes diarios, registro de uso y lecturas de la tarea programada                                                                                                           |
 | `07_phase1_guarantees`  | 28      | Criterio 9 de la Fase 1: RLS en todas las tablas públicas, anon sin `admin_*` ni escritura, PVP sin permiso, publicación y UPDATE/DELETE en solo inserción                    |
 | `08_scent_newsletter`   | 30      | Perfil olfativo (restricciones, lectura de publicados, escritura con permiso y MFA) y suscriptores (alta pública, sin lectura pública, baja y borrado con `customers.manage`) |
+| `09_business_control`   | 36      | Control: solo `system_admin` con MFA, `internal` inalcanzable, auditoría sin importes, precio del mostrador y hechos del mes                                                  |
 
 Además, en `db.yml`: `scripts/check-db-types.ts` (tipos generados iguales a las migraciones) y `scripts/check-db-lint.ts` (`supabase db lint` con plpgsql_check; falla con cualquier error salvo tres falsos positivos de tablas temporales, DECISIONS §84).
 
@@ -77,6 +79,7 @@ Antes de tener Docker, las pruebas se ejecutaron contra `adhara-dev` con `tests/
 - `20260930_catalogo_2026.sql` crea las marcas y los 420 perfumes nuevos del «CATALOGO 2026» como borradores, sin formatos, PVP ni costes, y sus 647 imágenes provisionales. Las URL apuntan a los archivos ya subidos al bucket `product-media` de `adhara-dev`; en otro proyecto habría que subirlos antes. Los formatos y los costes llegan con el CSV desde el panel (DECISIONS §54-55).
 - `20260930_piloto_publicado.sql` publica los 4 perfumes del piloto con su PVP y su procedencia (DECISIONS §57).
 - `20260930_compra_orient_fragance.sql` carga la compra a Orient Fragance: 34 perfumes nuevos, un formato con PVP de la tienda oficial por perfume, 20 uds de stock por formato y publicación de los que tienen PVP (DECISIONS §57).
+- `20261010_control_inicial.sql` (opcional, tras la migración `20261010120000`) carga en el control las tareas de «Pendiente del usuario» de STATUS y las entregas ya fusionadas con su PR, sin importes ni costes (DECISIONS §116).
 
 ## Pendiente
 

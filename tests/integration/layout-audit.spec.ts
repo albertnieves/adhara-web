@@ -39,6 +39,14 @@ const ROUTES = [
   '/admin/equipo',
   '/admin/asistente',
   '/admin/diseno',
+  '/admin/control',
+  '/admin/control/negocio',
+  '/admin/control/costes',
+  '/admin/control/costes/nuevo',
+  '/admin/control/tareas',
+  '/admin/control/tareas/nueva',
+  '/admin/control/entregas',
+  '/admin/control/entregas/nueva',
 ];
 
 test('panel: diseño sin solapes ni desbordes en todas sus pantallas', async ({

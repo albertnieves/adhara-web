@@ -687,19 +687,25 @@ export type Database = {
         Row: {
           movement_id: number;
           quantity: number;
+          retail_price_cents: number | null;
           sale_id: number;
+          unit_price_cents: number | null;
           variant_id: string;
         };
         Insert: {
           movement_id: number;
           quantity: number;
+          retail_price_cents?: number | null;
           sale_id: number;
+          unit_price_cents?: number | null;
           variant_id: string;
         };
         Update: {
           movement_id?: number;
           quantity?: number;
+          retail_price_cents?: number | null;
           sale_id?: number;
+          unit_price_cents?: number | null;
           variant_id?: string;
         };
         Relationships: [
@@ -785,6 +791,123 @@ export type Database = {
         Returns: number;
       };
       admin_cancel_invite: { Args: { p_email: string }; Returns: undefined };
+      admin_control_costs: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          amount_net_cents: number;
+          area: string;
+          category: string;
+          concept: string;
+          ends_on: string;
+          frequency: string;
+          id: string;
+          notes: string;
+          starts_on: string;
+          updated_at: string;
+        }[];
+      };
+      admin_control_delete_cost: { Args: { p_id: string }; Returns: undefined };
+      admin_control_delete_delivery: {
+        Args: { p_id: string };
+        Returns: undefined;
+      };
+      admin_control_delete_task: { Args: { p_id: string }; Returns: undefined };
+      admin_control_deliveries: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          amount_net_cents: number;
+          billing_status: string;
+          created_at: string;
+          delivered_on: string;
+          description: string;
+          due_on: string;
+          id: string;
+          reference: string;
+          status: string;
+          title: string;
+          updated_at: string;
+        }[];
+      };
+      admin_control_month_facts: {
+        Args: { p_from: string; p_to: string };
+        Returns: {
+          cogs_net_cents: number;
+          month: string;
+          priced_returned_units: number;
+          priced_sold_units: number;
+          received_net_cents: number;
+          received_units: number;
+          retail_price_cents: number;
+          returned_gross_cents: number;
+          returned_units: number;
+          sold_gross_cents: number;
+          sold_units: number;
+          uncosted_received_units: number;
+          uncosted_units: number;
+          variant_id: string;
+        }[];
+      };
+      admin_control_save_cost: {
+        Args: {
+          p_amount_net_cents: number;
+          p_area: string;
+          p_category: string;
+          p_concept: string;
+          p_ends_on?: string;
+          p_frequency: string;
+          p_id: string;
+          p_notes?: string;
+          p_starts_on: string;
+        };
+        Returns: string;
+      };
+      admin_control_save_delivery: {
+        Args: {
+          p_amount_net_cents?: number;
+          p_billing_status?: string;
+          p_delivered_on?: string;
+          p_description?: string;
+          p_due_on?: string;
+          p_id: string;
+          p_reference?: string;
+          p_status: string;
+          p_title: string;
+        };
+        Returns: string;
+      };
+      admin_control_save_task: {
+        Args: {
+          p_area: string;
+          p_due_on?: string;
+          p_id: string;
+          p_notes?: string;
+          p_owner: string;
+          p_priority: string;
+          p_status: string;
+          p_title: string;
+        };
+        Returns: string;
+      };
+      admin_control_set_task_status: {
+        Args: { p_id: string; p_status: string };
+        Returns: undefined;
+      };
+      admin_control_tasks: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          area: string;
+          completed_at: string;
+          created_at: string;
+          due_on: string;
+          id: string;
+          notes: string;
+          owner: string;
+          priority: string;
+          status: string;
+          title: string;
+          updated_at: string;
+        }[];
+      };
       admin_create_purchase_order: {
         Args: {
           p_expected_on?: string;

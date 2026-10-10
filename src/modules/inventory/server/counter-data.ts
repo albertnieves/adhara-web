@@ -8,6 +8,8 @@ export type StoreSaleRow = {
   kind: 'sale' | 'return';
   ticketRef: string | null;
   units: number;
+  /** Importe con IVA; null en las ventas sin precio cobrado (anteriores a DECISIONS §114). */
+  amountCents: number | null;
   createdAt: string;
   lines: { label: string; quantity: number }[];
 };
@@ -21,7 +23,7 @@ export async function listRecentStoreSales(
   const { data, error } = await supabase
     .from('store_sales')
     .select(
-      'id, kind, ticket_ref, units, created_at, lines:store_sale_lines(quantity, variant:product_variants!inner(label, size_ml, product:products!inner(name, brand:brands!inner(name))))',
+      'id, kind, ticket_ref, units, created_at, lines:store_sale_lines(quantity, unit_price_cents, variant:product_variants!inner(label, size_ml, product:products!inner(name, brand:brands!inner(name))))',
     )
     .eq('location_id', locationId)
     .order('created_at', { ascending: false })
@@ -33,6 +35,12 @@ export async function listRecentStoreSales(
     kind: sale.kind === 'return' ? 'return' : 'sale',
     ticketRef: sale.ticket_ref,
     units: sale.units,
+    amountCents: sale.lines.every((line) => line.unit_price_cents !== null)
+      ? sale.lines.reduce(
+          (sum, line) => sum + (line.unit_price_cents ?? 0) * line.quantity,
+          0,
+        )
+      : null,
     createdAt: sale.created_at,
     lines: sale.lines.map((line) => ({
       quantity: line.quantity,

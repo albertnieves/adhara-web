@@ -8,8 +8,8 @@ Fuente única: `src/modules/auth/domain/permissions.ts`. La misma matriz está s
 
 | Rol            | Quién                      | Alcance                                                                                |
 | -------------- | -------------------------- | -------------------------------------------------------------------------------------- |
-| `system_admin` | Administrador del sistema  | Todo, incluidos personal (`staff.manage`) y configuración (`settings.manage`)          |
-| `store_admin`  | Administrador de la tienda | Toda la operación, también costes, compras y reembolsos; sin personal ni configuración |
+| `system_admin` | Administrador del sistema  | Todo: personal, configuración y control del negocio (`business.control`)               |
+| `store_admin`  | Administrador de la tienda | Operación, costes, compras y reembolsos; sin personal, configuración ni control        |
 | `viewer`       | Encargado                  | `inventory.view`, `orders.view`, `messages.view` y `agent.use`; sin clientes ni costes |
 
 Sustituyen a `owner`, `manager`, `store_staff` y `content_editor` de la Fase 0 (DECISIONS §14). Los clientes no son personal: cuando existan (F14), solo verán sus datos por RLS.
@@ -34,6 +34,7 @@ Una redirección nunca sustituye la autorización en servidor.
 
 - Costes, historial de PVP, proveedores y pedidos de compra viven en `internal`, que la API no expone (`PGRST106` en `adhara-dev`, criterio 10) y sobre el que `anon` y `authenticated` no tienen privilegios (pgTAP `03` y `07`).
 - Solo se leen con funciones `admin_*` que exigen `pricing.view_cost` o `purchasing.manage` con MFA.
+- Las tareas, los costes del negocio y las entregas del control (`/admin/control`) también viven en `internal`, solo con `business.control` (administrador del sistema con MFA); la auditoría no guarda sus importes (pgTAP `09`).
 - Ninguna tabla pública tiene columnas de coste (pgTAP `03`). La tienda solo recibe disponible, últimas unidades o agotado (`storefront_availability`).
 - `tests/e2e/cost-leak.spec.ts` recorre las rutas públicas (HTML, RSC, JSON y cabeceras) buscando nombres de campos de coste y, en `e2e.yml`, el coste centinela de `tests/fixtures/test-db.sql` (987654 céntimos, también como 9.876,54 €), su proveedor y su referencia.
 - El informe diario y el asistente trabajan en unidades, sin costes, importes ni nombres de proveedor (`tests/unit/assistant.test.ts`).
