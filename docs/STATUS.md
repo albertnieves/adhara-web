@@ -303,5 +303,6 @@ La revisión visual con perfumes se hizo en local con un Supabase simulado que d
 - 03/10: Fase 2, DS-10: la tienda pasa a la biblioteca y a los colores semánticos.
 - 04/10: Fase 2, DS-11 y DS-12: el panel pasa a la biblioteca, axe y objetivos de 44 px bloquean, guía e informe de la fase; falta la revisión visual del usuario.
 - 09/10: catálogo olfativo sin compra con research de notas, suscripción a promociones con Sender y tienda sin etiquetas provisionales.
+- 10/10: vídeo de presentación para el cliente (web actual, versión final, asistente y coste de mantenimiento), grabado contra Supabase local con datos de demostración; guion y costes en [PRESENTACION_CLIENTE.md](PRESENTACION_CLIENTE.md).
 
 Ver docs/DEVELOPMENT.md para continuar y docs/DECISIONS.md para las decisiones.
