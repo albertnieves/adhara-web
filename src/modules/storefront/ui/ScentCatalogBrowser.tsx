@@ -31,6 +31,8 @@ import { Link } from '@/modules/i18n';
 import { ProductImage } from './ProductImage';
 import { ScentGlyph } from './ScentGlyphs';
 import { ScentMoments } from './ScentProfileView';
+import { ViewToggle } from './ViewToggle';
+import { productGridClass, useCatalogView } from './catalogView';
 
 export type ScentEntry = {
   product: StorefrontProduct;
@@ -58,13 +60,18 @@ function Chip({
   );
 }
 
-/** Tarjeta del catálogo olfativo: sin precio ni compra, con su perfil. */
+/**
+ * Tarjeta del catálogo olfativo: sin precio ni compra, con su perfil.
+ * `compact`, para la cuadrícula de dos columnas del móvil.
+ */
 export function ScentCard({
   entry,
   priority,
+  compact = false,
 }: {
   entry: ScentEntry;
   priority: boolean;
+  compact?: boolean;
 }) {
   const t = useTranslations();
   const locale = useLocale();
@@ -86,12 +93,14 @@ export function ScentCard({
       className="group block min-w-0"
     >
       <div className="bg-stage relative aspect-[4/5] overflow-hidden">
-        <div className="bg-stage absolute inset-8 transition-transform duration-[1.6s] ease-(--ease-luxe) group-hover:scale-[1.05]">
+        <div
+          className={`bg-stage absolute ${compact ? 'inset-3 sm:inset-8' : 'inset-8'} transition-transform duration-[1.6s] ease-(--ease-luxe) group-hover:scale-[1.05]`}
+        >
           <ProductImage
             media={media}
             alt={`${product.brand.name} ${product.name}`}
             brand={product.brand.name}
-            sizes="(min-width: 1280px) 22vw, (min-width: 1024px) 30vw, (min-width: 640px) 45vw, 90vw"
+            sizes={`(min-width: 1280px) 22vw, (min-width: 1024px) 30vw, (min-width: 640px) 45vw, ${compact ? '45vw' : '90vw'}`}
             priority={priority}
           />
         </div>
@@ -100,23 +109,27 @@ export function ScentCard({
           className="bg-accent absolute inset-x-0 bottom-0 h-px origin-left scale-x-0 transition-transform duration-700 ease-(--ease-luxe) group-hover:scale-x-100"
         />
       </div>
-      <div className="mt-5 min-w-0">
+      <div className={`min-w-0 ${compact ? 'mt-3 sm:mt-5' : 'mt-5'}`}>
         <Eyebrow>{product.brand.name}</Eyebrow>
         <Heading level={3} size="h3" className="mt-1.5 line-clamp-2">
           {product.name}
         </Heading>
         {profile && profile.families.length > 0 && (
-          <p className="font-display text-accent-fg mt-1 text-lg italic">
+          <p
+            className={`font-display text-accent-fg mt-1 italic ${compact ? 'text-base sm:text-lg' : 'text-lg'}`}
+          >
             {profile.families.map((f) => t(`family.${f}`)).join(' · ')}
           </p>
         )}
         {preview.length > 0 && (
-          <p className="text-fg-muted mt-2 line-clamp-2 text-sm">
+          <p
+            className={`text-fg-muted mt-2 line-clamp-2 ${compact ? 'text-xs sm:text-sm' : 'text-sm'}`}
+          >
             {preview.join(' · ')}
           </p>
         )}
         {profile && (
-          <div className="mt-4">
+          <div className={compact ? 'mt-3 sm:mt-4' : 'mt-4'}>
             <ScentMoments profile={profile} />
           </div>
         )}
@@ -132,6 +145,7 @@ export function ScentCatalogBrowser({ entries }: { entries: ScentEntry[] }) {
   const [family, setFamily] = useState<ScentFamily | null>(null);
   const [season, setSeason] = useState<Season | null>(null);
   const [time, setTime] = useState<TimeOfDay | null>(null);
+  const [view, setView] = useCatalogView();
   const deferredQuery = useDeferredValue(query);
 
   const families = SCENT_FAMILIES.filter((value) =>
@@ -230,7 +244,7 @@ export function ScentCatalogBrowser({ entries }: { entries: ScentEntry[] }) {
           placeholder={t('scent.search')}
           className="w-full max-w-md"
         />
-        <div className="flex items-center gap-6">
+        <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
           <p
             className="text-fg-muted tracking-caps text-xs whitespace-nowrap uppercase tabular-nums"
             aria-live="polite"
@@ -242,6 +256,7 @@ export function ScentCatalogBrowser({ entries }: { entries: ScentEntry[] }) {
               {t('scent.clear')}
             </Button>
           )}
+          <ViewToggle view={view} onChange={setView} className="ml-auto" />
         </div>
       </div>
 
@@ -258,7 +273,7 @@ export function ScentCatalogBrowser({ entries }: { entries: ScentEntry[] }) {
       ) : (
         <motion.ul
           layout={!reduced}
-          className="mt-12 grid gap-x-6 gap-y-16 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+          className={`mt-12 ${productGridClass(view)}`}
         >
           <AnimatePresence mode="popLayout" initial={false}>
             {visible.map((entry, index) => (
@@ -275,7 +290,11 @@ export function ScentCatalogBrowser({ entries }: { entries: ScentEntry[] }) {
                   ease: [0.22, 1, 0.36, 1],
                 }}
               >
-                <ScentCard entry={entry} priority={index < 4} />
+                <ScentCard
+                  entry={entry}
+                  priority={index < 4}
+                  compact={view === 'grid'}
+                />
               </motion.li>
             ))}
           </AnimatePresence>

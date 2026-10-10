@@ -46,6 +46,9 @@
     "sortPriceAsc": "Preu: de menor a major",
     "sortPriceDesc": "Preu: de major a menor",
     "sortName": "Nom",
+    "view": "Vista",
+    "viewGrid": "Quadrícula",
+    "viewLarge": "Vista àmplia",
     "empty": "La col·lecció s’està preparant amb dades verificades. Torna aviat.",
     "emptyFiltered": "Cap perfum coincideix amb la teva cerca.",
     "clear": "Neteja els filtres"

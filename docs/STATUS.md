@@ -2,6 +2,15 @@
 
 **Tienda visual (es/ca/en) y panel de administración operativos sobre `adhara-dev`, desplegados en Vercel y públicos desde el 10/10 en `latelierdudesert.com`, sin Vercel Authentication y todavía con `noindex` (DECISIONS §118). `main` incluye las fases R y S (PR #9), la entrega de acceso y edición de Codex (PR #10) y el panel con el asistente (PR #11); sus 17 migraciones están aplicadas en `adhara-dev` (comprobado el 02/10). La tienda muestra 50 perfumes publicados con PVP. La Fase 1 está cerrada (PR #12): sus 19 criterios están cumplidos o con una excepción escrita ([informe](phases/FASE_1_REPORT.md)). La Fase 2 (sistema de diseño) está terminada a falta de la revisión visual del usuario ([informe](phases/FASE_2_REPORT.md)): 12 de 13 criterios cumplidos. Siguiente: checkout con pago con tarjeta, que espera los datos del TPV virtual (ver «Pendiente del usuario»).**
 
+## Móvil: cuadrícula, menú y galería (10/10, rama `claude/pensive-goldberg-aqgb5z`)
+
+A petición del usuario. Decisiones §119–121; roadmap de las siguientes entregas en [ROADMAP.md](ROADMAP.md).
+
+- **Cuadrícula de dos columnas** en la colección y el catálogo olfativo, con selector «Cuadrícula / Vista amplia» junto al recuento (solo por debajo de 640 px; por defecto, cuadrícula). A 390 px la colección pasa de 34.262 a 12.280 px de alto y el catálogo olfativo de 36.475 a 14.279. Destacados de la portada y relacionados, también en dos columnas.
+- **Menú móvil arreglado:** dentro de la cabecera quedaba encerrado en 88 px por el desenfoque de fondo y no dejaba navegar. Ahora ocupa la pantalla, lleva a Inicio, Colección y Catálogo olfativo y se cierra con Esc.
+- **Galería de la ficha:** los indicadores de foto pasan de 40 × 1 px a 44 px de alto.
+- **Comprobado en local** (build de producción contra los datos públicos de `adhara-dev`, solo lectura): lint, tipos, formato, escaneo de secretos y unitarias 322/322; E2E nuevas `mobile-navigation` 3/3 (y 1 omitida en escritorio); auditoría de maquetación y axe, FAQ, textos legales, vista previa y arranque: 78 pasan. La auditoría de la ficha agota sus 2 minutos con «Asad» (escena 3D con WebGL por software en el contenedor) y pasa con más tiempo; en CI el perfume centinela no tiene 3D. «Yara Moi» (dos fotos) pasa la auditoría y axe a las 4 anchuras tras el arreglo de la galería. Sin migraciones.
+
 ## Textos legales en borrador (09/10, rama `claude/affectionate-mccarthy-ec5p5j`)
 
 A petición del usuario, para revisarlos con el cliente. Decisión §113; guía de revisión en [LEGAL.md](LEGAL.md).
@@ -313,5 +322,6 @@ La revisión visual con perfumes se hizo en local con un Supabase simulado que d
 - 04/10: Fase 2, DS-11 y DS-12: el panel pasa a la biblioteca, axe y objetivos de 44 px bloquean, guía e informe de la fase; falta la revisión visual del usuario.
 - 09/10: catálogo olfativo sin compra con research de notas, suscripción a promociones con Sender y tienda sin etiquetas provisionales.
 - 10/10: dominio `latelierdudesert.com` comprado en Vercel y asignado a `altier-web`; fuera Vercel Authentication, la web pasa a ser pública (con `noindex`).
+- 10/10: móvil en cuadrícula de dos columnas con selector de vista, menú móvil arreglado y roadmap de las siguientes entregas (hitos H0–H5).
 
 Ver docs/DEVELOPMENT.md para continuar y docs/DECISIONS.md para las decisiones.

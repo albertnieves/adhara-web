@@ -46,6 +46,9 @@
     "sortPriceAsc": "Price: low to high",
     "sortPriceDesc": "Price: high to low",
     "sortName": "Name",
+    "view": "View",
+    "viewGrid": "Grid",
+    "viewLarge": "Large view",
     "empty": "The collection is being prepared with verified data. Please come back soon.",
     "emptyFiltered": "No fragrance matches your search.",
     "clear": "Clear filters"
