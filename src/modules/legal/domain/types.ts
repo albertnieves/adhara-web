@@ -52,8 +52,6 @@ export type LegalDocument = {
   title: string;
   /** Una frase bajo el título y en la descripción de la página. */
   summary: string;
-  /** Aviso fijo al principio (p. ej. «la compra online aún no está activa»). */
-  notice?: string;
   sections: LegalSection[];
 };
 

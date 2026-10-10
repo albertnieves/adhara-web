@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { draftMode } from 'next/headers';
 import { Fragment } from 'react';
 import { Eyebrow, Heading, Table, Td, Text, Th } from '@/components/ui';
 import { Star } from '@/modules/brand';
@@ -9,7 +10,8 @@ import { alternatesMetadata } from '@/modules/i18n/metadata';
 import type { Locale } from '@/modules/i18n/seo';
 import { LEGAL_COPY } from '../content';
 import { LEGAL_ENTITY, LEGAL_UPDATED_AT } from '../domain/entity';
-import { parseLegalText, resolveValue } from '../domain/placeholders';
+import { resolveValue, visibleSegments } from '../domain/placeholders';
+import type { LegalSegment } from '../domain/placeholders';
 import { LEGAL_PATHS } from '../domain/routes';
 import { LEGAL_DOCUMENTS } from '../domain/types';
 import type {
@@ -48,16 +50,16 @@ async function legalValues(locale: Locale): Promise<Values> {
   };
 }
 
+type Context = { values: Values; copy: LegalCopy; preview: boolean };
+
 function Rich({
-  text,
-  values,
+  segments,
   copy,
 }: {
-  text: string;
-  values: Values;
+  segments: LegalSegment[];
   copy: LegalCopy;
 }) {
-  return parseLegalText(text, values).map((segment, index) => {
+  return segments.map((segment, index) => {
     switch (segment.kind) {
       case 'text':
         return <Fragment key={index}>{segment.text}</Fragment>;
@@ -114,41 +116,43 @@ function Rich({
   });
 }
 
-function Block({
-  block,
-  values,
-  copy,
-}: {
-  block: LegalBlock;
-  values: Values;
-  copy: LegalCopy;
-}) {
+function Block({ block, ctx }: { block: LegalBlock; ctx: Context }) {
+  const visible = (text: string) =>
+    visibleSegments(text, ctx.values, ctx.preview);
   if (typeof block === 'string') {
+    const segments = visible(block);
+    if (!segments) return null;
     return (
       <Text className="leading-relaxed">
-        <Rich text={block} values={values} copy={copy} />
+        <Rich segments={segments} copy={ctx.copy} />
       </Text>
     );
   }
   if ('list' in block) {
+    const items = block.list
+      .map(visible)
+      .filter((item): item is LegalSegment[] => item !== null);
+    if (items.length === 0) return null;
     const ListTag = block.ordered ? 'ol' : 'ul';
     return (
       <ListTag
         className={`${block.ordered ? 'list-decimal' : 'list-disc'} marker:text-accent space-y-2 pl-6 leading-relaxed`}
       >
-        {block.list.map((item, index) => (
+        {items.map((segments, index) => (
           <li key={index}>
-            <Rich text={item} values={values} copy={copy} />
+            <Rich segments={segments} copy={ctx.copy} />
           </li>
         ))}
       </ListTag>
     );
   }
   if ('note' in block) {
+    const segments = visible(block.note);
+    if (!segments) return null;
     return (
       <div className="border-accent bg-surface-raised border-l-2 px-5 py-4">
         <Text size="small" className="leading-relaxed">
-          <Rich text={block.note} values={values} copy={copy} />
+          <Rich segments={segments} copy={ctx.copy} />
         </Text>
       </div>
     );
@@ -183,8 +187,8 @@ function Block({
 
 /**
  * Página de un texto legal: título, fecha de la versión, índice, secciones
- * y enlaces al resto. Los datos pendientes se ven como «Pendiente: …» para
- * revisarlos con el cliente (docs/LEGAL.md).
+ * y enlaces al resto. Lo que depende de un dato pendiente no se publica; en
+ * la vista previa del personal se ve como «Pendiente: …» (docs/LEGAL.md).
  */
 export async function LegalPage({
   doc,
@@ -195,7 +199,8 @@ export async function LegalPage({
 }) {
   const copy = LEGAL_COPY[locale];
   const document = copy.documents[doc];
-  const values = await legalValues(locale);
+  const [values, draft] = await Promise.all([legalValues(locale), draftMode()]);
+  const ctx: Context = { values, copy, preview: draft.isEnabled };
   const updated = new Intl.DateTimeFormat(locale, {
     dateStyle: 'long',
     timeZone: 'UTC',
@@ -216,16 +221,6 @@ export async function LegalPage({
         <Text size="small" tone="muted" className="mt-4">
           {copy.ui.updated}: <time dateTime={LEGAL_UPDATED_AT}>{updated}</time>
         </Text>
-        {document.notice && (
-          <div
-            role="note"
-            className="border-warning bg-warning-soft text-warning mt-8 border-l-2 px-5 py-4"
-          >
-            <Text size="small" className="leading-relaxed">
-              {document.notice}
-            </Text>
-          </div>
-        )}
       </header>
 
       <div className="mt-16 grid gap-12 lg:grid-cols-[16rem_minmax(0,1fr)] lg:gap-20">
@@ -263,12 +258,7 @@ export async function LegalPage({
               </Heading>
               <div className="mt-5 space-y-4">
                 {section.blocks.map((block, index) => (
-                  <Block
-                    key={index}
-                    block={block}
-                    values={values}
-                    copy={copy}
-                  />
+                  <Block key={index} block={block} ctx={ctx} />
                 ))}
               </div>
             </section>

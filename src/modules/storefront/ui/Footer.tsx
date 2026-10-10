@@ -20,7 +20,7 @@ export async function Footer() {
       data-tone="dark"
       className="bg-surface text-fg relative overflow-hidden"
     >
-      <div className="mx-auto grid max-w-[90rem] gap-14 px-5 pt-24 pb-12 sm:px-10 md:grid-cols-2 lg:grid-cols-[2fr_1fr_1fr_1fr]">
+      <div className="mx-auto grid max-w-[90rem] gap-14 px-5 pt-24 pb-12 sm:px-10 md:grid-cols-[2fr_1fr_1fr]">
         <div className="space-y-6">
           <Logo variant="stacked" />
           <p className="text-fg-muted max-w-xs text-sm leading-relaxed">
@@ -103,23 +103,25 @@ export async function Footer() {
             {t('staffAccess')}
           </NextLink>
         </div>
+      </div>
+      <div className="border-border text-2xs tracking-caps mx-auto flex max-w-[90rem] flex-col gap-4 border-t px-5 py-6 uppercase sm:px-10 lg:flex-row lg:items-center lg:justify-between">
+        <span className="text-fg-muted">
+          {t('rights', { year: new Date().getFullYear() })}
+        </span>
         <nav aria-label={t('legal')}>
-          <Eyebrow className="mb-5">{t('legal')}</Eyebrow>
-          <ul className="space-y-3 text-sm">
+          <ul className="text-fg-muted flex flex-wrap gap-x-6 gap-y-3">
             {LEGAL_DOCUMENTS.map((doc) => (
               <li key={doc}>
-                <Link href={LEGAL_PATHS[doc]} className="link-underline">
+                <Link
+                  href={LEGAL_PATHS[doc]}
+                  className="link-underline hover:text-fg"
+                >
                   {legal.documents[doc].title}
                 </Link>
               </li>
             ))}
           </ul>
         </nav>
-      </div>
-      <div className="border-border text-2xs tracking-caps mx-auto flex max-w-[90rem] items-center justify-between border-t px-5 py-6 uppercase sm:px-10">
-        <span className="text-fg-muted">
-          {t('rights', { year: new Date().getFullYear() })}
-        </span>
         <span className="text-accent-fg">Castelldefels</span>
       </div>
     </footer>

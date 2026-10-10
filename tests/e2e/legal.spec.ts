@@ -1,9 +1,9 @@
 import { expect, test } from '@playwright/test';
 
 /*
- * Textos legales: enlazados desde el pie en los tres idiomas, con rutas
- * traducidas, índice que lleva a cada sección y los datos que faltan
- * señalados como pendientes.
+ * Textos legales: enlazados desde la barra inferior del pie en los tres
+ * idiomas, con rutas traducidas e índice que lleva a cada sección. Lo que
+ * depende de un dato pendiente no se publica.
  */
 
 const PAGES = [
@@ -30,13 +30,10 @@ for (const [locale, title, url] of PAGES) {
   });
 }
 
-test('el índice lleva a cada sección y los datos pendientes se ven', async ({
+test('el índice lleva a cada sección y no se publican datos pendientes', async ({
   page,
 }) => {
   await page.goto('/es/envios-y-devoluciones');
-  await expect(page.getByRole('note')).toContainText(
-    'La compra online todavía no está disponible',
-  );
   await page
     .getByRole('navigation', { name: 'En esta página' })
     .getByRole('link', { name: 'Perfumes precintados' })
@@ -45,10 +42,13 @@ test('el índice lleva a cada sección y los datos pendientes se ven', async ({
   await expect(
     page.getByRole('heading', { name: 'Perfumes precintados' }),
   ).toBeInViewport();
-  await expect(page.locator('mark[data-pending="taxId"]')).toHaveCount(0);
+  // Sin datos del titular ni de envíos, esas líneas no se ven en la tienda.
+  await expect(page.locator('mark[data-pending]')).toHaveCount(0);
+  await expect(page.getByText('Pendiente', { exact: false })).toHaveCount(0);
+  await expect(page.getByText(/^Enviamos a/)).toHaveCount(0);
   await expect(
-    page.locator('mark[data-pending="shippingZones"]').first(),
-  ).toHaveText('Pendiente: zonas de envío');
+    page.getByText(/^A la atención de L’Atelier du Désert, .+Castelldefels:$/),
+  ).toBeVisible();
 });
 
 test('el aviso de la suscripción enlaza la política de privacidad', async ({

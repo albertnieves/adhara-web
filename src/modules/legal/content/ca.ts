@@ -56,7 +56,7 @@ export const ca: LegalCopy = {
           id: 'objeto',
           title: 'Objecte i acceptació',
           blocks: [
-            'Aquest web dona a conèixer la perfumeria àrab de L’Atelier du Désert i la seva botiga de Castelldefels: la col·lecció, el catàleg olfactiu i, quan estigui disponible, la compra en línia.',
+            'Aquest web dona a conèixer la perfumeria àrab de L’Atelier du Désert i la seva botiga de Castelldefels: la col·lecció, el catàleg olfactiu i la compra en línia.',
             'Navegar pel web implica acceptar aquest avís legal. Les compres es regeixen, a més, per les [condicions de venda](doc:terms) i per la pàgina d’[enviaments i devolucions](doc:shipping).',
           ],
         },
@@ -69,7 +69,7 @@ export const ca: LegalCopy = {
               list: [
                 'fer-lo servir per a finalitats il·lícites o que perjudiquin tercers;',
                 'introduir-hi virus o qualsevol codi que el pugui danyar;',
-                'intentar accedir a zones restringides, com el tauler de l’equip, o a dades d’altres persones;',
+                'intentar accedir a zones restringides o a dades d’altres persones;',
                 'copiar o extreure’n els continguts de manera massiva.',
               ],
             },
@@ -80,7 +80,7 @@ export const ca: LegalCopy = {
           id: 'propiedad',
           title: 'Propietat intel·lectual i industrial',
           blocks: [
-            'El nom L’Atelier du Désert, el seu logotip, el disseny del web, els textos propis i el codi pertanyen a {holder} o es fan servir amb llicència. No els pots reproduir, distribuir ni transformar sense autorització.',
+            'El nom L’Atelier du Désert, el seu logotip, el disseny del web, els textos propis i el codi pertanyen al titular d’aquest web o es fan servir amb llicència. No els pots reproduir, distribuir ni transformar sense autorització.',
             'Els noms, les marques i les imatges dels perfums pertanyen a les seves cases respectives. Es fan servir només per identificar els productes que es venen a la botiga, sense que això suposi cap relació diferent de la de revenedor.',
           ],
         },
@@ -127,15 +127,13 @@ export const ca: LegalCopy = {
       title: 'Condicions de venda',
       summary:
         'Les condicions que s’apliquen a les compres que facis en aquest web.',
-      notice:
-        'La compra en línia encara no està disponible. Aquestes condicions s’aplicaran a les comandes fetes en aquest web quan s’activi; mentrestant, t’esperem a la botiga de Castelldefels.',
       sections: [
         {
           id: 'partes',
           title: 'Qui ven i a qui',
           blocks: [
-            'Ven {holder}, amb NIF {taxId} i domicili a {registeredAddress}, amb el nom comercial L’Atelier du Désert (vegeu l’[avís legal](doc:legalNotice)).',
-            'Aquestes condicions s’apliquen a les compres fetes al web per persones majors d’edat, amb lliurament a {shippingZones} o recollida a la botiga. En fer la comanda acceptes la versió vigent en aquell moment, que t’enviem amb la confirmació.',
+            'El venedor és el titular d’aquest web, L’Atelier du Désert, les dades del qual figuren a l’[avís legal](doc:legalNotice#titular).',
+            'Aquestes condicions s’apliquen a les compres fetes al web per persones majors d’edat, amb lliurament a domicili o recollida a la botiga. En fer la comanda acceptes la versió vigent en aquell moment, que t’enviem amb la confirmació.',
           ],
         },
         {
@@ -218,7 +216,14 @@ export const ca: LegalCopy = {
           id: 'atencion',
           title: 'Atenció al client i reclamacions',
           blocks: [
-            'Ens pots escriure a {email}, trucar al {phone} o venir a la botiga, a {storeAddress}. Respondrem les reclamacions al més aviat possible i com a màxim en un mes.',
+            'Ens pots contactar per aquestes vies. Respondrem les reclamacions al més aviat possible i com a màxim en un mes.',
+            {
+              list: [
+                'Correu electrònic: {email}',
+                'Telèfon: {phone}',
+                'Botiga: {storeAddress}',
+              ],
+            },
             'Tens a la teva disposició fulls oficials de queixa, reclamació i denúncia a la botiga, i també ens els pots demanar per correu. Pots adreçar-te a l’oficina municipal d’informació al consumidor del teu municipi o a l’[Agència Catalana del Consum](https://consum.gencat.cat).',
             'Arbitratge de consum: {arbitration}.',
           ],
@@ -251,13 +256,14 @@ export const ca: LegalCopy = {
           blocks: [
             {
               list: [
-                'Responsable: {holder} (L’Atelier du Désert)',
+                'Responsable: L’Atelier du Désert',
+                'Titular: {holder}',
                 'NIF: {taxId}',
                 'Domicili: {registeredAddress}',
                 'Correu per a qüestions de privacitat: {email}',
               ],
             },
-            'Per la mida i l’activitat del negoci no és obligatori un delegat de protecció de dades. Per a qualsevol qüestió sobre les teves dades, escriu-nos al correu anterior.',
+            'Per a qualsevol qüestió sobre les teves dades, ens pots escriure per correu electrònic o per correu postal a la botiga, a {storeAddress}.',
           ],
         },
         {
@@ -293,7 +299,6 @@ export const ca: LegalCopy = {
           id: 'pedidos',
           title: 'Comandes en línia',
           blocks: [
-            'S’aplicarà quan la compra en línia estigui disponible.',
             {
               list: [
                 'Dades: nom, correu, telèfon, adreça de lliurament i, si demanes factura a nom d’una empresa, les seves dades fiscals; productes, imports i estat del pagament. Les dades de la teva targeta les tracta el banc: nosaltres no les rebem.',
@@ -325,10 +330,9 @@ export const ca: LegalCopy = {
             'No venem ni cedim les teves dades. Només hi accedeixen, amb contracte d’encàrrec de tractament i només per prestar-nos el seu servei, aquests proveïdors:',
             {
               list: [
-                'Vercel Inc.: allotjament del web, amb servidors a la Unió Europea (París).',
-                'Supabase Inc.: base de dades, amb servidors a la Unió Europea (Frankfurt).',
-                'Sender (sender.net, Lituània): enviament dels correus del Club L’Atelier.',
-                'Quan la compra en línia estigui disponible: l’entitat bancària que processa el pagament, l’empresa de transport ({carrier}) i el proveïdor dels correus de la comanda.',
+                'Proveïdors d’allotjament web i de base de dades, amb servidors a la Unió Europea.',
+                'El proveïdor d’enviament dels correus del Club L’Atelier.',
+                'L’entitat bancària que processa els pagaments, l’empresa de transport i el proveïdor dels correus de les comandes.',
               ],
             },
             'També hi poden accedir la nostra assessoria, per a la comptabilitat i els impostos, i les administracions públiques quan una llei ho exigeixi.',
@@ -338,7 +342,7 @@ export const ca: LegalCopy = {
           id: 'transferencias',
           title: 'Transferències internacionals',
           blocks: [
-            'Vercel i Supabase són empreses dels Estats Units. Tot i que les dades es desen a la Unió Europea, hi pot haver accessos des de fora. En aquest cas, la transferència s’empara en el Marc de Privacitat de Dades UE-EUA o en les clàusules contractuals tipus aprovades per la Comissió Europea.',
+            'Alguns proveïdors tenen la seu fora de l’Espai Econòmic Europeu. Tot i que les dades es desen a la Unió Europea, hi pot haver accessos des de fora. En aquest cas, la transferència s’empara en el Marc de Privacitat de Dades UE-EUA o en les clàusules contractuals tipus aprovades per la Comissió Europea.',
           ],
         },
         {
@@ -357,7 +361,7 @@ export const ca: LegalCopy = {
                 'retirada del consentiment, sense que afecti el que s’ha tractat abans.',
               ],
             },
-            'Escriu-nos a {email} o a {registeredAddress} indicant quin dret vols exercir. Si tenim dubtes sobre la teva identitat, et podrem demanar que l’acreditis. Et respondrem en el termini d’un mes.',
+            'Escriu-nos per correu electrònic o per correu postal a la botiga ({storeAddress}) indicant quin dret vols exercir. Si tenim dubtes sobre la teva identitat, et podrem demanar que l’acreditis. Et respondrem en el termini d’un mes.',
             'No prenem decisions automatitzades ni elaborem perfils amb efectes sobre tu.',
             'Si creus que no hem tractat bé les teves dades, pots reclamar davant l’[Agència Espanyola de Protecció de Dades](https://www.aepd.es).',
           ],
@@ -373,7 +377,7 @@ export const ca: LegalCopy = {
           id: 'medidas',
           title: 'Seguretat',
           blocks: [
-            'Apliquem mesures tècniques i organitzatives adequades: connexió xifrada (HTTPS), accés de l’equip amb verificació en dos passos i només a les dades que necessita cada funció, i registre de les operacions del tauler.',
+            'Apliquem mesures tècniques i organitzatives adequades per protegir les teves dades, com ara la connexió xifrada (HTTPS) i l’accés restringit a la informació.',
           ],
         },
         {
@@ -413,24 +417,6 @@ export const ca: LegalCopy = {
                     'Pròpia',
                     'Recordar l’idioma que tries.',
                     'Fins que tanques el navegador',
-                  ],
-                  [
-                    'sb-…-auth-token',
-                    'Pròpia (Supabase)',
-                    'Mantenir la sessió de l’equip al tauler de gestió. No s’instal·la als clients.',
-                    'Fins que es tanca la sessió (màxim 400 dies)',
-                  ],
-                  [
-                    '__prerender_bypass',
-                    'Pròpia',
-                    'Visualització prèvia de la botiga per a l’equip. No s’instal·la als clients.',
-                    'Fins que tanques el navegador',
-                  ],
-                  [
-                    '_vercel_jwt',
-                    'Vercel',
-                    'Accés restringit al web mentre no està obert al públic.',
-                    'La fixa Vercel; desapareix en obrir el web',
                   ],
                 ],
               },
@@ -473,8 +459,6 @@ export const ca: LegalCopy = {
     shipping: {
       title: 'Enviaments i devolucions',
       summary: 'On i quan enviem, quant costa i com retornar una comanda.',
-      notice:
-        'La compra en línia encara no està disponible. Aquestes condicions s’aplicaran a les comandes fetes en aquest web quan s’activi.',
       sections: [
         {
           id: 'zonas',
@@ -518,7 +502,7 @@ export const ca: LegalCopy = {
           title: 'Dret de desistiment: 14 dies',
           blocks: [
             'Pots desistir de la compra sense donar explicacions en un termini de 14 dies naturals des del dia que tu, o la persona que indiquis (diferent del transportista), rebeu la comanda. Si els productes arriben en lliuraments separats, el termini compta des de l’últim.',
-            'Per desistir, comunica’ns-ho de manera clara abans que s’acabi el termini: per correu electrònic a {email} o per correu postal a {registeredAddress}. Pots fer servir el [formulari de desistiment](doc:shipping#formulario), tot i que no és obligatori.',
+            'Per desistir, comunica’ns-ho de manera clara abans que s’acabi el termini, per correu electrònic o per correu postal a la botiga ({storeAddress}). Pots fer servir el [formulari de desistiment](doc:shipping#formulario), tot i que no és obligatori.',
           ],
         },
         {
@@ -549,7 +533,7 @@ export const ca: LegalCopy = {
           id: 'defectos',
           title: 'Productes malmesos, defectuosos o equivocats',
           blocks: [
-            'Si el producte arriba trencat, amb fuites, defectuós o no és el que vas demanar, escriu-nos a {email} amb el número de comanda i fotos. Te’l canviarem o et retornarem l’import, i les despeses aniran a càrrec nostre. A més, tens la garantia legal de 3 anys explicada a les [condicions de venda](doc:terms#garantia).',
+            'Si el producte arriba trencat, amb fuites, defectuós o no és el que vas demanar, escriu-nos amb el número de comanda i fotos. Te’l canviarem o et retornarem l’import, i les despeses aniran a càrrec nostre. A més, tens la garantia legal de 3 anys explicada a les [condicions de venda](doc:terms#garantia).',
           ],
         },
         {
@@ -564,7 +548,7 @@ export const ca: LegalCopy = {
           title: 'Model de formulari de desistiment',
           blocks: [
             '(Només cal emplenar i enviar aquest formulari si voleu desistir del contracte.)',
-            'A l’atenció de {holder}, {registeredAddress}, {email}:',
+            'A l’atenció de L’Atelier du Désert, {storeAddress}:',
             {
               list: [
                 'Per la present us comunico/comuniquem (*) que desisteixo del meu/desistim del nostre (*) contracte de venda del bé següent (*):',

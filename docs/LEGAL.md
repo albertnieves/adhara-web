@@ -4,7 +4,7 @@ Borrador del 09/10/2026 de los cinco textos legales de la tienda, en español, c
 
 ## Dónde se ven
 
-Enlazados en el pie de todas las páginas (columna «Legal»), y la política de privacidad también desde el aviso de la suscripción.
+Enlazados en la barra inferior del pie de todas las páginas, en pequeño junto al ©, como en cualquier tienda, y la política de privacidad también desde el aviso de la suscripción.
 
 | Texto                  | es                          | ca                             | en                         |
 | ---------------------- | --------------------------- | ------------------------------ | -------------------------- |
@@ -14,13 +14,13 @@ Enlazados en el pie de todas las páginas (columna «Legal»), y la política de
 | Política de cookies    | `/es/cookies`               | `/ca/galetes`                  | `/en/cookie-policy`        |
 | Envíos y devoluciones  | `/es/envios-y-devoluciones` | `/ca/enviaments-i-devolucions` | `/en/shipping-and-returns` |
 
-Las condiciones de venta y los envíos llevan arriba un aviso: la compra online aún no está disponible y se aplicarán cuando se active.
+**Discretos, como en una perfumería que ya funciona** (§114): sin avisos de «borrador» ni de «compra online no disponible», sin nombres de proveedores (se citan por categorías, como permite el RGPD) y sin detalles internos (panel, cookies del equipo, Vercel, medidas concretas). Una prueba unitaria lo vigila.
 
 ## Cómo se modifican
 
 - **Texto:** `src/modules/legal/content/es.ts` (referencia), `ca.ts` y `en.ts`, con las mismas secciones. Una prueba (`tests/unit/legal.test.ts`) falla si los idiomas no tienen las mismas secciones, marcadores y enlaces.
-- **Datos que faltan:** `src/modules/legal/domain/entity.ts` (`LEGAL_ENTITY`). Mientras un dato vale `null`, la página muestra un recuadro «Pendiente: …» en su lugar. Al rellenarlo desaparece en los tres idiomas.
-- **Correo, teléfono y dirección de la tienda:** Panel → Configuración (los mismos que el pie). Hoy el correo y el teléfono están vacíos, así que salen como pendientes.
+- **Datos que faltan:** `src/modules/legal/domain/entity.ts` (`LEGAL_ENTITY`). Mientras un dato vale `null`, **el párrafo o la línea que lo usa no se publica** (la página se lee completa, sin huecos). Para revisarlos con el cliente, entra en la tienda desde el panel con «Ver tienda con borradores»: en esa vista previa se ven como recuadros «Pendiente: …». Al rellenar el dato, la línea aparece en los tres idiomas.
+- **Correo, teléfono y dirección de la tienda:** Panel → Configuración (los mismos que el pie). Hoy el correo y el teléfono están vacíos, así que esas líneas no se publican.
 - **Fecha de la versión:** `LEGAL_UPDATED_AT` en el mismo archivo; se cambia con cada revisión de fondo.
 - Marcadores: `{campo}` inserta un dato; `[texto](doc:privacy#derechos)` enlaza otro texto legal; `[texto](https://…)` enlaza fuera.
 
@@ -47,8 +47,8 @@ Las condiciones de venta y los envíos llevan arriba un aviso: la compra online 
 3. **Recogida gratuita en la tienda** de Castelldefels como opción de entrega, y devoluciones a la misma dirección.
 4. **Venta solo a mayores de edad**; Club L’Atelier desde 14 años (art. 7 LOPDGDD).
 5. **Garantía legal de 3 años**, sin garantía comercial adicional.
-6. **Sin aviso de cookies:** la web solo usa cookies técnicas (`NEXT_LOCALE`, la sesión del equipo, la vista previa y la de Vercel mientras la web es privada), exentas por el art. 22.2 LSSI. **Si se añade analítica, publicidad, un mapa incrustado o un píxel, hace falta un aviso con consentimiento previo y actualizar la política.**
-7. **Proveedores citados en privacidad:** Vercel (París), Supabase (Fráncfort) y Sender (Lituania). El asistente del panel (Anthropic) no se cita porque no trata datos de clientes; si llegan los mensajes con borradores de IA (A6.3), hay que añadirlo.
+6. **Sin aviso de cookies:** la web solo usa cookies técnicas, exentas por el art. 22.2 LSSI. La política lista solo la del idioma (`NEXT_LOCALE`), que es la que reciben los clientes; las de sesión y vista previa del equipo y la de Vercel mientras la web es privada no se citan. **Si se añade analítica, publicidad, un mapa incrustado o un píxel, hace falta un aviso con consentimiento previo y actualizar la política.**
+7. **Proveedores en privacidad, por categorías:** alojamiento y base de datos en la UE (Vercel, París; Supabase, Fráncfort), email del Club (Sender, Lituania), y banco, transportista y email de pedidos. Las transferencias se explican sin nombrar a nadie. El asistente del panel (Anthropic) no se cita porque no trata datos de clientes; si llegan los mensajes con borradores de IA (A6.3), hay que añadirlo.
 8. **Sin plataforma ODR europea:** dejó de existir el 20/07/2025, así que no se enlaza.
 9. Los textos están en los tres idiomas sin cláusula de prevalencia (el Código de consumo de Cataluña exige la información también en catalán).
 

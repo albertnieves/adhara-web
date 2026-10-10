@@ -4,6 +4,7 @@ export type { LegalValue } from './domain/entity';
 export {
   invalidTokens,
   parseLegalText,
+  visibleSegments,
   resolveValue,
 } from './domain/placeholders';
 export type { LegalSegment } from './domain/placeholders';

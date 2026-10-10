@@ -9,6 +9,7 @@ import {
   invalidTokens,
   parseLegalText,
   resolveValue,
+  visibleSegments,
 } from '../../src/modules/legal';
 import type { LegalBlock, LegalCopy } from '../../src/modules/legal';
 
@@ -31,7 +32,6 @@ function allTexts(copy: LegalCopy): string[] {
     return [
       document.title,
       document.summary,
-      document.notice ?? '',
       ...document.sections.flatMap((section) => [
         section.title,
         ...section.blocks.flatMap(blockTexts),
@@ -90,6 +90,20 @@ describe('parseLegalText', () => {
     ]);
   });
 
+  it('en la tienda no se publica lo que tiene datos pendientes; en la vista previa, sí', () => {
+    expect(visibleSegments('NIF: {taxId}', {}, false)).toBeNull();
+    expect(visibleSegments('NIF: {taxId}', {}, true)).toEqual([
+      { kind: 'text', text: 'NIF: ' },
+      { kind: 'pending', field: 'taxId' },
+    ]);
+    expect(
+      visibleSegments('NIF: {taxId}', { taxId: 'B00000000' }, false),
+    ).toEqual([
+      { kind: 'text', text: 'NIF: ' },
+      { kind: 'value', field: 'taxId', text: 'B00000000' },
+    ]);
+  });
+
   it('un valor vacío cuenta como pendiente', () => {
     expect(resolveValue(null, 'es')).toBeNull();
     expect(resolveValue('  ', 'es')).toBeNull();
@@ -118,9 +132,6 @@ describe('textos legales', () => {
             section.blocks.length,
           ]);
         expect(ids(other), doc).toEqual(ids(es));
-        expect(Boolean(other.documents[doc].notice), doc).toBe(
-          Boolean(es.documents[doc].notice),
-        );
       }
       expect(fieldsOf(allTexts(other))).toEqual(fieldsOf(allTexts(es)));
       expect(docLinksOf(allTexts(other))).toEqual(docLinksOf(allTexts(es)));
@@ -151,6 +162,15 @@ describe('textos legales', () => {
       expect(pathnames[LEGAL_PATHS[doc]], doc).toMatchObject({
         es: LEGAL_PATHS[doc],
       });
+    }
+  });
+
+  it('no expone detalles internos de la web', () => {
+    for (const locale of ['es', 'ca', 'en'] as const) {
+      const text = allTexts(LEGAL_COPY[locale]).join(' ');
+      expect(text).not.toMatch(
+        /Vercel|Supabase|panel|tauler|dashboard|_vercel|sb-|prerender|todavía no|encara no|not available yet/i,
+      );
     }
   });
 

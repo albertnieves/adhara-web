@@ -1,10 +1,12 @@
 import type { LegalCopy } from '../domain/types';
 
 /**
- * Textos legales en español (versión de referencia). Borrador para revisar
- * con el cliente y la asesoría: los datos que faltan van como `{campo}` y se
- * ven en la página como «Pendiente: …». Cualquier cambio de fondo se hace
- * aquí primero y después en ca.ts y en.ts, con las mismas secciones.
+ * Textos legales en español (versión de referencia), a revisar con el
+ * cliente y la asesoría. Los datos van como `{campo}`: si falta uno, ese
+ * párrafo o línea no se publica y en la vista previa del personal se ve como
+ * «Pendiente: …». Sin detalles internos (proveedores por nombre, panel,
+ * estado de la web). Cualquier cambio de fondo se hace aquí primero y
+ * después en ca.ts y en.ts, con las mismas secciones.
  */
 export const es: LegalCopy = {
   ui: {
@@ -61,7 +63,7 @@ export const es: LegalCopy = {
           id: 'objeto',
           title: 'Objeto y aceptación',
           blocks: [
-            'Esta web da a conocer la perfumería árabe de L’Atelier du Désert y su tienda de Castelldefels: su colección, el catálogo olfativo y, cuando esté disponible, la compra online.',
+            'Esta web da a conocer la perfumería árabe de L’Atelier du Désert y su tienda de Castelldefels: su colección, el catálogo olfativo y la compra online.',
             'Navegar por la web supone aceptar este aviso legal. Las compras se rigen además por las [condiciones de venta](doc:terms) y por la página de [envíos y devoluciones](doc:shipping).',
           ],
         },
@@ -74,7 +76,7 @@ export const es: LegalCopy = {
               list: [
                 'usarla para fines ilícitos o que perjudiquen a terceros;',
                 'introducir virus o cualquier código que pueda dañarla;',
-                'intentar acceder a zonas restringidas, como el panel del equipo, o a datos de otras personas;',
+                'intentar acceder a zonas restringidas o a datos de otras personas;',
                 'copiar o extraer de forma masiva sus contenidos.',
               ],
             },
@@ -85,7 +87,7 @@ export const es: LegalCopy = {
           id: 'propiedad',
           title: 'Propiedad intelectual e industrial',
           blocks: [
-            'El nombre L’Atelier du Désert, su logotipo, el diseño de la web, sus textos propios y su código pertenecen a {holder} o se usan con licencia. No puedes reproducirlos, distribuirlos ni transformarlos sin autorización.',
+            'El nombre L’Atelier du Désert, su logotipo, el diseño de la web, sus textos propios y su código pertenecen al titular de esta web o se usan con licencia. No puedes reproducirlos, distribuirlos ni transformarlos sin autorización.',
             'Los nombres, las marcas y las imágenes de los perfumes pertenecen a sus casas respectivas. Se usan solo para identificar los productos que se venden en la tienda, sin que ello suponga ninguna relación distinta de la de revendedor.',
           ],
         },
@@ -132,15 +134,13 @@ export const es: LegalCopy = {
       title: 'Condiciones de venta',
       summary:
         'Las condiciones que se aplican a las compras que hagas en esta web.',
-      notice:
-        'La compra online todavía no está disponible. Estas condiciones se aplicarán a los pedidos hechos en esta web cuando se active; mientras tanto, te esperamos en la tienda de Castelldefels.',
       sections: [
         {
           id: 'partes',
           title: 'Quién vende y a quién',
           blocks: [
-            'Vende {holder}, con NIF {taxId} y domicilio en {registeredAddress}, con el nombre comercial L’Atelier du Désert (ver el [aviso legal](doc:legalNotice)).',
-            'Estas condiciones se aplican a las compras hechas en la web por personas mayores de edad, con entrega en {shippingZones} o recogida en la tienda. Al hacer el pedido aceptas la versión vigente en ese momento, que te enviamos con la confirmación.',
+            'El vendedor es el titular de esta web, L’Atelier du Désert, cuyos datos figuran en el [aviso legal](doc:legalNotice#titular).',
+            'Estas condiciones se aplican a las compras hechas en la web por personas mayores de edad, con entrega a domicilio o recogida en la tienda. Al hacer el pedido aceptas la versión vigente en ese momento, que te enviamos con la confirmación.',
           ],
         },
         {
@@ -223,7 +223,14 @@ export const es: LegalCopy = {
           id: 'atencion',
           title: 'Atención al cliente y reclamaciones',
           blocks: [
-            'Puedes escribirnos a {email}, llamarnos al {phone} o venir a la tienda, en {storeAddress}. Responderemos a las reclamaciones lo antes posible y como máximo en un mes.',
+            'Puedes contactarnos por estas vías. Responderemos a las reclamaciones lo antes posible y como máximo en un mes.',
+            {
+              list: [
+                'Email: {email}',
+                'Teléfono: {phone}',
+                'Tienda: {storeAddress}',
+              ],
+            },
             'Tienes a tu disposición hojas oficiales de queja, reclamación y denuncia en la tienda, y también puedes pedírnoslas por email. Puedes dirigirte a la oficina municipal de información al consumidor de tu municipio o a la [Agència Catalana del Consum](https://consum.gencat.cat).',
             'Arbitraje de consumo: {arbitration}.',
           ],
@@ -256,13 +263,14 @@ export const es: LegalCopy = {
           blocks: [
             {
               list: [
-                'Responsable: {holder} (L’Atelier du Désert)',
+                'Responsable: L’Atelier du Désert',
+                'Titular: {holder}',
                 'NIF: {taxId}',
                 'Domicilio: {registeredAddress}',
                 'Email para temas de privacidad: {email}',
               ],
             },
-            'Por el tamaño y la actividad del negocio no es obligatorio un delegado de protección de datos. Para cualquier cuestión sobre tus datos, escríbenos al email anterior.',
+            'Para cualquier cuestión sobre tus datos, puedes escribirnos por email o por correo postal a la tienda, en {storeAddress}.',
           ],
         },
         {
@@ -298,7 +306,6 @@ export const es: LegalCopy = {
           id: 'pedidos',
           title: 'Pedidos online',
           blocks: [
-            'Se aplicará cuando la compra online esté disponible.',
             {
               list: [
                 'Datos: nombre, email, teléfono, dirección de entrega y, si pides factura a nombre de una empresa, sus datos fiscales; productos, importes y estado del pago. Los datos de tu tarjeta los trata el banco: nosotros no los recibimos.',
@@ -330,10 +337,9 @@ export const es: LegalCopy = {
             'No vendemos ni cedemos tus datos. Solo acceden a ellos, con contrato de encargo de tratamiento y solo para prestarnos su servicio, estos proveedores:',
             {
               list: [
-                'Vercel Inc.: alojamiento de la web, con servidores en la Unión Europea (París).',
-                'Supabase Inc.: base de datos, con servidores en la Unión Europea (Fráncfort).',
-                'Sender (sender.net, Lituania): envío de los correos del Club L’Atelier.',
-                'Cuando la compra online esté disponible: la entidad bancaria que procesa el pago, la empresa de transporte ({carrier}) y el proveedor de los emails del pedido.',
+                'Proveedores de alojamiento web y de base de datos, con servidores en la Unión Europea.',
+                'El proveedor de envío de los correos del Club L’Atelier.',
+                'La entidad bancaria que procesa los pagos, la empresa de transporte y el proveedor de los emails de los pedidos.',
               ],
             },
             'También pueden acceder nuestra asesoría, para la contabilidad y los impuestos, y las administraciones públicas cuando una ley lo exija.',
@@ -343,7 +349,7 @@ export const es: LegalCopy = {
           id: 'transferencias',
           title: 'Transferencias internacionales',
           blocks: [
-            'Vercel y Supabase son empresas de Estados Unidos. Aunque los datos se guardan en la Unión Europea, puede haber accesos desde fuera de ella. En ese caso, la transferencia se ampara en el Marco de Privacidad de Datos UE-EE. UU. o en las cláusulas contractuales tipo aprobadas por la Comisión Europea.',
+            'Algunos proveedores tienen su sede fuera del Espacio Económico Europeo. Aunque los datos se guardan en la Unión Europea, puede haber accesos desde fuera de ella. En ese caso, la transferencia se ampara en el Marco de Privacidad de Datos UE-EE. UU. o en las cláusulas contractuales tipo aprobadas por la Comisión Europea.',
           ],
         },
         {
@@ -362,7 +368,7 @@ export const es: LegalCopy = {
                 'retirada del consentimiento, sin que afecte a lo tratado antes.',
               ],
             },
-            'Escríbenos a {email} o a {registeredAddress} indicando qué derecho quieres ejercer. Si tenemos dudas sobre tu identidad, podremos pedirte que la acredites. Te responderemos en el plazo de un mes.',
+            'Escríbenos por email o por correo postal a la tienda ({storeAddress}) indicando qué derecho quieres ejercer. Si tenemos dudas sobre tu identidad, podremos pedirte que la acredites. Te responderemos en el plazo de un mes.',
             'No tomamos decisiones automatizadas ni elaboramos perfiles con efectos sobre ti.',
             'Si crees que no hemos tratado bien tus datos, puedes reclamar ante la [Agencia Española de Protección de Datos](https://www.aepd.es).',
           ],
@@ -378,7 +384,7 @@ export const es: LegalCopy = {
           id: 'medidas',
           title: 'Seguridad',
           blocks: [
-            'Aplicamos medidas técnicas y organizativas adecuadas: conexión cifrada (HTTPS), acceso del equipo con verificación en dos pasos y solo a los datos que necesita cada función, y registro de las operaciones del panel.',
+            'Aplicamos medidas técnicas y organizativas adecuadas para proteger tus datos, como la conexión cifrada (HTTPS) y el acceso restringido a la información.',
           ],
         },
         {
@@ -417,24 +423,6 @@ export const es: LegalCopy = {
                     'Propia',
                     'Recordar el idioma que eliges.',
                     'Hasta que cierras el navegador',
-                  ],
-                  [
-                    'sb-…-auth-token',
-                    'Propia (Supabase)',
-                    'Mantener la sesión del equipo en el panel de gestión. No se instala a los clientes.',
-                    'Hasta cerrar la sesión (máximo 400 días)',
-                  ],
-                  [
-                    '__prerender_bypass',
-                    'Propia',
-                    'Vista previa de la tienda para el equipo. No se instala a los clientes.',
-                    'Hasta que cierras el navegador',
-                  ],
-                  [
-                    '_vercel_jwt',
-                    'Vercel',
-                    'Acceso restringido a la web mientras no está abierta al público.',
-                    'La fija Vercel; desaparece al abrir la web',
                   ],
                 ],
               },
@@ -478,8 +466,6 @@ export const es: LegalCopy = {
       title: 'Envíos y devoluciones',
       summary:
         'Dónde y cuándo enviamos, cuánto cuesta y cómo devolver un pedido.',
-      notice:
-        'La compra online todavía no está disponible. Estas condiciones se aplicarán a los pedidos hechos en esta web cuando se active.',
       sections: [
         {
           id: 'zonas',
@@ -523,7 +509,7 @@ export const es: LegalCopy = {
           title: 'Derecho de desistimiento: 14 días',
           blocks: [
             'Puedes desistir de la compra sin dar explicaciones en un plazo de 14 días naturales desde el día en que tú, o la persona que indiques (distinta del transportista), recibís el pedido. Si los productos llegan en entregas separadas, el plazo cuenta desde la última.',
-            'Para desistir, comunícanoslo de forma clara antes de que acabe el plazo: por email a {email} o por correo postal a {registeredAddress}. Puedes usar el [formulario de desistimiento](doc:shipping#formulario), aunque no es obligatorio.',
+            'Para desistir, comunícanoslo de forma clara antes de que acabe el plazo, por email o por correo postal a la tienda ({storeAddress}). Puedes usar el [formulario de desistimiento](doc:shipping#formulario), aunque no es obligatorio.',
           ],
         },
         {
@@ -554,7 +540,7 @@ export const es: LegalCopy = {
           id: 'defectos',
           title: 'Productos dañados, defectuosos o equivocados',
           blocks: [
-            'Si el producto llega roto, con fugas, defectuoso o no es el que pediste, escríbenos a {email} con el número de pedido y fotos. Te lo cambiaremos o te devolveremos el importe, y los gastos correrán de nuestra cuenta. Además, tienes la garantía legal de 3 años explicada en las [condiciones de venta](doc:terms#garantia).',
+            'Si el producto llega roto, con fugas, defectuoso o no es el que pediste, escríbenos con el número de pedido y fotos. Te lo cambiaremos o te devolveremos el importe, y los gastos correrán de nuestra cuenta. Además, tienes la garantía legal de 3 años explicada en las [condiciones de venta](doc:terms#garantia).',
           ],
         },
         {
@@ -569,7 +555,7 @@ export const es: LegalCopy = {
           title: 'Modelo de formulario de desistimiento',
           blocks: [
             '(Solo debe cumplimentar y enviar el presente formulario si desea desistir del contrato.)',
-            'A la atención de {holder}, {registeredAddress}, {email}:',
+            'A la atención de L’Atelier du Désert, {storeAddress}:',
             {
               list: [
                 'Por la presente le comunico/comunicamos (*) que desisto de mi/desistimos de nuestro (*) contrato de venta del siguiente bien (*):',

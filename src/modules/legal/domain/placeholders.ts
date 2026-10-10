@@ -84,6 +84,24 @@ export function parseLegalText(
   return segments;
 }
 
+/**
+ * Lo que se publica de un texto: en la tienda, un párrafo o una línea de
+ * lista con algún dato pendiente no se muestra (la página se lee completa,
+ * sin huecos); en la vista previa del personal se ve con el marcador
+ * «Pendiente: …» para revisarlo con el cliente.
+ */
+export function visibleSegments(
+  text: string,
+  values: Partial<Record<LegalField, string | null>>,
+  showPending: boolean,
+): LegalSegment[] | null {
+  const segments = parseLegalText(text, values);
+  if (!showPending && segments.some((segment) => segment.kind === 'pending')) {
+    return null;
+  }
+  return segments;
+}
+
 /** Marcadores o enlaces de un texto que no se reconocen. */
 export function invalidTokens(text: string): string[] {
   return parseLegalText(text, {})

@@ -55,7 +55,7 @@ export const en: LegalCopy = {
           id: 'objeto',
           title: 'Purpose and acceptance',
           blocks: [
-            'This website presents the Arabian perfumery of L’Atelier du Désert and its shop in Castelldefels: its collection, the scent catalogue and, once available, online shopping.',
+            'This website presents the Arabian perfumery of L’Atelier du Désert and its shop in Castelldefels: its collection, the scent catalogue and online shopping.',
             'By browsing the website you accept this legal notice. Purchases are also governed by the [terms of sale](doc:terms) and the [shipping and returns](doc:shipping) page.',
           ],
         },
@@ -68,7 +68,7 @@ export const en: LegalCopy = {
               list: [
                 'use it for unlawful purposes or to harm others;',
                 'introduce viruses or any code that could damage it;',
-                'try to access restricted areas, such as the staff dashboard, or other people’s data;',
+                'try to access restricted areas or other people’s data;',
                 'copy or scrape its content on a large scale.',
               ],
             },
@@ -79,7 +79,7 @@ export const en: LegalCopy = {
           id: 'propiedad',
           title: 'Intellectual and industrial property',
           blocks: [
-            'The name L’Atelier du Désert, its logo, the website design, its own texts and its code belong to {holder} or are used under licence. You may not reproduce, distribute or modify them without permission.',
+            'The name L’Atelier du Désert, its logo, the website design, its own texts and its code belong to the owner of this website or are used under licence. You may not reproduce, distribute or modify them without permission.',
             'The names, brands and images of the perfumes belong to their respective houses. They are used only to identify the products sold in the shop and imply no relationship other than that of a retailer.',
           ],
         },
@@ -125,15 +125,13 @@ export const en: LegalCopy = {
     terms: {
       title: 'Terms of sale',
       summary: 'The terms that apply to purchases made on this website.',
-      notice:
-        'Online shopping is not available yet. These terms will apply to orders placed on this website once it opens; in the meantime, we look forward to seeing you at our shop in Castelldefels.',
       sections: [
         {
           id: 'partes',
           title: 'Who sells and to whom',
           blocks: [
-            'The seller is {holder}, tax ID {taxId}, with registered address at {registeredAddress}, trading as L’Atelier du Désert (see the [legal notice](doc:legalNotice)).',
-            'These terms apply to purchases made on the website by adults, for delivery to {shippingZones} or for collection in the shop. When you order, you accept the version in force at that time, which we send you with the confirmation.',
+            'The seller is the owner of this website, L’Atelier du Désert, whose details are set out in the [legal notice](doc:legalNotice#titular).',
+            'These terms apply to purchases made on the website by adults, for home delivery or for collection in the shop. When you order, you accept the version in force at that time, which we send you with the confirmation.',
           ],
         },
         {
@@ -216,7 +214,14 @@ export const en: LegalCopy = {
           id: 'atencion',
           title: 'Customer service and complaints',
           blocks: [
-            'You can email us at {email}, call us on {phone} or visit the shop at {storeAddress}. We will answer complaints as soon as possible and within one month at the latest.',
+            'You can reach us through these channels. We will answer complaints as soon as possible and within one month at the latest.',
+            {
+              list: [
+                'Email: {email}',
+                'Phone: {phone}',
+                'Shop: {storeAddress}',
+              ],
+            },
             'Official complaint forms (fulls oficials de queixa, reclamació i denúncia) are available in the shop and you can also ask us for them by email. You can contact your local consumer information office or the [Catalan Consumer Agency](https://consum.gencat.cat).',
             'Consumer arbitration: {arbitration}.',
           ],
@@ -249,13 +254,14 @@ export const en: LegalCopy = {
           blocks: [
             {
               list: [
-                'Controller: {holder} (L’Atelier du Désert)',
+                'Controller: L’Atelier du Désert',
+                'Owner: {holder}',
                 'Tax ID (NIF): {taxId}',
                 'Address: {registeredAddress}',
                 'Email for privacy matters: {email}',
               ],
             },
-            'Given the size and activity of the business, a data protection officer is not required. For any question about your data, write to the email above.',
+            'For any question about your data, you can email us or write to us at the shop, at {storeAddress}.',
           ],
         },
         {
@@ -291,7 +297,6 @@ export const en: LegalCopy = {
           id: 'pedidos',
           title: 'Online orders',
           blocks: [
-            'This will apply once online shopping is available.',
             {
               list: [
                 'Data: name, email, phone, delivery address and, if you ask for an invoice in a company’s name, its tax details; products, amounts and payment status. Your card details are processed by the bank: we do not receive them.',
@@ -323,10 +328,9 @@ export const en: LegalCopy = {
             'We do not sell or share your data. Only these providers access it, under a data processing agreement and solely to provide their service to us:',
             {
               list: [
-                'Vercel Inc.: website hosting, with servers in the European Union (Paris).',
-                'Supabase Inc.: database, with servers in the European Union (Frankfurt).',
-                'Sender (sender.net, Lithuania): sending Club L’Atelier emails.',
-                'Once online shopping is available: the bank that processes payments, the carrier ({carrier}) and the provider of order emails.',
+                'Web hosting and database providers, with servers in the European Union.',
+                'The provider that sends Club L’Atelier emails.',
+                'The bank that processes payments, the carrier and the provider of order emails.',
               ],
             },
             'Our accounting and tax advisers, and public authorities where required by law, may also have access.',
@@ -336,7 +340,7 @@ export const en: LegalCopy = {
           id: 'transferencias',
           title: 'International transfers',
           blocks: [
-            'Vercel and Supabase are US companies. Although the data is stored in the European Union, it may be accessed from outside it. In that case, the transfer is covered by the EU-US Data Privacy Framework or by the standard contractual clauses approved by the European Commission.',
+            'Some providers are based outside the European Economic Area. Although the data is stored in the European Union, it may be accessed from outside it. In that case, the transfer is covered by the EU-US Data Privacy Framework or by the standard contractual clauses approved by the European Commission.',
           ],
         },
         {
@@ -355,7 +359,7 @@ export const en: LegalCopy = {
                 'withdrawal of consent, without affecting earlier processing.',
               ],
             },
-            'Write to {email} or to {registeredAddress} stating which right you want to exercise. If we have doubts about your identity, we may ask you to prove it. We will reply within one month.',
+            'Email us or write to us at the shop ({storeAddress}) stating which right you want to exercise. If we have doubts about your identity, we may ask you to prove it. We will reply within one month.',
             'We do not make automated decisions or create profiles that affect you.',
             'If you think we have not handled your data properly, you can complain to the [Spanish Data Protection Agency](https://www.aepd.es).',
           ],
@@ -371,7 +375,7 @@ export const en: LegalCopy = {
           id: 'medidas',
           title: 'Security',
           blocks: [
-            'We apply appropriate technical and organisational measures: encrypted connections (HTTPS), staff access with two-step verification and only to the data each role needs, and a log of dashboard operations.',
+            'We apply appropriate technical and organisational measures to protect your data, such as encrypted connections (HTTPS) and restricted access to information.',
           ],
         },
         {
@@ -410,24 +414,6 @@ export const en: LegalCopy = {
                     'Ours',
                     'Remember the language you choose.',
                     'Until you close the browser',
-                  ],
-                  [
-                    'sb-…-auth-token',
-                    'Ours (Supabase)',
-                    'Keep staff signed in to the management dashboard. Not set for customers.',
-                    'Until sign-out (400 days at most)',
-                  ],
-                  [
-                    '__prerender_bypass',
-                    'Ours',
-                    'Shop preview for staff. Not set for customers.',
-                    'Until you close the browser',
-                  ],
-                  [
-                    '_vercel_jwt',
-                    'Vercel',
-                    'Restricted access to the website while it is not open to the public.',
-                    'Set by Vercel; removed when the website opens',
                   ],
                 ],
               },
@@ -471,8 +457,6 @@ export const en: LegalCopy = {
       title: 'Shipping and returns',
       summary:
         'Where and when we ship, what it costs and how to return an order.',
-      notice:
-        'Online shopping is not available yet. These terms will apply to orders placed on this website once it opens.',
       sections: [
         {
           id: 'zonas',
@@ -516,7 +500,7 @@ export const en: LegalCopy = {
           title: 'Right of withdrawal: 14 days',
           blocks: [
             'You can withdraw from the purchase without giving any reason within 14 calendar days from the day you, or a person you designate (other than the carrier), receive the order. If the products arrive in separate deliveries, the period runs from the last one.',
-            'To withdraw, tell us clearly before the period ends: by email to {email} or by post to {registeredAddress}. You may use the [withdrawal form](doc:shipping#formulario), but it is not compulsory.',
+            'To withdraw, tell us clearly before the period ends, by email or by post to the shop ({storeAddress}). You may use the [withdrawal form](doc:shipping#formulario), but it is not compulsory.',
           ],
         },
         {
@@ -547,7 +531,7 @@ export const en: LegalCopy = {
           id: 'defectos',
           title: 'Damaged, faulty or wrong products',
           blocks: [
-            'If the product arrives broken, leaking, faulty or is not what you ordered, email us at {email} with your order number and photos. We will replace it or refund you, and we will cover the costs. You also have the 3-year legal guarantee explained in the [terms of sale](doc:terms#garantia).',
+            'If the product arrives broken, leaking, faulty or is not what you ordered, email us with your order number and photos. We will replace it or refund you, and we will cover the costs. You also have the 3-year legal guarantee explained in the [terms of sale](doc:terms#garantia).',
           ],
         },
         {
@@ -562,7 +546,7 @@ export const en: LegalCopy = {
           title: 'Model withdrawal form',
           blocks: [
             '(Complete and return this form only if you wish to withdraw from the contract.)',
-            'To {holder}, {registeredAddress}, {email}:',
+            'To L’Atelier du Désert, {storeAddress}:',
             {
               list: [
                 'I/We (*) hereby give notice that I/We (*) withdraw from my/our (*) contract of sale of the following goods (*):',
