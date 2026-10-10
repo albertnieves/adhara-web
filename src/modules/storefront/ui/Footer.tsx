@@ -1,16 +1,19 @@
 import NextLink from 'next/link';
 import { readStoreContent } from '@/modules/content/server';
 import { storeContent, STORE_DEFAULTS } from '@/modules/content';
-import { getTranslations } from 'next-intl/server';
+import { getLocale, getTranslations } from 'next-intl/server';
 import { Eyebrow } from '@/components/ui';
 import { Logo } from '@/modules/brand';
 import { Link } from '@/modules/i18n';
+import type { Locale } from '@/modules/i18n/seo';
+import { LEGAL_COPY, LEGAL_DOCUMENTS, LEGAL_PATHS } from '@/modules/legal';
 import { FAQ_ANCHOR } from './Faq';
 
 export async function Footer() {
   const data = await readStoreContent('store', 'es');
   const store = data ? storeContent.parse(data.payload) : STORE_DEFAULTS;
   const t = await getTranslations('footer');
+  const legal = LEGAL_COPY[(await getLocale()) as Locale];
   const nav = await getTranslations('nav');
   return (
     <footer
@@ -101,10 +104,24 @@ export async function Footer() {
           </NextLink>
         </div>
       </div>
-      <div className="border-border text-2xs tracking-caps mx-auto flex max-w-[90rem] items-center justify-between border-t px-5 py-6 uppercase sm:px-10">
+      <div className="border-border text-2xs tracking-caps mx-auto flex max-w-[90rem] flex-col gap-4 border-t px-5 py-6 uppercase sm:px-10 lg:flex-row lg:items-center lg:justify-between">
         <span className="text-fg-muted">
           {t('rights', { year: new Date().getFullYear() })}
         </span>
+        <nav aria-label={t('legal')}>
+          <ul className="text-fg-muted flex flex-wrap gap-x-6 gap-y-3">
+            {LEGAL_DOCUMENTS.map((doc) => (
+              <li key={doc}>
+                <Link
+                  href={LEGAL_PATHS[doc]}
+                  className="link-underline hover:text-fg"
+                >
+                  {legal.documents[doc].title}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
         <span className="text-accent-fg">Castelldefels</span>
       </div>
     </footer>

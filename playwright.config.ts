@@ -1,7 +1,12 @@
 import { defineConfig, devices } from '@playwright/test';
+import { CONSENT_ACCEPTED } from './tests/support/legal-consent';
 export default defineConfig({
   testDir: './tests/e2e',
-  use: { baseURL: 'http://localhost:3000', trace: 'retain-on-failure' },
+  use: {
+    baseURL: 'http://localhost:3000',
+    trace: 'retain-on-failure',
+    storageState: CONSENT_ACCEPTED,
+  },
   projects: [
     {
       name: 'desktop',
