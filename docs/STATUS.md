@@ -1,6 +1,6 @@
-# Estado real — 09/10/2026
+# Estado real — 10/10/2026
 
-**Tienda visual (es/ca/en) y panel de administración operativos sobre `adhara-dev`, desplegados en Vercel, que sigue siendo privado (Vercel Authentication). `main` incluye las fases R y S (PR #9), la entrega de acceso y edición de Codex (PR #10) y el panel con el asistente (PR #11); sus 17 migraciones están aplicadas en `adhara-dev` (comprobado el 02/10). La tienda muestra 50 perfumes publicados con PVP. La Fase 1 está cerrada (PR #12): sus 19 criterios están cumplidos o con una excepción escrita ([informe](phases/FASE_1_REPORT.md)). La Fase 2 (sistema de diseño) está terminada a falta de la revisión visual del usuario ([informe](phases/FASE_2_REPORT.md)): 12 de 13 criterios cumplidos. Siguiente: checkout con pago con tarjeta, que espera los datos del TPV virtual (ver «Pendiente del usuario»).**
+**Tienda visual (es/ca/en) y panel de administración operativos sobre `adhara-dev`, desplegados en Vercel y públicos desde el 10/10 en `latelierdudesert.com`, sin Vercel Authentication y todavía con `noindex` (DECISIONS §118). `main` incluye las fases R y S (PR #9), la entrega de acceso y edición de Codex (PR #10) y el panel con el asistente (PR #11); sus 17 migraciones están aplicadas en `adhara-dev` (comprobado el 02/10). La tienda muestra 50 perfumes publicados con PVP. La Fase 1 está cerrada (PR #12): sus 19 criterios están cumplidos o con una excepción escrita ([informe](phases/FASE_1_REPORT.md)). La Fase 2 (sistema de diseño) está terminada a falta de la revisión visual del usuario ([informe](phases/FASE_2_REPORT.md)): 12 de 13 criterios cumplidos. Siguiente: checkout con pago con tarjeta, que espera los datos del TPV virtual (ver «Pendiente del usuario»).**
 
 ## Textos legales en borrador (09/10, rama `claude/affectionate-mccarthy-ec5p5j`)
 
@@ -13,7 +13,7 @@ A petición del usuario, para revisarlos con el cliente. Decisión §113; guía 
 
 ## Catálogo olfativo, suscripción a promociones y tienda sin etiquetas provisionales (09/10, rama `claude/adoring-mayer-jvv46o`)
 
-A petición del usuario, para acercar la web a producción. Decisiones §108–111. **Las dos migraciones nuevas (`20261009150000`, `20261009150100`) y la carga de perfiles (`supabase/data/20261009_perfiles_olfativos.sql`) están validadas en Supabase local y pendientes de aplicar en `adhara-dev` con autorización del usuario**; hasta entonces, la tienda desplegada muestra el catálogo olfativo sin perfiles y la suscripción responde con error.
+A petición del usuario, para acercar la web a producción. Decisiones §108–111. Las dos migraciones y la carga de perfiles (`supabase/data/20261009_perfiles_olfativos.sql`) están aplicadas en `adhara-dev` (comprobado el 10/10: 47 perfiles olfativos y la tabla de suscriptores). En remoto constan como `20261009161818` y `20261009164152`, no con las versiones del repositorio (`20261009150000`, `20261009150100`).
 
 - **Catálogo olfativo sin compra** (`/es/catalogo-olfativo`, `/ca/cataleg-olfactiu`, `/en/scent-catalogue` y ficha por perfume): pirámide de salida, corazón y fondo, familias, rueda de estaciones, día y noche, huella olfativa y perfumes afines; filtros por familia, estación y momento y búsqueda por nota. Sin precio ni compra. Enlazado en la cabecera y el pie.
 - **Research de notas:** 47 de los 50 perfumes publicados, cada uno con su fuente (distribuidor oficial en España o web de la marca); estación y momento solo cuando la fuente los indica. Sin perfil: Pharaoh Ramesses II, Game of Spades Blind Bid y Yara Aceite Concentrado (sin fuente). Vocabulario de 123 notas en es, ca y en. Editable en Panel → Catálogo → ficha → «Perfil olfativo».
@@ -211,7 +211,7 @@ Todas son provisionales (`provisional = true`) y guardan su procedencia: `origin
 
 ### Despliegue
 
-Vercel `altier-web` (antes `adhara-web`; equipo SOAPBRXND, Hobby; único proyecto activo, `soapbrxnd` pausado, DECISIONS §112), funciones en París (cdg1), todos los despliegues protegidos con Vercel Authentication. Variables públicas de Supabase (`adhara-dev`) configuradas para Preview, Production y Development. Production está en `06aacb1` (PR #11, READY); la PR #12 tiene su Preview en READY.
+Vercel `altier-web` (antes `adhara-web`; equipo L’Atelier, `latelierdudesert`, Hobby; único proyecto activo, `soapbrxnd` pausado, DECISIONS §112), funciones en París (cdg1), sin Vercel Authentication desde el 10/10: Production y Preview son públicas y el panel depende solo de su login con MFA (DECISIONS §118). Dominio **latelierdudesert.com** (comprado en Vercel el 10/10, DNS en Vercel, renovación automática, caduca el 10/10/2027) asignado a Production; `www` redirige al dominio sin `www` (DECISIONS §117). Variables públicas de Supabase (`adhara-dev`) configuradas para Preview, Production y Development. Production está en `06aacb1` (PR #11, READY); la PR #12 tiene su Preview en READY.
 
 ## Validación ejecutada (29/09–02/10/2026)
 
@@ -258,11 +258,11 @@ La revisión visual con perfumes se hizo en local con un Supabase simulado que d
 
 ## Pendiente del usuario
 
-0. **Catálogo olfativo y suscripción (09/10):** autorizar que se apliquen en `adhara-dev` las migraciones `20261009150000` y `20261009150100` y la carga `20261009_perfiles_olfativos.sql`; crear en Sender un token de API (y un grupo «Web») y ponerlos en Vercel, solo servidor, como `SENDER_API_TOKEN` y `SENDER_GROUP_ID`; activar en Sender la doble confirmación o un correo de bienvenida; y que la asesoría revise el texto de privacidad de la suscripción junto con los textos legales (punto 8).
+0. **Catálogo olfativo y suscripción (09/10):** crear en Sender un token de API (y un grupo «Web») y ponerlos en Vercel, solo servidor, como `SENDER_API_TOKEN` y `SENDER_GROUP_ID`; activar en Sender la doble confirmación o un correo de bienvenida; y que la asesoría revise el texto de privacidad de la suscripción junto con los textos legales (punto 8).
 
 1. Configurar la verificación en dos pasos del administrador de la tienda (la pide el primer acceso; la del administrador del sistema ya está activa) y proteger `main` en GitHub: PR obligatoria y `CI`, `Database` y `E2E` en verde.
 2. Importar el CSV del catálogo desde Panel → Catálogo → Importar, indicando si los precios del PDF llevan IVA. Los perfumes ya existen y 16 ya tienen su único formato, así que la revisión debe mostrar 0 perfumes nuevos, 408 formatos y 424 costes. Revisar después las marcas «por revisar», los 6 perfumes sin marca y las fotos (Panel → Catálogo, o la vista previa de la tienda).
-3. Decidir cuándo abrir la web a Agustín: con Vercel Authentication para todo, solo entra quien tiene cuenta en el equipo de Vercel (en Hobby, solo el titular).
+3. ~~Abrir la web a Agustín~~: hecho el 10/10, la web es pública (DECISIONS §118). Queda decidir cuándo quitar el `noindex` para que la indexen los buscadores.
 4. Asistente: configurar en Vercel, solo servidor y para Production y Preview, `ANTHROPIC_API_KEY` (de la cuenta de Anthropic del negocio), `CRON_SECRET` (valor aleatorio largo) y `SUPABASE_SECRET_KEY`; opcional `ASSISTANT_DAILY_LIMIT`. No pegar ninguna clave en el chat. La migración ya está aplicada.
 5. Dar de alta los proveedores reales (Compras → Proveedores) para que Reposición proponga cantidades.
 6. **Pago con tarjeta (Visa) en la web.** El datáfono de la tienda no sirve para cobrar online: hace falta un **TPV virtual** de comercio electrónico del banco (en España casi todos usan Redsys). Pedir al banco y guardar, sin pegarlo en el chat:
@@ -273,7 +273,7 @@ La revisión visual con perfumes se hizo en local con un Supabase simulado que d
      Alternativa si el banco tarda: Stripe (cuenta verificada con el IBAN del negocio). Decisiones para el checkout: solo recogida en tienda al principio o también envíos (zonas, tarifas, envío gratis, transportista); qué hacer si llega un pago sin stock (devolución automática o manual); y quién emite las facturas.
 7. **Correo transaccional** para confirmaciones de pedido y avisos (recomendado Resend), con acceso al DNS del dominio para SPF y DKIM y el remitente (p. ej. `pedidos@…`).
 8. **Datos legales para vender online** (LSSI y consumo): los cinco textos están en la web (§113–115) y los datos del titular ya están puestos (§116: autónoma, NIE, domicilio de la tienda, email y dominio). Faltan el teléfono (Panel → Configuración, donde conviene poner también el email), los datos de envíos, pagos y arbitraje para la compra online, confirmar las decisiones supuestas de [LEGAL.md](LEGAL.md) y la revisión de la asesoría.
-9. **Producción:** dominio con acceso a su DNS; plan Pro de Vercel (Hobby no admite uso comercial); proyecto `adhara-prod` en Supabase (plan con copias diarias); derechos de las fotos oficiales o fotos propias; y la MFA del administrador de la tienda.
+9. **Producción:** dominio `latelierdudesert.com` comprado el 10/10 (DNS en Vercel); añadirlo a la configuración de Auth de Supabase cuando se use para entrar al panel (DECISIONS §117); plan Pro de Vercel (Hobby no admite uso comercial); proyecto `adhara-prod` en Supabase (plan con copias diarias); derechos de las fotos oficiales o fotos propias; y la MFA del administrador de la tienda.
 10. Decisiones de la fase R: proveedores, plazos y múltiplos; si hay TPV; parámetros del vigilante; si el coste del pedido debe pasar a ser el vigente al recibir (PLAN_TIENDA_REPOSICION.md).
 11. Decisiones de la fase S: criterio de valoración que pide la gestoría para el cierre de existencias y margen mínimo (PLAN_INFORMES.md).
 12. **Revisión visual de la Fase 2** (criterio 13) en la Preview de la PR de cierre: `/admin/diseno` (incluidos los tonos de colección, D3), la tienda y el panel; y decidir si los filtros de la colección (36 px) deben pasar a 44 px. Aprobarla por escrito en la PR cierra la fase.
@@ -312,5 +312,6 @@ La revisión visual con perfumes se hizo en local con un Supabase simulado que d
 - 03/10: Fase 2, DS-10: la tienda pasa a la biblioteca y a los colores semánticos.
 - 04/10: Fase 2, DS-11 y DS-12: el panel pasa a la biblioteca, axe y objetivos de 44 px bloquean, guía e informe de la fase; falta la revisión visual del usuario.
 - 09/10: catálogo olfativo sin compra con research de notas, suscripción a promociones con Sender y tienda sin etiquetas provisionales.
+- 10/10: dominio `latelierdudesert.com` comprado en Vercel y asignado a `altier-web`; fuera Vercel Authentication, la web pasa a ser pública (con `noindex`).
 
 Ver docs/DEVELOPMENT.md para continuar y docs/DECISIONS.md para las decisiones.
