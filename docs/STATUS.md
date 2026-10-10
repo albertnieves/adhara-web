@@ -202,7 +202,7 @@ Todas son provisionales (`provisional = true`) y guardan su procedencia: `origin
 
 ### Despliegue
 
-Vercel `altier-web` (antes `adhara-web`; equipo SOAPBRXND, Hobby; único proyecto activo, `soapbrxnd` pausado, DECISIONS §112), funciones en París (cdg1), todos los despliegues protegidos con Vercel Authentication. Variables públicas de Supabase (`adhara-dev`) configuradas para Preview, Production y Development. Production está en `06aacb1` (PR #11, READY); la PR #12 tiene su Preview en READY.
+Vercel `altier-web` (antes `adhara-web`; equipo «L'Atelier», URL `latelierdudesert`, antes SOAPBRXND; único proyecto activo, `soapbrxnd` pausado, DECISIONS §112–113), funciones en París (cdg1), todos los despliegues protegidos con Vercel Authentication. Variables públicas de Supabase (`adhara-dev`) configuradas para Preview, Production y Development. Production está en `06aacb1` (PR #11, READY); la PR #12 tiene su Preview en READY.
 
 ## Validación ejecutada (29/09–02/10/2026)
 
@@ -303,5 +303,6 @@ La revisión visual con perfumes se hizo en local con un Supabase simulado que d
 - 03/10: Fase 2, DS-10: la tienda pasa a la biblioteca y a los colores semánticos.
 - 04/10: Fase 2, DS-11 y DS-12: el panel pasa a la biblioteca, axe y objetivos de 44 px bloquean, guía e informe de la fase; falta la revisión visual del usuario.
 - 09/10: catálogo olfativo sin compra con research de notas, suscripción a promociones con Sender y tienda sin etiquetas provisionales.
+- 10/10: vídeo de presentación para el cliente (web actual, versión final, asistente y coste de mantenimiento), grabado contra Supabase local con datos de demostración; guion y costes en [PRESENTACION_CLIENTE.md](PRESENTACION_CLIENTE.md).
 
 Ver docs/DEVELOPMENT.md para continuar y docs/DECISIONS.md para las decisiones.

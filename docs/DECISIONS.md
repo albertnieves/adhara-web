@@ -417,3 +417,11 @@ Formato de la Fase 0 §16: fecha · contexto · decisión · alternativas descar
      - `adhara-web` se renombra a `altier-web` (mismo id `prj_i8BphtVWLp68IZtvH9GrKlDRjK5L`, mismas variables, Git y protección) y se añade `altier-web.vercel.app`. `adhara-web.vercel.app` se mantiene mientras siga en la configuración de Auth de Supabase.
      - El proyecto `soapbrxnd` (sin relación con la tienda) queda pausado, no borrado; borrarlo es irreversible y lo decide el usuario.
      - El equipo de Vercel se llama SOAPBRXND porque es el equipo por defecto de la cuenta Hobby; no se puede mover el proyecto a otro equipo sin plan Pro. Cambiar su nombre y su URL (`soapbrxnd`) se hace en el panel de Vercel (Settings → General) y cambia las URL `*-soapbrxnd.vercel.app` de los despliegues.
+
+## Cuentas de los servicios — 10/10/2026
+
+113. **Reparto de cuentas entre el usuario y su socio** (`latelierdudesert@gmail.com`), a petición del usuario: el socio es titular de lo que guarda datos de clientes o lleva su nombre, y el usuario conserva acceso de administración para seguir trabajando.
+     - **Vercel sigue en la cuenta del usuario** (no guarda datos de clientes): un único asiento de pago en Pro. Equipo renombrado a «L'Atelier», URL `latelierdudesert` (antes SOAPBRXND); el socio, invitado como Viewer (gratis). Los alias `altier-web.vercel.app` y `adhara-web.vercel.app` no cambian; las Preview nuevas acaban en `-latelierdudesert.vercel.app` y hay que añadirlas a las Redirect URLs de Supabase Auth (`https://*-latelierdudesert.vercel.app/**`). Las claves de los servicios del socio van a sus variables de entorno, solo servidor.
+     - **Supabase:** `adhara-dev` se transferirá a una organización Pro del socio (misma URL, claves y URL de las fotos), con el usuario como Owner o Administrator.
+     - **Claude API, Sender, Resend, dominio y TPV:** a nombre del socio desde el principio, con el usuario como miembro administrador. El dominio se compra en un registrador a nombre del negocio, no dentro de Vercel. Resend se usa también como SMTP de Supabase Auth (el correo de serie envía 2 emails por hora).
+     - Pendiente: confirmar que el equipo de Vercel está en Pro (Hobby no admite uso comercial) y un contrato de encargo de tratamiento entre el negocio y el usuario.
