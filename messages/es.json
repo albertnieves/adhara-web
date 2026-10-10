@@ -46,6 +46,9 @@
     "sortPriceAsc": "Precio: de menor a mayor",
     "sortPriceDesc": "Precio: de mayor a menor",
     "sortName": "Nombre",
+    "view": "Vista",
+    "viewGrid": "Cuadrícula",
+    "viewLarge": "Vista amplia",
     "empty": "La colección se está preparando con datos verificados. Vuelve pronto.",
     "emptyFiltered": "Ningún perfume coincide con tu búsqueda.",
     "clear": "Limpiar filtros"

@@ -42,6 +42,12 @@ const PATHS = {
       <path d="M5 20c1.2-3.6 4-5.5 7-5.5s5.8 1.9 7 5.5" />
     </>
   ),
+  /** Vista en cuadrícula: cuatro tarjetas. */
+  grid: (
+    <path d="M5 5h5.5v5.5H5Zm8.5 0H19v5.5h-5.5ZM5 13.5h5.5V19H5Zm8.5 0H19V19h-5.5Z" />
+  ),
+  /** Vista amplia: una tarjeta con su pie. */
+  tile: <path d="M5 4h14v11H5Zm0 15.5h14" />,
 } satisfies Record<string, ReactNode>;
 
 export type IconName = keyof typeof PATHS;

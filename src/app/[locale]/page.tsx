@@ -86,7 +86,7 @@ export default async function Home({
             <EmptyState title={t('featuredEmpty')} />
           </Reveal>
         ) : (
-          <ul className="grid gap-x-6 gap-y-16 sm:grid-cols-2 lg:grid-cols-4">
+          <ul className="grid grid-cols-2 gap-x-3 gap-y-10 sm:gap-x-6 sm:gap-y-16 lg:grid-cols-4">
             {featured.map((product, index) => (
               <Reveal
                 as="li"
@@ -94,7 +94,7 @@ export default async function Home({
                 delay={index * 0.12}
                 className="min-w-0"
               >
-                <ProductCard product={product} />
+                <ProductCard product={product} compact />
               </Reveal>
             ))}
           </ul>

@@ -83,7 +83,7 @@ function Gallery({
         </AnimatePresence>
       </motion.div>
       {media.length > 1 && (
-        <ul className="flex justify-center gap-3 pb-6">
+        <ul className="-mt-3 flex justify-center gap-3 pb-3">
           {media.map((item, i) => (
             <li key={item.url}>
               <button
@@ -91,9 +91,12 @@ function Gallery({
                 onClick={() => setIndex(i)}
                 aria-label={`${i + 1} / ${media.length}`}
                 aria-pressed={i === index}
-                className={`h-px w-10 transition-colors duration-500 ${i === index ? 'bg-fg' : 'bg-border hover:bg-fg-muted'}`}
+                // La raya es fina, pero el botón mide 44 px de alto para el dedo.
+                className="group flex h-11 w-10 items-center"
               >
-                <span className="block h-6 -translate-y-3" />
+                <span
+                  className={`block h-px w-full transition-colors duration-500 ${i === index ? 'bg-fg' : 'bg-border group-hover:bg-fg-muted'}`}
+                />
               </button>
             </li>
           ))}

@@ -17,7 +17,7 @@ import { Logo } from '@/modules/brand';
 const html = renderToStaticMarkup;
 
 describe('Icon', () => {
-  it('tiene el juego de D5 y el de enlace externo (DS-06)', () => {
+  it('tiene el juego de D5, el de enlace externo (DS-06) y los de vista', () => {
     expect([...ICON_NAMES].sort()).toEqual(
       [
         'alert',
@@ -27,11 +27,13 @@ describe('Icon', () => {
         'check',
         'chevron',
         'close',
+        'grid',
         'info',
         'menu',
         'minus',
         'plus',
         'search',
+        'tile',
         'user',
       ].sort(),
     );
