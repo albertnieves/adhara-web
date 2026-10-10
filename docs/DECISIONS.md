@@ -438,3 +438,8 @@ Formato de la Fase 0 §16: fecha · contexto · decisión · alternativas descar
      - La aceptación queda en la cookie técnica `atelier_aviso` (un año, con la versión `LEGAL_UPDATED_AT` como valor: si cambian los textos, se vuelve a pedir), añadida a la política de cookies. Se lee en el navegador porque las páginas son estáticas: sin cookie, el servidor no pinta nada y no hay saltos al hidratar.
      - No es un aviso de consentimiento de cookies (no hace falta: solo hay cookies técnicas); si se añade analítica o publicidad, ese aviso debe permitir rechazar.
      - Las pruebas E2E entran con el aviso aceptado (`tests/support/legal-consent.ts` en los dos `playwright*.config.ts`); `tests/e2e/legal.spec.ts` lo prueba con un navegador limpio: teclado, Esc, cookie, enlaces y axe.
+116. **Datos del titular (10/10/2026)**, facilitados por el usuario: autónoma Patricia Adriana Pecora, NIF (NIE) X8044791N, domicilio de la actividad en la tienda (Carrer de Pompeu Fabra, 1, 08860 Castelldefels), email latelierdudesert@gmail.com y dominio www.latelierdudesert.com.
+     - Al ser autónoma, sin Registro Mercantil (la línea no se publica) y «Domicilio» en lugar de «Domicilio social».
+     - El email queda en `LEGAL_CONTACT_EMAIL` como reserva de los textos legales y del aviso de la suscripción mientras Panel → Configuración no tenga uno; conviene ponerlo también allí para que salga en el pie y en las preguntas frecuentes.
+     - `LEGAL_UPDATED_AT` pasa al 10/10/2026, así que el aviso de entrada se vuelve a pedir.
+     - Sin teléfono: su línea sigue sin publicarse. Los datos de envíos y pagos esperan a la compra online.

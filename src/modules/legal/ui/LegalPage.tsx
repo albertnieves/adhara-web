@@ -9,7 +9,11 @@ import { Link } from '@/modules/i18n';
 import { alternatesMetadata } from '@/modules/i18n/metadata';
 import type { Locale } from '@/modules/i18n/seo';
 import { LEGAL_COPY } from '../content';
-import { LEGAL_ENTITY, LEGAL_UPDATED_AT } from '../domain/entity';
+import {
+  LEGAL_CONTACT_EMAIL,
+  LEGAL_ENTITY,
+  LEGAL_UPDATED_AT,
+} from '../domain/entity';
 import { resolveValue, visibleSegments } from '../domain/placeholders';
 import type { LegalSegment } from '../domain/placeholders';
 import { LEGAL_PATHS } from '../domain/routes';
@@ -44,7 +48,7 @@ async function legalValues(locale: Locale): Promise<Values> {
   );
   return {
     ...entity,
-    email: store.email || null,
+    email: store.email || LEGAL_CONTACT_EMAIL,
     phone: store.phone || null,
     storeAddress: [store.address, store.city].filter(Boolean).join(', '),
   };

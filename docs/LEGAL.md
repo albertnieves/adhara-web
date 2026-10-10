@@ -26,21 +26,24 @@ Enlazados en la barra inferior del pie de todas las páginas, en pequeño junto 
 - **Fecha de la versión:** `LEGAL_UPDATED_AT` en el mismo archivo; se cambia con cada revisión de fondo.
 - Marcadores: `{campo}` inserta un dato; `[texto](doc:privacy#derechos)` enlaza otro texto legal; `[texto](https://…)` enlaza fuera.
 
-## Datos que tiene que dar el cliente
+## Datos del titular (recibidos el 10/10/2026, §116)
 
-| Dato                                                                          | Dónde aparece                                       |
-| ----------------------------------------------------------------------------- | --------------------------------------------------- |
-| Titular: razón social o nombre y apellidos del autónomo                       | Todos                                               |
-| NIF / CIF                                                                     | Aviso legal, condiciones, privacidad                |
-| Domicilio social o fiscal                                                     | Aviso legal, condiciones, privacidad, desistimiento |
-| Datos registrales (Registro Mercantil) o «no inscrita»                        | Aviso legal                                         |
-| Email y teléfono de contacto (en el panel)                                    | Todos                                               |
-| Dominio definitivo                                                            | Aviso legal                                         |
-| Zonas de envío                                                                | Condiciones, envíos                                 |
-| Tarifa de envío e importe para envío gratis                                   | Envíos                                              |
-| Plazo de entrega y transportista                                              | Envíos, privacidad (destinatarios)                  |
-| Medios de pago (tarjeta por TPV virtual, Bizum…)                              | Condiciones                                         |
-| Si se adhiere al arbitraje de consumo (Junta Arbitral de Consum de Catalunya) | Condiciones                                         |
+- Titular: Patricia Adriana Pecora (autónoma; sin Registro Mercantil).
+- NIF (NIE): X8044791N.
+- Domicilio: Carrer de Pompeu Fabra, 1, 08860 Castelldefels (Barcelona).
+- Email: latelierdudesert@gmail.com (`LEGAL_CONTACT_EMAIL`; conviene ponerlo también en Panel → Configuración).
+- Dominio: www.latelierdudesert.com.
+
+## Datos que faltan
+
+| Dato                                                                          | Dónde aparece                      |
+| ----------------------------------------------------------------------------- | ---------------------------------- |
+| Teléfono de contacto (en el panel)                                            | Aviso legal, condiciones           |
+| Zonas de envío                                                                | Condiciones, envíos                |
+| Tarifa de envío e importe para envío gratis                                   | Envíos                             |
+| Plazo de entrega y transportista                                              | Envíos, privacidad (destinatarios) |
+| Medios de pago (tarjeta por TPV virtual, Bizum…)                              | Condiciones                        |
+| Si se adhiere al arbitraje de consumo (Junta Arbitral de Consum de Catalunya) | Condiciones                        |
 
 ## Decisiones tomadas en el borrador (confirmar con el cliente)
 

@@ -19,7 +19,7 @@ export const es: LegalCopy = {
   fields: {
     holder: 'titular (razón social o nombre)',
     taxId: 'NIF',
-    registeredAddress: 'domicilio social',
+    registeredAddress: 'domicilio',
     registry: 'datos registrales',
     email: 'email de contacto',
     phone: 'teléfono',
@@ -49,7 +49,7 @@ export const es: LegalCopy = {
                 'Titular: {holder}',
                 'Nombre comercial: L’Atelier du Désert',
                 'NIF: {taxId}',
-                'Domicilio social: {registeredAddress}',
+                'Domicilio: {registeredAddress}',
                 'Tienda: {storeAddress}',
                 'Email: {email}',
                 'Teléfono: {phone}',

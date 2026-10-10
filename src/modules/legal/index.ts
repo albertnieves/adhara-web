@@ -2,6 +2,7 @@ export { LEGAL_COPY } from './content';
 export {
   LEGAL_CONSENT_COOKIE,
   LEGAL_CONSENT_MAX_AGE,
+  LEGAL_CONTACT_EMAIL,
   LEGAL_ENTITY,
   LEGAL_UPDATED_AT,
 } from './domain/entity';

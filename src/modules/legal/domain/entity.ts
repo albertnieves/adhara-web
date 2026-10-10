@@ -6,28 +6,30 @@ export type LegalValue = string | Record<Locale, string> | null;
 
 /**
  * Datos del titular y de la venta online que exigen la LSSI (art. 10) y la
- * ley de consumo (TRLGDCU, art. 97). **Pendientes del negocio** (STATUS,
- * pendiente 8): mientras valgan `null`, la página muestra «Pendiente: …» en
- * su lugar. No se inventan: se rellenan con lo que facilite el cliente y se
- * revisan con la asesoría (docs/LEGAL.md).
+ * ley de consumo (TRLGDCU, art. 97). Los del titular los facilitó el
+ * cliente el 10/10/2026 (autónomo, sin Registro Mercantil). Los que valen
+ * `null` siguen pendientes: esa línea no se publica y la vista previa del
+ * personal muestra «Pendiente: …». No se inventan (docs/LEGAL.md).
  *
- * El correo, el teléfono y la dirección de la tienda no van aquí: salen de
- * Panel → Configuración, los mismos que el pie.
+ * El teléfono y la dirección de la tienda salen de Panel → Configuración,
+ * como en el pie; el correo también, y si allí está vacío se usa
+ * `LEGAL_CONTACT_EMAIL`.
  */
 export const LEGAL_ENTITY: Record<
   Exclude<LegalField, 'email' | 'phone' | 'storeAddress'>,
   LegalValue
 > = {
   /** Razón social o nombre y apellidos del autónomo. */
-  holder: null,
-  /** NIF o CIF. */
-  taxId: null,
-  /** Domicilio social o fiscal (puede no coincidir con la tienda). */
-  registeredAddress: null,
-  /** Registro Mercantil (tomo, folio, hoja) o «no inscrita» si es autónomo. */
+  holder: 'Patricia Adriana Pecora',
+  /** NIF o CIF (aquí, NIE). */
+  taxId: 'X8044791N',
+  /** Domicilio de la actividad (el de la tienda). */
+  registeredAddress:
+    'Carrer de Pompeu Fabra, 1, 08860 Castelldefels (Barcelona)',
+  /** Registro Mercantil: no aplica a un autónomo, la línea no se publica. */
   registry: null,
-  /** Dominio definitivo de la web (p. ej. www.…). */
-  domain: null,
+  /** Dominio definitivo de la web. */
+  domain: 'www.latelierdudesert.com',
   /** Zonas de envío (p. ej. España peninsular y Baleares). */
   shippingZones: null,
   /** Tarifa de envío. */
@@ -44,8 +46,11 @@ export const LEGAL_ENTITY: Record<
   arbitration: null,
 };
 
+/** Correo de contacto de los textos si Panel → Configuración no tiene uno. */
+export const LEGAL_CONTACT_EMAIL = 'latelierdudesert@gmail.com';
+
 /** Fecha de la versión vigente de los textos (AAAA-MM-DD). */
-export const LEGAL_UPDATED_AT = '2026-10-09';
+export const LEGAL_UPDATED_AT = '2026-10-10';
 
 /**
  * Cookie técnica que recuerda que el visitante aceptó el aviso de entrada.

@@ -12,7 +12,7 @@ export const en: LegalCopy = {
   fields: {
     holder: 'owner (company or full name)',
     taxId: 'tax ID (NIF)',
-    registeredAddress: 'registered address',
+    registeredAddress: 'address',
     registry: 'registration details',
     email: 'contact email',
     phone: 'phone',
@@ -41,7 +41,7 @@ export const en: LegalCopy = {
                 'Owner: {holder}',
                 'Trade name: L’Atelier du Désert',
                 'Tax ID (NIF): {taxId}',
-                'Registered address: {registeredAddress}',
+                'Address: {registeredAddress}',
                 'Shop: {storeAddress}',
                 'Email: {email}',
                 'Phone: {phone}',
