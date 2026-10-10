@@ -1,4 +1,4 @@
-# Estado real — 09/10/2026
+# Estado real — 10/10/2026
 
 **Tienda visual (es/ca/en) y panel de administración operativos sobre `adhara-dev`, desplegados en Vercel, que sigue siendo privado (Vercel Authentication). `main` incluye las fases R y S (PR #9), la entrega de acceso y edición de Codex (PR #10) y el panel con el asistente (PR #11); sus 17 migraciones están aplicadas en `adhara-dev` (comprobado el 02/10). La tienda muestra 50 perfumes publicados con PVP. La Fase 1 está cerrada (PR #12): sus 19 criterios están cumplidos o con una excepción escrita ([informe](phases/FASE_1_REPORT.md)). La Fase 2 (sistema de diseño) está terminada a falta de la revisión visual del usuario ([informe](phases/FASE_2_REPORT.md)): 12 de 13 criterios cumplidos. Siguiente: checkout con pago con tarjeta, que espera los datos del TPV virtual (ver «Pendiente del usuario»).**
 
@@ -202,7 +202,7 @@ Todas son provisionales (`provisional = true`) y guardan su procedencia: `origin
 
 ### Despliegue
 
-Vercel `altier-web` (antes `adhara-web`; equipo SOAPBRXND, Hobby; único proyecto activo, `soapbrxnd` pausado, DECISIONS §112), funciones en París (cdg1), todos los despliegues protegidos con Vercel Authentication. Variables públicas de Supabase (`adhara-dev`) configuradas para Preview, Production y Development. Production está en `06aacb1` (PR #11, READY); la PR #12 tiene su Preview en READY.
+Vercel `altier-web` (antes `adhara-web`; equipo L’Atelier, `latelierdudesert`, Hobby; único proyecto activo, `soapbrxnd` pausado, DECISIONS §112), funciones en París (cdg1), todos los despliegues protegidos con Vercel Authentication, también el dominio propio. Dominio **latelierdudesert.com** (comprado en Vercel el 10/10, DNS en Vercel, renovación automática, caduca el 10/10/2027) asignado a Production; `www` redirige al dominio sin `www` (DECISIONS §113). Variables públicas de Supabase (`adhara-dev`) configuradas para Preview, Production y Development. Production está en `06aacb1` (PR #11, READY); la PR #12 tiene su Preview en READY.
 
 ## Validación ejecutada (29/09–02/10/2026)
 
@@ -264,7 +264,7 @@ La revisión visual con perfumes se hizo en local con un Supabase simulado que d
      Alternativa si el banco tarda: Stripe (cuenta verificada con el IBAN del negocio). Decisiones para el checkout: solo recogida en tienda al principio o también envíos (zonas, tarifas, envío gratis, transportista); qué hacer si llega un pago sin stock (devolución automática o manual); y quién emite las facturas.
 7. **Correo transaccional** para confirmaciones de pedido y avisos (recomendado Resend), con acceso al DNS del dominio para SPF y DKIM y el remitente (p. ej. `pedidos@…`).
 8. **Datos legales para vender online** (LSSI y consumo): titular (razón social o autónomo), NIF, domicilio, teléfono y email de contacto y datos registrales; con ellos se redactan aviso legal, privacidad, cookies, condiciones de venta y envíos y devoluciones (desistimiento de 14 días), a revisar por la asesoría.
-9. **Producción:** dominio con acceso a su DNS; plan Pro de Vercel (Hobby no admite uso comercial); proyecto `adhara-prod` en Supabase (plan con copias diarias); derechos de las fotos oficiales o fotos propias; y la MFA del administrador de la tienda.
+9. **Producción:** dominio `latelierdudesert.com` comprado el 10/10 (DNS en Vercel); añadirlo a la configuración de Auth de Supabase cuando se use para entrar al panel (DECISIONS §113); plan Pro de Vercel (Hobby no admite uso comercial); proyecto `adhara-prod` en Supabase (plan con copias diarias); derechos de las fotos oficiales o fotos propias; y la MFA del administrador de la tienda.
 10. Decisiones de la fase R: proveedores, plazos y múltiplos; si hay TPV; parámetros del vigilante; si el coste del pedido debe pasar a ser el vigente al recibir (PLAN_TIENDA_REPOSICION.md).
 11. Decisiones de la fase S: criterio de valoración que pide la gestoría para el cierre de existencias y margen mínimo (PLAN_INFORMES.md).
 12. **Revisión visual de la Fase 2** (criterio 13) en la Preview de la PR de cierre: `/admin/diseno` (incluidos los tonos de colección, D3), la tienda y el panel; y decidir si los filtros de la colección (36 px) deben pasar a 44 px. Aprobarla por escrito en la PR cierra la fase.
@@ -303,5 +303,6 @@ La revisión visual con perfumes se hizo en local con un Supabase simulado que d
 - 03/10: Fase 2, DS-10: la tienda pasa a la biblioteca y a los colores semánticos.
 - 04/10: Fase 2, DS-11 y DS-12: el panel pasa a la biblioteca, axe y objetivos de 44 px bloquean, guía e informe de la fase; falta la revisión visual del usuario.
 - 09/10: catálogo olfativo sin compra con research de notas, suscripción a promociones con Sender y tienda sin etiquetas provisionales.
+- 10/10: dominio `latelierdudesert.com` comprado en Vercel y asignado a `altier-web`, privado como el resto.
 
 Ver docs/DEVELOPMENT.md para continuar y docs/DECISIONS.md para las decisiones.
