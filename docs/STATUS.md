@@ -1,5 +1,13 @@
 # Estado real — 09/10/2026
 
+## En esta rama: pedidos web (10/10/2026)
+
+Primera entrega de [PLAN_PEDIDOS_WEB.md](PLAN_PEDIDOS_WEB.md): reglas de dominio y
+pruebas para decidir la confirmación de una notificación de tarjeta ya verificada.
+Comprueban referencia, céntimos y moneda, duplicados y pagos que requieren revisión.
+No hay todavía adaptador del banco, persistencia de pedidos, checkout ni pantalla
+de pedidos web. Las entregas P02–P07 siguen pendientes; no se ha modificado la base remota.
+
 **Tienda visual (es/ca/en) y panel de administración operativos sobre `adhara-dev`, desplegados en Vercel, que sigue siendo privado (Vercel Authentication). `main` incluye las fases R y S (PR #9), la entrega de acceso y edición de Codex (PR #10) y el panel con el asistente (PR #11); sus 17 migraciones están aplicadas en `adhara-dev` (comprobado el 02/10). La tienda muestra 50 perfumes publicados con PVP. La Fase 1 está cerrada (PR #12): sus 19 criterios están cumplidos o con una excepción escrita ([informe](phases/FASE_1_REPORT.md)). La Fase 2 (sistema de diseño) está terminada a falta de la revisión visual del usuario ([informe](phases/FASE_2_REPORT.md)): 12 de 13 criterios cumplidos. Siguiente: checkout con pago con tarjeta, que espera los datos del TPV virtual (ver «Pendiente del usuario»).**
 
 ## Catálogo olfativo, suscripción a promociones y tienda sin etiquetas provisionales (09/10, rama `claude/adoring-mayer-jvv46o`)

@@ -1,3 +1,9 @@
+export { planCardPaymentConfirmation } from './domain/payment';
+export type {
+  CardPaymentNotification,
+  OrderPaymentSnapshot,
+  PaymentConfirmationPlan,
+} from './domain/payment';
 export {
   ORDER_STATUSES,
   availableTransitions,
