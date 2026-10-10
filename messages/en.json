@@ -101,7 +101,8 @@
     "busy": "We are receiving many sign-ups right now. Please try again in a minute.",
     "error": "We could not sign you up right now. Please try again in a few minutes.",
     "privacy": "Controller: L’Atelier du Désert. Purpose: sending you promotions by email; mailings are managed with Sender, our email provider. You can unsubscribe from any email and exercise your rights of access, rectification and erasure by writing to us.",
-    "privacyContact": "Write to us at <mail>{email}</mail>."
+    "privacyContact": "Write to us at <mail>{email}</mail>.",
+    "privacyMore": "More information in our <link>privacy policy</link>."
   },
   "footer": {
     "tagline": "Arabian perfumery in Castelldefels.",
@@ -109,7 +110,8 @@
     "info": "Information",
     "rights": "© {year} L’Atelier du Désert",
     "staffAccess": "Staff access",
-    "faq": "FAQ"
+    "faq": "FAQ",
+    "legal": "Legal"
   },
   "faq": {
     "eyebrow": "Questions",
@@ -202,5 +204,12 @@
     "leather": "Leather and tobacco",
     "musky": "Musks",
     "aquatic": "Marine and luminous"
+  },
+  "legalConsent": {
+    "eyebrow": "Welcome",
+    "title": "Before you start",
+    "body": "At L’Atelier du Désert we only use technical cookies, needed for the website to work and to remember your language. We do not use advertising or analytics cookies.",
+    "links": "By continuing, you accept our <notice>legal notice</notice>, <privacy>privacy policy</privacy> and <cookies>cookie policy</cookies>.",
+    "accept": "Accept and continue"
   }
 }

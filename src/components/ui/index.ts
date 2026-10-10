@@ -9,6 +9,7 @@ export { BADGE_TONES, Badge, Tag } from './Badge';
 export type { BadgeTone } from './Badge';
 export { Checkbox, Radio } from './Choice';
 export { CloseButton, Dialog, useConfirm } from './Dialog';
+export { useModal } from './useModal';
 export type { ConfirmOptions, OverlayTone } from './Dialog';
 export { Eyebrow } from './Eyebrow';
 export type { EyebrowTone } from './Eyebrow';

@@ -2,6 +2,15 @@
 
 **Tienda visual (es/ca/en) y panel de administración operativos sobre `adhara-dev`, desplegados en Vercel, que sigue siendo privado (Vercel Authentication). `main` incluye las fases R y S (PR #9), la entrega de acceso y edición de Codex (PR #10) y el panel con el asistente (PR #11); sus 17 migraciones están aplicadas en `adhara-dev` (comprobado el 02/10). La tienda muestra 50 perfumes publicados con PVP. La Fase 1 está cerrada (PR #12): sus 19 criterios están cumplidos o con una excepción escrita ([informe](phases/FASE_1_REPORT.md)). La Fase 2 (sistema de diseño) está terminada a falta de la revisión visual del usuario ([informe](phases/FASE_2_REPORT.md)): 12 de 13 criterios cumplidos. Siguiente: checkout con pago con tarjeta, que espera los datos del TPV virtual (ver «Pendiente del usuario»).**
 
+## Textos legales en borrador (09/10, rama `claude/affectionate-mccarthy-ec5p5j`)
+
+A petición del usuario, para revisarlos con el cliente. Decisión §113; guía de revisión en [LEGAL.md](LEGAL.md).
+
+- **Aviso legal, condiciones de venta, privacidad, cookies y envíos y devoluciones** en es, ca y en, con rutas traducidas (`/es/aviso-legal`, `/ca/privacitat`, `/en/shipping-and-returns`…), índice por secciones y enlaces entre ellos. Discretos, como en una tienda en funcionamiento (§114): enlaces pequeños en la barra inferior del pie, sin avisos de borrador ni detalles internos; el aviso de la suscripción enlaza la privacidad.
+- **Aviso de entrada** (§115): pop-up que hay que aceptar antes de navegar, con enlaces a los textos; se recuerda un año (cookie técnica `atelier_aviso`) y no tapa las páginas legales.
+- **Datos pendientes:** titular, NIF, domicilio social, registro, dominio, envíos, pagos y arbitraje (`src/modules/legal/domain/entity.ts`; correo y teléfono, desde Panel → Configuración). Hasta que el cliente los dé, sus líneas no se publican; en la vista previa del personal («Ver tienda con borradores») se ven como «Pendiente: …» para revisarlas.
+- **Comprobado en local:** unitarias 320/320 (14 nuevas: marcadores, ocultación de pendientes, paridad de idiomas, enlaces, rutas y sin detalles internos); lint, formato, tipos y build; E2E del pie, índice y ocultación de pendientes en escritorio y móvil, y auditoría de maquetación y axe sin fallos en 5 páginas legales a 4 anchuras. Sin migraciones.
+
 ## Catálogo olfativo, suscripción a promociones y tienda sin etiquetas provisionales (09/10, rama `claude/adoring-mayer-jvv46o`)
 
 A petición del usuario, para acercar la web a producción. Decisiones §108–111. **Las dos migraciones nuevas (`20261009150000`, `20261009150100`) y la carga de perfiles (`supabase/data/20261009_perfiles_olfativos.sql`) están validadas en Supabase local y pendientes de aplicar en `adhara-dev` con autorización del usuario**; hasta entonces, la tienda desplegada muestra el catálogo olfativo sin perfiles y la suscripción responde con error.
@@ -263,7 +272,7 @@ La revisión visual con perfumes se hizo en local con un Supabase simulado que d
    - acceso al portal de Redsys (Canales) para ver operaciones y devolver.
      Alternativa si el banco tarda: Stripe (cuenta verificada con el IBAN del negocio). Decisiones para el checkout: solo recogida en tienda al principio o también envíos (zonas, tarifas, envío gratis, transportista); qué hacer si llega un pago sin stock (devolución automática o manual); y quién emite las facturas.
 7. **Correo transaccional** para confirmaciones de pedido y avisos (recomendado Resend), con acceso al DNS del dominio para SPF y DKIM y el remitente (p. ej. `pedidos@…`).
-8. **Datos legales para vender online** (LSSI y consumo): titular (razón social o autónomo), NIF, domicilio, teléfono y email de contacto y datos registrales; con ellos se redactan aviso legal, privacidad, cookies, condiciones de venta y envíos y devoluciones (desistimiento de 14 días), a revisar por la asesoría.
+8. **Datos legales para vender online** (LSSI y consumo): los cinco textos están en la web (§113–115) y los datos del titular ya están puestos (§116: autónoma, NIE, domicilio de la tienda, email y dominio). Faltan el teléfono (Panel → Configuración, donde conviene poner también el email), los datos de envíos, pagos y arbitraje para la compra online, confirmar las decisiones supuestas de [LEGAL.md](LEGAL.md) y la revisión de la asesoría.
 9. **Producción:** dominio con acceso a su DNS; plan Pro de Vercel (Hobby no admite uso comercial); proyecto `adhara-prod` en Supabase (plan con copias diarias); derechos de las fotos oficiales o fotos propias; y la MFA del administrador de la tienda.
 10. Decisiones de la fase R: proveedores, plazos y múltiplos; si hay TPV; parámetros del vigilante; si el coste del pedido debe pasar a ser el vigente al recibir (PLAN_TIENDA_REPOSICION.md).
 11. Decisiones de la fase S: criterio de valoración que pide la gestoría para el cierre de existencias y margen mínimo (PLAN_INFORMES.md).

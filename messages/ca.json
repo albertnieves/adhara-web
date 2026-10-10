@@ -101,7 +101,8 @@
     "busy": "Ara mateix hi ha moltes altes. Torna-ho a provar d’aquí a un minut.",
     "error": "Ara mateix no t’hem pogut apuntar. Torna-ho a provar d’aquí a uns minuts.",
     "privacy": "Responsable: L’Atelier du Désert. Finalitat: enviar-te promocions per correu; els enviaments es gestionen amb Sender, el nostre proveïdor de correu. Pots donar-te de baixa des de qualsevol correu i exercir els teus drets d’accés, rectificació i supressió escrivint-nos.",
-    "privacyContact": "Escriu-nos a <mail>{email}</mail>."
+    "privacyContact": "Escriu-nos a <mail>{email}</mail>.",
+    "privacyMore": "Més informació a la <link>política de privacitat</link>."
   },
   "footer": {
     "tagline": "Perfumeria àrab a Castelldefels.",
@@ -109,7 +110,8 @@
     "info": "Informació",
     "rights": "© {year} L’Atelier du Désert",
     "staffAccess": "Accés de l’equip",
-    "faq": "Preguntes freqüents"
+    "faq": "Preguntes freqüents",
+    "legal": "Legal"
   },
   "faq": {
     "eyebrow": "Dubtes",
@@ -202,5 +204,12 @@
     "leather": "Cuir i tabac",
     "musky": "Mescs",
     "aquatic": "Marines i lluminoses"
+  },
+  "legalConsent": {
+    "eyebrow": "Benvingut",
+    "title": "Abans de començar",
+    "body": "A L’Atelier du Désert només fem servir galetes tècniques, necessàries perquè el web funcioni i per recordar el teu idioma. No fem servir galetes de publicitat ni d’analítica.",
+    "links": "En continuar, acceptes el nostre <notice>avís legal</notice>, la <privacy>política de privacitat</privacy> i la <cookies>política de galetes</cookies>.",
+    "accept": "Acceptar i continuar"
   }
 }

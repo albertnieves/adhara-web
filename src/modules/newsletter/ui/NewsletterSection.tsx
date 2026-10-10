@@ -3,6 +3,8 @@ import { Eyebrow, Heading } from '@/components/ui';
 import { Star } from '@/modules/brand';
 import { storeContent, STORE_DEFAULTS } from '@/modules/content';
 import { readStoreContent } from '@/modules/content/server';
+import { Link } from '@/modules/i18n';
+import { LEGAL_CONTACT_EMAIL } from '@/modules/legal';
 import { NewsletterSignup } from './NewsletterSignup';
 
 /** Sección de suscripción a las promociones, justo antes del pie. */
@@ -12,6 +14,7 @@ export async function NewsletterSection() {
     readStoreContent('store', 'es'),
   ]);
   const store = data ? storeContent.parse(data.payload) : STORE_DEFAULTS;
+  const email = store.email || LEGAL_CONTACT_EMAIL;
   return (
     <section
       aria-labelledby="newsletter-title"
@@ -34,15 +37,21 @@ export async function NewsletterSection() {
           <NewsletterSignup />
           <p className="text-fg-muted mt-6 max-w-xl text-xs leading-relaxed">
             {t('privacy')}{' '}
-            {store.email &&
-              t.rich('privacyContact', {
-                email: store.email,
-                mail: (chunks) => (
-                  <a href={`mailto:${store.email}`} className="link-underline">
-                    {chunks}
-                  </a>
-                ),
-              })}
+            {t.rich('privacyContact', {
+              email,
+              mail: (chunks) => (
+                <a href={`mailto:${email}`} className="link-underline">
+                  {chunks}
+                </a>
+              ),
+            })}{' '}
+            {t.rich('privacyMore', {
+              link: (chunks) => (
+                <Link href="/privacidad" className="link-underline">
+                  {chunks}
+                </Link>
+              ),
+            })}
           </p>
         </div>
       </div>

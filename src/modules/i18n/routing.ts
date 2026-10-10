@@ -16,6 +16,27 @@ export const routing = defineRouting({
       ca: '/cataleg-olfactiu/[slug]',
       en: '/scent-catalogue/[slug]',
     },
+    '/aviso-legal': {
+      es: '/aviso-legal',
+      ca: '/avis-legal',
+      en: '/legal-notice',
+    },
+    '/condiciones-de-venta': {
+      es: '/condiciones-de-venta',
+      ca: '/condicions-de-venda',
+      en: '/terms-of-sale',
+    },
+    '/privacidad': {
+      es: '/privacidad',
+      ca: '/privacitat',
+      en: '/privacy-policy',
+    },
+    '/cookies': { es: '/cookies', ca: '/galetes', en: '/cookie-policy' },
+    '/envios-y-devoluciones': {
+      es: '/envios-y-devoluciones',
+      ca: '/enviaments-i-devolucions',
+      en: '/shipping-and-returns',
+    },
     '/perfume/[slug]': {
       es: '/perfume/[slug]',
       ca: '/perfum/[slug]',

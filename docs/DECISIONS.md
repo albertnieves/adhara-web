@@ -417,3 +417,29 @@ Formato de la Fase 0 §16: fecha · contexto · decisión · alternativas descar
      - `adhara-web` se renombra a `altier-web` (mismo id `prj_i8BphtVWLp68IZtvH9GrKlDRjK5L`, mismas variables, Git y protección) y se añade `altier-web.vercel.app`. `adhara-web.vercel.app` se mantiene mientras siga en la configuración de Auth de Supabase.
      - El proyecto `soapbrxnd` (sin relación con la tienda) queda pausado, no borrado; borrarlo es irreversible y lo decide el usuario.
      - El equipo de Vercel se llama SOAPBRXND porque es el equipo por defecto de la cuenta Hobby; no se puede mover el proyecto a otro equipo sin plan Pro. Cambiar su nombre y su URL (`soapbrxnd`) se hace en el panel de Vercel (Settings → General) y cambia las URL `*-soapbrxnd.vercel.app` de los despliegues.
+
+## Textos legales — 09/10/2026
+
+113. **Textos legales en borrador, visibles en la web**, a petición del usuario («prepara los términos legales, política de privacidad, cookies, envíos y devoluciones […] para luego hacer revisión con el cliente; quiero que esto sea visible en la web primero»). Guía de revisión en [LEGAL.md](LEGAL.md).
+     - **Cinco textos** en es, ca y en con rutas traducidas: aviso legal, condiciones de venta, privacidad, cookies y envíos y devoluciones (con el modelo de formulario de desistimiento). Enlazados en una columna «Legal» del pie y, la privacidad, desde el aviso de la suscripción.
+     - **En el código y no en la base** (`src/modules/legal`): son textos que cambian poco y deben revisarse por PR, con historial; no necesitan migración en `adhara-dev`. Una prueba exige las mismas secciones, marcadores y enlaces en los tres idiomas.
+     - **Sin datos inventados:** titular, NIF, domicilio social, registro, dominio, envíos, pagos y arbitraje valen `null` en `LEGAL_ENTITY` y la página muestra «Pendiente: …» en su lugar (pendiente 8). Correo, teléfono y dirección salen del panel, como el pie.
+     - **Decisiones de negocio supuestas** (perfumes desprecintados sin desistimiento, devolución a cargo del cliente, recogida en tienda, mayoría de edad para comprar, 14 años para el Club) listadas en LEGAL.md para confirmarlas con el cliente.
+     - **Sin aviso de cookies:** solo hay cookies técnicas (idioma, sesión y vista previa del equipo, protección de Vercel), exentas por el art. 22.2 LSSI. Cualquier analítica o contenido de terceros obliga a añadir consentimiento previo.
+     - No es asesoramiento jurídico: la asesoría debe revisarlos antes de abrir la web al público.
+114. **Textos legales discretos**, a petición del usuario («que cumpla los mínimos requisitos, pero que no esté totalmente expuesto o explícito; que sea lo más parecido a una perfumería ya funcionando»). Matiza §113:
+     - **Pie:** los enlaces pasan de una columna «Legal» a la barra inferior, en pequeño junto al ©.
+     - **Sin huecos a la vista:** un párrafo o línea con un dato pendiente no se publica; solo la vista previa del personal (Draft Mode) muestra «Pendiente: …». Los textos se reescriben para que lo esencial no dependa de datos que faltan: el vendedor remite al aviso legal, los derechos y el desistimiento se ejercen por email o por correo a la tienda, el formulario va a la dirección de la tienda.
+     - **Sin detalles internos:** fuera los avisos de «compra online no disponible», el panel, las cookies del equipo y de Vercel, los nombres de proveedores (por categorías, art. 13.1.e RGPD) y las medidas de seguridad concretas. Una prueba unitaria impide que vuelvan.
+     - **Límite:** mientras falten titular, NIF y email, el aviso legal no cumple aún el art. 10 LSSI; no se inventan y se piden al cliente antes de abrir la web al público.
+115. **Aviso de entrada para aceptar las condiciones**, a petición del usuario («quiero que aparezca en forma de pop-up para poder aceptarlo antes de empezar a navegar»).
+     - Diálogo modal en todas las páginas de la tienda (`LegalConsent`) con enlaces al aviso legal, la privacidad y las cookies y un único botón «Aceptar y continuar». Esc y tocar fuera no lo cierran; el foco queda dentro (`useModal`, ahora exportado por la biblioteca).
+     - No se muestra en las páginas legales, para poder leerlas antes de aceptar; al volver a la tienda sin aceptar, sale otra vez.
+     - La aceptación queda en la cookie técnica `atelier_aviso` (un año, con la versión `LEGAL_UPDATED_AT` como valor: si cambian los textos, se vuelve a pedir), añadida a la política de cookies. Se lee en el navegador porque las páginas son estáticas: sin cookie, el servidor no pinta nada y no hay saltos al hidratar.
+     - No es un aviso de consentimiento de cookies (no hace falta: solo hay cookies técnicas); si se añade analítica o publicidad, ese aviso debe permitir rechazar.
+     - Las pruebas E2E entran con el aviso aceptado (`tests/support/legal-consent.ts` en los dos `playwright*.config.ts`); `tests/e2e/legal.spec.ts` lo prueba con un navegador limpio: teclado, Esc, cookie, enlaces y axe.
+116. **Datos del titular (10/10/2026)**, facilitados por el usuario: autónoma Patricia Adriana Pecora, NIF (NIE) X8044791N, domicilio de la actividad en la tienda (Carrer de Pompeu Fabra, 1, 08860 Castelldefels), email latelierdudesert@gmail.com y dominio www.latelierdudesert.com.
+     - Al ser autónoma, sin Registro Mercantil (la línea no se publica) y «Domicilio» en lugar de «Domicilio social».
+     - El email queda en `LEGAL_CONTACT_EMAIL` como reserva de los textos legales y del aviso de la suscripción mientras Panel → Configuración no tenga uno; conviene ponerlo también allí para que salga en el pie y en las preguntas frecuentes.
+     - `LEGAL_UPDATED_AT` pasa al 10/10/2026, así que el aviso de entrada se vuelve a pedir.
+     - Sin teléfono: su línea sigue sin publicarse. Los datos de envíos y pagos esperan a la compra online.
