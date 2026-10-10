@@ -7,6 +7,7 @@
 A petición del usuario, para revisarlos con el cliente. Decisión §113; guía de revisión en [LEGAL.md](LEGAL.md).
 
 - **Aviso legal, condiciones de venta, privacidad, cookies y envíos y devoluciones** en es, ca y en, con rutas traducidas (`/es/aviso-legal`, `/ca/privacitat`, `/en/shipping-and-returns`…), índice por secciones y enlaces entre ellos. Discretos, como en una tienda en funcionamiento (§114): enlaces pequeños en la barra inferior del pie, sin avisos de borrador ni detalles internos; el aviso de la suscripción enlaza la privacidad.
+- **Aviso de entrada** (§115): pop-up que hay que aceptar antes de navegar, con enlaces a los textos; se recuerda un año (cookie técnica `atelier_aviso`) y no tapa las páginas legales.
 - **Datos pendientes:** titular, NIF, domicilio social, registro, dominio, envíos, pagos y arbitraje (`src/modules/legal/domain/entity.ts`; correo y teléfono, desde Panel → Configuración). Hasta que el cliente los dé, sus líneas no se publican; en la vista previa del personal («Ver tienda con borradores») se ven como «Pendiente: …» para revisarlas.
 - **Comprobado en local:** unitarias 320/320 (14 nuevas: marcadores, ocultación de pendientes, paridad de idiomas, enlaces, rutas y sin detalles internos); lint, formato, tipos y build; E2E del pie, índice y ocultación de pendientes en escritorio y móvil, y auditoría de maquetación y axe sin fallos en 5 páginas legales a 4 anchuras. Sin migraciones.
 

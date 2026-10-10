@@ -6,6 +6,8 @@ Borrador del 09/10/2026 de los cinco textos legales de la tienda, en español, c
 
 Enlazados en la barra inferior del pie de todas las páginas, en pequeño junto al ©, como en cualquier tienda, y la política de privacidad también desde el aviso de la suscripción.
 
+**Aviso de entrada** (§115): la primera vez, un pop-up pide aceptar el aviso legal, la privacidad y las cookies antes de navegar. Se recuerda un año con la cookie técnica `atelier_aviso`; si cambia `LEGAL_UPDATED_AT`, se vuelve a pedir. No sale en las páginas legales.
+
 | Texto                  | es                          | ca                             | en                         |
 | ---------------------- | --------------------------- | ------------------------------ | -------------------------- |
 | Aviso legal            | `/es/aviso-legal`           | `/ca/avis-legal`               | `/en/legal-notice`         |

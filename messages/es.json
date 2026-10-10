@@ -204,5 +204,12 @@
     "leather": "Cuero y tabaco",
     "musky": "Almizcles",
     "aquatic": "Marinas y luminosas"
+  },
+  "legalConsent": {
+    "eyebrow": "Bienvenido",
+    "title": "Antes de empezar",
+    "body": "En L’Atelier du Désert solo usamos cookies técnicas, necesarias para que la web funcione y para recordar tu idioma. No usamos cookies de publicidad ni de analítica.",
+    "links": "Al continuar, aceptas nuestro <notice>aviso legal</notice>, la <privacy>política de privacidad</privacy> y la <cookies>política de cookies</cookies>.",
+    "accept": "Aceptar y continuar"
   }
 }

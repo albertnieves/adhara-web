@@ -415,6 +415,12 @@ export const en: LegalCopy = {
                     'Remember the language you choose.',
                     'Until you close the browser',
                   ],
+                  [
+                    'atelier_aviso',
+                    'Ours',
+                    'Remember that you accepted the website terms, so we do not ask again.',
+                    '1 year',
+                  ],
                 ],
               },
             },
@@ -424,7 +430,7 @@ export const en: LegalCopy = {
           id: 'consentimiento',
           title: 'Why we do not ask for consent',
           blocks: [
-            'Technical cookies, and those that store a preference you choose, such as the language, are exempt from consent under article 22.2 of the LSSI and the guidance of the Spanish Data Protection Agency. That is why the website shows no cookie banner.',
+            'Technical cookies, and those that store a preference you choose, such as the language, are exempt from consent under article 22.2 of the LSSI and the guidance of the Spanish Data Protection Agency. That is why we do not ask you to accept cookies: the notice you see when you arrive is to let you know our terms.',
             'If we ever use analytics or advertising cookies, we will ask for your permission before setting them, with the option to reject them as easily as accept them, and we will update this policy.',
           ],
         },

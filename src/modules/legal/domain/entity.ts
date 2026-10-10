@@ -46,3 +46,11 @@ export const LEGAL_ENTITY: Record<
 
 /** Fecha de la versión vigente de los textos (AAAA-MM-DD). */
 export const LEGAL_UPDATED_AT = '2026-10-09';
+
+/**
+ * Cookie técnica que recuerda que el visitante aceptó el aviso de entrada.
+ * Su valor es la versión de los textos: si cambia `LEGAL_UPDATED_AT`, el
+ * aviso se vuelve a mostrar. Dura un año.
+ */
+export const LEGAL_CONSENT_COOKIE = 'atelier_aviso';
+export const LEGAL_CONSENT_MAX_AGE = 60 * 60 * 24 * 365;

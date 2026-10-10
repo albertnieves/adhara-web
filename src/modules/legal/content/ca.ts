@@ -418,6 +418,12 @@ export const ca: LegalCopy = {
                     'Recordar l’idioma que tries.',
                     'Fins que tanques el navegador',
                   ],
+                  [
+                    'atelier_aviso',
+                    'Pròpia',
+                    'Recordar que has acceptat les condicions del web, per no tornar-te-les a demanar.',
+                    '1 any',
+                  ],
                 ],
               },
             },
@@ -427,7 +433,7 @@ export const ca: LegalCopy = {
           id: 'consentimiento',
           title: 'Per què no et demanem consentiment',
           blocks: [
-            'Les galetes tècniques, i les que desen una preferència que tries tu, com l’idioma, estan exemptes de consentiment segons l’article 22.2 de la LSSI i la guia de l’Agència Espanyola de Protecció de Dades. Per això el web no mostra cap avís de galetes.',
+            'Les galetes tècniques, i les que desen una preferència que tries tu, com l’idioma, estan exemptes de consentiment segons l’article 22.2 de la LSSI i la guia de l’Agència Espanyola de Protecció de Dades. Per això no et demanem que acceptis galetes: l’avís que veus en entrar és perquè coneguis les nostres condicions.',
             'Si en el futur fem servir galetes d’analítica o de publicitat, et demanarem permís abans d’instal·lar-les, amb l’opció de rebutjar-les tan fàcilment com acceptar-les, i actualitzarem aquesta política.',
           ],
         },

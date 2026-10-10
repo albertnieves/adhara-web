@@ -61,3 +61,67 @@ test('el aviso de la suscripción enlaza la política de privacidad', async ({
     .click();
   await expect(page).toHaveURL(/\/ca\/privacitat$/);
 });
+
+test.describe('aviso de entrada', () => {
+  test.use({ storageState: { cookies: [], origins: [] } });
+
+  test('hay que aceptarlo antes de navegar y no vuelve a salir', async ({
+    page,
+    context,
+  }) => {
+    await page.goto('/es');
+    const dialog = page.getByRole('dialog', { name: 'Antes de empezar' });
+    await expect(dialog).toBeVisible();
+    const accept = dialog.getByRole('button', { name: 'Aceptar y continuar' });
+    await expect(accept).toBeFocused();
+
+    // Esc no lo cierra y el resto de la página queda inerte.
+    await page.keyboard.press('Escape');
+    await expect(dialog).toBeVisible();
+    for (let i = 0; i < 5; i += 1) await page.keyboard.press('Tab');
+    expect(
+      await dialog.evaluate((node) => node.contains(document.activeElement)),
+    ).toBe(true);
+
+    await accept.click();
+    await expect(dialog).toBeHidden();
+    const cookie = (await context.cookies()).find(
+      (item) => item.name === 'atelier_aviso',
+    );
+    expect(cookie?.value).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+    expect(cookie!.expires - Date.now() / 1000).toBeGreaterThan(
+      360 * 24 * 3600,
+    );
+
+    await page.goto('/ca/cataleg');
+    await expect(page.getByRole('dialog')).toHaveCount(0);
+  });
+
+  test('enlaza los textos legales y no tapa esas páginas', async ({ page }) => {
+    await page.goto('/en');
+    const dialog = page.getByRole('dialog', { name: 'Before you start' });
+    await dialog.getByRole('link', { name: 'privacy policy' }).click();
+    await expect(page).toHaveURL(/\/en\/privacy-policy$/);
+    await expect(page.getByRole('dialog')).toHaveCount(0);
+    await expect(
+      page.getByRole('heading', { level: 1, name: 'Privacy policy' }),
+    ).toBeVisible();
+
+    // Al volver a la tienda sin aceptar, se muestra otra vez.
+    await page.goto('/en/catalog');
+    await expect(
+      page.getByRole('dialog', { name: 'Before you start' }),
+    ).toBeVisible();
+  });
+
+  test('sin infracciones de accesibilidad', async ({ page }) => {
+    await page.goto('/es');
+    await expect(page.getByRole('dialog')).toBeVisible();
+    const { default: AxeBuilder } = await import('@axe-core/playwright');
+    const results = await new AxeBuilder({ page })
+      .include('dialog')
+      .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'])
+      .analyze();
+    expect(results.violations).toEqual([]);
+  });
+});

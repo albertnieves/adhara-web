@@ -1,17 +1,22 @@
 import { describe, expect, it } from 'vitest';
 import { routing } from '../../src/modules/i18n/routing';
+import { LEGAL_COPY } from '../../src/modules/legal/content';
+import { LEGAL_ENTITY } from '../../src/modules/legal/domain/entity';
 import {
-  LEGAL_COPY,
-  LEGAL_DOCUMENTS,
-  LEGAL_ENTITY,
-  LEGAL_FIELDS,
-  LEGAL_PATHS,
   invalidTokens,
   parseLegalText,
   resolveValue,
   visibleSegments,
-} from '../../src/modules/legal';
-import type { LegalBlock, LegalCopy } from '../../src/modules/legal';
+} from '../../src/modules/legal/domain/placeholders';
+import { LEGAL_PATHS } from '../../src/modules/legal/domain/routes';
+import {
+  LEGAL_DOCUMENTS,
+  LEGAL_FIELDS,
+} from '../../src/modules/legal/domain/types';
+import type {
+  LegalBlock,
+  LegalCopy,
+} from '../../src/modules/legal/domain/types';
 
 /*
  * Textos legales (modules/legal): los tres idiomas tienen los mismos

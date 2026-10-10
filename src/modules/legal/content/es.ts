@@ -424,6 +424,12 @@ export const es: LegalCopy = {
                     'Recordar el idioma que eliges.',
                     'Hasta que cierras el navegador',
                   ],
+                  [
+                    'atelier_aviso',
+                    'Propia',
+                    'Recordar que has aceptado las condiciones de la web, para no volver a preguntarte.',
+                    '1 año',
+                  ],
                 ],
               },
             },
@@ -433,7 +439,7 @@ export const es: LegalCopy = {
           id: 'consentimiento',
           title: 'Por qué no te pedimos consentimiento',
           blocks: [
-            'Las cookies técnicas, y las que guardan una preferencia que tú eliges, como el idioma, están exentas de consentimiento según el artículo 22.2 de la LSSI y la guía de la Agencia Española de Protección de Datos. Por eso la web no muestra un aviso de cookies.',
+            'Las cookies técnicas, y las que guardan una preferencia que tú eliges, como el idioma, están exentas de consentimiento según el artículo 22.2 de la LSSI y la guía de la Agencia Española de Protección de Datos. Por eso no te pedimos que aceptes cookies: el aviso que ves al entrar es para que conozcas nuestras condiciones.',
             'Si en el futuro usamos cookies de analítica o de publicidad, te pediremos permiso antes de instalarlas, con la opción de rechazarlas tan fácilmente como aceptarlas, y actualizaremos esta política.',
           ],
         },

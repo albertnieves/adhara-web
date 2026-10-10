@@ -1,5 +1,11 @@
 export { LEGAL_COPY } from './content';
-export { LEGAL_ENTITY, LEGAL_UPDATED_AT } from './domain/entity';
+export {
+  LEGAL_CONSENT_COOKIE,
+  LEGAL_CONSENT_MAX_AGE,
+  LEGAL_ENTITY,
+  LEGAL_UPDATED_AT,
+} from './domain/entity';
+export { LegalConsent } from './ui/LegalConsent';
 export type { LegalValue } from './domain/entity';
 export {
   invalidTokens,
