@@ -687,19 +687,25 @@ export type Database = {
         Row: {
           movement_id: number;
           quantity: number;
+          retail_price_cents: number | null;
           sale_id: number;
+          unit_price_cents: number | null;
           variant_id: string;
         };
         Insert: {
           movement_id: number;
           quantity: number;
+          retail_price_cents?: number | null;
           sale_id: number;
+          unit_price_cents?: number | null;
           variant_id: string;
         };
         Update: {
           movement_id?: number;
           quantity?: number;
+          retail_price_cents?: number | null;
           sale_id?: number;
+          unit_price_cents?: number | null;
           variant_id?: string;
         };
         Relationships: [
@@ -785,6 +791,223 @@ export type Database = {
         Returns: number;
       };
       admin_cancel_invite: { Args: { p_email: string }; Returns: undefined };
+      admin_control_assistant_usage: {
+        Args: { p_from: string; p_to: string };
+        Returns: {
+          cache_read_tokens: number;
+          calls: number;
+          day: string;
+          input_tokens: number;
+          kind: string;
+          model: string;
+          output_tokens: number;
+          person: string;
+          user_id: string;
+        }[];
+      };
+      admin_control_attention: {
+        Args: { p_from: string; p_to: string };
+        Returns: {
+          day: string;
+          hits: number;
+          kind: string;
+          product_id: string;
+        }[];
+      };
+      admin_control_backups: {
+        Args: { p_limit?: number };
+        Returns: {
+          created_at: string;
+          error: string;
+          id: number;
+          kind: string;
+          path: string;
+          sha256: string;
+          size_bytes: number;
+          status: string;
+          table_rows: Json;
+        }[];
+      };
+      admin_control_costs: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          amount_net_cents: number;
+          area: string;
+          category: string;
+          concept: string;
+          ends_on: string;
+          frequency: string;
+          id: string;
+          notes: string;
+          starts_on: string;
+          updated_at: string;
+        }[];
+      };
+      admin_control_data_quality: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          check_key: string;
+          detail: string;
+          label: string;
+          product_id: string;
+          severity: string;
+          variant_id: string;
+        }[];
+      };
+      admin_control_delete_cost: { Args: { p_id: string }; Returns: undefined };
+      admin_control_delete_delivery: {
+        Args: { p_id: string };
+        Returns: undefined;
+      };
+      admin_control_delete_task: { Args: { p_id: string }; Returns: undefined };
+      admin_control_deliveries: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          amount_net_cents: number;
+          billing_status: string;
+          created_at: string;
+          delivered_on: string;
+          description: string;
+          due_on: string;
+          id: string;
+          reference: string;
+          status: string;
+          title: string;
+          updated_at: string;
+        }[];
+      };
+      admin_control_export: {
+        Args: {
+          p_limit?: number;
+          p_offset: number;
+          p_schema: string;
+          p_table: string;
+        };
+        Returns: Json;
+      };
+      admin_control_export_catalog: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          approx_rows: number;
+          key_columns: string[];
+          schema_name: string;
+          table_name: string;
+        }[];
+      };
+      admin_control_log_backup: {
+        Args: {
+          p_error?: string;
+          p_kind: string;
+          p_path: string;
+          p_sha256: string;
+          p_size_bytes: number;
+          p_status: string;
+          p_table_rows: Json;
+        };
+        Returns: number;
+      };
+      admin_control_month_facts: {
+        Args: { p_from: string; p_to: string };
+        Returns: {
+          cogs_net_cents: number;
+          month: string;
+          priced_returned_units: number;
+          priced_sold_units: number;
+          received_net_cents: number;
+          received_units: number;
+          retail_price_cents: number;
+          returned_gross_cents: number;
+          returned_units: number;
+          sold_gross_cents: number;
+          sold_units: number;
+          uncosted_received_units: number;
+          uncosted_units: number;
+          variant_id: string;
+        }[];
+      };
+      admin_control_save_cost: {
+        Args: {
+          p_amount_net_cents: number;
+          p_area: string;
+          p_category: string;
+          p_concept: string;
+          p_ends_on?: string;
+          p_frequency: string;
+          p_id: string;
+          p_notes?: string;
+          p_starts_on: string;
+        };
+        Returns: string;
+      };
+      admin_control_save_delivery: {
+        Args: {
+          p_amount_net_cents?: number;
+          p_billing_status?: string;
+          p_delivered_on?: string;
+          p_description?: string;
+          p_due_on?: string;
+          p_id: string;
+          p_reference?: string;
+          p_status: string;
+          p_title: string;
+        };
+        Returns: string;
+      };
+      admin_control_save_task: {
+        Args: {
+          p_area: string;
+          p_due_on?: string;
+          p_id: string;
+          p_notes?: string;
+          p_owner: string;
+          p_priority: string;
+          p_status: string;
+          p_title: string;
+        };
+        Returns: string;
+      };
+      admin_control_set_task_status: {
+        Args: { p_id: string; p_status: string };
+        Returns: undefined;
+      };
+      admin_control_system_status: {
+        Args: Record<PropertyKey, never>;
+        Returns: Json;
+      };
+      admin_control_tasks: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          area: string;
+          completed_at: string;
+          created_at: string;
+          due_on: string;
+          id: string;
+          notes: string;
+          owner: string;
+          priority: string;
+          status: string;
+          title: string;
+          updated_at: string;
+        }[];
+      };
+      admin_control_variant_events: {
+        Args: { p_variant_ids: string[] };
+        Returns: {
+          at: string;
+          compare_at_cents: number;
+          cost_net_cents: number;
+          kind: string;
+          price_cents: number;
+          variant_id: string;
+        }[];
+      };
+      admin_control_variant_series: {
+        Args: { p_from: string; p_grain?: string; p_to: string };
+        Returns: {
+          series: Json;
+          variant_id: string;
+        }[];
+      };
       admin_create_purchase_order: {
         Args: {
           p_expected_on?: string;
@@ -1201,6 +1424,7 @@ export type Database = {
           valid_to: string;
         }[];
       };
+      control_access: { Args: Record<PropertyKey, never>; Returns: boolean };
       newsletter_subscribe: {
         Args: {
           p_consent_version: string;
@@ -1226,6 +1450,10 @@ export type Database = {
           status: string;
           variant_id: string;
         }[];
+      };
+      track_product_event: {
+        Args: { p_kind: string; p_slug: string };
+        Returns: boolean;
       };
     };
     Enums: {

@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
+import { draftMode } from 'next/headers';
 import { notFound } from 'next/navigation';
 import { Eyebrow, Heading, Tag } from '@/components/ui';
 import type { ScentProfile } from '@/modules/catalog';
@@ -23,6 +24,7 @@ import {
   ScentSectionTitle,
   SeasonWheel,
   TimeOfDayView,
+  TrackEvent,
 } from '@/modules/storefront';
 
 export const revalidate = 300;
@@ -69,12 +71,15 @@ export default async function ScentProductPage({ params }: { params: Params }) {
   const product = await getStorefrontProduct(slug, locale);
   if (!product) notFound();
 
-  const [t, profile, products, profiles] = await Promise.all([
+  const [t, profile, products, profiles, draft] = await Promise.all([
     getTranslations(),
     getScentProfile(product.id),
     listStorefrontProducts(locale),
     listScentProfiles(),
+    draftMode(),
   ]);
+  // La vista previa del personal no se mide.
+  const trackSlug = draft.isEnabled ? null : product.slug;
   const similar = profile
     ? products
         .filter((p) => p.id !== product.id && profiles[p.id])
@@ -92,6 +97,7 @@ export default async function ScentProductPage({ params }: { params: Params }) {
 
   return (
     <main className="pt-18">
+      {trackSlug && <TrackEvent slug={trackSlug} kind="scent_view" />}
       <div className="grid lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)]">
         <div className="lg:sticky lg:top-18 lg:self-start">
           <ProductStage
@@ -99,6 +105,7 @@ export default async function ScentProductPage({ params }: { params: Params }) {
             media={product.media}
             name={product.name}
             brand={product.brand.name}
+            trackSlug={trackSlug}
           />
         </div>
         <div className="px-5 py-14 sm:px-10 lg:px-16 lg:py-24">
@@ -217,7 +224,7 @@ export default async function ScentProductPage({ params }: { params: Params }) {
               title={t('scent.similarTitle', { name: product.name })}
             />
           </Reveal>
-          <ul className="grid gap-x-6 gap-y-16 sm:grid-cols-2 lg:grid-cols-4">
+          <ul className="grid grid-cols-2 gap-x-3 gap-y-10 sm:gap-x-6 sm:gap-y-16 lg:grid-cols-4">
             {similar.map((entry, index) => (
               <Reveal
                 as="li"
@@ -225,7 +232,7 @@ export default async function ScentProductPage({ params }: { params: Params }) {
                 delay={index * 0.1}
                 className="min-w-0"
               >
-                <ScentCard entry={entry} priority={false} />
+                <ScentCard entry={entry} priority={false} compact />
               </Reveal>
             ))}
           </ul>

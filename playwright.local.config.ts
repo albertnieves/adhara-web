@@ -1,4 +1,5 @@
 import { defineConfig, devices } from '@playwright/test';
+import { CONSENT_ACCEPTED } from './tests/support/legal-consent';
 export default defineConfig({
   testDir: './tests/integration',
   workers: 1,
@@ -6,6 +7,7 @@ export default defineConfig({
   timeout: 90000,
   use: {
     baseURL: 'http://localhost:3000',
+    storageState: CONSENT_ACCEPTED,
     trace: 'off',
     screenshot: 'off',
   },

@@ -13,6 +13,7 @@ import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 import type { ProductMedia } from '@/modules/catalog';
 import { ProductImage } from './ProductImage';
+import { trackProductEvent } from './TrackEvent';
 
 /** three.js solo en el cliente y solo en las fichas con escena. */
 const UnboxingViewer = dynamic(
@@ -83,7 +84,7 @@ function Gallery({
         </AnimatePresence>
       </motion.div>
       {media.length > 1 && (
-        <ul className="flex justify-center gap-3 pb-6">
+        <ul className="-mt-3 flex justify-center gap-3 pb-3">
           {media.map((item, i) => (
             <li key={item.url}>
               <button
@@ -91,9 +92,12 @@ function Gallery({
                 onClick={() => setIndex(i)}
                 aria-label={`${i + 1} / ${media.length}`}
                 aria-pressed={i === index}
-                className={`h-px w-10 transition-colors duration-500 ${i === index ? 'bg-fg' : 'bg-border hover:bg-fg-muted'}`}
+                // La raya es fina, pero el botón mide 44 px de alto para el dedo.
+                className="group flex h-11 w-10 items-center"
               >
-                <span className="block h-6 -translate-y-3" />
+                <span
+                  className={`block h-px w-full transition-colors duration-500 ${i === index ? 'bg-fg' : 'bg-border group-hover:bg-fg-muted'}`}
+                />
               </button>
             </li>
           ))}
@@ -108,11 +112,17 @@ export function ProductStage({
   media,
   name,
   brand,
+  trackSlug = null,
 }: {
   scene: string | null;
   media: ProductMedia[];
   name: string;
   brand: string;
+  /**
+   * Slug del perfume para contar (anónimo) que su escena 3D se ha visto; null
+   * en la vista previa del personal, que no se mide.
+   */
+  trackSlug?: string | null;
 }) {
   const t = useTranslations('product');
   const gallery = <Gallery media={media} name={name} brand={brand} />;
@@ -128,6 +138,11 @@ export function ProductStage({
             dragHint: t('sceneDrag'),
           }}
           fallback={gallery}
+          onSeen={
+            trackSlug
+              ? () => trackProductEvent(trackSlug, 'unboxing')
+              : undefined
+          }
         />
       ) : (
         gallery

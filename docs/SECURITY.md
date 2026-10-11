@@ -8,8 +8,8 @@ Fuente única: `src/modules/auth/domain/permissions.ts`. La misma matriz está s
 
 | Rol            | Quién                      | Alcance                                                                                |
 | -------------- | -------------------------- | -------------------------------------------------------------------------------------- |
-| `system_admin` | Administrador del sistema  | Todo, incluidos personal (`staff.manage`) y configuración (`settings.manage`)          |
-| `store_admin`  | Administrador de la tienda | Toda la operación, también costes, compras y reembolsos; sin personal ni configuración |
+| `system_admin` | Administrador del sistema  | Todo: personal, configuración y control del negocio (`business.control`)               |
+| `store_admin`  | Administrador de la tienda | Operación, costes, compras y reembolsos; sin personal, configuración ni control        |
 | `viewer`       | Encargado                  | `inventory.view`, `orders.view`, `messages.view` y `agent.use`; sin clientes ni costes |
 
 Sustituyen a `owner`, `manager`, `store_staff` y `content_editor` de la Fase 0 (DECISIONS §14). Los clientes no son personal: cuando existan (F14), solo verán sus datos por RLS.
@@ -34,23 +34,26 @@ Una redirección nunca sustituye la autorización en servidor.
 
 - Costes, historial de PVP, proveedores y pedidos de compra viven en `internal`, que la API no expone (`PGRST106` en `adhara-dev`, criterio 10) y sobre el que `anon` y `authenticated` no tienen privilegios (pgTAP `03` y `07`).
 - Solo se leen con funciones `admin_*` que exigen `pricing.view_cost` o `purchasing.manage` con MFA.
+- Las tareas, los costes del negocio y las entregas del control (`/admin/control`) también viven en `internal`, solo para el titular: `business.control` con MFA **y** estar en `internal.control_owners`, una lista que solo se cambia por SQL (DECISIONS §127). Otro administrador del sistema recibe 404. La auditoría no guarda sus importes (pgTAP `09`).
 - Ninguna tabla pública tiene columnas de coste (pgTAP `03`). La tienda solo recibe disponible, últimas unidades o agotado (`storefront_availability`).
 - `tests/e2e/cost-leak.spec.ts` recorre las rutas públicas (HTML, RSC, JSON y cabeceras) buscando nombres de campos de coste y, en `e2e.yml`, el coste centinela de `tests/fixtures/test-db.sql` (987654 céntimos, también como 9.876,54 €), su proveedor y su referencia.
 - El informe diario y el asistente trabajan en unidades, sin costes, importes ni nombres de proveedor (`tests/unit/assistant.test.ts`).
 
 ## Secretos y claves
 
-| Variable                                                           | Dónde                  | Uso                                                                                 |
-| ------------------------------------------------------------------ | ---------------------- | ----------------------------------------------------------------------------------- |
-| `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Cliente y servidor     | Públicas; la RLS protege los datos                                                  |
-| `SUPABASE_SECRET_KEY`                                              | Solo servidor (Vercel) | Invitaciones de Auth (`createAuthAdminClient`) e informe diario (`createJobClient`) |
-| `ANTHROPIC_API_KEY`, `CRON_SECRET`, `ASSISTANT_DAILY_LIMIT`        | Solo servidor (Vercel) | Asistente y tarea programada                                                        |
+| Variable                                                           | Dónde                  | Uso                                                                                                                   |
+| ------------------------------------------------------------------ | ---------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Cliente y servidor     | Públicas; la RLS protege los datos                                                                                    |
+| `SUPABASE_SECRET_KEY`                                              | Solo servidor (Vercel) | Invitaciones de Auth (`createAuthAdminClient`), informe diario y copia diaria (`createJobClient`, tras `CRON_SECRET`) |
+| `ANTHROPIC_API_KEY`, `CRON_SECRET`, `ASSISTANT_DAILY_LIMIT`        | Solo servidor (Vercel) | Asistente y tareas programadas                                                                                        |
+| `SUPABASE_BACKUPS_TOKEN` (opcional)                                | Solo servidor (Vercel) | Lista de copias de la plataforma en la consola; token personal limitado a «Backups: Read»                             |
 
 - Los módulos con secretos importan `server-only`; el build falla si llegan al cliente.
 - La clave privilegiada nunca está en el camino de renderizado de páginas ni recibe datos del navegador sin una autorización previa.
 - `.env.example` solo lleva valores públicos y nombres de variables. `pnpm scan:secrets` (en `ci.yml`) busca patrones de claves en los archivos versionados sin imprimirlas (criterio 13).
 - `CRON_SECRET` se compara en tiempo constante; sin configurar, la tarea programada responde 503.
 - Nunca se piden claves por chat: el usuario las configura en Vercel.
+- La consola solo muestra si cada variable está configurada, nunca su valor. `pnpm scan:secrets` también busca tokens personales de Supabase (`sbp_…`).
 
 ## Cabeceras e indexación
 
@@ -63,6 +66,12 @@ Las acciones sensibles (personal, precios, costes, stock, compras, contenido) qu
 ## Asistente
 
 Herramientas de solo lectura con la sesión y los permisos de quien pregunta; ninguna escribe ni usa la clave privilegiada (prueba unitaria). Tope diario por persona, hasta 8 vueltas por pregunta, 60 s por petición y registro de uso de solo inserción. La consulta comprueba el origen de la petición.
+
+## Consola del titular
+
+- **Copias** (DECISIONS §128): bucket privado `system-backups` que solo el titular puede leer (política de Storage); la tarea diaria escribe con la clave privilegiada tras `CRON_SECRET`; la exportación usa una lista blanca de tablas con nombres citados (`%I`), nunca el texto recibido. Las copias contienen costes y proveedores: se descargan con enlace firmado de 60 s o con la sesión, siempre `private, no-store`. Restaurar solo en local con el script; en remoto lo decide el titular.
+- **Visitas** (DECISIONS §129): `track_product_event` es la única función de escritura que puede llamar `anon`; solo suma contadores de perfumes publicados, no devuelve nada que revele si existen y tiene un freno global de 1200 eventos por minuto. No se guarda IP, agente de usuario, cookies ni identificadores; GPC y «No rastrear» se respetan.
+- **Copias de la plataforma:** el token se usa solo en servidor, con 5 s de espera, y nunca se registra ni se muestra.
 
 ## Avisos del asesor de Supabase (`adhara-dev`, 02/10)
 

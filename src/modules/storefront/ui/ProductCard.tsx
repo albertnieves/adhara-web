@@ -7,14 +7,17 @@ import { ProductImage } from './ProductImage';
 
 /**
  * Tarjeta de la colección: la imagen respira al pasar el cursor y, si hay una
- * segunda imagen (la caja), aparece con un fundido.
+ * segunda imagen (la caja), aparece con un fundido. `compact` es la de la
+ * cuadrícula de dos columnas del móvil; desde 640 px es igual que la normal.
  */
 export function ProductCard({
   product,
   priority = false,
+  compact = false,
 }: {
   product: StorefrontProduct;
   priority?: boolean;
+  compact?: boolean;
 }) {
   const t = useTranslations();
   const locale = useLocale();
@@ -23,6 +26,8 @@ export function ProductCard({
   const media = heroMedia(product);
   const alternate = product.media.find((m) => m.url !== media?.url) ?? null;
   const sizes = product.variants.map(variantLabel).join(' · ');
+  const inset = compact ? 'inset-3 sm:inset-6' : 'inset-6';
+  const imageSizes = `(min-width: 1024px) 25vw, (min-width: 640px) 45vw, ${compact ? '45vw' : '90vw'}`;
 
   return (
     <Link
@@ -32,26 +37,26 @@ export function ProductCard({
       <div className="bg-stage relative aspect-[4/5] overflow-hidden">
         <div
           // Fondo propio: al escalar, la capa se aísla y multiply necesita un fondo dentro.
-          className={`bg-stage absolute inset-6 transition-[transform,opacity] duration-[1.6s] ease-(--ease-luxe) group-hover:scale-[1.05] ${alternate ? 'group-hover:opacity-0' : ''}`}
+          className={`bg-stage absolute ${inset} transition-[transform,opacity] duration-[1.6s] ease-(--ease-luxe) group-hover:scale-[1.05] ${alternate ? 'group-hover:opacity-0' : ''}`}
         >
           <ProductImage
             media={media}
             alt={`${product.brand.name} ${product.name}`}
             brand={product.brand.name}
-            sizes="(min-width: 1024px) 25vw, (min-width: 640px) 45vw, 90vw"
+            sizes={imageSizes}
             priority={priority}
           />
         </div>
         {alternate && (
           <div
             aria-hidden
-            className="bg-stage absolute inset-6 scale-[0.97] opacity-0 transition-[transform,opacity] duration-[1.6s] ease-(--ease-luxe) group-hover:scale-100 group-hover:opacity-100"
+            className={`bg-stage absolute ${inset} scale-[0.97] opacity-0 transition-[transform,opacity] duration-[1.6s] ease-(--ease-luxe) group-hover:scale-100 group-hover:opacity-100`}
           >
             <ProductImage
               media={alternate}
               alt=""
               brand={product.brand.name}
-              sizes="(min-width: 1024px) 25vw, (min-width: 640px) 45vw, 90vw"
+              sizes={imageSizes}
             />
           </div>
         )}
@@ -60,7 +65,7 @@ export function ProductCard({
           className="bg-accent absolute inset-x-0 bottom-0 h-px origin-left scale-x-0 transition-transform duration-700 ease-(--ease-luxe) group-hover:scale-x-100"
         />
       </div>
-      <div className="mt-5 min-w-0">
+      <div className={`min-w-0 ${compact ? 'mt-3 sm:mt-5' : 'mt-5'}`}>
         <Eyebrow>{product.brand.name}</Eyebrow>
         <Heading level={3} size="h3" className="mt-1.5 line-clamp-2">
           {product.name}
@@ -75,7 +80,7 @@ export function ProductCard({
             .filter(Boolean)
             .join(' · ')}
         </p>
-        <p className="mt-3 text-sm">
+        <p className={`text-sm ${compact ? 'mt-2 sm:mt-3' : 'mt-3'}`}>
           {price === null ? (
             t('product.pricePending')
           ) : (

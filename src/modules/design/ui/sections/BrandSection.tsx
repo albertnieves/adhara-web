@@ -11,6 +11,9 @@ const RULES = [
   'No: dorado, degradados, sombras, giros, deformaciones ni fotos sin un velo que garantice el contraste.',
 ];
 
+/** La consola del titular no lleva el logotipo: se nombra en Manrope. */
+const BRAND_TONES = TONES.filter((tone) => tone.id !== 'console');
+
 export function BrandSection() {
   return (
     <Section
@@ -22,7 +25,7 @@ export function BrandSection() {
       <StarList items={RULES} className="max-w-3xl text-sm" />
       <SubTitle>Fondos permitidos</SubTitle>
       <ul className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-        {TONES.map((tone) => (
+        {BRAND_TONES.map((tone) => (
           <li
             key={tone.id}
             data-tone={tone.id === 'light' ? undefined : tone.id}

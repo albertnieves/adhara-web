@@ -5,22 +5,36 @@ import { cx } from './cx';
  * Tabla de datos (Fase 2, DS-09) con los estilos de `.data-table`. Con
  * `stacked`, en el móvil cada fila pasa a ficha: la celda `primary` encabeza
  * y las demás muestran su `label`, sin desplazamiento horizontal. La leyenda
- * nombra la tabla para el lector de pantalla.
+ * nombra la tabla para el lector de pantalla. `density="compact"` (consola)
+ * reduce el relleno y la letra a 12 px; `stickyHeader` deja la cabecera fija
+ * al desplazarse.
  */
 export function Table({
   caption,
   stacked = true,
+  density = 'default',
+  stickyHeader = false,
   className,
   children,
 }: {
   caption: string;
   stacked?: boolean;
+  density?: 'default' | 'compact';
+  stickyHeader?: boolean;
   /** Solo colocación. */
   className?: string;
   children: ReactNode;
 }) {
   return (
-    <table className={cx('data-table', stacked && 'stack-table', className)}>
+    <table
+      className={cx(
+        'data-table',
+        stacked && 'stack-table',
+        density === 'compact' && 'data-table-compact',
+        stickyHeader && 'data-table-sticky',
+        className,
+      )}
+    >
       <caption className="sr-only">{caption}</caption>
       {children}
     </table>

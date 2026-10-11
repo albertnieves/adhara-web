@@ -65,10 +65,11 @@ const LEGACY_CLASSES = [
 /**
  * Colores de la capa de paleta: fuera de los tokens se usan los semánticos
  * (fg, surface, border, accent…), que cambian con el tono. Solo se permite
- * `stage`, el fondo de la escena de producto.
+ * `stage`, el fondo de la escena de producto. La paleta de la consola
+ * (grafito, tiza, señal…) tampoco: la consola usa los semánticos de su tono.
  */
 const PALETTE_TOKENS =
-  'ivory|paper|sand|ink|ink-soft|night|night-raised|smoke|mist|line|line-strong|line-dark|line-strong-dark|gold|gold-deep|gold-soft|oud|indigo-night|forest';
+  'ivory|paper|sand|ink|ink-soft|night|night-raised|smoke|mist|line|line-strong|line-dark|line-strong-dark|gold|gold-deep|gold-soft|oud|indigo-night|forest|graphite|graphite-raised|graphite-sunken|chalk|pewter|wire|wire-strong|signal|signal-soft';
 const PALETTE_UTILITY = new RegExp(
   `(?<![\\w-])(?:[a-z0-9-]+:)*(?:bg|text|border|border-[tblrxy]|ring|fill|stroke|from|to|via|outline|decoration|divide|placeholder|shadow|accent|caret)-(?:${PALETTE_TOKENS})(?:/\\d+)?(?![\\w-])`,
   'g',

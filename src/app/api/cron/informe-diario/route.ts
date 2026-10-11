@@ -1,4 +1,4 @@
-import { timingSafeEqual } from 'node:crypto';
+import { cronGuard } from '@/lib/cron';
 import { generateAndStoreDailyReport } from '@/modules/assistant/server';
 import { previousDay } from '@/modules/assistant';
 import { madridDay } from '@/modules/reports';
@@ -11,21 +11,9 @@ import { madridDay } from '@/modules/reports';
 export const dynamic = 'force-dynamic';
 export const maxDuration = 60;
 
-function authorized(request: Request, secret: string) {
-  const header = Buffer.from(request.headers.get('authorization') ?? '');
-  const expected = Buffer.from(`Bearer ${secret}`);
-  return header.length === expected.length && timingSafeEqual(header, expected);
-}
-
 export async function GET(request: Request) {
-  const secret = process.env.CRON_SECRET;
-  if (!secret)
-    return Response.json(
-      { ok: false, message: 'CRON_SECRET no configurado' },
-      { status: 503 },
-    );
-  if (!authorized(request, secret))
-    return Response.json({ ok: false }, { status: 401 });
+  const denied = cronGuard(request);
+  if (denied) return denied;
 
   const day = previousDay(madridDay(new Date()));
   try {

@@ -6,8 +6,13 @@ import { Button } from './Button';
 import { Icon } from './Icon';
 import { useModal } from './useModal';
 
-/** Tonos de superficie de las superposiciones (los de la guía, DS-02). */
-export type OverlayTone = 'light' | 'dark' | 'oud' | 'indigo' | 'forest';
+/**
+ * Tonos de superficie de las superposiciones (los de la guía, DS-02). Dentro
+ * de la consola basta el claro por defecto, que hereda su tono; `console`
+ * sirve si la superposición se abre fuera de su contenedor.
+ */
+export type OverlayTone =
+  'light' | 'dark' | 'oud' | 'indigo' | 'forest' | 'console';
 
 /** Botón de cerrar de 44 px para diálogos y paneles. */
 export function CloseButton({

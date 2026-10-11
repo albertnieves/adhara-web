@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 import {
@@ -139,6 +140,57 @@ describe('Card, Table, EmptyState y Skeleton', () => {
     expect(markup).toContain('scope="col"');
     expect(markup).toContain('data-primary="true"');
     expect(markup).toContain('data-label="ml"');
+  });
+
+  it('Table compacta y con cabecera fija solo cuando se pide', () => {
+    const rows = (
+      <tbody>
+        <tr>
+          <Td primary>A</Td>
+        </tr>
+      </tbody>
+    );
+    const plain = renderToStaticMarkup(<Table caption="X">{rows}</Table>);
+    expect(plain).toContain('class="data-table stack-table"');
+    expect(plain).not.toContain('data-table-compact');
+    expect(plain).not.toContain('data-table-sticky');
+    const compact = renderToStaticMarkup(
+      <Table caption="X" density="compact" stacked={false} stickyHeader>
+        {rows}
+      </Table>,
+    );
+    expect(compact).toContain(
+      'class="data-table data-table-compact data-table-sticky"',
+    );
+    const onlyCompact = renderToStaticMarkup(
+      <Table caption="X" density="compact">
+        {rows}
+      </Table>,
+    );
+    expect(onlyCompact).toContain(
+      'class="data-table stack-table data-table-compact"',
+    );
+  });
+
+  it('las clases de la tabla compacta existen y no bajan de 12 px', () => {
+    const css = readFileSync(
+      new URL('../../src/app/globals.css', import.meta.url),
+      'utf8',
+    );
+    const rule = (selector: string) =>
+      css.match(
+        new RegExp(
+          `${selector.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\s*{([^}]*)}`,
+        ),
+      )?.[1] ?? '';
+    expect(rule('.data-table-compact td')).toMatch(
+      /font-size:\s*var\(--text-xs\);/,
+    );
+    expect(rule('.data-table-compact td')).toMatch(/padding:\s*0\.375rem/);
+    expect(rule('.data-table-sticky thead th')).toMatch(/position:\s*sticky;/);
+    expect(rule('.data-table-sticky thead th')).toMatch(
+      /background:\s*var\(--color-surface-raised\);/,
+    );
   });
 
   it('EmptyState con título y acción; Skeleton decorativo', () => {

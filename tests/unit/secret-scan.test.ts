@@ -8,6 +8,7 @@ const fake = (...parts: string[]) => parts.join('');
 describe('escaneo de secretos', () => {
   it.each([
     ['Supabase secret key', fake('sb_', 'secret_', 'a'.repeat(24))],
+    ['Token personal de Supabase', fake('sb', 'p_', 'fc', 'a1'.repeat(16))],
     [
       'JWT (p. ej. service_role)',
       fake(

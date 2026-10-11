@@ -61,72 +61,86 @@ export function Header() {
 
   useEffect(() => {
     document.body.style.overflow = open ? 'hidden' : '';
+    if (!open) return;
+    // Esc cierra el menú móvil.
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setOpen(false);
+    };
+    window.addEventListener('keydown', onKey);
     return () => {
       document.body.style.overflow = '';
+      window.removeEventListener('keydown', onKey);
     };
   }, [open]);
 
   const transparent = overlayPage && !scrolled && !open;
 
   return (
-    <header
-      // Sobre el vídeo de la portada, los semánticos del tono oscuro.
-      data-tone={transparent ? 'dark' : undefined}
-      className={`text-fg fixed inset-x-0 top-0 z-40 border-b transition-[background-color,color,border-color,backdrop-filter] duration-700 ease-(--ease-luxe) ${
-        transparent
-          ? 'border-transparent bg-transparent'
-          : 'border-border bg-surface/85 backdrop-blur-md'
-      }`}
-    >
-      <div className="mx-auto grid h-18 max-w-[90rem] grid-cols-[1fr_auto_1fr] items-center px-5 sm:px-10">
-        <nav aria-label={t('menu')} className="flex items-center gap-8">
-          <button
-            type="button"
-            className="min-h-11 md:hidden"
-            aria-expanded={open}
-            aria-controls="mobile-menu"
-            onClick={() => setOpen((value) => !value)}
-          >
-            <Eyebrow as="span" tone="inherit">
-              {open ? t('close') : t('menu')}
-            </Eyebrow>
-          </button>
-          <Link
-            href="/catalogo"
-            className="link-underline text-2xs tracking-caps-lg hidden uppercase md:inline"
-            aria-current={pathname === '/catalogo' ? 'page' : undefined}
-          >
-            {t('collection')}
-          </Link>
-          <Link
-            href="/catalogo-olfativo"
-            className="link-underline text-2xs tracking-caps-lg hidden uppercase md:inline"
-            aria-current={
-              pathname.startsWith('/catalogo-olfativo') ? 'page' : undefined
-            }
-          >
-            {t('scentCatalog')}
-          </Link>
-          <Link
-            href={{ pathname: '/', hash: 'experiencia' }}
-            className="link-underline text-2xs tracking-caps-lg hidden uppercase md:inline"
-          >
-            {t('experience')}
-          </Link>
-        </nav>
+    <>
+      <header
+        // Sobre el vídeo de la portada, los semánticos del tono oscuro.
+        data-tone={transparent ? 'dark' : undefined}
+        className={`text-fg fixed inset-x-0 top-0 z-40 border-b transition-[background-color,color,border-color,backdrop-filter] duration-700 ease-(--ease-luxe) ${
+          transparent
+            ? 'border-transparent bg-transparent'
+            : 'border-border bg-surface/85 backdrop-blur-md'
+        }`}
+      >
+        <div className="mx-auto grid h-18 max-w-[90rem] grid-cols-[1fr_auto_1fr] items-center px-5 sm:px-10">
+          <nav aria-label={t('menu')} className="flex items-center gap-8">
+            <button
+              type="button"
+              className="min-h-11 md:hidden"
+              aria-expanded={open}
+              aria-controls="mobile-menu"
+              onClick={() => setOpen((value) => !value)}
+            >
+              <Eyebrow as="span" tone="inherit">
+                {open ? t('close') : t('menu')}
+              </Eyebrow>
+            </button>
+            <Link
+              href="/catalogo"
+              className="link-underline text-2xs tracking-caps-lg hidden uppercase md:inline"
+              aria-current={pathname === '/catalogo' ? 'page' : undefined}
+            >
+              {t('collection')}
+            </Link>
+            <Link
+              href="/catalogo-olfativo"
+              className="link-underline text-2xs tracking-caps-lg hidden uppercase md:inline"
+              aria-current={
+                pathname.startsWith('/catalogo-olfativo') ? 'page' : undefined
+              }
+            >
+              {t('scentCatalog')}
+            </Link>
+            <Link
+              href={{ pathname: '/', hash: 'experiencia' }}
+              className="link-underline text-2xs tracking-caps-lg hidden uppercase md:inline"
+            >
+              {t('experience')}
+            </Link>
+          </nav>
 
-        <Link href="/" aria-label={t('home')} onClick={() => setOpen(false)}>
-          <Logo />
-        </Link>
+          <Link href="/" aria-label={t('home')} onClick={() => setOpen(false)}>
+            <Logo />
+          </Link>
 
-        <div className="flex justify-end">
-          <LanguageLinks
-            pathname={pathname}
-            className="text-2xs tracking-caps hidden items-center gap-4 md:flex"
-          />
+          <div className="flex justify-end">
+            <LanguageLinks
+              pathname={pathname}
+              className="text-2xs tracking-caps hidden items-center gap-4 md:flex"
+            />
+          </div>
         </div>
-      </div>
+      </header>
 
+      {/*
+       * Fuera de <header>: su backdrop-filter convierte a la cabecera en el
+       * bloque contenedor de los hijos fijos, y el menú quedaba encerrado en
+       * sus 72 px, recortado y sin recibir los toques.
+       */}
       <AnimatePresence>
         {open && (
           <motion.div
@@ -177,6 +191,6 @@ export function Header() {
           </motion.div>
         )}
       </AnimatePresence>
-    </header>
+    </>
   );
 }

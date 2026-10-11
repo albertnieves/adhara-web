@@ -1,6 +1,7 @@
 import { Eyebrow, Heading } from '@/components/ui';
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
+import { draftMode } from 'next/headers';
 import { notFound } from 'next/navigation';
 import { variantLabel } from '@/modules/catalog';
 import {
@@ -17,6 +18,7 @@ import {
   ProductStage,
   PurchasePanel,
   Reveal,
+  TrackEvent,
 } from '@/modules/storefront';
 
 export const revalidate = 300;
@@ -56,11 +58,14 @@ export default async function ProductPage({ params }: { params: Params }) {
   const product = await getStorefrontProduct(slug, locale);
   if (!product) notFound();
 
-  const [t, availability, all] = await Promise.all([
+  const [t, availability, all, draft] = await Promise.all([
     getTranslations(),
     getAvailability([product.id]),
     listStorefrontProducts(locale),
+    draftMode(),
   ]);
+  // La vista previa del personal no se mide.
+  const trackSlug = draft.isEnabled ? null : product.slug;
   const related = all
     .filter((p) => p.brand.slug === product.brand.slug && p.id !== product.id)
     .slice(0, 4);
@@ -68,6 +73,7 @@ export default async function ProductPage({ params }: { params: Params }) {
 
   return (
     <main className="pt-18">
+      {trackSlug && <TrackEvent slug={trackSlug} kind="view" />}
       <div className="grid lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)]">
         <div className="lg:sticky lg:top-18 lg:self-start">
           <ProductStage
@@ -75,6 +81,7 @@ export default async function ProductPage({ params }: { params: Params }) {
             media={product.media}
             name={product.name}
             brand={product.brand.name}
+            trackSlug={trackSlug}
           />
         </div>
 
@@ -153,7 +160,7 @@ export default async function ProductPage({ params }: { params: Params }) {
               {t('product.related', { brand: product.brand.name })}
             </Heading>
           </Reveal>
-          <ul className="grid gap-x-6 gap-y-16 sm:grid-cols-2 lg:grid-cols-4">
+          <ul className="grid grid-cols-2 gap-x-3 gap-y-10 sm:gap-x-6 sm:gap-y-16 lg:grid-cols-4">
             {related.map((item, index) => (
               <Reveal
                 as="li"
@@ -161,7 +168,7 @@ export default async function ProductPage({ params }: { params: Params }) {
                 delay={index * 0.1}
                 className="min-w-0"
               >
-                <ProductCard product={item} />
+                <ProductCard product={item} compact />
               </Reveal>
             ))}
           </ul>

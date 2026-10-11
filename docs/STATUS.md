@@ -1,4 +1,4 @@
-# Estado real — 09/10/2026
+# Estado real — 11/10/2026
 
 ## En esta rama: pedidos web (10/10/2026)
 
@@ -8,11 +8,55 @@ Comprueban referencia, céntimos y moneda, duplicados y pagos que requieren revi
 No hay todavía adaptador del banco, persistencia de pedidos, checkout ni pantalla
 de pedidos web. Las entregas P02–P07 siguen pendientes; no se ha modificado la base remota.
 
-**Tienda visual (es/ca/en) y panel de administración operativos sobre `adhara-dev`, desplegados en Vercel, que sigue siendo privado (Vercel Authentication). `main` incluye las fases R y S (PR #9), la entrega de acceso y edición de Codex (PR #10) y el panel con el asistente (PR #11); sus 17 migraciones están aplicadas en `adhara-dev` (comprobado el 02/10). La tienda muestra 50 perfumes publicados con PVP. La Fase 1 está cerrada (PR #12): sus 19 criterios están cumplidos o con una excepción escrita ([informe](phases/FASE_1_REPORT.md)). La Fase 2 (sistema de diseño) está terminada a falta de la revisión visual del usuario ([informe](phases/FASE_2_REPORT.md)): 12 de 13 criterios cumplidos. Siguiente: checkout con pago con tarjeta, que espera los datos del TPV virtual (ver «Pendiente del usuario»).**
+**Tienda visual (es/ca/en) y panel de administración operativos sobre `adhara-dev`, desplegados en Vercel y públicos desde el 10/10 en `latelierdudesert.com`, sin Vercel Authentication y todavía con `noindex` (DECISIONS §118). `main` incluye las fases R y S (PR #9), la entrega de acceso y edición de Codex (PR #10) y el panel con el asistente (PR #11); sus 17 migraciones están aplicadas en `adhara-dev` (comprobado el 02/10). La tienda muestra 50 perfumes publicados con PVP. La Fase 1 está cerrada (PR #12): sus 19 criterios están cumplidos o con una excepción escrita ([informe](phases/FASE_1_REPORT.md)). La Fase 2 (sistema de diseño) está terminada a falta de la revisión visual del usuario ([informe](phases/FASE_2_REPORT.md)): 12 de 13 criterios cumplidos. Siguiente: checkout con pago con tarjeta, que espera los datos del TPV virtual (ver «Pendiente del usuario»).**
+
+## Consola del titular (11/10, rama `claude/serene-dirac-rsrqcx`)
+
+A petición del usuario: el control pasa a ser una consola solo para su cuenta y solo para ordenador, con las métricas de cada perfume, visitas, copias de seguridad y utilidades del sistema. Decisiones §127–130; guía en [ADMIN_OPERATIONS.md](ADMIN_OPERATIONS.md#consola-del-titular-control-del-negocio-y-del-proyecto). **Las migraciones `20261010120000` y `20261011090000`–`20261011090300` están validadas en Supabase local y pendientes de aplicar en `adhara-dev` con autorización del usuario**; esta rama no debe desplegarse antes.
+
+- **Solo el titular:** `business.control` con MFA y estar en `internal.control_owners` (entra el administrador del sistema activo al aplicar la migración). Cualquier otra cuenta recibe 404.
+- **Consola oscura solo para ordenador** (desde 1280 px; por debajo, un aviso en la misma URL), con menú lateral fijo, tablas compactas y cifras monoespaciadas.
+- **Resumen** con alertas (roturas, cobertura, tareas y entregas vencidas, copia atrasada, migraciones, variables y calidad), lo que sube y baja y lo más visto.
+- **Productos** (tabla ordenable y filtrable de 26 semanas) y **ficha de cada perfume** (12/26/52 semanas o diario): ritmo con los días con existencias, tendencia, patrón de demanda, previsión a 28 días, cobertura, ABC/XYZ, margen, descuento, roturas y cambios de PVP y coste.
+- **Atención:** visitas anónimas y agregadas a la ficha, la ficha olfativa y la escena 3D, conversión y «Mucho interés, pocas ventas». Los carritos abandonados llegarán con el checkout.
+- **Copias:** copia diaria al bucket privado `system-backups` (30 días), descarga al momento, registro con SHA-256, copias de la plataforma con token opcional y restauración solo en local (`scripts/restore-backup.ts`, simulacro hecho).
+- **Estado del sistema, uso y coste del asistente y calidad de datos.**
+- **Comprobado en local** (Supabase local reiniciado, en el orden de la CI): pgTAP 492/492 en 13 archivos (163 nuevas); tipos generados iguales; `db lint` sin errores; concurrencia correcta; unitarias 440/440 en 45 archivos (con las de `main` fusionado); `pnpm check` correcto; `format:check` y `scan:secrets` correctos; E2E de la tienda con el coste centinela 231 pasan y 21 omitidas, con el aviso legal de `main` (antes, la prueba del cuerpo no JSON se corrigió, §130); recorridos autenticados 22/22, con la consola completa del titular (productos y ficha, atención, descarga de copia, estado, calidad y asistente), el 404 para otro `system_admin` y la auditoría de diseño de las 15 pantallas de la consola a 1280–1440 px y el aviso por debajo. Revisión visual con capturas a 1440 px: se corrigieron una tabla que invadía otra columna en Estado, la tabla de productos que no cabía y las roturas contadas antes del primer movimiento.
+
+## Control del negocio y del proyecto (10/10, rama `claude/serene-dirac-rsrqcx`)
+
+A petición del usuario: un panel aparte para gestionar el cliente y el negocio. Decisiones §122–126; guía en [ADMIN_OPERATIONS.md](ADMIN_OPERATIONS.md#control-del-negocio-y-del-proyecto). **La migración `20261010120000_business_control.sql` está validada en Supabase local y pendiente de aplicar en `adhara-dev` con autorización del usuario**; hasta entonces, el control y el mostrador desplegados fallarían al leer sus tablas y columnas nuevas, así que esta rama no debe desplegarse antes que la migración.
+
+- **`/admin/control`**, sección aparte con su propio menú, solo para el administrador del sistema con MFA (permiso nuevo `business.control`; el administrador de la tienda recibe 404). Enlazada como «Control del negocio» en el pie del menú del panel.
+  - **Resumen:** ventas sin IVA, margen, costes y beneficio del mes y su evolución en 12 meses; tareas abiertas, vencidas y del cliente; pendiente de cobrar y balance del proyecto; lo urgente y las próximas entregas.
+  - **Ventas y beneficio:** cuenta de resultados mes a mes (6, 12 o 24 meses) con compras recibidas y lo más vendido.
+  - **Costes:** fijos y puntuales del negocio o del proyecto, mensuales, anuales o puntuales, con lo pagado cada mes.
+  - **Tareas** y **Entregas** al cliente, con importe y estado de facturación.
+- **El mostrador guarda el precio cobrado** por línea (PVP por defecto, descuento si se escribe otro, nunca por encima del PVP) y muestra el total. Las ventas anteriores se estiman con el PVP vigente.
+- **Carga inicial opcional** `supabase/data/20261010_control_inicial.sql`: 15 tareas de «Pendiente del usuario» y 8 entregas (6 fusionadas con su PR, la de esta rama y el checkout), sin importes ni costes.
+- **Comprobado en local** (Supabase local reiniciado, en el orden de la CI): pgTAP 329/329 en 10 archivos (36 nuevas); tipos generados iguales; `db lint` sin errores; concurrencia correcta (también el mostrador); unitarias 330/330 (24 nuevas); `pnpm check` correcto; E2E de la tienda 171 pasan y 15 omitidas (una ejecución anterior tuvo un fallo intermitente en el catálogo olfativo, ajeno a este cambio, que pasa al repetirla); recorridos autenticados 19/19, con los del control (venta con descuento en el mostrador, costes, tareas, entregas y 404 para el administrador de la tienda) y la auditoría de diseño y axe de 33 pantallas del panel, las 8 del control incluidas.
+
+## Móvil: cuadrícula, menú y galería (10/10, rama `claude/pensive-goldberg-aqgb5z`)
+
+A petición del usuario. Decisiones §119–121; roadmap de las siguientes entregas en [ROADMAP.md](ROADMAP.md).
+
+- **Cuadrícula de dos columnas** en la colección y el catálogo olfativo, con selector «Cuadrícula / Vista amplia» junto al recuento (solo por debajo de 640 px; por defecto, cuadrícula). A 390 px la colección pasa de 34.262 a 12.280 px de alto y el catálogo olfativo de 36.475 a 14.279. Destacados de la portada y relacionados, también en dos columnas.
+- **Menú móvil arreglado:** dentro de la cabecera quedaba encerrado en 88 px por el desenfoque de fondo y no dejaba navegar. Ahora ocupa la pantalla, lleva a Inicio, Colección y Catálogo olfativo y se cierra con Esc.
+- **Galería de la ficha:** los indicadores de foto pasan de 40 × 1 px a 44 px de alto.
+- **Comprobado en local** (build de producción contra los datos públicos de `adhara-dev`, solo lectura): lint, tipos, formato, escaneo de secretos y unitarias 322/322; E2E nuevas `mobile-navigation` 3/3 (y 1 omitida en escritorio); auditoría de maquetación y axe, FAQ, textos legales, vista previa y arranque: 78 pasan. La auditoría de la ficha agota sus 2 minutos con «Asad» (escena 3D con WebGL por software en el contenedor) y pasa con más tiempo; en CI el perfume centinela no tiene 3D. «Yara Moi» (dos fotos) pasa la auditoría y axe a las 4 anchuras tras el arreglo de la galería. Sin migraciones.
+
+## Textos legales en borrador (09/10, rama `claude/affectionate-mccarthy-ec5p5j`)
+
+A petición del usuario, para revisarlos con el cliente. Decisión §113; guía de revisión en [LEGAL.md](LEGAL.md).
+
+- **Aviso legal, condiciones de venta, privacidad, cookies y envíos y devoluciones** en es, ca y en, con rutas traducidas (`/es/aviso-legal`, `/ca/privacitat`, `/en/shipping-and-returns`…), índice por secciones y enlaces entre ellos. Discretos, como en una tienda en funcionamiento (§114): enlaces pequeños en la barra inferior del pie, sin avisos de borrador ni detalles internos; el aviso de la suscripción enlaza la privacidad.
+- **Aviso de entrada** (§115): pop-up que hay que aceptar antes de navegar, con enlaces a los textos; se recuerda un año (cookie técnica `atelier_aviso`) y no tapa las páginas legales.
+- **Datos pendientes:** titular, NIF, domicilio social, registro, dominio, envíos, pagos y arbitraje (`src/modules/legal/domain/entity.ts`; correo y teléfono, desde Panel → Configuración). Hasta que el cliente los dé, sus líneas no se publican; en la vista previa del personal («Ver tienda con borradores») se ven como «Pendiente: …» para revisarlas.
+- **Comprobado en local:** unitarias 320/320 (14 nuevas: marcadores, ocultación de pendientes, paridad de idiomas, enlaces, rutas y sin detalles internos); lint, formato, tipos y build; E2E del pie, índice y ocultación de pendientes en escritorio y móvil, y auditoría de maquetación y axe sin fallos en 5 páginas legales a 4 anchuras. Sin migraciones.
 
 ## Catálogo olfativo, suscripción a promociones y tienda sin etiquetas provisionales (09/10, rama `claude/adoring-mayer-jvv46o`)
 
-A petición del usuario, para acercar la web a producción. Decisiones §108–111. **Las dos migraciones nuevas (`20261009150000`, `20261009150100`) y la carga de perfiles (`supabase/data/20261009_perfiles_olfativos.sql`) están validadas en Supabase local y pendientes de aplicar en `adhara-dev` con autorización del usuario**; hasta entonces, la tienda desplegada muestra el catálogo olfativo sin perfiles y la suscripción responde con error.
+A petición del usuario, para acercar la web a producción. Decisiones §108–111. Las dos migraciones y la carga de perfiles (`supabase/data/20261009_perfiles_olfativos.sql`) están aplicadas en `adhara-dev` (comprobado el 10/10: 47 perfiles olfativos y la tabla de suscriptores). En remoto constan como `20261009161818` y `20261009164152`, no con las versiones del repositorio (`20261009150000`, `20261009150100`).
 
 - **Catálogo olfativo sin compra** (`/es/catalogo-olfativo`, `/ca/cataleg-olfactiu`, `/en/scent-catalogue` y ficha por perfume): pirámide de salida, corazón y fondo, familias, rueda de estaciones, día y noche, huella olfativa y perfumes afines; filtros por familia, estación y momento y búsqueda por nota. Sin precio ni compra. Enlazado en la cabecera y el pie.
 - **Research de notas:** 47 de los 50 perfumes publicados, cada uno con su fuente (distribuidor oficial en España o web de la marca); estación y momento solo cuando la fuente los indica. Sin perfil: Pharaoh Ramesses II, Game of Spades Blind Bid y Yara Aceite Concentrado (sin fuente). Vocabulario de 123 notas en es, ca y en. Editable en Panel → Catálogo → ficha → «Perfil olfativo».
@@ -210,7 +254,7 @@ Todas son provisionales (`provisional = true`) y guardan su procedencia: `origin
 
 ### Despliegue
 
-Vercel `altier-web` (antes `adhara-web`; equipo SOAPBRXND, Hobby; único proyecto activo, `soapbrxnd` pausado, DECISIONS §112), funciones en París (cdg1), todos los despliegues protegidos con Vercel Authentication. Variables públicas de Supabase (`adhara-dev`) configuradas para Preview, Production y Development. Production está en `06aacb1` (PR #11, READY); la PR #12 tiene su Preview en READY.
+Vercel `altier-web` (antes `adhara-web`; equipo L’Atelier, `latelierdudesert`, Hobby; único proyecto activo, `soapbrxnd` pausado, DECISIONS §112), funciones en París (cdg1), sin Vercel Authentication desde el 10/10: Production y Preview son públicas y el panel depende solo de su login con MFA (DECISIONS §118). Dominio **latelierdudesert.com** (comprado en Vercel el 10/10, DNS en Vercel, renovación automática, caduca el 10/10/2027) asignado a Production; `www` redirige al dominio sin `www` (DECISIONS §117). Variables públicas de Supabase (`adhara-dev`) configuradas para Preview, Production y Development. Production está en `06aacb1` (PR #11, READY); la PR #12 tiene su Preview en READY.
 
 ## Validación ejecutada (29/09–02/10/2026)
 
@@ -257,11 +301,13 @@ La revisión visual con perfumes se hizo en local con un Supabase simulado que d
 
 ## Pendiente del usuario
 
-0. **Catálogo olfativo y suscripción (09/10):** autorizar que se apliquen en `adhara-dev` las migraciones `20261009150000` y `20261009150100` y la carga `20261009_perfiles_olfativos.sql`; crear en Sender un token de API (y un grupo «Web») y ponerlos en Vercel, solo servidor, como `SENDER_API_TOKEN` y `SENDER_GROUP_ID`; activar en Sender la doble confirmación o un correo de bienvenida; y que la asesoría revise el texto de privacidad de la suscripción junto con los textos legales (punto 8).
+- **Control del negocio y consola (10–11/10):** autorizar que se apliquen en `adhara-dev`, por orden y antes de desplegar la rama, las migraciones `20261010120000` y `20261011090000`–`20261011090300` (y, si se quiere, la carga `20261010_control_inicial.sql`); comprobar que tu cuenta queda en la lista de titulares; configurar en Vercel, solo servidor, `CRON_SECRET` y `SUPABASE_SECRET_KEY` (si no lo están ya) para la copia diaria y, opcional, `SUPABASE_BACKUPS_TOKEN` (token personal de Supabase limitado a «Backups: Read»), sin pegar nada en el chat; descargar de vez en cuando una copia y guardarla fuera; que la asesoría confirme si la política de privacidad debe mencionar la medición anónima de visitas (DECISIONS §129); después, dar de alta los costes reales y completar importes y facturación de las entregas en `/admin/control`.
+
+0. **Catálogo olfativo y suscripción (09/10):** crear en Sender un token de API (y un grupo «Web») y ponerlos en Vercel, solo servidor, como `SENDER_API_TOKEN` y `SENDER_GROUP_ID`; activar en Sender la doble confirmación o un correo de bienvenida; y que la asesoría revise el texto de privacidad de la suscripción junto con los textos legales (punto 8).
 
 1. Configurar la verificación en dos pasos del administrador de la tienda (la pide el primer acceso; la del administrador del sistema ya está activa) y proteger `main` en GitHub: PR obligatoria y `CI`, `Database` y `E2E` en verde.
 2. Importar el CSV del catálogo desde Panel → Catálogo → Importar, indicando si los precios del PDF llevan IVA. Los perfumes ya existen y 16 ya tienen su único formato, así que la revisión debe mostrar 0 perfumes nuevos, 408 formatos y 424 costes. Revisar después las marcas «por revisar», los 6 perfumes sin marca y las fotos (Panel → Catálogo, o la vista previa de la tienda).
-3. Decidir cuándo abrir la web a Agustín: con Vercel Authentication para todo, solo entra quien tiene cuenta en el equipo de Vercel (en Hobby, solo el titular).
+3. ~~Abrir la web a Agustín~~: hecho el 10/10, la web es pública (DECISIONS §118). Queda decidir cuándo quitar el `noindex` para que la indexen los buscadores.
 4. Asistente: configurar en Vercel, solo servidor y para Production y Preview, `ANTHROPIC_API_KEY` (de la cuenta de Anthropic del negocio), `CRON_SECRET` (valor aleatorio largo) y `SUPABASE_SECRET_KEY`; opcional `ASSISTANT_DAILY_LIMIT`. No pegar ninguna clave en el chat. La migración ya está aplicada.
 5. Dar de alta los proveedores reales (Compras → Proveedores) para que Reposición proponga cantidades.
 6. **Pago con tarjeta (Visa) en la web.** El datáfono de la tienda no sirve para cobrar online: hace falta un **TPV virtual** de comercio electrónico del banco (en España casi todos usan Redsys). Pedir al banco y guardar, sin pegarlo en el chat:
@@ -271,8 +317,8 @@ La revisión visual con perfumes se hizo en local con un Supabase simulado que d
    - acceso al portal de Redsys (Canales) para ver operaciones y devolver.
      Alternativa si el banco tarda: Stripe (cuenta verificada con el IBAN del negocio). Decisiones para el checkout: solo recogida en tienda al principio o también envíos (zonas, tarifas, envío gratis, transportista); qué hacer si llega un pago sin stock (devolución automática o manual); y quién emite las facturas.
 7. **Correo transaccional** para confirmaciones de pedido y avisos (recomendado Resend), con acceso al DNS del dominio para SPF y DKIM y el remitente (p. ej. `pedidos@…`).
-8. **Datos legales para vender online** (LSSI y consumo): titular (razón social o autónomo), NIF, domicilio, teléfono y email de contacto y datos registrales; con ellos se redactan aviso legal, privacidad, cookies, condiciones de venta y envíos y devoluciones (desistimiento de 14 días), a revisar por la asesoría.
-9. **Producción:** dominio con acceso a su DNS; plan Pro de Vercel (Hobby no admite uso comercial); proyecto `adhara-prod` en Supabase (plan con copias diarias); derechos de las fotos oficiales o fotos propias; y la MFA del administrador de la tienda.
+8. **Datos legales para vender online** (LSSI y consumo): los cinco textos están en la web (§113–115) y los datos del titular ya están puestos (§116: autónoma, NIE, domicilio de la tienda, email y dominio). Faltan el teléfono (Panel → Configuración, donde conviene poner también el email), los datos de envíos, pagos y arbitraje para la compra online, confirmar las decisiones supuestas de [LEGAL.md](LEGAL.md) y la revisión de la asesoría.
+9. **Producción:** dominio `latelierdudesert.com` comprado el 10/10 (DNS en Vercel); añadirlo a la configuración de Auth de Supabase cuando se use para entrar al panel (DECISIONS §117); plan Pro de Vercel (Hobby no admite uso comercial); proyecto `adhara-prod` en Supabase (plan con copias diarias); derechos de las fotos oficiales o fotos propias; y la MFA del administrador de la tienda.
 10. Decisiones de la fase R: proveedores, plazos y múltiplos; si hay TPV; parámetros del vigilante; si el coste del pedido debe pasar a ser el vigente al recibir (PLAN_TIENDA_REPOSICION.md).
 11. Decisiones de la fase S: criterio de valoración que pide la gestoría para el cierre de existencias y margen mínimo (PLAN_INFORMES.md).
 12. **Revisión visual de la Fase 2** (criterio 13) en la Preview de la PR de cierre: `/admin/diseno` (incluidos los tonos de colección, D3), la tienda y el panel; y decidir si los filtros de la colección (36 px) deben pasar a 44 px. Aprobarla por escrito en la PR cierra la fase.
@@ -311,5 +357,7 @@ La revisión visual con perfumes se hizo en local con un Supabase simulado que d
 - 03/10: Fase 2, DS-10: la tienda pasa a la biblioteca y a los colores semánticos.
 - 04/10: Fase 2, DS-11 y DS-12: el panel pasa a la biblioteca, axe y objetivos de 44 px bloquean, guía e informe de la fase; falta la revisión visual del usuario.
 - 09/10: catálogo olfativo sin compra con research de notas, suscripción a promociones con Sender y tienda sin etiquetas provisionales.
+- 10/10: dominio `latelierdudesert.com` comprado en Vercel y asignado a `altier-web`; fuera Vercel Authentication, la web pasa a ser pública (con `noindex`).
+- 10/10: móvil en cuadrícula de dos columnas con selector de vista, menú móvil arreglado y roadmap de las siguientes entregas (hitos H0–H5).
 
 Ver docs/DEVELOPMENT.md para continuar y docs/DECISIONS.md para las decisiones.
