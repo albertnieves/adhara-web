@@ -33,6 +33,8 @@ export const PERMISSIONS = [
   'reports.view',
   'settings.manage',
   'staff.manage',
+  // Control del negocio y del proyecto (/admin/control): solo el titular.
+  'business.control',
 ] as const;
 export type Permission = (typeof PERMISSIONS)[number];
 
@@ -53,10 +55,15 @@ export const AAL2_PERMISSIONS: ReadonlySet<Permission> = new Set(
   ),
 );
 
-/** Administrador de la tienda: toda la operación diaria, sin personal ni configuración. */
+/**
+ * Administrador de la tienda: toda la operación diaria, sin personal,
+ * configuración ni el control del negocio y del proyecto.
+ */
 const STORE_ADMIN: readonly Permission[] = PERMISSIONS.filter(
   (permission) =>
-    permission !== 'staff.manage' && permission !== 'settings.manage',
+    permission !== 'staff.manage' &&
+    permission !== 'settings.manage' &&
+    permission !== 'business.control',
 );
 
 /** Encargado: solo lectura, sin datos de clientes ni costes. */

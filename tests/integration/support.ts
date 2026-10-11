@@ -1,5 +1,6 @@
 import { expect, type Page } from '@playwright/test';
 import { createClient } from '@supabase/supabase-js';
+import { execFileSync } from 'node:child_process';
 import { createHmac, randomUUID } from 'node:crypto';
 
 /*
@@ -54,6 +55,52 @@ export async function user(role: string) {
   if (staff.error) throw staff.error;
   return email;
 }
+
+/**
+ * SQL como postgres en la base local (contenedor de Supabase de Docker). Los
+ * valores van en variables de psql (`:'nombre'` las cita como literal), no
+ * pegados en el texto.
+ */
+export function psql(sql: string, vars: Record<string, string> = {}) {
+  execFileSync(
+    'docker',
+    [
+      'exec',
+      '-i',
+      'supabase_db_adhara-admin-delivery',
+      'psql',
+      '-X',
+      '-U',
+      'postgres',
+      '-d',
+      'postgres',
+      '-v',
+      'ON_ERROR_STOP=1',
+      ...Object.entries(vars).flatMap(([name, value]) => [
+        '-v',
+        `${name}=${value}`,
+      ]),
+    ],
+    { input: sql, stdio: ['pipe', 'ignore', 'inherit'] },
+  );
+}
+
+/**
+ * Hace titular de la consola (/admin/control) a un usuario ya creado: la
+ * lista internal.control_owners solo se cambia por SQL (DECISIONS §127).
+ */
+export function makeControlOwner(email: string) {
+  psql(
+    `insert into internal.control_owners (user_id, note)
+     select id, 'Prueba local' from auth.users where email = :'email'
+     on conflict (user_id) do nothing;
+     -- División por cero (y error) si el usuario no existe.
+     select 1 / count(*) from internal.control_owners o
+     join auth.users u on u.id = o.user_id where u.email = :'email';`,
+    { email },
+  );
+}
+
 export async function login(page: Page, email: string) {
   await page.goto('/admin/acceso');
   await page.getByLabel('Email', { exact: true }).fill(email);

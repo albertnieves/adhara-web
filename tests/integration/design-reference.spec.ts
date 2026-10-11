@@ -7,7 +7,8 @@ import { login, user } from './support';
  * Página de referencia del sistema de diseño (Fase 2, DS-03): la ve todo el
  * personal con sesión (D6), aquí con el rol con menos permisos. Comprueba que
  * salen todos los tokens con valor, que el contraste calculado en el navegador
- * cumple en los cinco tonos y que axe no encuentra infracciones.
+ * cumple en los seis tonos (también el de la consola) y que axe no encuentra
+ * infracciones.
  */
 
 test('referencia del sistema de diseño con sesión de encargado', async ({
@@ -33,6 +34,8 @@ test('referencia del sistema de diseño con sesión de encargado', async ({
   for (const variable of [
     '--color-surface',
     '--color-indigo-night',
+    '--color-graphite',
+    '--font-mono',
     '--text-2xs',
     '--tracking-caps-lg',
     '--radius-hairline',
@@ -44,7 +47,14 @@ test('referencia del sistema de diseño con sesión de encargado', async ({
     ).toBeVisible();
 
   // Contraste calculado en cada tono: todas las combinaciones cumplen.
-  for (const tone of ['Claro', 'Oscuro', 'Oud', 'Índigo', 'Bosque']) {
+  for (const tone of [
+    'Claro',
+    'Oscuro',
+    'Oud',
+    'Índigo',
+    'Bosque',
+    'Consola',
+  ]) {
     const region = page.getByRole('region', { name: tone, exact: true });
     const summary = await region.getByText(/^Cumplen \d+ de \d+/).innerText();
     const [, passing, total] = summary.match(/Cumplen (\d+) de (\d+)/)!;

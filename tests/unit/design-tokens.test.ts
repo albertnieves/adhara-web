@@ -5,13 +5,14 @@ import {
   catalogVariables,
   fixedPairs,
   matrixPairs,
+  SEMANTIC_COLORS,
   TONES,
 } from '@/modules/design/domain/tokens';
 import type { ToneId } from '@/modules/design/domain/tokens';
 
 /*
  * Criterio 2 de la Fase 2: todas las combinaciones permitidas de tokens
- * cumplen WCAG 2.2 AA en el tono claro y en los oscuros. Lee los tokens de
+ * cumplen WCAG 2.2 AA en el tono claro, en los oscuros y en el de la consola. Lee los tokens de
  * src/app/globals.css, así que no hay una segunda copia de los valores; la
  * matriz es la de src/modules/design, la misma que enseña /admin/diseno.
  */
@@ -21,9 +22,22 @@ const css = readFileSync(
   'utf8',
 );
 
-/** Contenido del bloque que abre `opener` (llaves equilibradas). */
+/**
+ * Contenido del bloque que abre `opener` (llaves equilibradas). El selector
+ * tiene que empezar la regla: al principio de una línea y sin una coma antes,
+ * así que la última línea de un selector agrupado (`[data-tone='dark'],
+ * …, [data-tone='forest'] {`) no cuenta como el bloque propio de `forest`.
+ */
 function block(opener: string): string {
-  const start = css.indexOf(opener);
+  let start = -1;
+  for (
+    let at = css.indexOf(opener);
+    at !== -1 && start === -1;
+    at = css.indexOf(opener, at + 1)
+  ) {
+    const before = css.slice(0, at);
+    if (/(^|\n)[ \t]*$/.test(before) && !/,\s*$/.test(before)) start = at;
+  }
   if (start === -1) throw new Error(`No está el bloque ${opener}`);
   let depth = 0;
   for (let i = css.indexOf('{', start); i < css.length; i++) {
@@ -45,12 +59,16 @@ function colors(source: string): Map<string, string> {
 
 const theme = colors(block('@theme static {'));
 const darkTones = colors(block("[data-tone='dark'],"));
+const ownTone = (id: ToneId) => colors(block(`[data-tone='${id}'] {`));
+/** La consola es un bloque independiente: no hereda de los oscuros. */
+const consoleTone = ownTone('console');
 const TONE_COLORS: Record<ToneId, Map<string, string>> = {
   light: new Map(),
   dark: darkTones,
-  oud: new Map([...darkTones, ...colors(block("[data-tone='oud'] {"))]),
-  indigo: new Map([...darkTones, ...colors(block("[data-tone='indigo'] {"))]),
-  forest: new Map([...darkTones, ...colors(block("[data-tone='forest'] {"))]),
+  oud: new Map([...darkTones, ...ownTone('oud')]),
+  indigo: new Map([...darkTones, ...ownTone('indigo')]),
+  forest: new Map([...darkTones, ...ownTone('forest')]),
+  console: consoleTone,
 };
 
 function resolve(name: string, tone: Map<string, string>, depth = 0): string {
@@ -98,6 +116,54 @@ describe('contraste de los tokens (WCAG 2.2 AA)', () => {
     expect(css).toMatch(
       /:focus-visible\s*{\s*outline:\s*2px solid var\(--color-focus\)/,
     );
+  });
+});
+
+describe('bloques de los tonos', () => {
+  it('cada oscuro de colección lee su propio fondo, no el del grupo', () => {
+    expect(TONE_COLORS.dark.get('surface')).toBe('var(--color-night)');
+    expect(TONE_COLORS.oud.get('surface')).toBe('var(--color-oud)');
+    expect(TONE_COLORS.indigo.get('surface')).toBe('var(--color-indigo-night)');
+    expect(TONE_COLORS.forest.get('surface')).toBe('var(--color-forest)');
+    expect(() => block("[data-tone='ninguno'] {")).toThrow();
+  });
+
+  it('la consola redefine todos los semánticos con su propia paleta', () => {
+    expect(
+      SEMANTIC_COLORS.map((c) => c.name).filter((n) => !consoleTone.has(n)),
+    ).toEqual([]);
+    expect(consoleTone.get('surface')).toBe('var(--color-graphite)');
+    expect(consoleTone.get('accent')).toBe('var(--color-signal)');
+    // Ningún semántico de la consola sale del oro ni de la noche de la tienda.
+    expect(
+      [...consoleTone].filter(([, value]) =>
+        /--color-(gold|night|ivory|ink|mist|line)/.test(value),
+      ),
+    ).toEqual([]);
+  });
+
+  it('la consola: titulares en Manrope y movimiento más corto', () => {
+    const tone = block("[data-tone='console'] {");
+    expect(tone).toMatch(/--font-display:\s*var\(--font-sans\);/);
+    const ms = (name: string, source: string) =>
+      Number(source.match(new RegExp(`${name}:\\s*(\\d+)ms;`))?.[1]);
+    const root = block(':root {');
+    for (const name of [
+      '--duration-fast',
+      '--duration-base',
+      '--duration-slow',
+    ])
+      expect(ms(name, tone), name).toBeLessThan(ms(name, root));
+  });
+
+  it('la consola solo se aplica en pantalla: al imprimir queda en claro', () => {
+    expect(css).toMatch(/@media screen\s*{\s*\[data-tone='console'\] {/);
+    // El fondo del documento acompaña solo al contenedor de la consola,
+    // no a las muestras del tono en /admin/diseno.
+    expect(css).toMatch(
+      /body:has\(\[data-shell='console'\]\)\s*{\s*background:\s*var\(--color-graphite\);/,
+    );
+    expect(css).not.toMatch(/body:has\(\[data-tone=/);
   });
 });
 

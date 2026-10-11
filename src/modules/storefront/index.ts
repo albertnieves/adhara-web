@@ -19,3 +19,5 @@ export {
   SeasonWheel,
   TimeOfDayView,
 } from './ui/ScentProfileView';
+export { TrackEvent, trackProductEvent } from './ui/TrackEvent';
+export type { TrackedKind } from './ui/TrackEvent';

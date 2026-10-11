@@ -1,17 +1,21 @@
 import { expect, test } from '@playwright/test';
+import type { Page } from '@playwright/test';
 import {
   AUDIT_WIDTHS,
+  DESKTOP_WIDTHS,
   auditRoute,
   axeBaseline,
   formatFindings,
 } from '../support/layout-audit';
-import { admin, login, user } from './support';
+import { admin, login, makeControlOwner, user } from './support';
 
 /*
  * Red de seguridad del sistema de diseño (DS-01) en el panel: todas sus
  * pantallas con sesión de administrador del sistema y MFA, a 390, 768, 1280
  * y 1440 px. Desde DS-11 exige además controles de 44 px de alto
- * (criterio 8) y ninguna infracción de axe (criterio 6).
+ * (criterio 8) y ninguna infracción de axe (criterio 6). La consola del
+ * titular (/admin/control) es solo para escritorio: sus pantallas se auditan
+ * a 1280 y 1440 px, y el aviso que la sustituye por debajo, a 390 y 768.
  */
 
 const ROUTES = [
@@ -41,28 +45,49 @@ const ROUTES = [
   '/admin/diseno',
 ];
 
-test('panel: diseño sin solapes ni desbordes en todas sus pantallas', async ({
-  page,
-}) => {
-  test.setTimeout(15 * 60_000);
-  await login(page, await user('system_admin'));
+const CONSOLE_ROUTES = [
+  '/admin/control',
+  '/admin/control/negocio',
+  '/admin/control/productos',
+  '/admin/control/atencion',
+  '/admin/control/costes',
+  '/admin/control/costes/nuevo',
+  '/admin/control/tareas',
+  '/admin/control/tareas/nueva',
+  '/admin/control/entregas',
+  '/admin/control/entregas/nueva',
+  '/admin/control/sistema',
+  '/admin/control/copias',
+  '/admin/control/asistente',
+  '/admin/control/calidad',
+];
 
+/** Un producto cualquiera para auditar las fichas (rutas dinámicas). */
+async function anyProductId() {
   const { data: product } = await admin
     .from('products')
     .select('id')
     .limit(1)
     .maybeSingle();
-  const routes = [
-    ...ROUTES,
-    ...(product ? [`/admin/catalogo/${product.id}`] : []),
-  ];
+  return product ? String(product.id) : undefined;
+}
 
+/**
+ * Audita rutas a unas anchuras y devuelve los informes y lo que dice axe.
+ * `after` comprueba algo más en la última anchura de cada ruta.
+ */
+async function auditAll(
+  page: Page,
+  routes: string[],
+  widths: readonly number[],
+  { suffix = '', after }: { suffix?: string; after?: () => Promise<void> } = {},
+) {
   const reports: string[] = [];
   const violations: string[] = [];
   for (const path of routes) {
-    const name = `panel${path.replace(/^\/admin/, '').replace(/\//g, '-') || '-inicio'}`;
+    const name = `panel${path.replace(/^\/admin/, '').replace(/\//g, '-') || '-inicio'}${suffix}`;
     await test.step(path, async () => {
-      const results = await auditRoute(page, path, name, AUDIT_WIDTHS, 200, {
+      const results = await auditRoute(page, path, name, widths, 200, {
         minTarget: 44,
       });
       const report = formatFindings(name, results);
@@ -73,7 +98,75 @@ test('panel: diseño sin solapes ni desbordes en todas sus pantallas', async ({
           (v) => `${path}: ${v.id} (${v.impact}, ${v.nodes}) ${v.help}`,
         ),
       );
+      await after?.();
     });
+  }
+  return { reports, violations };
+}
+
+test('panel: diseño sin solapes ni desbordes en todas sus pantallas', async ({
+  page,
+}) => {
+  test.setTimeout(15 * 60_000);
+  // Titular: el pie del menú enseña también el acceso a la consola.
+  const email = await user('system_admin');
+  makeControlOwner(email);
+  await login(page, email);
+
+  const product = await anyProductId();
+  const routes = [
+    ...ROUTES,
+    ...(product ? [`/admin/catalogo/${product}`] : []),
+  ];
+  const { reports, violations } = await auditAll(page, routes, AUDIT_WIDTHS);
+  expect(reports.join('\n'), reports.join('\n')).toBe('');
+  expect(violations, violations.join('\n')).toEqual([]);
+});
+
+test('consola: escritorio sin solapes ni desbordes y aviso por debajo de 1280 px', async ({
+  page,
+}) => {
+  test.setTimeout(15 * 60_000);
+  const email = await user('system_admin');
+  makeControlOwner(email);
+  await login(page, email);
+
+  const product = await anyProductId();
+  const routes = [
+    ...CONSOLE_ROUTES,
+    ...(product ? [`/admin/control/productos/${product}`] : []),
+  ];
+  const nav = page.getByRole('navigation', { name: 'Secciones de la consola' });
+  const notice = page.getByText(
+    'La consola se usa en ordenador, a partir de 1280 px de ancho.',
+  );
+  const desktop = await auditAll(page, routes, DESKTOP_WIDTHS, {
+    after: async () => {
+      // A 1440 px (la última anchura): menú a la vista y sin el aviso.
+      await expect(nav).toBeVisible();
+      await expect(notice).toBeHidden();
+    },
+  });
+
+  // Por debajo de 1280 px, la misma URL (200, sin redirigir) da el aviso con
+  // el enlace al panel de la tienda; el contenido de la consola no se ve.
+  const reports = [...desktop.reports];
+  const violations = [...desktop.violations];
+  for (const width of [390, 768]) {
+    const small = await auditAll(page, ['/admin/control'], [width], {
+      suffix: `-aviso-${width}`,
+      after: async () => {
+        await expect(notice).toBeVisible();
+        const back = page.getByRole('link', { name: 'Panel de la tienda' });
+        await expect(back).toBeVisible();
+        await expect(back).toHaveAttribute('href', '/admin');
+        const box = await back.boundingBox();
+        expect(box?.height ?? 0).toBeGreaterThanOrEqual(44);
+        await expect(nav).toBeHidden();
+      },
+    });
+    reports.push(...small.reports);
+    violations.push(...small.violations);
   }
   expect(reports.join('\n'), reports.join('\n')).toBe('');
   expect(violations, violations.join('\n')).toEqual([]);

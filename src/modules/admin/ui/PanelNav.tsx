@@ -11,10 +11,13 @@ export type NavItem = {
   soon?: boolean;
   /** Grupo del menú; sin grupo, el enlace va arriba (Inicio). */
   group?: string;
+  /** Activo solo en su ruta exacta (el inicio de una sección). */
+  exact?: boolean;
 };
 
-function isActive(pathname: string, href: string) {
-  return href === '/admin'
+function isActive(pathname: string, item: NavItem) {
+  const { href } = item;
+  return href === '/admin' || item.exact
     ? pathname === href
     : pathname === href || pathname.startsWith(`${href}/`);
 }
@@ -60,11 +63,9 @@ function NavList({
                   <Link
                     href={item.href}
                     onClick={onNavigate}
-                    aria-current={
-                      isActive(pathname, item.href) ? 'page' : undefined
-                    }
+                    aria-current={isActive(pathname, item) ? 'page' : undefined}
                     className={`ease-luxe flex min-h-11 items-center border-l-2 px-3 text-sm transition-colors duration-(--duration-base) ${
-                      isActive(pathname, item.href)
+                      isActive(pathname, item)
                         ? 'bg-surface-raised text-fg border-accent'
                         : 'text-fg-muted hover:text-fg hover:bg-surface-raised border-transparent'
                     }`}

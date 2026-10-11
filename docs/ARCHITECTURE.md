@@ -54,6 +54,7 @@ flowchart LR
 | `inventory`           | Movimientos, recuentos, niveles y vigilante de stock                           |
 | `purchasing`          | Proveedores, pedidos de compra, recepciones y propuestas de reposición         |
 | `reports`             | Existencias y cierre, rotación, márgenes, compras y auditoría                  |
+| `control`             | Consola del titular: negocio, métricas por perfume, visitas, copias, estado    |
 | `assistant`           | Informe diario, resumen y chat con herramientas de solo lectura                |
 | `content`             | Portada y datos de la tienda con borrador, revisiones y publicación            |
 | `storefront`          | Componentes y lecturas de la tienda pública                                    |

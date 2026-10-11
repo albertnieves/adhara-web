@@ -1,6 +1,32 @@
-# Estado real — 10/10/2026
+# Estado real — 11/10/2026
 
 **Tienda visual (es/ca/en) y panel de administración operativos sobre `adhara-dev`, desplegados en Vercel y públicos desde el 10/10 en `latelierdudesert.com`, sin Vercel Authentication y todavía con `noindex` (DECISIONS §118). `main` incluye las fases R y S (PR #9), la entrega de acceso y edición de Codex (PR #10) y el panel con el asistente (PR #11); sus 17 migraciones están aplicadas en `adhara-dev` (comprobado el 02/10). La tienda muestra 50 perfumes publicados con PVP. La Fase 1 está cerrada (PR #12): sus 19 criterios están cumplidos o con una excepción escrita ([informe](phases/FASE_1_REPORT.md)). La Fase 2 (sistema de diseño) está terminada a falta de la revisión visual del usuario ([informe](phases/FASE_2_REPORT.md)): 12 de 13 criterios cumplidos. Siguiente: checkout con pago con tarjeta, que espera los datos del TPV virtual (ver «Pendiente del usuario»).**
+
+## Consola del titular (11/10, rama `claude/serene-dirac-rsrqcx`)
+
+A petición del usuario: el control pasa a ser una consola solo para su cuenta y solo para ordenador, con las métricas de cada perfume, visitas, copias de seguridad y utilidades del sistema. Decisiones §127–130; guía en [ADMIN_OPERATIONS.md](ADMIN_OPERATIONS.md#consola-del-titular-control-del-negocio-y-del-proyecto). **Las migraciones `20261010120000` y `20261011090000`–`20261011090300` están validadas en Supabase local y pendientes de aplicar en `adhara-dev` con autorización del usuario**; esta rama no debe desplegarse antes.
+
+- **Solo el titular:** `business.control` con MFA y estar en `internal.control_owners` (entra el administrador del sistema activo al aplicar la migración). Cualquier otra cuenta recibe 404.
+- **Consola oscura solo para ordenador** (desde 1280 px; por debajo, un aviso en la misma URL), con menú lateral fijo, tablas compactas y cifras monoespaciadas.
+- **Resumen** con alertas (roturas, cobertura, tareas y entregas vencidas, copia atrasada, migraciones, variables y calidad), lo que sube y baja y lo más visto.
+- **Productos** (tabla ordenable y filtrable de 26 semanas) y **ficha de cada perfume** (12/26/52 semanas o diario): ritmo con los días con existencias, tendencia, patrón de demanda, previsión a 28 días, cobertura, ABC/XYZ, margen, descuento, roturas y cambios de PVP y coste.
+- **Atención:** visitas anónimas y agregadas a la ficha, la ficha olfativa y la escena 3D, conversión y «Mucho interés, pocas ventas». Los carritos abandonados llegarán con el checkout.
+- **Copias:** copia diaria al bucket privado `system-backups` (30 días), descarga al momento, registro con SHA-256, copias de la plataforma con token opcional y restauración solo en local (`scripts/restore-backup.ts`, simulacro hecho).
+- **Estado del sistema, uso y coste del asistente y calidad de datos.**
+- **Comprobado en local** (Supabase local reiniciado, en el orden de la CI): pgTAP 492/492 en 13 archivos (163 nuevas); tipos generados iguales; `db lint` sin errores; concurrencia correcta; unitarias 440/440 en 45 archivos (con las de `main` fusionado); `pnpm check` correcto; `format:check` y `scan:secrets` correctos; E2E de la tienda con el coste centinela 231 pasan y 21 omitidas, con el aviso legal de `main` (antes, la prueba del cuerpo no JSON se corrigió, §130); recorridos autenticados 22/22, con la consola completa del titular (productos y ficha, atención, descarga de copia, estado, calidad y asistente), el 404 para otro `system_admin` y la auditoría de diseño de las 15 pantallas de la consola a 1280–1440 px y el aviso por debajo. Revisión visual con capturas a 1440 px: se corrigieron una tabla que invadía otra columna en Estado, la tabla de productos que no cabía y las roturas contadas antes del primer movimiento.
+
+## Control del negocio y del proyecto (10/10, rama `claude/serene-dirac-rsrqcx`)
+
+A petición del usuario: un panel aparte para gestionar el cliente y el negocio. Decisiones §122–126; guía en [ADMIN_OPERATIONS.md](ADMIN_OPERATIONS.md#control-del-negocio-y-del-proyecto). **La migración `20261010120000_business_control.sql` está validada en Supabase local y pendiente de aplicar en `adhara-dev` con autorización del usuario**; hasta entonces, el control y el mostrador desplegados fallarían al leer sus tablas y columnas nuevas, así que esta rama no debe desplegarse antes que la migración.
+
+- **`/admin/control`**, sección aparte con su propio menú, solo para el administrador del sistema con MFA (permiso nuevo `business.control`; el administrador de la tienda recibe 404). Enlazada como «Control del negocio» en el pie del menú del panel.
+  - **Resumen:** ventas sin IVA, margen, costes y beneficio del mes y su evolución en 12 meses; tareas abiertas, vencidas y del cliente; pendiente de cobrar y balance del proyecto; lo urgente y las próximas entregas.
+  - **Ventas y beneficio:** cuenta de resultados mes a mes (6, 12 o 24 meses) con compras recibidas y lo más vendido.
+  - **Costes:** fijos y puntuales del negocio o del proyecto, mensuales, anuales o puntuales, con lo pagado cada mes.
+  - **Tareas** y **Entregas** al cliente, con importe y estado de facturación.
+- **El mostrador guarda el precio cobrado** por línea (PVP por defecto, descuento si se escribe otro, nunca por encima del PVP) y muestra el total. Las ventas anteriores se estiman con el PVP vigente.
+- **Carga inicial opcional** `supabase/data/20261010_control_inicial.sql`: 15 tareas de «Pendiente del usuario» y 8 entregas (6 fusionadas con su PR, la de esta rama y el checkout), sin importes ni costes.
+- **Comprobado en local** (Supabase local reiniciado, en el orden de la CI): pgTAP 329/329 en 10 archivos (36 nuevas); tipos generados iguales; `db lint` sin errores; concurrencia correcta (también el mostrador); unitarias 330/330 (24 nuevas); `pnpm check` correcto; E2E de la tienda 171 pasan y 15 omitidas (una ejecución anterior tuvo un fallo intermitente en el catálogo olfativo, ajeno a este cambio, que pasa al repetirla); recorridos autenticados 19/19, con los del control (venta con descuento en el mostrador, costes, tareas, entregas y 404 para el administrador de la tienda) y la auditoría de diseño y axe de 33 pantallas del panel, las 8 del control incluidas.
 
 ## Móvil: cuadrícula, menú y galería (10/10, rama `claude/pensive-goldberg-aqgb5z`)
 
@@ -266,6 +292,8 @@ El 30/09 la misma cuenta se reactivó temporalmente (rol de tienda) para validar
 La revisión visual con perfumes se hizo en local con un Supabase simulado que devolvía los 4 perfumes del piloto como publicados y **sin precio**; no se modificó la base de datos.
 
 ## Pendiente del usuario
+
+- **Control del negocio y consola (10–11/10):** autorizar que se apliquen en `adhara-dev`, por orden y antes de desplegar la rama, las migraciones `20261010120000` y `20261011090000`–`20261011090300` (y, si se quiere, la carga `20261010_control_inicial.sql`); comprobar que tu cuenta queda en la lista de titulares; configurar en Vercel, solo servidor, `CRON_SECRET` y `SUPABASE_SECRET_KEY` (si no lo están ya) para la copia diaria y, opcional, `SUPABASE_BACKUPS_TOKEN` (token personal de Supabase limitado a «Backups: Read»), sin pegar nada en el chat; descargar de vez en cuando una copia y guardarla fuera; que la asesoría confirme si la política de privacidad debe mencionar la medición anónima de visitas (DECISIONS §129); después, dar de alta los costes reales y completar importes y facturación de las entregas en `/admin/control`.
 
 0. **Catálogo olfativo y suscripción (09/10):** crear en Sender un token de API (y un grupo «Web») y ponerlos en Vercel, solo servidor, como `SENDER_API_TOKEN` y `SENDER_GROUP_ID`; activar en Sender la doble confirmación o un correo de bienvenida; y que la asesoría revise el texto de privacidad de la suscripción junto con los textos legales (punto 8).
 

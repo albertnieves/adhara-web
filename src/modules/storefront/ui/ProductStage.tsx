@@ -13,6 +13,7 @@ import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 import type { ProductMedia } from '@/modules/catalog';
 import { ProductImage } from './ProductImage';
+import { trackProductEvent } from './TrackEvent';
 
 /** three.js solo en el cliente y solo en las fichas con escena. */
 const UnboxingViewer = dynamic(
@@ -111,11 +112,17 @@ export function ProductStage({
   media,
   name,
   brand,
+  trackSlug = null,
 }: {
   scene: string | null;
   media: ProductMedia[];
   name: string;
   brand: string;
+  /**
+   * Slug del perfume para contar (anónimo) que su escena 3D se ha visto; null
+   * en la vista previa del personal, que no se mide.
+   */
+  trackSlug?: string | null;
 }) {
   const t = useTranslations('product');
   const gallery = <Gallery media={media} name={name} brand={brand} />;
@@ -131,6 +138,11 @@ export function ProductStage({
             dragHint: t('sceneDrag'),
           }}
           fallback={gallery}
+          onSeen={
+            trackSlug
+              ? () => trackProductEvent(trackSlug, 'unboxing')
+              : undefined
+          }
         />
       ) : (
         gallery

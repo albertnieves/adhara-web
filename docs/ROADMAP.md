@@ -37,11 +37,12 @@ Seis hitos. Cada entrega es una PR revisable con su verificación (`pnpm check`,
 
 ### H0 — En curso
 
-| Entrega                       | Qué incluye                                                                                                        | Tamaño | Bloquea  |
-| ----------------------------- | ------------------------------------------------------------------------------------------------------------------ | ------ | -------- |
-| Móvil: cuadrícula y menú      | Esta rama: cuadrícula de dos columnas con vista amplia, menú móvil que vuelve a navegar y galería de 44 px.        | S      | Revisión |
-| Cierre de la Fase 2           | Revisión visual del usuario en la Preview (`/admin/diseno`, tonos de colección, tienda y panel).                   | S      | Usuario  |
-| Presentación al cliente (#32) | Documentación de la presentación y reparto de cuentas. Antes de fusionar, renumerar su §113 (ya existe en `main`). | S      | Revisión |
+| Entrega                       | Qué incluye                                                                                                                        | Tamaño | Bloquea                              |
+| ----------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- | ------ | ------------------------------------ |
+| Móvil: cuadrícula y menú      | Esta rama: cuadrícula de dos columnas con vista amplia, menú móvil que vuelve a navegar y galería de 44 px.                        | S      | Revisión                             |
+| Cierre de la Fase 2           | Revisión visual del usuario en la Preview (`/admin/diseno`, tonos de colección, tienda y panel).                                   | S      | Usuario                              |
+| Presentación al cliente (#32) | Documentación de la presentación y reparto de cuentas. Antes de fusionar, renumerar su §113 (ya existe en `main`).                 | S      | Revisión                             |
+| Consola del titular           | Control del negocio y consola solo para el titular: métricas por perfume, visitas, copias, estado, asistente y calidad (§122–130). | L      | Usuario: migraciones en `adhara-dev` |
 
 ### H1 — Escaparate listo para abrir a buscadores
 

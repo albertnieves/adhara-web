@@ -1,14 +1,20 @@
 import { TONES } from '../../domain/tokens';
+import type { ToneId } from '../../domain/tokens';
 import { Section } from '../Section';
 import { ToneContrast } from '../ToneContrast';
 
-/** Los semánticos de un tono en uso: texto, controles, foco y estados. */
-function ToneSample() {
+/**
+ * Los semánticos de un tono en uso: texto, controles, foco y estados. En la
+ * consola, el titular sale en Manrope y el acento es la señal, no el dorado.
+ */
+function ToneSample({ tone }: { tone: ToneId }) {
   return (
     <div className="mt-6 flex flex-wrap items-center gap-x-8 gap-y-4">
       <p className="font-display text-3xl font-light">Ámbar y oud</p>
       <p className="text-fg-muted text-sm">Texto secundario</p>
-      <p className="text-accent-fg text-sm">Texto dorado</p>
+      <p className="text-accent-fg text-sm">
+        {tone === 'console' ? 'Texto de señal' : 'Texto dorado'}
+      </p>
       <span className="border-border-strong inline-flex min-h-11 items-center border px-4 text-sm">
         Borde de control
       </span>
@@ -30,7 +36,7 @@ export function ToneSection() {
     <Section
       id="tonos"
       title="Tonos y contraste"
-      intro="Cada tono oscuro redefine los semánticos con data-tone. El contraste se calcula en el navegador con los colores de cada tono: texto 4,5:1; bordes de controles, foco y acento 3:1 (WCAG 2.2 AA). Es la misma matriz que comprueba la prueba unitaria."
+      intro="Cada tono oscuro, y el de la consola del titular, redefine los semánticos con data-tone. El contraste se calcula en el navegador con los colores de cada tono: texto 4,5:1; bordes de controles, foco y acento 3:1 (WCAG 2.2 AA). Es la misma matriz que comprueba la prueba unitaria."
     >
       <div className="flex flex-col gap-10">
         {TONES.map((tone) => (
@@ -44,7 +50,7 @@ export function ToneSection() {
               {tone.label}
             </h3>
             <p className="text-fg-muted mt-2 text-sm">{tone.use}</p>
-            <ToneSample />
+            <ToneSample tone={tone.id} />
             <div className="mt-10">
               <ToneContrast tone={tone.id} />
             </div>
