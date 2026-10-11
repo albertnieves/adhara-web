@@ -41,15 +41,15 @@ Una redirección nunca sustituye la autorización en servidor.
 
 ## Secretos y claves
 
-| Variable                                                           | Dónde                  | Uso                                                                                                                   |
-| ------------------------------------------------------------------ | ---------------------- | --------------------------------------------------------------------------------------------------------------------- |
-| `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Cliente y servidor     | Públicas; la RLS protege los datos                                                                                    |
-| `SUPABASE_SECRET_KEY`                                              | Solo servidor (Vercel) | Invitaciones de Auth (`createAuthAdminClient`), informe diario y copia diaria (`createJobClient`, tras `CRON_SECRET`) |
-| `ANTHROPIC_API_KEY`, `CRON_SECRET`, `ASSISTANT_DAILY_LIMIT`        | Solo servidor (Vercel) | Asistente y tareas programadas                                                                                        |
-| `SUPABASE_BACKUPS_TOKEN` (opcional)                                | Solo servidor (Vercel) | Lista de copias de la plataforma en la consola; token personal limitado a «Backups: Read»                             |
+| Variable                                                           | Dónde                  | Uso                                                                                                                                                                               |
+| ------------------------------------------------------------------ | ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Cliente y servidor     | Públicas; la RLS protege los datos                                                                                                                                                |
+| `SUPABASE_SECRET_KEY`                                              | Solo servidor (Vercel) | Invitaciones de Auth (`createAuthAdminClient`), informe diario y copia diaria (`createJobClient`, tras `CRON_SECRET`); desde P03–P04, pedidos web (`web_order_*`, DECISIONS §131) |
+| `ANTHROPIC_API_KEY`, `CRON_SECRET`, `ASSISTANT_DAILY_LIMIT`        | Solo servidor (Vercel) | Asistente y tareas programadas                                                                                                                                                    |
+| `SUPABASE_BACKUPS_TOKEN` (opcional)                                | Solo servidor (Vercel) | Lista de copias de la plataforma en la consola; token personal limitado a «Backups: Read»                                                                                         |
 
 - Los módulos con secretos importan `server-only`; el build falla si llegan al cliente.
-- La clave privilegiada nunca está en el camino de renderizado de páginas ni recibe datos del navegador sin una autorización previa.
+- La clave privilegiada nunca está en el camino de renderizado de páginas ni recibe datos del navegador sin una autorización previa. Única excepción, desde P03: el checkout pasa a `web_order_create` formatos, cantidades y contacto validados, y la función vuelve a validarlo todo y calcula precio y stock en la base (DECISIONS §131).
 - `.env.example` solo lleva valores públicos y nombres de variables. `pnpm scan:secrets` (en `ci.yml`) busca patrones de claves en los archivos versionados sin imprimirlas (criterio 13).
 - `CRON_SECRET` se compara en tiempo constante; sin configurar, la tarea programada responde 503.
 - Nunca se piden claves por chat: el usuario las configura en Vercel.

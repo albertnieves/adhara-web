@@ -1,12 +1,15 @@
 # Estado real — 11/10/2026
 
-## En esta rama: pedidos web (10/10/2026)
+## En esta rama: pedidos web (PR #31, 10–11/10/2026)
 
-Primera entrega de [PLAN_PEDIDOS_WEB.md](PLAN_PEDIDOS_WEB.md): reglas de dominio y
-pruebas para decidir la confirmación de una notificación de tarjeta ya verificada.
-Comprueban referencia, céntimos y moneda, duplicados y pagos que requieren revisión.
-No hay todavía adaptador del banco, persistencia de pedidos, checkout ni pantalla
-de pedidos web. Las entregas P02–P07 siguen pendientes; no se ha modificado la base remota.
+Plan en [PLAN_PEDIDOS_WEB.md](PLAN_PEDIDOS_WEB.md); decisiones §131–134.
+
+- **P01 (10/10):** reglas de dominio y pruebas para decidir la confirmación de una notificación de tarjeta ya verificada (referencia, céntimos y moneda, duplicados y pagos que requieren revisión).
+- **P02 (11/10):** migración `20261011230000_web_orders.sql` con pedidos, líneas, contacto (solo con `customers.view`), intentos de pago, notificaciones, cronología y reserva de stock con caducidad. Solo el servidor crea pedidos y registra cobros; el panel cambia el estado con `admin_transition_order`.
+- **Comprobado en local** (Supabase local reiniciado): pgTAP 571/571 en 14 archivos (79 nuevas); concurrencia real (última unidad, notificación duplicada, cobro contra caducidad); tipos generados iguales; `db lint` sin errores.
+- **Pendiente:** no hay todavía checkout, adaptador del banco ni pantalla de pedidos (P03–P07). **La migración no está aplicada en `adhara-dev`**: se aplica al fusionar.
+- **Bloqueado a propósito:** el envío, hasta que haya tarifas reales; los reembolsos, hasta el adaptador del proveedor.
+- **Plan Pro de Vercel** contratado por el usuario el 11/10 (§134).
 
 **Tienda visual (es/ca/en) y panel de administración operativos sobre `adhara-dev`, desplegados en Vercel y públicos desde el 10/10 en `latelierdudesert.com`, sin Vercel Authentication y todavía con `noindex` (DECISIONS §118). `main` incluye las fases R y S (PR #9), la entrega de acceso y edición de Codex (PR #10) y el panel con el asistente (PR #11); sus 17 migraciones están aplicadas en `adhara-dev` (comprobado el 02/10). La tienda muestra 50 perfumes publicados con PVP. La Fase 1 está cerrada (PR #12): sus 19 criterios están cumplidos o con una excepción escrita ([informe](phases/FASE_1_REPORT.md)). La Fase 2 (sistema de diseño) está terminada a falta de la revisión visual del usuario ([informe](phases/FASE_2_REPORT.md)): 12 de 13 criterios cumplidos. Siguiente: checkout con pago con tarjeta, que espera los datos del TPV virtual (ver «Pendiente del usuario»).**
 
@@ -318,7 +321,7 @@ La revisión visual con perfumes se hizo en local con un Supabase simulado que d
      Alternativa si el banco tarda: Stripe (cuenta verificada con el IBAN del negocio). Decisiones para el checkout: solo recogida en tienda al principio o también envíos (zonas, tarifas, envío gratis, transportista); qué hacer si llega un pago sin stock (devolución automática o manual); y quién emite las facturas.
 7. **Correo transaccional** para confirmaciones de pedido y avisos (recomendado Resend), con acceso al DNS del dominio para SPF y DKIM y el remitente (p. ej. `pedidos@…`).
 8. **Datos legales para vender online** (LSSI y consumo): los cinco textos están en la web (§113–115) y los datos del titular ya están puestos (§116: autónoma, NIE, domicilio de la tienda, email y dominio). Faltan el teléfono (Panel → Configuración, donde conviene poner también el email), los datos de envíos, pagos y arbitraje para la compra online, confirmar las decisiones supuestas de [LEGAL.md](LEGAL.md) y la revisión de la asesoría.
-9. **Producción:** dominio `latelierdudesert.com` comprado el 10/10 (DNS en Vercel); añadirlo a la configuración de Auth de Supabase cuando se use para entrar al panel (DECISIONS §117); plan Pro de Vercel (Hobby no admite uso comercial); proyecto `adhara-prod` en Supabase (plan con copias diarias); derechos de las fotos oficiales o fotos propias; y la MFA del administrador de la tienda.
+9. **Producción:** dominio `latelierdudesert.com` comprado el 10/10 (DNS en Vercel); añadirlo a la configuración de Auth de Supabase cuando se use para entrar al panel (DECISIONS §117); plan Pro de Vercel contratado el 11/10 (DECISIONS §134); proyecto `adhara-prod` en Supabase (plan con copias diarias); derechos de las fotos oficiales o fotos propias; y la MFA del administrador de la tienda.
 10. Decisiones de la fase R: proveedores, plazos y múltiplos; si hay TPV; parámetros del vigilante; si el coste del pedido debe pasar a ser el vigente al recibir (PLAN_TIENDA_REPOSICION.md).
 11. Decisiones de la fase S: criterio de valoración que pide la gestoría para el cierre de existencias y margen mínimo (PLAN_INFORMES.md).
 12. **Revisión visual de la Fase 2** (criterio 13) en la Preview de la PR de cierre: `/admin/diseno` (incluidos los tonos de colección, D3), la tienda y el panel; y decidir si los filtros de la colección (36 px) deben pasar a 44 px. Aprobarla por escrito en la PR cierra la fase.

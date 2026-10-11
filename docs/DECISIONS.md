@@ -508,3 +508,33 @@ A petición del usuario («mejorar el panel, que sea única y exclusivamente par
      - **Restauración solo en local** (`scripts/restore-backup.ts`, con `--dry-run`): restaurar en `adhara-dev` o en producción es una decisión del titular y se hace a mano. Simulacro hecho: 36 tablas y una restauración real tras `db reset` local.
 129. **Medición de visitas anónima y agregada.** `POST /api/eventos` → `public.track_product_event(slug, kind)` suma un contador por perfume publicado, día de Madrid y tipo (`view`, `scent_view`, `unboxing`) en `internal.product_attention_daily`. Sin cookies ni almacenamiento en el navegador, sin IP, agente de usuario ni identificador; no se mide si el navegador envía Global Privacy Control o «No rastrear», ni bots ni otros orígenes, con un freno global de 1200 eventos por minuto. No guarda ni lee nada en el dispositivo, así que no entra en el art. 22.2 LSSI ni cambia lo dicho en §113 sobre cookies (no es la analítica de terceros que obligaría a pedir consentimiento); aun así, la asesoría debe confirmar si la política de privacidad debe mencionarla. **Carritos abandonados:** no hay cesta ni cuentas de cliente todavía; `add_to_cart` se acepta en la base para cuando llegue el checkout y la consola lo explica en vez de mostrar datos inventados.
 130. **Lo que encontraron las pruebas.** La gravedad de la calidad de datos llegaba de la base en inglés (`high`, `medium`, `low`) y la consola la leía en español: todas salían como «baja»; ahora se traduce y hay prueba. El día de una copia se leía con un desplazamiento de un carácter en la ruta. La página de productos importaba un tipo de servidor desde el índice de cliente. La prueba del cuerpo que no es JSON en `/api/eventos` enviaba una cadena con tipo JSON, que Playwright convierte en JSON válido: ahora envía los bytes tal cual. La revisión con capturas a 1440 px encontró la tabla de variables invadiendo la columna de migraciones en Estado (ahora a ancho completo), la tabla de productos más ancha que la pantalla (la clase ABC/XYZ pasa bajo el nombre y las cabeceras se acortan) y, en la ficha, las semanas anteriores al primer movimiento contadas como roturas (ya no cuentan). El resumen y Estado contaban la descarga al momento como copia: solo cuenta la diaria, que es la que se guarda.
+
+## Pedidos web: base de datos (P02) y plan Pro de Vercel — 11/10/2026
+
+Continúa la PR #31 a petición del usuario («sigue trabajando en la PR 31»). Plan y alcance en [PLAN_PEDIDOS_WEB.md](PLAN_PEDIDOS_WEB.md).
+
+131. **Solo el servidor crea pedidos y registra cobros, con la clave privilegiada.** Las funciones `web_order_*` no son ejecutables por `anon` ni `authenticated` (pgTAP `13`).
+     - **Cobro:** la notificación del banco no trae sesión; su autorización es la firma, que verifica el adaptador del servidor (P04) antes de llamar a `web_order_record_payment`.
+     - **Caducidad:** la tarea programada, tras `CRON_SECRET`, como el informe y la copia diarios.
+     - **Creación (checkout):** también desde el servidor y no como función pública con freno (como `newsletter_subscribe`). Así todo el tráfico del checkout pasa por Vercel, donde se puede limitar por IP, y nadie puede retener stock llamando directamente a la API de Supabase.
+     - Es la primera vez que la clave recibe datos del navegador sin sesión. Para acotarlo, el servidor solo pasará formatos, cantidades y contacto validados, y la función vuelve a validarlo todo y calcula precios y stock. SECURITY.md se actualiza con esta excepción.
+     - En P02 nadie llama todavía a estas funciones fuera de las pruebas.
+132. **Pedidos en `public` con RLS, no en `internal`.** No contienen costes ni proveedores: el panel los lee con la sesión de quien mira (`orders.view`), sin funciones de lectura propias.
+     - Los datos personales van aparte, en `order_contacts`, que exige además `customers.view`: el encargado ve pedidos y líneas, pero no quién compró (ADMIN_PLAN §2).
+     - Líneas, intentos, notificaciones y cronología son de solo inserción. La cronología no guarda datos personales.
+     - Las líneas congelan SKU, marca, nombre, tamaño y precio. El número visible empieza en 1001.
+     - La referencia de pago son 12 dígitos aleatorios, válida para Redsys. No es correlativa para que `adhara-dev` y producción no choquen si comparten el TPV de pruebas.
+     - Las tablas entran en la lista blanca de la copia diaria (§128).
+133. **Reglas de reserva y cobro.**
+     - **Reserva:** 30 minutos por defecto (de 5 a 120), provisional hasta conocer el TPV. Se hace en la ubicación del pedido, en orden de formato para evitar bloqueos cruzados.
+     - **Mismo precio en el total y en las líneas:** al crear el pedido, los formatos se bloquean en modo compartido. Lo encontró la revisión propia: sin ese bloqueo, un cambio de PVP entre el cálculo del total y la inserción de las líneas podía descuadrarlos.
+     - **Pagar no mueve existencias:** compromete la reserva, que se descuenta al enviar (`SALE_ONLINE`) o al entregar en tienda (`SALE_CLICK_COLLECT`).
+     - **Caducidad:** devuelve las unidades y deja el pedido pendiente y sin reserva. Si llega un pago tardío, el pedido pasa a incidencias (`needs_attention`, motivo `reservation_unavailable`) y nunca directamente a pagado; es la propuesta inicial del plan (revisión manual).
+     - **Incidencias:** un pedido en incidencias conserva su reserva hasta que alguien la resuelve. Resolverla como pagada (`orders.refund`, con MFA) compromete la reserva o, si ya caducó, vuelve a reservar si hay stock.
+     - **Preparar, dejar listo, enviar y entregar** exigen `orders.fulfill` **con MFA**, como el mostrador (§59), aunque la matriz no marque ese permiso con MFA.
+     - **Bloqueos de P02:** las transiciones con reembolso (cancelar algo cobrado, reembolsar) devuelven `refund_unavailable` hasta el adaptador del proveedor (P06): nunca se marca reembolsado solo con un botón. El envío devuelve `shipping_unavailable` hasta que haya zonas y tarifas reales: no se inventa un precio de envío.
+134. **Plan Pro de Vercel.** El usuario lo contrató el 11/10 para el equipo de la tienda (antes SOAPBRXND; hoy L’Atelier, `latelierdudesert`, §117), donde está `altier-web`.
+     - La API de Vercel disponible no muestra el plan del equipo, así que se anota según lo dicho por el usuario.
+     - Queda resuelto el pendiente «Hobby no admite uso comercial» (§118).
+     - Permite la tarea programada frecuente que necesita la caducidad de reservas, que se añadirá con el checkout (P03).
+     - Siguen pendientes para producción: `adhara-prod`, la revisión legal, los derechos de las fotos y la MFA del administrador de la tienda.

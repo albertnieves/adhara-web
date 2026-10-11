@@ -41,8 +41,9 @@ type Transition = {
   only?: FulfillmentType;
 };
 
+/** Cuadro repetido en private.order_transition (tests/unit/orders-sql.test.ts). */
 // prettier-ignore
-const TRANSITIONS: readonly Transition[] = [
+export const ORDER_TRANSITIONS: readonly Transition[] = [
   { from: 'pending_payment', to: 'paid', by: 'system', inventory: 'commit_reservation' },
   { from: 'pending_payment', to: 'cancelled', by: 'system', inventory: 'release_reservation' },
   { from: 'pending_payment', to: 'needs_attention', by: 'system', inventory: 'none' },
@@ -76,7 +77,7 @@ export function planTransition(
   to: OrderStatus,
   actor: TransitionActor,
 ): TransitionPlan {
-  const transition = TRANSITIONS.find(
+  const transition = ORDER_TRANSITIONS.find(
     (candidate) => candidate.from === order.status && candidate.to === to,
   );
   if (!transition) return { ok: false, reason: 'invalid_transition' };
@@ -100,7 +101,7 @@ export function availableTransitions(
   order: { status: OrderStatus; fulfillment: FulfillmentType },
   session: StaffSession,
 ): OrderStatus[] {
-  return TRANSITIONS.filter(
+  return ORDER_TRANSITIONS.filter(
     (transition) =>
       transition.from === order.status &&
       planTransition(order, transition.to, { kind: 'staff', ...session }).ok,

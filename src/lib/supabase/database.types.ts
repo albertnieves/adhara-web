@@ -293,6 +293,326 @@ export type Database = {
         };
         Relationships: [];
       };
+      order_contacts: {
+        Row: {
+          address_line1: string | null;
+          address_line2: string | null;
+          city: string | null;
+          country: string | null;
+          created_at: string;
+          email: string;
+          full_name: string;
+          order_id: string;
+          phone: string | null;
+          postal_code: string | null;
+          province: string | null;
+          updated_at: string;
+        };
+        Insert: {
+          address_line1?: string | null;
+          address_line2?: string | null;
+          city?: string | null;
+          country?: string | null;
+          created_at?: string;
+          email: string;
+          full_name: string;
+          order_id: string;
+          phone?: string | null;
+          postal_code?: string | null;
+          province?: string | null;
+          updated_at?: string;
+        };
+        Update: {
+          address_line1?: string | null;
+          address_line2?: string | null;
+          city?: string | null;
+          country?: string | null;
+          created_at?: string;
+          email?: string;
+          full_name?: string;
+          order_id?: string;
+          phone?: string | null;
+          postal_code?: string | null;
+          province?: string | null;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'order_contacts_order_id_fkey';
+            columns: ['order_id'];
+            isOneToOne: true;
+            referencedRelation: 'orders';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      order_events: {
+        Row: {
+          actor_id: string | null;
+          at: string;
+          detail: Json | null;
+          from_status: string | null;
+          id: number;
+          kind: string;
+          order_id: string;
+          to_status: string | null;
+        };
+        Insert: {
+          actor_id?: string | null;
+          at?: string;
+          detail?: Json | null;
+          from_status?: string | null;
+          id?: never;
+          kind: string;
+          order_id: string;
+          to_status?: string | null;
+        };
+        Update: {
+          actor_id?: string | null;
+          at?: string;
+          detail?: Json | null;
+          from_status?: string | null;
+          id?: never;
+          kind?: string;
+          order_id?: string;
+          to_status?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'order_events_order_id_fkey';
+            columns: ['order_id'];
+            isOneToOne: false;
+            referencedRelation: 'orders';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      order_lines: {
+        Row: {
+          brand_name: string;
+          line_total_cents: number;
+          order_id: string;
+          product_name: string;
+          quantity: number;
+          size_ml: number | null;
+          sku: string | null;
+          unit_price_cents: number;
+          variant_id: string;
+          variant_label: string | null;
+        };
+        Insert: {
+          brand_name: string;
+          line_total_cents: number;
+          order_id: string;
+          product_name: string;
+          quantity: number;
+          size_ml?: number | null;
+          sku?: string | null;
+          unit_price_cents: number;
+          variant_id: string;
+          variant_label?: string | null;
+        };
+        Update: {
+          brand_name?: string;
+          line_total_cents?: number;
+          order_id?: string;
+          product_name?: string;
+          quantity?: number;
+          size_ml?: number | null;
+          sku?: string | null;
+          unit_price_cents?: number;
+          variant_id?: string;
+          variant_label?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'order_lines_order_id_fkey';
+            columns: ['order_id'];
+            isOneToOne: false;
+            referencedRelation: 'orders';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'order_lines_variant_id_fkey';
+            columns: ['variant_id'];
+            isOneToOne: false;
+            referencedRelation: 'product_variants';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      order_payment_attempts: {
+        Row: {
+          amount_cents: number;
+          created_at: string;
+          currency: string;
+          id: string;
+          order_id: string;
+          provider: string;
+          reference: string;
+        };
+        Insert: {
+          amount_cents: number;
+          created_at?: string;
+          currency?: string;
+          id?: string;
+          order_id: string;
+          provider: string;
+          reference: string;
+        };
+        Update: {
+          amount_cents?: number;
+          created_at?: string;
+          currency?: string;
+          id?: string;
+          order_id?: string;
+          provider?: string;
+          reference?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'order_payment_attempts_order_id_fkey';
+            columns: ['order_id'];
+            isOneToOne: false;
+            referencedRelation: 'orders';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      order_payments: {
+        Row: {
+          amount_cents: number;
+          attempt_id: string;
+          currency: string;
+          decision: string;
+          id: number;
+          order_id: string;
+          outcome: string;
+          provider: string;
+          reason: string | null;
+          received_at: string;
+          transaction_id: string;
+        };
+        Insert: {
+          amount_cents: number;
+          attempt_id: string;
+          currency: string;
+          decision: string;
+          id?: never;
+          order_id: string;
+          outcome: string;
+          provider: string;
+          reason?: string | null;
+          received_at?: string;
+          transaction_id: string;
+        };
+        Update: {
+          amount_cents?: number;
+          attempt_id?: string;
+          currency?: string;
+          decision?: string;
+          id?: never;
+          order_id?: string;
+          outcome?: string;
+          provider?: string;
+          reason?: string | null;
+          received_at?: string;
+          transaction_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'order_payments_attempt_id_fkey';
+            columns: ['attempt_id'];
+            isOneToOne: false;
+            referencedRelation: 'order_payment_attempts';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'order_payments_order_id_fkey';
+            columns: ['order_id'];
+            isOneToOne: false;
+            referencedRelation: 'orders';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      orders: {
+        Row: {
+          channel: string;
+          created_at: string;
+          currency: string;
+          fulfillment: string;
+          id: string;
+          items_cents: number;
+          locale: string;
+          location_id: string;
+          number: number;
+          paid_at: string | null;
+          received_transaction_id: string | null;
+          request_id: string;
+          reservation: string;
+          reserved_until: string;
+          revision: number;
+          shipping_cents: number;
+          status: string;
+          total_cents: number;
+          tracking_reference: string | null;
+          updated_at: string;
+        };
+        Insert: {
+          channel?: string;
+          created_at?: string;
+          currency?: string;
+          fulfillment: string;
+          id?: string;
+          items_cents: number;
+          locale: string;
+          location_id: string;
+          number?: never;
+          paid_at?: string | null;
+          received_transaction_id?: string | null;
+          request_id: string;
+          reservation?: string;
+          reserved_until: string;
+          revision?: number;
+          shipping_cents?: number;
+          status?: string;
+          total_cents: number;
+          tracking_reference?: string | null;
+          updated_at?: string;
+        };
+        Update: {
+          channel?: string;
+          created_at?: string;
+          currency?: string;
+          fulfillment?: string;
+          id?: string;
+          items_cents?: number;
+          locale?: string;
+          location_id?: string;
+          number?: never;
+          paid_at?: string | null;
+          received_transaction_id?: string | null;
+          request_id?: string;
+          reservation?: string;
+          reserved_until?: string;
+          revision?: number;
+          shipping_cents?: number;
+          status?: string;
+          total_cents?: number;
+          tracking_reference?: string | null;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'orders_location_id_fkey';
+            columns: ['location_id'];
+            isOneToOne: false;
+            referencedRelation: 'stock_locations';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       permissions: {
         Row: {
           code: string;
@@ -1393,6 +1713,42 @@ export type Database = {
           variant_id: string;
         }[];
       };
+      admin_transition_order: {
+        Args: {
+          p_order_id: string;
+          p_revision: number;
+          p_to: string;
+          p_tracking_reference?: string;
+        };
+        Returns: {
+          channel: string;
+          created_at: string;
+          currency: string;
+          fulfillment: string;
+          id: string;
+          items_cents: number;
+          locale: string;
+          location_id: string;
+          number: number;
+          paid_at: string | null;
+          received_transaction_id: string | null;
+          request_id: string;
+          reservation: string;
+          reserved_until: string;
+          revision: number;
+          shipping_cents: number;
+          status: string;
+          total_cents: number;
+          tracking_reference: string | null;
+          updated_at: string;
+        };
+        SetofOptions: {
+          from: '*';
+          to: 'orders';
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
       admin_transition_purchase_order: {
         Args: { p_action: string; p_order_id: string; p_revision: number };
         Returns: string;
@@ -1454,6 +1810,38 @@ export type Database = {
       track_product_event: {
         Args: { p_kind: string; p_slug: string };
         Returns: boolean;
+      };
+      web_order_create: {
+        Args: {
+          p_contact: Json;
+          p_fulfillment: string;
+          p_hold_minutes?: number;
+          p_items: Json;
+          p_locale: string;
+          p_location_id: string;
+          p_provider: string;
+          p_request_id: string;
+        };
+        Returns: Json;
+      };
+      web_order_new_attempt: {
+        Args: { p_order_id: string; p_provider: string };
+        Returns: Json;
+      };
+      web_order_record_payment: {
+        Args: {
+          p_amount_cents: number;
+          p_currency: string;
+          p_outcome: string;
+          p_provider: string;
+          p_reference: string;
+          p_transaction_id: string;
+        };
+        Returns: Json;
+      };
+      web_order_release_expired: {
+        Args: { p_limit?: number };
+        Returns: number;
       };
     };
     Enums: {

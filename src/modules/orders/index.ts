@@ -6,6 +6,7 @@ export type {
 } from './domain/payment';
 export {
   ORDER_STATUSES,
+  ORDER_TRANSITIONS,
   availableTransitions,
   planTransition,
 } from './domain/status';

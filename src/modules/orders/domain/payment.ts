@@ -7,7 +7,8 @@ export type OrderPaymentSnapshot = {
   paymentReference: string;
   amountCents: number;
   currency: 'EUR';
-  reservation: 'active' | 'released' | 'committed';
+  /** consumed: converted into a sale when shipped or collected. */
+  reservation: 'active' | 'released' | 'committed' | 'consumed';
   /** Persisted when a successful payment is recorded, including incidents. */
   receivedTransactionId: string | null;
 };

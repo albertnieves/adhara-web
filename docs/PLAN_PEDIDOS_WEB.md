@@ -1,16 +1,19 @@
 # Pedidos de la web y confirmación de tarjeta
 
-Estado: **PR de trabajo, primera entrega de dominio** · 10/10/2026.
+Estado: **PR de trabajo: P01 (reglas) y P02 (base de datos) hechas** · 11/10/2026.
 
 Objetivo solicitado: al pagar con tarjeta en la web, el pedido aparece automáticamente
 en el panel con sus datos y queda disponible para preparar y entregar. La compra debe
 quedar registrada aunque el cliente cierre la pestaña después del pago.
 
-Esta entrega añade `planCardPaymentConfirmation` y pruebas unitarias a `modules/orders`.
-Es una función de decisión pura; **todavía no cobra, verifica firmas, guarda pedidos,
-reserva stock ni añade pantallas**. La tienda sigue sin checkout. No se modifica la
-base remota ni se instalan SDK de pagos. Las fases siguientes se irán incorporando
-a esta rama/PR y sus casillas solo se cerrarán con evidencia.
+P01 añadió `planCardPaymentConfirmation` (decisión pura) a `modules/orders`. P02 añade
+la migración `20261011230000_web_orders.sql`: pedidos, líneas, contacto, intentos de
+pago, notificaciones, cronología y reserva de stock, con las funciones que crean el
+pedido, registran el cobro, liberan reservas caducadas y cambian el estado desde el
+panel (detalle abajo). **Todavía no hay checkout, adaptador del banco ni pantallas**:
+nadie llama aún a esas funciones fuera de las pruebas, la tienda sigue sin vender y
+la migración **no se ha aplicado en `adhara-dev`** (se aplicará al fusionar, como las
+demás). No se instalan SDK de pagos. Las casillas solo se cierran con evidencia.
 
 ## Flujo previsto
 
@@ -80,13 +83,51 @@ se implementará con sesión propia o un mecanismo seguro específico para invit
 - Reembolso: operación separada con idempotencia y conciliación; nunca marcar reembolsado
   solo porque el personal pulse un botón. Pendiente de implementar el adaptador.
 
+## P02 — base de datos (hecho el 11/10)
+
+Migración `20261011230000_web_orders.sql`, pgTAP `13_web_orders.test.sql` (79 pruebas),
+tres casos nuevos en `scripts/test-concurrency.ts` y `tests/unit/orders-sql.test.ts`
+(estados y cuadro de transiciones idénticos en SQL y en TypeScript). Decisiones §131–134.
+
+| Tabla (`public`, con RLS)                 | Contenido                                                                                      | Lee                                  |
+| ----------------------------------------- | ---------------------------------------------------------------------------------------------- | ------------------------------------ |
+| `orders`                                  | Número visible (desde 1001), idioma, estado, entrega, ubicación, importes, reserva y caducidad | `orders.view`                        |
+| `order_lines` (solo inserción)            | Formato, SKU, marca, nombre, tamaño, cantidad, precio unitario y total congelados              | `orders.view`                        |
+| `order_contacts`                          | Nombre, email normalizado, teléfono; columnas de dirección vacías hasta que haya envíos        | `orders.view` **y** `customers.view` |
+| `order_payment_attempts` (solo inserción) | Proveedor y referencia aleatoria de 12 dígitos por ida al banco, importe y moneda              | `orders.view`                        |
+| `order_payments` (solo inserción)         | Cada notificación verificada una vez: transacción, resultado, importe, decisión y motivo       | `orders.view`                        |
+| `order_events` (solo inserción)           | Cronología sin datos personales: creación, intentos, cobros, incidencias, reservas y estados   | `orders.view`                        |
+
+Nadie escribe directamente. Funciones:
+
+- **Servidor, solo con la clave privilegiada** (`web_order_*`, §131): `web_order_create`
+  calcula el importe con el PVP del catálogo publicado (ignora cualquier precio recibido),
+  reserva todo o nada y es idempotente por `request_id`; `web_order_new_attempt` da una
+  referencia nueva mientras la reserva siga en pie; `web_order_record_payment` decide como
+  `planCardPaymentConfirmation` bajo el bloqueo del pedido y guarda cada notificación una
+  sola vez; `web_order_release_expired` devuelve al stock las reservas caducadas.
+- **Panel:** `admin_transition_order` aplica el cuadro de `status.ts` con su efecto de
+  inventario en la misma transacción, revisión optimista, cronología y auditoría.
+
+Comprobado en local: 12 compras simultáneas de la última unidad → un pedido; la misma
+notificación 8 veces a la vez → una confirmación; cobro contra caducidad simultáneos →
+o pagado con la reserva, o incidencia sin ella, con el stock cuadrado.
+
+Límites de P02, a propósito: **envío bloqueado** (`shipping_unavailable`) hasta tener
+zonas y tarifas reales; **reembolsos y cancelaciones con cobro bloqueados**
+(`refund_unavailable`) hasta el adaptador del proveedor (P06); sin desglose de IVA
+(pendiente de la asesoría y de la facturación); la retención de datos personales
+(RGPD) se decidirá con la ficha de cliente.
+
 ## Entregas de esta PR
 
 - [x] P01 — Reglas de decisión para notificaciones ya verificadas y pruebas unitarias.
-- [ ] P02 — Persistencia de pedidos, líneas, contactos, intentos, eventos y reservas;
+- [x] P02 — Persistencia de pedidos, líneas, contactos, intentos, eventos y reservas;
       migración con RLS, proyecciones por permiso, pgTAP y tipos generados.
 - [ ] P03 — Checkout es/ca/en: contacto, entrega, resumen calculado en servidor,
       idempotencia, reserva y caducidad. Tarifas reales antes de habilitar envíos.
+      La base ya crea, reserva y caduca; falta la pantalla, la llamada desde el
+      servidor y la tarea programada que llame a `web_order_release_expired`.
 - [ ] P04 — Adaptador del TPV, notificación autenticada, confirmación atómica,
       conciliación y pruebas oficiales de sandbox. Sin credenciales en el repositorio.
 - [ ] P05 — Panel → Pedidos web: listado, filtros, ficha, incidencias, preparación,
@@ -96,9 +137,13 @@ se implementará con sesión propia o un mecanismo seguro específico para invit
       duplicados concurrentes, última unidad, caducidad contra pago, pago tardío, permisos
       y ausencia de datos personales/costes en respuestas públicas; E2E móvil/escritorio.
 
-P02 y la base del panel pueden avanzar sin credenciales del banco. La activación de P03–P04
-requiere TPV de pruebas y las decisiones comerciales. P01 no satisface la aceptación
-de A5: la idempotencia, autorización y atomicidad reales se demostrarán en SQL y E2E.
+La base del panel (P05) puede avanzar sin credenciales del banco. La activación de P03–P04
+requiere TPV de pruebas y las decisiones comerciales. La idempotencia, autorización y
+atomicidad ya están demostradas en SQL (pgTAP y concurrencia real); falta el E2E (P07).
+
+La caducidad de reservas necesita una tarea programada frecuente (propuesta: cada 5 minutos),
+que el plan Hobby de Vercel no permitía. Con el plan Pro, contratado por el usuario el 11/10
+(§134), se añadirá en P03 junto al checkout, protegida con `CRON_SECRET`.
 
 ## Pendientes para activar ventas
 
