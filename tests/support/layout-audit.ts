@@ -17,6 +17,12 @@ import { join } from 'node:path';
 
 export const AUDIT_WIDTHS = [390, 768, 1280, 1440] as const;
 
+/**
+ * Anchuras de escritorio: la consola del titular (/admin/control) solo se usa
+ * a partir de 1280 px; por debajo muestra un aviso, que se audita aparte.
+ */
+export const DESKTOP_WIDTHS = [1280, 1440] as const;
+
 /** Etiquetas de axe que exige la fase: WCAG 2.0, 2.1 y 2.2 en niveles A y AA. */
 export const AXE_TAGS = [
   'wcag2a',

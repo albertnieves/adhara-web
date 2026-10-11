@@ -61,6 +61,53 @@ const ROWS = [
   { name: 'Formato C', size: 10, stock: 0, tone: 'neutral' as const },
 ];
 
+/** Tabla de muestra; compacta, como en la consola del titular. */
+function SampleTable({ compact = false }: { compact?: boolean }) {
+  const figures = compact ? 'font-mono' : undefined;
+  return (
+    <Table
+      caption={
+        compact
+          ? 'Formatos de ejemplo en la tabla compacta'
+          : 'Formatos de ejemplo'
+      }
+      density={compact ? 'compact' : 'default'}
+      stickyHeader={compact}
+    >
+      <thead>
+        <tr>
+          <Th>Formato</Th>
+          <Th numeric>ml</Th>
+          <Th numeric>Stock</Th>
+          <Th>Estado</Th>
+        </tr>
+      </thead>
+      <tbody>
+        {ROWS.map((row) => (
+          <tr key={row.name}>
+            <Td primary>{row.name}</Td>
+            <Td label="ml" numeric className={figures}>
+              {row.size}
+            </Td>
+            <Td label="Stock" numeric className={figures}>
+              {row.stock}
+            </Td>
+            <Td label="Estado">
+              <Badge tone={row.tone}>
+                {row.stock === 0
+                  ? 'Agotado'
+                  : row.stock < 5
+                    ? 'Últimas unidades'
+                    : 'Disponible'}
+              </Badge>
+            </Td>
+          </tr>
+        ))}
+      </tbody>
+    </Table>
+  );
+}
+
 /**
  * Datos y comercio (Fase 2, DS-09): estados, etiquetas, precio, tarjeta,
  * tabla, vacío y carga. Los importes son de ejemplo y no son de ningún
@@ -170,38 +217,19 @@ export function DataComponents() {
         </Card>
       </div>
       <div className="mt-6">
-        <Table caption="Formatos de ejemplo">
-          <thead>
-            <tr>
-              <Th>Formato</Th>
-              <Th numeric>ml</Th>
-              <Th numeric>Stock</Th>
-              <Th>Estado</Th>
-            </tr>
-          </thead>
-          <tbody>
-            {ROWS.map((row) => (
-              <tr key={row.name}>
-                <Td primary>{row.name}</Td>
-                <Td label="ml" numeric>
-                  {row.size}
-                </Td>
-                <Td label="Stock" numeric>
-                  {row.stock}
-                </Td>
-                <Td label="Estado">
-                  <Badge tone={row.tone}>
-                    {row.stock === 0
-                      ? 'Agotado'
-                      : row.stock < 5
-                        ? 'Últimas unidades'
-                        : 'Disponible'}
-                  </Badge>
-                </Td>
-              </tr>
-            ))}
-          </tbody>
-        </Table>
+        <SampleTable />
+      </div>
+      <Text size="small" tone="muted" className="mt-8 mb-4 max-w-3xl">
+        En la consola del titular, density=&quot;compact&quot; reduce el relleno
+        y la letra (12 px) para ver más filas, y stickyHeader deja la cabecera
+        fija al desplazarse por una tabla larga. Las cifras van en la
+        monoespaciada.
+      </Text>
+      <div
+        data-tone="console"
+        className="bg-surface text-fg border-border border p-4"
+      >
+        <SampleTable compact />
       </div>
 
       <SubTitle>EmptyState y Skeleton</SubTitle>

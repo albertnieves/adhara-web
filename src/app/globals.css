@@ -32,6 +32,19 @@
   --color-oud: #2a1d15;
   --color-indigo-night: #151a2e;
   --color-forest: #13211a;
+  /*
+   * Consola del titular (/admin/control): grafito frío con un acento de
+   * señal. Solo para su tono; no es parte del lenguaje de la tienda.
+   */
+  --color-graphite: #0f1216;
+  --color-graphite-raised: #161a20;
+  --color-graphite-sunken: #0b0d10;
+  --color-chalk: #e4e7eb;
+  --color-pewter: #9aa4b0;
+  --color-wire: #262c34;
+  --color-wire-strong: #5f6b78;
+  --color-signal: #4aa8d8;
+  --color-signal-soft: #7cc4ea;
 
   /* Semánticos (tono claro). Los componentes usan estos. */
   --color-surface: var(--color-ivory);
@@ -72,6 +85,10 @@
 
   --font-display: var(--font-cormorant), 'Times New Roman', serif;
   --font-sans: var(--font-manrope), system-ui, sans-serif;
+  /* Monoespaciada del sistema: solo las cifras de la consola. */
+  --font-mono:
+    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono',
+    'Courier New', monospace;
 
   --ease-luxe: cubic-bezier(0.22, 1, 0.36, 1);
 
@@ -174,6 +191,49 @@
   }
   [data-tone='forest'] {
     --color-surface: var(--color-forest);
+  }
+
+  /*
+   * Consola del titular (/admin/control): un tono propio, independiente de
+   * los oscuros de la tienda. Redefine todos los semánticos, los titulares
+   * van en Manrope y el movimiento es más corto. Solo en pantalla: al
+   * imprimir, la consola queda en el tono claro, legible y sin fondo.
+   * `data-shell='console'` marca el contenedor de la consola (no las muestras
+   * de /admin/diseno) para que el rebote del scroll no enseñe el marfil.
+   */
+  @media screen {
+    [data-tone='console'] {
+      color-scheme: dark;
+      --color-surface: var(--color-graphite);
+      --color-surface-raised: var(--color-graphite-raised);
+      --color-surface-sunken: var(--color-graphite-sunken);
+      --color-fg: var(--color-chalk);
+      --color-fg-muted: var(--color-pewter);
+      --color-fg-inverse: var(--color-graphite);
+      --color-border: var(--color-wire);
+      --color-border-strong: var(--color-wire-strong);
+      --color-accent: var(--color-signal);
+      --color-accent-fg: var(--color-signal-soft);
+      --color-focus: var(--color-signal-soft);
+      --color-danger: #f2958f;
+      --color-danger-soft: #2b1816;
+      --color-success: #74cf9a;
+      --color-success-soft: #12261a;
+      --color-warning: #e6b866;
+      --color-warning-soft: #2a2112;
+      --font-display: var(--font-sans);
+      --duration-fast: 120ms;
+      --duration-base: 200ms;
+      --duration-slow: 300ms;
+    }
+    [data-tone='console'] ::selection {
+      background: var(--color-signal);
+      color: var(--color-graphite);
+    }
+    body:has([data-shell='console']) {
+      background: var(--color-graphite);
+      color: var(--color-chalk);
+    }
   }
 
   html {
@@ -296,6 +356,25 @@
       var(--color-surface-raised) 60%,
       transparent
     );
+  }
+  /* Densa (consola): más filas a la vista, sin bajar de 12 px. */
+  .data-table-compact th {
+    padding: 0.375rem 0.625rem;
+    letter-spacing: var(--tracking-caps-sm);
+  }
+  .data-table-compact td {
+    padding: 0.375rem 0.625rem;
+    font-size: var(--text-xs);
+    line-height: var(--text-xs--line-height);
+  }
+  /* Cabecera fija al desplazarse por una tabla larga. */
+  .data-table-sticky thead th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background: var(--color-surface-raised);
+    /* Con bordes colapsados, el borde no acompaña a la celda fija. */
+    box-shadow: inset 0 -1px 0 var(--color-border);
   }
 
   /* Panel lateral (Sheet): entra desde el borde, sin recortar la tabla. */

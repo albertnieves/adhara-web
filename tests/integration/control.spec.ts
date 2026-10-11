@@ -1,32 +1,15 @@
 import { expect, test } from '@playwright/test';
-import { execFileSync } from 'node:child_process';
+import type { Page } from '@playwright/test';
 import { randomUUID } from 'node:crypto';
-import { login, user } from './support';
+import { login, makeControlOwner, psql, user } from './support';
 
 /*
- * Control del negocio y del proyecto (/admin/control) y precio cobrado en el
- * mostrador, contra Supabase local.
+ * Consola del titular (/admin/control) y precio cobrado en el mostrador,
+ * contra Supabase local. La consola es solo para escritorio: las pruebas van
+ * a 1440 px (el aviso de pantallas pequeñas lo audita layout-audit.spec.ts).
  */
 
-function psql(sql: string) {
-  execFileSync(
-    'docker',
-    [
-      'exec',
-      '-i',
-      'supabase_db_adhara-admin-delivery',
-      'psql',
-      '-X',
-      '-U',
-      'postgres',
-      '-d',
-      'postgres',
-      '-v',
-      'ON_ERROR_STOP=1',
-    ],
-    { input: sql, stdio: ['pipe', 'ignore', 'inherit'] },
-  );
-}
+test.use({ viewport: { width: 1440, height: 900 } });
 
 /** Perfume con PVP de 50 €, coste de 20 € y 5 unidades en la tienda. */
 function stockedProduct(email: string) {
@@ -60,7 +43,12 @@ test('control: venta con descuento, costes, tareas y entregas', async ({
   page,
 }) => {
   const email = await user('system_admin');
+  // El administrador del sistema de la prueba es, además, el titular.
+  makeControlOwner(email);
   await login(page, email);
+  await expect(
+    page.getByRole('link', { name: 'Control del negocio' }),
+  ).toBeVisible();
   const name = stockedProduct(email);
   const id = name.split(' ').at(-1)!;
 
@@ -134,10 +122,24 @@ test('control: venta con descuento, costes, tareas y entregas', async ({
   await expect(deliveryRow).toContainText('1200,00 €');
   await expect(deliveryRow).toContainText('Por facturar');
 
-  // Resumen y borrado con confirmación.
+  // Resumen en la consola: menú propio con la sección activa marcada.
   await page.goto('/admin/control');
   await expect(page.getByRole('heading', { name: 'Resumen' })).toBeVisible();
+  const nav = page.getByRole('navigation', { name: 'Secciones de la consola' });
+  await expect(nav.getByRole('link', { name: 'Resumen' })).toHaveAttribute(
+    'aria-current',
+    'page',
+  );
+  await expect(page.getByRole('button', { name: 'Menú' })).toHaveCount(0);
+  await expect(
+    page.getByText('La consola se usa en ordenador', { exact: false }),
+  ).toBeHidden();
+
+  // Borrado con confirmación.
   await page.goto('/admin/control/costes');
+  await expect(
+    nav.getByRole('link', { name: 'Costes', exact: true }),
+  ).toHaveAttribute('aria-current', 'page');
   await costRow.getByRole('link', { name: `Alquiler ${id}` }).click();
   await page.getByRole('button', { name: 'Borrar' }).click();
   await page
@@ -150,15 +152,38 @@ test('control: venta con descuento, costes, tareas y entregas', async ({
   ).toHaveCount(0);
 });
 
-test('control: el administrador de la tienda no lo ve', async ({ page }) => {
-  await login(page, await user('store_admin'));
+/** Sin el acceso en el menú del panel ni la consola: 404 en sus rutas. */
+async function expectNoControl(page: Page) {
+  // A 1440 px la barra lateral del panel está a la vista (con su pie): que
+  // falte el acceso significa algo.
+  await expect(
+    page.getByRole('link', { name: 'Sistema de diseño' }),
+  ).toBeVisible();
   await expect(
     page.getByRole('link', { name: 'Control del negocio' }),
   ).toHaveCount(0);
-  for (const path of ['/admin/control', '/admin/control/costes']) {
+  for (const path of [
+    '/admin/control',
+    '/admin/control/costes',
+    '/admin/control/negocio',
+  ]) {
     await page.goto(path);
     await expect(
       page.getByRole('heading', { name: '404', exact: true }),
     ).toBeVisible();
+    await expect(page.locator('[data-shell="console"]')).toHaveCount(0);
   }
+}
+
+test('control: el administrador de la tienda no lo ve', async ({ page }) => {
+  await login(page, await user('store_admin'));
+  await expectNoControl(page);
+});
+
+test('control: otro administrador del sistema no titular recibe 404', async ({
+  page,
+}) => {
+  // Tiene business.control y MFA, pero no está en la lista de titulares.
+  await login(page, await user('system_admin'));
+  await expectNoControl(page);
 });

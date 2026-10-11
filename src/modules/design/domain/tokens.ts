@@ -6,11 +6,14 @@
  * tienen exactamente los mismos tokens.
  */
 
-export type ToneId = 'light' | 'dark' | 'oud' | 'indigo' | 'forest';
+export type ToneId = 'light' | 'dark' | 'oud' | 'indigo' | 'forest' | 'console';
 
 export type Tone = { id: ToneId; label: string; use: string };
 
-/** Tonos: el claro por defecto y los oscuros con `data-tone`. */
+/**
+ * Tonos: el claro por defecto, los oscuros de la tienda y el de la consola
+ * del titular, todos con `data-tone`.
+ */
 export const TONES: readonly Tone[] = [
   {
     id: 'light',
@@ -36,6 +39,11 @@ export const TONES: readonly Tone[] = [
     id: 'forest',
     label: 'Bosque',
     use: 'Oscuro de colección (D3), para la tienda a partir de la F5.',
+  },
+  {
+    id: 'console',
+    label: 'Consola',
+    use: 'Consola del titular, solo escritorio (/admin/control): grafito frío con acento de señal y titulares en Manrope.',
   },
 ];
 
@@ -81,6 +89,30 @@ export const PALETTE_COLORS: readonly ColorToken[] = [
     role: 'Índigo nocturno. Fondo del tono índigo (D3).',
   },
   { name: 'forest', role: 'Verde muy oscuro. Fondo del tono bosque (D3).' },
+  { name: 'graphite', role: 'Grafito. Fondo del tono consola.' },
+  {
+    name: 'graphite-raised',
+    role: 'Grafito elevado. Tarjetas, campos y barra lateral de la consola.',
+  },
+  {
+    name: 'graphite-sunken',
+    role: 'Grafito hundido. Zonas hundidas de la consola.',
+  },
+  { name: 'chalk', role: 'Tiza. Texto de la consola y botón principal.' },
+  { name: 'pewter', role: 'Peltre. Texto atenuado de la consola.' },
+  { name: 'wire', role: 'Cable. Separadores de la consola.' },
+  {
+    name: 'wire-strong',
+    role: 'Cable marcado. Bordes de controles de la consola (3:1).',
+  },
+  {
+    name: 'signal',
+    role: 'Señal. Acento de la consola: barras, líneas y estado activo.',
+  },
+  {
+    name: 'signal-soft',
+    role: 'Señal suave. Texto de acento y foco de la consola.',
+  },
 ];
 
 /** Semánticos: los que usan los componentes; cada tono los redefine. */
@@ -156,7 +188,11 @@ export function matrixPairs(tone: ToneId): ContrastPair[] {
   ];
 }
 
-/** Combinaciones fijas: texto inverso y, en claro, estados y botones. */
+/**
+ * Combinaciones fijas: texto inverso; los estados sobre su fondo suave en el
+ * claro y en la consola (que define sus fondos suaves oscuros); y, en claro,
+ * los botones.
+ */
 export function fixedPairs(tone: ToneId): ContrastPair[] {
   const text = (fg: string, bg: string): ContrastPair => ({
     fg,
@@ -165,12 +201,16 @@ export function fixedPairs(tone: ToneId): ContrastPair[] {
     kind: 'text',
   });
   const inverse = text('fg-inverse', 'fg');
-  if (tone !== 'light') return [inverse];
-  return [
-    inverse,
+  const states = [
     text('danger', 'danger-soft'),
     text('success', 'success-soft'),
     text('warning', 'warning-soft'),
+  ];
+  if (tone === 'console') return [inverse, ...states];
+  if (tone !== 'light') return [inverse];
+  return [
+    inverse,
+    ...states,
     text('ivory', 'ink'),
     text('ivory', 'ink-soft'),
     text('ink', 'gold-soft'),
@@ -188,11 +228,15 @@ export type Token = { variable: string; role: string };
 export const FONT_TOKENS: readonly Token[] = [
   {
     variable: '--font-display',
-    role: 'Cormorant Garamond (D1): titulares y cifras grandes.',
+    role: 'Cormorant Garamond (D1): titulares y cifras grandes. La consola la cambia por Manrope.',
   },
   {
     variable: '--font-sans',
-    role: 'Manrope (D1): texto, controles y versalitas.',
+    role: 'Manrope (D1): texto, controles y versalitas; en la consola, también los titulares.',
+  },
+  {
+    variable: '--font-mono',
+    role: 'Monoespaciada del sistema: solo las cifras de la consola del titular.',
   },
 ];
 
@@ -264,6 +308,7 @@ export const RADIUS_TOKENS: readonly Token[] = [
   },
 ];
 
+/** En la consola del titular las tres son más cortas (120, 200 y 300 ms). */
 export const DURATION_TOKENS: readonly Token[] = [
   {
     variable: '--duration-fast',

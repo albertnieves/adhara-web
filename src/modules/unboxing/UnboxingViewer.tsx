@@ -1,6 +1,12 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useEffectEvent,
+  useRef,
+  useState,
+} from 'react';
 import { detectWebGL, usePrefersReducedMotion } from './env';
 import { storefrontMotionSpec } from './motion/storefront';
 import type { Phase } from './motion/timeline';
@@ -22,6 +28,11 @@ type Props = {
   labels: UnboxingLabels;
   /** Imagen mostrada sin WebGL o si la escena falla: la compra nunca depende del 3D. */
   fallback: React.ReactNode;
+  /**
+   * Se llama una vez, la primera vez que la escena (con WebGL y sin fallo) se
+   * ve en pantalla: la medición anónima de interés de la tienda.
+   */
+  onSeen?: () => void;
 };
 
 /**
@@ -33,6 +44,7 @@ export default function UnboxingViewer({
   background,
   labels,
   fallback,
+  onSeen,
 }: Props) {
   const product = findScene(scene);
   const [timeline] = useState(() => new Timeline(storefrontMotionSpec));
@@ -42,6 +54,8 @@ export default function UnboxingViewer({
   const reduced = usePrefersReducedMotion();
   const container = useRef<HTMLDivElement>(null);
   const started = useRef(false);
+  const seen = useRef(false);
+  const notifySeen = useEffectEvent(() => onSeen?.());
 
   useEffect(
     () =>
@@ -76,6 +90,23 @@ export default function UnboxingViewer({
       window.clearTimeout(timer);
     };
   }, [timeline, reduced, product]);
+
+  // onSeen va aparte de la reproducción: con movimiento reducido también cuenta.
+  useEffect(() => {
+    const node = container.current;
+    if (!node || !product || seen.current) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry?.isIntersecting || seen.current) return;
+        seen.current = true;
+        observer.disconnect();
+        notifySeen();
+      },
+      { threshold: 0.4 },
+    );
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [product]);
 
   const replay = useCallback(() => {
     if (reduced) timeline.skipToEnd();

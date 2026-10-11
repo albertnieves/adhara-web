@@ -7,7 +7,8 @@ export type MonthValue = { month: MonthKey; value: number };
  * Barras de una sola serie por mes, con base en cero: hacia arriba los
  * valores positivos (acento) y hacia abajo los negativos (peligro). Cada barra
  * lleva su valor en el título (al pasar el ratón) y en la lista accesible; la
- * tabla de la página tiene las cifras exactas.
+ * tabla de la página tiene las cifras exactas. Compactas para la consola, con
+ * las cifras en la monoespaciada.
  */
 export function MonthBars({
   title,
@@ -29,16 +30,16 @@ export function MonthBars({
 
   return (
     <figure className="min-w-0">
-      <figcaption className="text-fg-muted text-2xs tracking-caps mb-3 font-semibold uppercase">
+      <figcaption className="text-fg-muted text-2xs tracking-caps-sm mb-2 font-semibold uppercase">
         {title}
       </figcaption>
       {range === 0 ? (
-        <p className="text-fg-muted border-border border-y py-10 text-center text-sm">
+        <p className="text-fg-muted border-border border-y py-8 text-center text-sm">
           Sin datos en estos meses.
         </p>
       ) : (
         <ol
-          className="grid h-44 gap-0.5"
+          className="grid h-36 gap-0.5"
           style={{
             gridTemplateColumns: `repeat(${data.length}, minmax(0, 1fr))`,
           }}
@@ -90,9 +91,9 @@ export function MonthBars({
         </ol>
       )}
       {highlight && range > 0 && (
-        <p className="text-fg-muted mt-3 text-xs">
+        <p className="text-fg-muted mt-2 text-xs">
           {monthLabel(highlight)}:{' '}
-          <span className="text-fg font-semibold tabular-nums">
+          <span className="text-fg font-mono font-semibold tabular-nums">
             {format(data.find((d) => d.month === highlight)?.value ?? 0)}
           </span>
         </p>

@@ -791,6 +791,43 @@ export type Database = {
         Returns: number;
       };
       admin_cancel_invite: { Args: { p_email: string }; Returns: undefined };
+      admin_control_assistant_usage: {
+        Args: { p_from: string; p_to: string };
+        Returns: {
+          cache_read_tokens: number;
+          calls: number;
+          day: string;
+          input_tokens: number;
+          kind: string;
+          model: string;
+          output_tokens: number;
+          person: string;
+          user_id: string;
+        }[];
+      };
+      admin_control_attention: {
+        Args: { p_from: string; p_to: string };
+        Returns: {
+          day: string;
+          hits: number;
+          kind: string;
+          product_id: string;
+        }[];
+      };
+      admin_control_backups: {
+        Args: { p_limit?: number };
+        Returns: {
+          created_at: string;
+          error: string;
+          id: number;
+          kind: string;
+          path: string;
+          sha256: string;
+          size_bytes: number;
+          status: string;
+          table_rows: Json;
+        }[];
+      };
       admin_control_costs: {
         Args: Record<PropertyKey, never>;
         Returns: {
@@ -804,6 +841,17 @@ export type Database = {
           notes: string;
           starts_on: string;
           updated_at: string;
+        }[];
+      };
+      admin_control_data_quality: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          check_key: string;
+          detail: string;
+          label: string;
+          product_id: string;
+          severity: string;
+          variant_id: string;
         }[];
       };
       admin_control_delete_cost: { Args: { p_id: string }; Returns: undefined };
@@ -827,6 +875,36 @@ export type Database = {
           title: string;
           updated_at: string;
         }[];
+      };
+      admin_control_export: {
+        Args: {
+          p_limit?: number;
+          p_offset: number;
+          p_schema: string;
+          p_table: string;
+        };
+        Returns: Json;
+      };
+      admin_control_export_catalog: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          approx_rows: number;
+          key_columns: string[];
+          schema_name: string;
+          table_name: string;
+        }[];
+      };
+      admin_control_log_backup: {
+        Args: {
+          p_error?: string;
+          p_kind: string;
+          p_path: string;
+          p_sha256: string;
+          p_size_bytes: number;
+          p_status: string;
+          p_table_rows: Json;
+        };
+        Returns: number;
       };
       admin_control_month_facts: {
         Args: { p_from: string; p_to: string };
@@ -892,6 +970,10 @@ export type Database = {
         Args: { p_id: string; p_status: string };
         Returns: undefined;
       };
+      admin_control_system_status: {
+        Args: Record<PropertyKey, never>;
+        Returns: Json;
+      };
       admin_control_tasks: {
         Args: Record<PropertyKey, never>;
         Returns: {
@@ -906,6 +988,24 @@ export type Database = {
           status: string;
           title: string;
           updated_at: string;
+        }[];
+      };
+      admin_control_variant_events: {
+        Args: { p_variant_ids: string[] };
+        Returns: {
+          at: string;
+          compare_at_cents: number;
+          cost_net_cents: number;
+          kind: string;
+          price_cents: number;
+          variant_id: string;
+        }[];
+      };
+      admin_control_variant_series: {
+        Args: { p_from: string; p_grain?: string; p_to: string };
+        Returns: {
+          series: Json;
+          variant_id: string;
         }[];
       };
       admin_create_purchase_order: {
@@ -1350,6 +1450,10 @@ export type Database = {
           status: string;
           variant_id: string;
         }[];
+      };
+      track_product_event: {
+        Args: { p_kind: string; p_slug: string };
+        Returns: boolean;
       };
     };
     Enums: {

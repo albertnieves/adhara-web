@@ -1,8 +1,12 @@
 import Link from 'next/link';
 import type { ReactNode } from 'react';
-import { cardClass, Eyebrow } from '@/components/ui';
+import { cardClass } from '@/components/ui';
 
-/** Cifra destacada del control: etiqueta, valor y una nota breve. */
+/**
+ * Cifra destacada de la consola: etiqueta en versalitas, valor en la
+ * monoespaciada con cifras tabulares y una nota breve. Compacta para que
+ * quepan varias por fila; en alerta, valor y borde izquierdo en peligro.
+ */
 export function KeyFigure({
   label,
   value,
@@ -16,21 +20,26 @@ export function KeyFigure({
   href?: string;
   tone?: 'default' | 'alert';
 }) {
+  const alert = tone === 'alert';
   const body = (
     <div
       className={cardClass({
-        padding: 'sm',
+        padding: 'none',
         interactive: Boolean(href),
-        className: 'h-full sm:p-6',
+        className: alert
+          ? 'border-l-danger h-full border-l-2 px-4 py-3'
+          : 'h-full px-4 py-3',
       })}
     >
-      <Eyebrow>{label}</Eyebrow>
+      <p className="text-fg-muted text-2xs tracking-caps-sm font-semibold uppercase">
+        {label}
+      </p>
       <p
-        className={`font-display mt-2 text-3xl font-light lining-nums tabular-nums sm:text-4xl ${tone === 'alert' ? 'text-danger' : ''}`}
+        className={`mt-1 font-mono text-2xl wrap-break-word tabular-nums ${alert ? 'text-danger' : 'text-fg'}`}
       >
         {value}
       </p>
-      {note && <p className="text-fg-muted mt-2 text-xs">{note}</p>}
+      {note && <p className="text-fg-muted mt-1 text-xs">{note}</p>}
     </div>
   );
   return href ? (
