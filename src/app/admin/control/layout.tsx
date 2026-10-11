@@ -4,7 +4,8 @@ import type { ReactNode } from 'react';
 import { PanelNav } from '@/modules/admin/ui/PanelNav';
 import type { NavItem } from '@/modules/admin/ui/PanelNav';
 import { Toaster } from '@/components/ui';
-import { requirePermission, signOut } from '@/modules/auth/server';
+import { signOut } from '@/modules/auth/server';
+import { requireControl } from '@/modules/control/server';
 import { Logo } from '@/modules/brand';
 
 export const metadata: Metadata = {
@@ -33,7 +34,7 @@ export default async function ControlLayout({
 }: {
   children: ReactNode;
 }) {
-  const staff = await requirePermission('business.control');
+  const staff = await requireControl();
   const shortcut =
     'text-fg-muted hover:text-fg inline-flex min-h-11 items-center text-left text-xs tracking-caps uppercase';
   const shortcuts = (

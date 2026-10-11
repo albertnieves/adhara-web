@@ -5,18 +5,24 @@ begin;
 create extension if not exists pgtap with schema extensions;
 set search_path = public, extensions;
 
-select plan(36);
+select plan(40);
 
 insert into auth.users (id, email) values
   ('00000000-0000-4000-8000-000000000091', 'sistema@test.invalid'),
   ('00000000-0000-4000-8000-000000000092', 'tienda@test.invalid'),
   ('00000000-0000-4000-8000-000000000093', 'encargado@test.invalid'),
-  ('00000000-0000-4000-8000-000000000094', 'cliente@test.invalid');
+  ('00000000-0000-4000-8000-000000000094', 'cliente@test.invalid'),
+  ('00000000-0000-4000-8000-000000000095', 'otro-sistema@test.invalid');
 
 insert into public.staff_members (user_id, role) values
   ('00000000-0000-4000-8000-000000000091', 'system_admin'),
   ('00000000-0000-4000-8000-000000000092', 'store_admin'),
-  ('00000000-0000-4000-8000-000000000093', 'viewer');
+  ('00000000-0000-4000-8000-000000000093', 'viewer'),
+  ('00000000-0000-4000-8000-000000000095', 'system_admin');
+
+-- Solo el titular de la lista entra en el control (DECISIONS §118).
+insert into internal.control_owners (user_id) values
+  ('00000000-0000-4000-8000-000000000091');
 
 insert into public.brands (id, slug, name) values
   ('00000000-0000-4000-8000-0000000009b1', 'marca-control', 'Marca de control');
@@ -93,8 +99,17 @@ select pg_temp.act_as('00000000-0000-4000-8000-000000000091', 'aal1');
 select throws_ok('select * from public.admin_control_tasks()', '42501', 'forbidden',
   'sin MFA, ni el administrador del sistema');
 
--- Administrador del sistema con MFA: tareas
+-- Otro administrador del sistema, con MFA pero fuera de la lista de titulares
+select pg_temp.act_as('00000000-0000-4000-8000-000000000095', 'aal2');
+select throws_ok('select * from public.admin_control_tasks()', '42501', 'forbidden',
+  'otro administrador del sistema no entra si no es titular');
+select is(public.control_access(), false, 'y control_access lo dice sin error');
+
+-- Titular con MFA: tareas
+select pg_temp.act_as('00000000-0000-4000-8000-000000000091', 'aal1');
+select is(public.control_access(), false, 'el titular sin MFA no tiene acceso');
 select pg_temp.act_as('00000000-0000-4000-8000-000000000091', 'aal2');
+select is(public.control_access(), true, 'el titular con MFA tiene acceso');
 select isnt(
   public.admin_control_save_task(null, '  Pedir el TPV virtual  ', 'business', 'pending',
     'high', 'client', '2026-10-31', 'Datos del banco'),

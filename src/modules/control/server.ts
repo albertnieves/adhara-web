@@ -6,3 +6,4 @@ export {
   listMonthFacts,
   listTasks,
 } from './server/admin';
+export { hasControlAccess, requireControl } from './server/access';

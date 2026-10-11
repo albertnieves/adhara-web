@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { PageHeader } from '@/modules/admin';
-import { requirePermission } from '@/modules/auth/server';
+import { requireControl } from '@/modules/control/server';
 import { listDeliveries } from '@/modules/control/server';
 import { DeleteControlItem, DeliveryForm } from '@/modules/control/ui';
 import { buttonClass, Card } from '@/components/ui';
@@ -14,7 +14,7 @@ export default async function DeliveryPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
-  const { supabase } = await requirePermission('business.control');
+  const { supabase } = await requireControl();
   const { id } = await params;
   const delivery = (await listDeliveries(supabase)).find((d) => d.id === id);
   if (!delivery) notFound();

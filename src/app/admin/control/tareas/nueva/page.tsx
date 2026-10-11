@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { PageHeader } from '@/modules/admin';
-import { requirePermission } from '@/modules/auth/server';
+import { requireControl } from '@/modules/control/server';
 import { CONTROL_AREAS, isOneOf } from '@/modules/control';
 import { TaskForm } from '@/modules/control/ui';
 import { buttonClass, Card } from '@/components/ui';
@@ -13,7 +13,7 @@ export default async function NewTaskPage({
 }: {
   searchParams: Promise<{ area?: string }>;
 }) {
-  await requirePermission('business.control');
+  await requireControl();
   const { area } = await searchParams;
   return (
     <main className="max-w-4xl">

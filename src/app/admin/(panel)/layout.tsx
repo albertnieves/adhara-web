@@ -7,6 +7,7 @@ import { ROLE_LABELS, isAllowed } from '@/modules/auth';
 import type { Permission } from '@/modules/auth';
 import { requireStaff, signOut } from '@/modules/auth/server';
 import { Logo } from '@/modules/brand';
+import { hasControlAccess } from '@/modules/control/server';
 import { enterStorefrontPreview } from '@/modules/storefront/server/preview';
 
 const SECTIONS: (NavItem & { permission?: Permission })[] = [
@@ -118,10 +119,10 @@ export default async function PanelLayout({
     { role: staff.role, aal: 'aal2' },
     'catalog.edit',
   );
-  const canControl = isAllowed(
-    { role: staff.role, aal: 'aal2' },
-    'business.control',
-  );
+  // La consola es del titular: además del permiso, la lista de titulares.
+  const canControl =
+    isAllowed({ role: staff.role, aal: 'aal2' }, 'business.control') &&
+    (await hasControlAccess(staff.supabase));
   const shortcut =
     'text-fg-muted hover:text-fg inline-flex min-h-11 items-center text-left text-xs tracking-caps uppercase';
   const shortcuts = (

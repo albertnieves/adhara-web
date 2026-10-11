@@ -1324,6 +1324,7 @@ export type Database = {
           valid_to: string;
         }[];
       };
+      control_access: { Args: Record<PropertyKey, never>; Returns: boolean };
       newsletter_subscribe: {
         Args: {
           p_consent_version: string;

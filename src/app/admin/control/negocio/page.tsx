@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { PageHeader } from '@/modules/admin';
-import { requirePermission } from '@/modules/auth/server';
+import { requireControl } from '@/modules/control/server';
 import {
   businessMonths,
   euros,
@@ -28,7 +28,7 @@ export default async function BusinessPage({
 }: {
   searchParams: Promise<{ meses?: string }>;
 }) {
-  const { supabase } = await requirePermission('business.control');
+  const { supabase } = await requireControl();
   const { meses } = await searchParams;
   const count: number = PERIODS.find((p) => String(p) === meses) ?? 12;
   const today = madridToday();

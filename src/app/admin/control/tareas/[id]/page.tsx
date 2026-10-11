@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { PageHeader } from '@/modules/admin';
-import { requirePermission } from '@/modules/auth/server';
+import { requireControl } from '@/modules/control/server';
 import { listTasks } from '@/modules/control/server';
 import { DeleteControlItem, TaskForm } from '@/modules/control/ui';
 import { buttonClass, Card } from '@/components/ui';
@@ -14,7 +14,7 @@ export default async function TaskPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
-  const { supabase } = await requirePermission('business.control');
+  const { supabase } = await requireControl();
   const { id } = await params;
   const task = (await listTasks(supabase)).find((t) => t.id === id);
   if (!task) notFound();

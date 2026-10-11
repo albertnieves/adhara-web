@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { PageHeader } from '@/modules/admin';
-import { requirePermission } from '@/modules/auth/server';
+import { requireControl } from '@/modules/control/server';
 import { madridToday } from '@/modules/control';
 import { listCosts } from '@/modules/control/server';
 import { CostForm, DeleteControlItem } from '@/modules/control/ui';
@@ -15,7 +15,7 @@ export default async function CostPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
-  const { supabase } = await requirePermission('business.control');
+  const { supabase } = await requireControl();
   const { id } = await params;
   const cost = (await listCosts(supabase)).find((c) => c.id === id);
   if (!cost) notFound();

@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { PageHeader } from '@/modules/admin';
-import { requirePermission } from '@/modules/auth/server';
+import { requireControl } from '@/modules/control/server';
 import type { ControlTask } from '@/modules/control';
 import {
   AREA_LABELS,
@@ -76,7 +76,7 @@ export default async function TasksPage({
 }: {
   searchParams: Promise<{ ver?: string; area?: string }>;
 }) {
-  const { supabase } = await requirePermission('business.control');
+  const { supabase } = await requireControl();
   const query = await searchParams;
   const view: View =
     query.ver === 'hechas' || query.ver === 'todas' ? query.ver : 'abiertas';

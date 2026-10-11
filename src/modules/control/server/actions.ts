@@ -6,7 +6,7 @@ import { z } from 'zod';
 import { parseEuros } from '@/lib/money';
 import type { ActionState } from '@/modules/admin';
 import { describeDbError, fail, ok } from '@/modules/admin';
-import { requirePermission } from '@/modules/auth/server';
+import { requireControl } from './access';
 import {
   BILLING_STATUSES,
   CONTROL_AREAS,
@@ -89,7 +89,7 @@ export async function saveTask(
   _: ActionState,
   formData: FormData,
 ): Promise<ActionState> {
-  const { supabase } = await requirePermission('business.control');
+  const { supabase } = await requireControl();
   const parsed = taskInput.safeParse({
     id: text(formData, 'id'),
     title: text(formData, 'title'),
@@ -130,7 +130,7 @@ export async function setTaskStatus(
   _: ActionState,
   formData: FormData,
 ): Promise<ActionState> {
-  const { supabase } = await requirePermission('business.control');
+  const { supabase } = await requireControl();
   const parsed = taskStatusInput.safeParse({
     id: text(formData, 'id'),
     status: text(formData, 'status'),
@@ -151,7 +151,7 @@ export async function deleteTask(
   _: ActionState,
   formData: FormData,
 ): Promise<ActionState> {
-  const { supabase } = await requirePermission('business.control');
+  const { supabase } = await requireControl();
   const id = z.uuid().safeParse(text(formData, 'id'));
   if (!id.success) return fail('No se pudo borrar la tarea.');
   const { error } = await supabase.rpc('admin_control_delete_task', {
@@ -192,7 +192,7 @@ export async function saveCost(
   _: ActionState,
   formData: FormData,
 ): Promise<ActionState> {
-  const { supabase } = await requirePermission('business.control');
+  const { supabase } = await requireControl();
   const parsed = costInput.safeParse({
     id: text(formData, 'id'),
     concept: text(formData, 'concept'),
@@ -229,7 +229,7 @@ export async function deleteCost(
   _: ActionState,
   formData: FormData,
 ): Promise<ActionState> {
-  const { supabase } = await requirePermission('business.control');
+  const { supabase } = await requireControl();
   const id = z.uuid().safeParse(text(formData, 'id'));
   if (!id.success) return fail('No se pudo borrar el coste.');
   const { error } = await supabase.rpc('admin_control_delete_cost', {
@@ -269,7 +269,7 @@ export async function saveDelivery(
   _: ActionState,
   formData: FormData,
 ): Promise<ActionState> {
-  const { supabase } = await requirePermission('business.control');
+  const { supabase } = await requireControl();
   const parsed = deliveryInput.safeParse({
     id: text(formData, 'id'),
     title: text(formData, 'title'),
@@ -306,7 +306,7 @@ export async function deleteDelivery(
   _: ActionState,
   formData: FormData,
 ): Promise<ActionState> {
-  const { supabase } = await requirePermission('business.control');
+  const { supabase } = await requireControl();
   const id = z.uuid().safeParse(text(formData, 'id'));
   if (!id.success) return fail('No se pudo borrar la entrega.');
   const { error } = await supabase.rpc('admin_control_delete_delivery', {

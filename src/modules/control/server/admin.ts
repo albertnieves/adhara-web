@@ -1,4 +1,5 @@
 import 'server-only';
+import { fetchAll } from '@/lib/supabase/paginate';
 import type { StaffContext } from '@/modules/auth/server';
 import type { MonthFact } from '../domain/business';
 import type { ControlCost } from '../domain/costs';
@@ -19,7 +20,7 @@ import type { ControlDelivery, ControlTask } from '../domain/work';
 
 /*
  * Lecturas del control: funciones admin_control_* que exigen business.control
- * con MFA. Quien llama ya pasó requirePermission('business.control'); la base
+ * con MFA y ser titular. Quien llama ya pasó requireControl(); la base
  * de datos lo vuelve a comprobar.
  */
 
@@ -93,11 +94,17 @@ export async function listMonthFacts(
   from: MonthKey,
   to: MonthKey,
 ): Promise<MonthFact[]> {
-  const { data, error } = await supabase.rpc('admin_control_month_facts', {
-    p_from: monthStart(from),
-    p_to: monthStart(addMonths(to, 1)),
-  });
-  if (error) throw new Error(error.message);
+  // Una fila por mes y formato: con más de 1000, PostgREST corta sin avisar.
+  const data = await fetchAll((start, end) =>
+    supabase
+      .rpc('admin_control_month_facts', {
+        p_from: monthStart(from),
+        p_to: monthStart(addMonths(to, 1)),
+      })
+      .order('month')
+      .order('variant_id')
+      .range(start, end),
+  );
   return data.map((f) => ({
     month: monthOf(f.month),
     variantId: f.variant_id,

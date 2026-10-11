@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { PageHeader } from '@/modules/admin';
-import { requirePermission } from '@/modules/auth/server';
+import { requireControl } from '@/modules/control/server';
 import type { BillingStatus, ControlDelivery } from '@/modules/control';
 import {
   BILLING_STATUS_LABELS,
@@ -41,7 +41,7 @@ function isLink(reference: string) {
 }
 
 export default async function DeliveriesPage() {
-  const { supabase } = await requirePermission('business.control');
+  const { supabase } = await requireControl();
   const today = madridToday();
   const [deliveries, costs] = await Promise.all([
     listDeliveries(supabase),

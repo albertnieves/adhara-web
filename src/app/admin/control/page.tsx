@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { PageHeader } from '@/modules/admin';
-import { requirePermission } from '@/modules/auth/server';
+import { requireControl } from '@/modules/control/server';
 import {
   TASK_OWNER_LABELS,
   TASK_PRIORITY_LABELS,
@@ -41,7 +41,7 @@ import { Badge, buttonClass } from '@/components/ui';
 export const metadata: Metadata = { title: 'Resumen' };
 
 export default async function ControlHome() {
-  const { supabase } = await requirePermission('business.control');
+  const { supabase } = await requireControl();
   const today = madridToday();
   const months = monthsEndingAt(monthOf(today), 12);
   const [facts, costs, tasks, deliveries] = await Promise.all([

@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { PageHeader } from '@/modules/admin';
-import { requirePermission } from '@/modules/auth/server';
+import { requireControl } from '@/modules/control/server';
 import type { ControlArea, ControlCost, CostState } from '@/modules/control';
 import {
   AREA_LABELS,
@@ -114,7 +114,7 @@ function CostTable({
 }
 
 export default async function CostsPage() {
-  const { supabase } = await requirePermission('business.control');
+  const { supabase } = await requireControl();
   const today = madridToday();
   const month = monthOf(today);
   const months = monthsEndingAt(month, 12);
