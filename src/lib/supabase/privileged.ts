@@ -16,7 +16,7 @@ export function createAuthAdminClient() {
 /**
  * Tareas del servidor sin sesión de personal: el informe diario del
  * asistente (tras CRON_SECRET o reports.view, que exige MFA) y la copia
- * diaria de la consola (tras CRON_SECRET; DECISIONS §119). Nunca para CRUD
+ * diaria de la consola (tras CRON_SECRET; DECISIONS §128). Nunca para CRUD
  * ordinario ni con datos que lleguen del navegador.
  */
 export function createJobClient() {

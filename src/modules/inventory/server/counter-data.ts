@@ -8,7 +8,7 @@ export type StoreSaleRow = {
   kind: 'sale' | 'return';
   ticketRef: string | null;
   units: number;
-  /** Importe con IVA; null en las ventas sin precio cobrado (anteriores a DECISIONS §114). */
+  /** Importe con IVA; null en las ventas sin precio cobrado (anteriores a DECISIONS §123). */
   amountCents: number | null;
   createdAt: string;
   lines: { label: string; quantity: number }[];

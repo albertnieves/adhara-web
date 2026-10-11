@@ -1,10 +1,10 @@
--- Control del negocio y del proyecto (/admin/control, DECISIONS §113–117).
+-- Control del negocio y del proyecto (/admin/control, DECISIONS §122–126).
 -- Solo el administrador del sistema con MFA (permiso business.control). Las
 -- tareas, los costes y las entregas viven en internal, fuera de la API de
 -- datos, y solo se leen y escriben con las funciones admin_control_*. La
 -- auditoría guarda quién y qué, nunca importes.
 --
--- El mostrador pasa a guardar el precio cobrado por línea (revisa §59; §114): las
+-- El mostrador pasa a guardar el precio cobrado por línea (revisa §59; §123): las
 -- ventas y el beneficio del negocio salen de ahí, y lo anterior se estima con
 -- el PVP vigente.
 

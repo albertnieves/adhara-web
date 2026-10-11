@@ -34,7 +34,7 @@ Una redirección nunca sustituye la autorización en servidor.
 
 - Costes, historial de PVP, proveedores y pedidos de compra viven en `internal`, que la API no expone (`PGRST106` en `adhara-dev`, criterio 10) y sobre el que `anon` y `authenticated` no tienen privilegios (pgTAP `03` y `07`).
 - Solo se leen con funciones `admin_*` que exigen `pricing.view_cost` o `purchasing.manage` con MFA.
-- Las tareas, los costes del negocio y las entregas del control (`/admin/control`) también viven en `internal`, solo para el titular: `business.control` con MFA **y** estar en `internal.control_owners`, una lista que solo se cambia por SQL (DECISIONS §118). Otro administrador del sistema recibe 404. La auditoría no guarda sus importes (pgTAP `09`).
+- Las tareas, los costes del negocio y las entregas del control (`/admin/control`) también viven en `internal`, solo para el titular: `business.control` con MFA **y** estar en `internal.control_owners`, una lista que solo se cambia por SQL (DECISIONS §127). Otro administrador del sistema recibe 404. La auditoría no guarda sus importes (pgTAP `09`).
 - Ninguna tabla pública tiene columnas de coste (pgTAP `03`). La tienda solo recibe disponible, últimas unidades o agotado (`storefront_availability`).
 - `tests/e2e/cost-leak.spec.ts` recorre las rutas públicas (HTML, RSC, JSON y cabeceras) buscando nombres de campos de coste y, en `e2e.yml`, el coste centinela de `tests/fixtures/test-db.sql` (987654 céntimos, también como 9.876,54 €), su proveedor y su referencia.
 - El informe diario y el asistente trabajan en unidades, sin costes, importes ni nombres de proveedor (`tests/unit/assistant.test.ts`).
@@ -69,8 +69,8 @@ Herramientas de solo lectura con la sesión y los permisos de quien pregunta; ni
 
 ## Consola del titular
 
-- **Copias** (DECISIONS §119): bucket privado `system-backups` que solo el titular puede leer (política de Storage); la tarea diaria escribe con la clave privilegiada tras `CRON_SECRET`; la exportación usa una lista blanca de tablas con nombres citados (`%I`), nunca el texto recibido. Las copias contienen costes y proveedores: se descargan con enlace firmado de 60 s o con la sesión, siempre `private, no-store`. Restaurar solo en local con el script; en remoto lo decide el titular.
-- **Visitas** (DECISIONS §120): `track_product_event` es la única función de escritura que puede llamar `anon`; solo suma contadores de perfumes publicados, no devuelve nada que revele si existen y tiene un freno global de 1200 eventos por minuto. No se guarda IP, agente de usuario, cookies ni identificadores; GPC y «No rastrear» se respetan.
+- **Copias** (DECISIONS §128): bucket privado `system-backups` que solo el titular puede leer (política de Storage); la tarea diaria escribe con la clave privilegiada tras `CRON_SECRET`; la exportación usa una lista blanca de tablas con nombres citados (`%I`), nunca el texto recibido. Las copias contienen costes y proveedores: se descargan con enlace firmado de 60 s o con la sesión, siempre `private, no-store`. Restaurar solo en local con el script; en remoto lo decide el titular.
+- **Visitas** (DECISIONS §129): `track_product_event` es la única función de escritura que puede llamar `anon`; solo suma contadores de perfumes publicados, no devuelve nada que revele si existen y tiene un freno global de 1200 eventos por minuto. No se guarda IP, agente de usuario, cookies ni identificadores; GPC y «No rastrear» se respetan.
 - **Copias de la plataforma:** el token se usa solo en servidor, con 5 s de espera, y nunca se registra ni se muestra.
 
 ## Avisos del asesor de Supabase (`adhara-dev`, 02/10)

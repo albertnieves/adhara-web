@@ -153,12 +153,12 @@ export default async function AttentionPage({
       </ConsoleHeader>
 
       <div className="mb-6">
-        <ConsoleNotice title="La tienda sigue siendo privada">
+        <ConsoleNotice title="Cifras orientativas mientras la web no esté indexada">
           <p>
-            Mientras los despliegues estén protegidos con Vercel Authentication,
-            las visitas son del equipo y de pruebas: las cifras servirán cuando
-            la tienda abra. No cuentan los bots, otros orígenes ni los
-            navegadores con «No rastrear» o Global Privacy Control.
+            La web es pública desde el 10/10/2026, pero los buscadores aún no la
+            indexan: hay pocas visitas y parte son del equipo. Tampoco cuentan
+            los bots, otros orígenes ni los navegadores con «No rastrear» o
+            Global Privacy Control.
           </p>
         </ConsoleNotice>
       </div>

@@ -27,6 +27,11 @@ const ROUTES: [path: string, name: string, status?: number][] = [
   ['/en/scent-catalogue', 'catalogo-olfativo-en'],
   ['/es/catalogo-olfativo/no-existe', 'catalogo-olfativo-404', 404],
   ['/es/perfume/no-existe', 'ficha-404', 404],
+  ['/es/aviso-legal', 'aviso-legal-es'],
+  ['/es/condiciones-de-venta', 'condiciones-de-venta-es'],
+  ['/ca/privacitat', 'privacidad-ca'],
+  ['/en/cookie-policy', 'cookies-en'],
+  ['/es/envios-y-devoluciones', 'envios-y-devoluciones-es'],
   ['/admin/acceso', 'panel-acceso'],
   ['/admin/recuperar', 'panel-recuperar'],
 ];

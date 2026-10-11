@@ -86,7 +86,7 @@ Antes de tener Docker, las pruebas se ejecutaron contra `adhara-dev` con `tests/
 - `20260930_catalogo_2026.sql` crea las marcas y los 420 perfumes nuevos del «CATALOGO 2026» como borradores, sin formatos, PVP ni costes, y sus 647 imágenes provisionales. Las URL apuntan a los archivos ya subidos al bucket `product-media` de `adhara-dev`; en otro proyecto habría que subirlos antes. Los formatos y los costes llegan con el CSV desde el panel (DECISIONS §54-55).
 - `20260930_piloto_publicado.sql` publica los 4 perfumes del piloto con su PVP y su procedencia (DECISIONS §57).
 - `20260930_compra_orient_fragance.sql` carga la compra a Orient Fragance: 34 perfumes nuevos, un formato con PVP de la tienda oficial por perfume, 20 uds de stock por formato y publicación de los que tienen PVP (DECISIONS §57).
-- `20261010_control_inicial.sql` (opcional, tras la migración `20261010120000`) carga en el control las tareas de «Pendiente del usuario» de STATUS y las entregas ya fusionadas con su PR, sin importes ni costes (DECISIONS §116).
+- `20261010_control_inicial.sql` (opcional, tras la migración `20261010120000`) carga en el control las tareas de «Pendiente del usuario» de STATUS y las entregas ya fusionadas con su PR, sin importes ni costes (DECISIONS §125).
 
 ## Pendiente
 

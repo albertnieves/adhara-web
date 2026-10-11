@@ -14,6 +14,8 @@ import {
 import type { Audience, StorefrontProduct } from '@/modules/catalog';
 import { AUDIENCES, lowestPrice } from '@/modules/catalog';
 import { ProductCard } from './ProductCard';
+import { ViewToggle } from './ViewToggle';
+import { productGridClass, useCatalogView } from './catalogView';
 
 type Sort = 'featured' | 'priceAsc' | 'priceDesc' | 'name';
 
@@ -76,6 +78,7 @@ export function CatalogBrowser({
   const [brand, setBrand] = useState<string | null>(null);
   const [audience, setAudience] = useState<Audience | null>(null);
   const [sort, setSort] = useState<Sort>('featured');
+  const [view, setView] = useCatalogView();
   const deferredQuery = useDeferredValue(query);
 
   const brands = useMemo(() => {
@@ -142,11 +145,13 @@ export function CatalogBrowser({
           placeholder={t('search')}
           className="w-full max-w-sm"
         />
-        <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
+        {/* En el móvil: recuento y vista en una línea, orden debajo. */}
+        <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-3 sm:justify-start">
           <p className="text-fg-muted tracking-caps text-xs whitespace-nowrap uppercase tabular-nums">
             {t('count', { count: visible.length })}
           </p>
-          <label className="flex items-center gap-3">
+          <ViewToggle view={view} onChange={setView} />
+          <label className="flex basis-full items-center gap-3 sm:basis-auto">
             <Eyebrow as="span">{t('sort')}</Eyebrow>
             <Select
               value={sort}
@@ -186,7 +191,7 @@ export function CatalogBrowser({
       ) : (
         <motion.ul
           layout={!reduced}
-          className="mt-12 grid gap-x-6 gap-y-16 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+          className={`mt-12 ${productGridClass(view)}`}
         >
           <AnimatePresence mode="popLayout" initial={false}>
             {visible.map((product, index) => (
@@ -203,7 +208,11 @@ export function CatalogBrowser({
                   ease: [0.22, 1, 0.36, 1],
                 }}
               >
-                <ProductCard product={product} priority={index < 4} />
+                <ProductCard
+                  product={product}
+                  priority={index < 4}
+                  compact={view === 'grid'}
+                />
               </motion.li>
             ))}
           </AnimatePresence>

@@ -87,7 +87,7 @@ export function psql(sql: string, vars: Record<string, string> = {}) {
 
 /**
  * Hace titular de la consola (/admin/control) a un usuario ya creado: la
- * lista internal.control_owners solo se cambia por SQL (DECISIONS §118).
+ * lista internal.control_owners solo se cambia por SQL (DECISIONS §127).
  */
 export function makeControlOwner(email: string) {
   psql(

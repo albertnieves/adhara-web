@@ -76,7 +76,7 @@ Una combinación que no está en la matriz no está permitida. Para añadir una,
 
 ### 2.7 Consola del titular
 
-`/admin/control` es una herramienta de trabajo del titular, no un escaparate: tiene su propio tono, `data-tone="console"`, y no la estética de la tienda (excepción a D1 y D2, registrada en DECISIONS §118).
+`/admin/control` es una herramienta de trabajo del titular, no un escaparate: tiene su propio tono, `data-tone="console"`, y no la estética de la tienda (excepción a D1 y D2, registrada en DECISIONS §127).
 
 - **Color:** grafito frío (`graphite`, `graphite-raised`, `graphite-sunken`), texto tiza y peltre, separadores `wire` y un acento de señal (`signal`, `signal-soft`) en lugar del dorado. Es un bloque independiente en `globals.css` que redefine los 17 semánticos, también los `-soft` de los estados; la prueba lo exige y comprueba su contraste como el de los demás tonos.
 - **Tipografía:** titulares en Manrope (el tono redefine `--font-display`), sin Cormorant; cifras en `font-mono` con `tabular-nums` (`KeyFigure`, `MonthBars`, tablas).

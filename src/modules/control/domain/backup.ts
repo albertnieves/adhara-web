@@ -4,7 +4,7 @@ import { z } from 'zod';
  * Copias de seguridad lógicas de la consola: un JSON con las filas de las
  * tablas de la lista blanca de admin_control_export_catalog, comprimido con
  * gzip. Cubre los datos del negocio de la base; no las fotos de Storage, las
- * cuentas de Auth ni la pérdida del proyecto (DECISIONS §119).
+ * cuentas de Auth ni la pérdida del proyecto (DECISIONS §128).
  */
 
 export const BACKUP_FORMAT = 'latelier-backup';

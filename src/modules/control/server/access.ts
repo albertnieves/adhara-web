@@ -7,7 +7,7 @@ import { requirePermission } from '@/modules/auth/server';
 /*
  * Acceso a la consola: business.control (administrador del sistema con MFA)
  * y, además, estar en la lista de titulares (internal.control_owners,
- * DECISIONS §118). Cualquier otra sesión recibe 404, igual que sin permiso.
+ * DECISIONS §127). Cualquier otra sesión recibe 404, igual que sin permiso.
  * Las funciones admin_control_* lo vuelven a comprobar en la base.
  */
 export const requireControl = cache(async (): Promise<StaffContext> => {

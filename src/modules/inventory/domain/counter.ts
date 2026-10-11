@@ -1,7 +1,7 @@
 /**
  * Mostrador: ventas y devoluciones de la tienda física desde la tablet. El
  * panel no emite tickets: descuenta unidades, guarda el precio cobrado por
- * línea (el PVP, o menos si hubo descuento; DECISIONS §114) y el nº de ticket
+ * línea (el PVP, o menos si hubo descuento; DECISIONS §123) y el nº de ticket
  * del TPV o de la caja. La venta se aplica en SQL todo o nada
  * (admin_record_store_sale); aquí se preparan las líneas y se avisa antes.
  */

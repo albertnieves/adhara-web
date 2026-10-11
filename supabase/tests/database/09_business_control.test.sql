@@ -20,7 +20,7 @@ insert into public.staff_members (user_id, role) values
   ('00000000-0000-4000-8000-000000000093', 'viewer'),
   ('00000000-0000-4000-8000-000000000095', 'system_admin');
 
--- Solo el titular de la lista entra en el control (DECISIONS §118).
+-- Solo el titular de la lista entra en el control (DECISIONS §127).
 insert into internal.control_owners (user_id) values
   ('00000000-0000-4000-8000-000000000091');
 

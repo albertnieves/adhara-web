@@ -15,7 +15,7 @@ const sql = readFileSync(
   'utf8',
 );
 
-// Permisos añadidos después, con su asignación (control del negocio, DECISIONS §113).
+// Permisos añadidos después, con su asignación (control del negocio, DECISIONS §122).
 const later = readFileSync(
   new URL(
     '../../supabase/migrations/20261010120000_business_control.sql',

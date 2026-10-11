@@ -11,7 +11,7 @@ import { backupSourceFrom, buildBackup } from '@/modules/control/server';
  * Copia diaria de la consola (Vercel Cron, vercel.json): exporta los datos del
  * negocio, los sube al bucket privado system-backups, lo registra y borra las
  * copias de más de 30 días. Solo responde a quien envía CRON_SECRET y usa la
- * clave privilegiada únicamente para esto (DECISIONS §119).
+ * clave privilegiada únicamente para esto (DECISIONS §128).
  */
 export const dynamic = 'force-dynamic';
 export const maxDuration = 60;

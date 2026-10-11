@@ -1,4 +1,4 @@
--- Consola del titular (/admin/control), DECISIONS §118.
+-- Consola del titular (/admin/control), DECISIONS §127.
 -- El control deja de ser de cualquier administrador del sistema: además de
 -- business.control (con MFA), hay que estar en internal.control_owners, una
 -- lista que solo se cambia por SQL. Al aplicar esta migración entra el

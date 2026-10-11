@@ -5,7 +5,7 @@ import { supabaseRefOf } from '../domain/backup';
 /*
  * Copias de la plataforma Supabase (Management API). Solo si el titular pone
  * en Vercel SUPABASE_BACKUPS_TOKEN: un token personal LIMITADO a «Backups:
- * Read» de este proyecto (DECISIONS §119). El token no sale de este módulo ni
+ * Read» de este proyecto (DECISIONS §128). El token no sale de este módulo ni
  * se registra; los errores se resumen sin él.
  */
 
