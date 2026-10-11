@@ -1,9 +1,8 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { PageHeader } from '@/modules/admin';
 import { requireControl } from '@/modules/control/server';
 import { CONTROL_AREAS, isOneOf } from '@/modules/control';
-import { TaskForm } from '@/modules/control/ui';
+import { ConsoleHeader, TaskForm } from '@/modules/control/ui';
 import { buttonClass, Card } from '@/components/ui';
 
 export const metadata: Metadata = { title: 'Nueva tarea' };
@@ -17,14 +16,14 @@ export default async function NewTaskPage({
   const { area } = await searchParams;
   return (
     <main className="max-w-4xl">
-      <PageHeader eyebrow="Tareas" title="Nueva tarea">
+      <ConsoleHeader section="Tareas" title="Nueva tarea">
         <Link
           href="/admin/control/tareas"
           className={buttonClass('outline', 'md')}
         >
           Todas las tareas
         </Link>
-      </PageHeader>
+      </ConsoleHeader>
       <Card as="section">
         <TaskForm
           defaultArea={isOneOf(CONTROL_AREAS, area) ? area : 'project'}

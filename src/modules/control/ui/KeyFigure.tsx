@@ -39,7 +39,9 @@ export function KeyFigure({
       >
         {value}
       </p>
-      {note && <p className="text-fg-muted mt-1 text-xs">{note}</p>}
+      {note && (
+        <p className="text-fg-muted mt-1 text-xs wrap-break-word">{note}</p>
+      )}
     </div>
   );
   return href ? (

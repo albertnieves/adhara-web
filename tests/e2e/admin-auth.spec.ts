@@ -19,6 +19,12 @@ for (const path of [
   '/admin/control/costes',
   '/admin/control/tareas',
   '/admin/control/entregas',
+  '/admin/control/productos',
+  '/admin/control/atencion',
+  '/admin/control/sistema',
+  '/admin/control/copias',
+  '/admin/control/asistente',
+  '/admin/control/calidad',
 ]) {
   test(`sin sesión ${path} redirige al acceso`, async ({ request }) => {
     const response = await request.get(path, { maxRedirects: 0 });

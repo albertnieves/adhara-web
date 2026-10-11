@@ -34,3 +34,24 @@ export function signedPercent(bp: BasisPoints | null): string {
   if (bp === null) return '—';
   return bp > 0 ? `+${percent(bp)}` : percent(bp);
 }
+
+const DATE_TIME = new Intl.DateTimeFormat('es-ES', {
+  day: 'numeric',
+  month: 'short',
+  year: 'numeric',
+  hour: '2-digit',
+  minute: '2-digit',
+  timeZone: 'Europe/Madrid',
+});
+
+/** Fecha y hora de Madrid de un instante ISO: «11 oct 2026, 05:30». */
+export function madridDateTime(iso: string): string {
+  return DATE_TIME.format(new Date(iso)).replace('.', '');
+}
+
+const INTEGER = new Intl.NumberFormat('es-ES', { useGrouping: 'always' });
+
+/** Enteros con separador de miles también en cifras de cuatro dígitos. */
+export function integer(value: number): string {
+  return INTEGER.format(value);
+}

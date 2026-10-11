@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { PageHeader } from '@/modules/admin';
 import { requireControl } from '@/modules/control/server';
 import type { ControlTask } from '@/modules/control';
 import {
@@ -19,7 +18,7 @@ import {
   sortTasks,
 } from '@/modules/control';
 import { listTasks } from '@/modules/control/server';
-import { TaskDoneToggle } from '@/modules/control/ui';
+import { ConsoleHeader, TaskDoneToggle } from '@/modules/control/ui';
 import { Badge, buttonClass, EmptyState } from '@/components/ui';
 import type { BadgeTone } from '@/components/ui';
 
@@ -92,14 +91,14 @@ export default async function TasksPage({
 
   return (
     <main>
-      <PageHeader eyebrow="Proyecto" title="Tareas">
+      <ConsoleHeader section="Proyecto" title="Tareas">
         <Link
           href={`/admin/control/tareas/nueva${area ? `?area=${area}` : ''}`}
           className={buttonClass('primary', 'md')}
         >
           Nueva tarea
         </Link>
-      </PageHeader>
+      </ConsoleHeader>
 
       <p className="text-fg-muted mb-8 text-sm">
         {counts.open} abiertas · {counts.overdue} vencidas · {counts.blocked}{' '}

@@ -11,6 +11,10 @@ import { pathToFileURL } from 'node:url';
 export const SECRET_PATTERNS: { name: string; pattern: RegExp }[] = [
   { name: 'Supabase secret key', pattern: /\bsb_secret_[A-Za-z0-9_-]{16,}/ },
   {
+    name: 'Token personal de Supabase',
+    pattern: /\bsbp_[A-Za-z0-9_]{20,}/,
+  },
+  {
     name: 'JWT (p. ej. service_role)',
     pattern:
       /\beyJ[A-Za-z0-9_-]{10,}\.eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}/,

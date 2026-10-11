@@ -1,10 +1,13 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { PageHeader } from '@/modules/admin';
 import { requireControl } from '@/modules/control/server';
 import { listDeliveries } from '@/modules/control/server';
-import { DeleteControlItem, DeliveryForm } from '@/modules/control/ui';
+import {
+  ConsoleHeader,
+  DeleteControlItem,
+  DeliveryForm,
+} from '@/modules/control/ui';
 import { buttonClass, Card } from '@/components/ui';
 
 export const metadata: Metadata = { title: 'Entrega' };
@@ -20,19 +23,19 @@ export default async function DeliveryPage({
   if (!delivery) notFound();
   return (
     <main className="max-w-4xl">
-      <PageHeader eyebrow="Entregas" title={delivery.title}>
+      <ConsoleHeader section="Entregas" title={delivery.title}>
         <Link
           href="/admin/control/entregas"
           className={buttonClass('outline', 'md')}
         >
           Todas las entregas
         </Link>
-      </PageHeader>
+      </ConsoleHeader>
       <Card as="section">
         <DeliveryForm delivery={delivery} />
       </Card>
       <section className="border-border mt-14 border-t pt-8">
-        <h2 className="mb-4 text-xl font-light">Borrar</h2>
+        <h2 className="mb-3 text-lg font-semibold">Borrar</h2>
         <DeleteControlItem
           kind="delivery"
           id={delivery.id}

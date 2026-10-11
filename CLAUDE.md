@@ -18,7 +18,7 @@ Node 24.16.0 (`.nvmrc`), pnpm 11.19.0, Next.js 16.3.6 (App Router, webpack), Rea
 - Dinero en céntimos enteros y porcentajes en puntos básicos; precio y stock se calculan y validan en servidor.
 - Costes, proveedores y pedidos de compra en el esquema `internal`, no expuesto. Nunca en props, HTML, RSC ni respuestas públicas; solo mediante funciones `admin_*` con permiso y MFA.
 - Toda tabla de `public` tiene RLS y pruebas pgTAP de autorización. Una redirección no sustituye la autorización en servidor: `requireStaff` / `requirePermission` en cada página, acción y Route Handler del panel.
-- La clave privilegiada (`SUPABASE_SECRET_KEY`) solo para invitaciones de Auth y el informe diario. Nunca se piden claves por chat ni se suben secretos; `.env.example` solo lleva valores públicos y nombres.
+- La clave privilegiada (`SUPABASE_SECRET_KEY`) solo para invitaciones de Auth, el informe diario y la copia diaria de la consola (DECISIONS §119). Nunca se piden claves por chat ni se suben secretos; `.env.example` solo lleva valores públicos y nombres.
 - Detalle en [docs/SECURITY.md](docs/SECURITY.md) y [docs/PRICING.md](docs/PRICING.md).
 
 ## Idiomas

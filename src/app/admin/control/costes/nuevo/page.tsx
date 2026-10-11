@@ -1,9 +1,8 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { PageHeader } from '@/modules/admin';
 import { requireControl } from '@/modules/control/server';
 import { isOneOf, CONTROL_AREAS, madridToday } from '@/modules/control';
-import { CostForm } from '@/modules/control/ui';
+import { ConsoleHeader, CostForm } from '@/modules/control/ui';
 import { buttonClass, Card } from '@/components/ui';
 
 export const metadata: Metadata = { title: 'Nuevo coste' };
@@ -17,14 +16,14 @@ export default async function NewCostPage({
   const { area } = await searchParams;
   return (
     <main className="max-w-4xl">
-      <PageHeader eyebrow="Costes" title="Nuevo coste">
+      <ConsoleHeader section="Costes" title="Nuevo coste">
         <Link
           href="/admin/control/costes"
           className={buttonClass('outline', 'md')}
         >
           Todos los costes
         </Link>
-      </PageHeader>
+      </ConsoleHeader>
       <Card as="section">
         <CostForm
           today={madridToday()}

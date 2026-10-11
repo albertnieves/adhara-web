@@ -152,6 +152,84 @@ test('control: venta con descuento, costes, tareas y entregas', async ({
   ).toHaveCount(0);
 });
 
+test('consola: productos, atención, copias, estado, calidad y asistente', async ({
+  page,
+}) => {
+  const email = await user('system_admin');
+  makeControlOwner(email);
+  await login(page, email);
+  const name = stockedProduct(email);
+  // Visitas anónimas de hoy (las de la tienda solo cuentan perfumes publicados).
+  psql(
+    `insert into internal.product_attention_daily (product_id, day, kind, hits)
+     select id, (now() at time zone 'Europe/Madrid')::date, 'view', 25
+     from public.products where name = :'name';`,
+    { name },
+  );
+  const nav = page.getByRole('navigation', { name: 'Secciones de la consola' });
+
+  // Productos: el perfume aparece con sus existencias y abre su ficha.
+  await page.goto(`/admin/control/productos?q=${encodeURIComponent(name)}`);
+  await expect(
+    page.getByRole('heading', { name: 'Productos', exact: true }),
+  ).toBeVisible();
+  const productRow = page.getByRole('row').filter({ hasText: name });
+  await expect(productRow).toHaveCount(1);
+  await productRow.getByRole('link', { name: new RegExp(name) }).click();
+  await expect(page.getByRole('heading', { name, exact: true })).toBeVisible();
+  await expect(nav.getByRole('link', { name: 'Productos' })).toHaveAttribute(
+    'aria-current',
+    'page',
+  );
+
+  // Atención: el perfume con sus 25 visitas de hoy.
+  await page.goto('/admin/control/atencion?periodo=7');
+  await expect(
+    page.getByRole('heading', { name: 'Atención', exact: true }),
+  ).toBeVisible();
+  await expect(page.getByRole('row').filter({ hasText: name })).toContainText(
+    '25',
+  );
+  await expect(
+    page.getByRole('heading', { name: 'Carritos abandonados', exact: true }),
+  ).toBeVisible();
+
+  // Copias: descarga al momento (gzip) y queda en el registro.
+  await page.goto('/admin/control/copias');
+  await expect(
+    page.getByRole('heading', { name: 'Copias de seguridad', exact: true }),
+  ).toBeVisible();
+  const download = page.waitForEvent('download');
+  await page.getByRole('button', { name: 'Descargar copia ahora' }).click();
+  expect((await download).suggestedFilename()).toMatch(
+    /^latelier-copia-\d{4}-\d{2}-\d{2}-\d{4}\.json\.gz$/,
+  );
+  await page.reload();
+  await expect(
+    page.getByRole('row').filter({ hasText: 'Descarga' }).first(),
+  ).toContainText('Correcta');
+
+  // Estado: migraciones al día en la base local.
+  await page.goto('/admin/control/sistema');
+  await expect(
+    page.getByRole('heading', { name: 'Estado del sistema', exact: true }),
+  ).toBeVisible();
+  await expect(page.getByText('Al día', { exact: true })).toBeVisible();
+
+  await page.goto('/admin/control/calidad');
+  await expect(
+    page.getByRole('heading', { name: 'Calidad de datos', exact: true }),
+  ).toBeVisible();
+
+  await page.goto('/admin/control/asistente?periodo=7');
+  await expect(
+    page.getByRole('heading', {
+      name: 'Uso y coste del asistente',
+      exact: true,
+    }),
+  ).toBeVisible();
+});
+
 /** Sin el acceso en el menú del panel ni la consola: 404 en sus rutas. */
 async function expectNoControl(page: Page) {
   // A 1440 px la barra lateral del panel está a la vista (con su pie): que

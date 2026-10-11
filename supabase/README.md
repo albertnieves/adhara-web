@@ -28,6 +28,10 @@ Proyecto de desarrollo: **`adhara-dev`** (ref `xgpsislololgbakzcmad`), región `
 | 20261009150000 | Perfil olfativo: `product_scent_profiles` (lectura pública de publicados; escritura `catalog.edit` o `research.edit`), notas como claves del vocabulario y fuente `https` obligatoria                                                                                                     |
 | 20261009150100 | Suscriptores a promociones: `newsletter_subscribers` (sin acceso público; `customers.view` lee y `customers.manage` da de baja o borra) y alta pública `newsletter_subscribe`                                                                                                             |
 | 20261010120000 | Control del negocio (`/admin/control`): permiso `business.control`, precio cobrado en `store_sale_lines` (sin superar el PVP) y tareas, costes y entregas en `internal` con funciones `admin_control_*`                                                                                   |
+| 20261011090000 | Consola del titular: `internal.control_owners` (solo por SQL; entra el `system_admin` activo al aplicarla), `private.is_control_owner` y `control_access`                                                                                                                                 |
+| 20261011090100 | Métricas por producto: `admin_control_variant_series` (ventas, cobrado, coste, existencias y días con stock por formato y tramo) y `admin_control_variant_events`                                                                                                                         |
+| 20261011090200 | Visitas anónimas: `internal.product_attention_daily`, `track_product_event` (pública, solo publicados, freno de 1200/min) y `admin_control_attention`                                                                                                                                     |
+| 20261011090300 | Copias: bucket privado `system-backups`, `internal.control_backups`, exportación por lista blanca (titular o `service_role`); estado del sistema, uso del asistente y calidad de datos                                                                                                    |
 
 La matriz de permisos se genera desde `src/modules/auth/domain/permissions.ts`; `tests/unit/permissions-sql.test.ts` falla si ambas divergen. Del mismo modo, `tests/unit/inventory-sql.test.ts` compara tipos, efectos, permisos y motivos de los movimientos con `src/modules/inventory/domain/movements.ts`.
 
@@ -35,7 +39,7 @@ Los tipos de `src/lib/supabase/database.types.ts` se generan desde `adhara-dev` 
 
 ## Pruebas de base de datos
 
-`tests/database/*.test.sql` son pruebas pgTAP para `supabase test db` (`pnpm test:db`). Crean usuarios ficticios dentro de una transacción que se revierte y cubren anon, usuario sin personal (cliente), `viewer`, `store_admin` y `system_admin`, con y sin MFA (aal2). Se ejecutan en cada PR y en `main` en `db.yml`, sobre Supabase local recién reiniciado (`supabase db reset`). Resultado del 10/10 (CLI 2.118.0): 329/329 en 10 archivos.
+`tests/database/*.test.sql` son pruebas pgTAP para `supabase test db` (`pnpm test:db`). Crean usuarios ficticios dentro de una transacción que se revierte y cubren anon, usuario sin personal (cliente), `viewer`, `store_admin` y `system_admin`, con y sin MFA (aal2). Se ejecutan en cada PR y en `main` en `db.yml`, sobre Supabase local recién reiniciado (`supabase db reset`). Resultado del 11/10 (CLI 2.118.0): 492/492 en 13 archivos.
 
 | Archivo                 | Pruebas | Qué cubre                                                                                                                                                                     |
 | ----------------------- | ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -48,7 +52,10 @@ Los tipos de `src/lib/supabase/database.types.ts` se generan desde `adhara-dev` 
 | `06_assistant`          | 24      | Informes diarios, registro de uso y lecturas de la tarea programada                                                                                                           |
 | `07_phase1_guarantees`  | 28      | Criterio 9 de la Fase 1: RLS en todas las tablas públicas, anon sin `admin_*` ni escritura, PVP sin permiso, publicación y UPDATE/DELETE en solo inserción                    |
 | `08_scent_newsletter`   | 30      | Perfil olfativo (restricciones, lectura de publicados, escritura con permiso y MFA) y suscriptores (alta pública, sin lectura pública, baja y borrado con `customers.manage`) |
-| `09_business_control`   | 36      | Control: solo `system_admin` con MFA, `internal` inalcanzable, auditoría sin importes, precio del mostrador y hechos del mes                                                  |
+| `09_business_control`   | 40      | Control: solo el titular con MFA (otro `system_admin` no), `internal` inalcanzable, auditoría sin importes, precio del mostrador y hechos del mes                             |
+| `10_product_metrics`    | 49      | Series por formato (ventas, cobrado, coste, existencias, días con stock) y historial de PVP y coste, solo para el titular                                                     |
+| `11_product_attention`  | 55      | Visitas: solo perfumes publicados, sin revelar nada, freno por minuto y lectura solo del titular                                                                              |
+| `12_backups_system`     | 55      | Copias (lista blanca, rol de servicio, bucket privado, registro de solo inserción), estado del sistema, uso del asistente y calidad de datos                                  |
 
 Además, en `db.yml`: `scripts/check-db-types.ts` (tipos generados iguales a las migraciones) y `scripts/check-db-lint.ts` (`supabase db lint` con plpgsql_check; falla con cualquier error salvo tres falsos positivos de tablas temporales, DECISIONS §84).
 

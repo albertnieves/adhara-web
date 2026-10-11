@@ -81,7 +81,8 @@ test('lo que no cuenta también responde 204', async ({ request }) => {
 
 test('un cuerpo que no es JSON responde 400', async ({ request }) => {
   const response = await request.post('/api/eventos', {
-    data: 'esto no es json',
+    // Como Buffer: una cadena con tipo JSON, Playwright la convertiría en JSON.
+    data: Buffer.from('esto no es json'),
     headers: { 'Content-Type': 'application/json', 'User-Agent': AGENT },
   });
   expect(response.status()).toBe(400);

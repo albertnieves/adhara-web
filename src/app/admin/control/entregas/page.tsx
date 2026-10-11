@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { PageHeader } from '@/modules/admin';
 import { requireControl } from '@/modules/control/server';
 import type { BillingStatus, ControlDelivery } from '@/modules/control';
 import {
@@ -16,7 +15,7 @@ import {
   sortDeliveries,
 } from '@/modules/control';
 import { listCosts, listDeliveries } from '@/modules/control/server';
-import { KeyFigure } from '@/modules/control/ui';
+import { ConsoleHeader, KeyFigure } from '@/modules/control/ui';
 import { Badge, buttonClass, EmptyState, Table } from '@/components/ui';
 import type { BadgeTone } from '@/components/ui';
 
@@ -54,16 +53,16 @@ export default async function DeliveriesPage() {
 
   return (
     <main>
-      <PageHeader eyebrow="Proyecto" title="Entregas">
+      <ConsoleHeader section="Proyecto" title="Entregas">
         <Link
           href="/admin/control/entregas/nueva"
           className={buttonClass('primary', 'md')}
         >
           Nueva entrega
         </Link>
-      </PageHeader>
+      </ConsoleHeader>
 
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="grid grid-cols-4 gap-3">
         <KeyFigure
           label="Por facturar"
           value={euros(money.toInvoiceCents)}
@@ -104,6 +103,7 @@ export default async function DeliveriesPage() {
             <Table
               caption="Entregas del proyecto al cliente"
               stacked={false}
+              density="compact"
               className="min-w-[52rem]"
             >
               <thead>

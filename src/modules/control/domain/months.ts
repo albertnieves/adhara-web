@@ -101,3 +101,26 @@ export function daysBetween(from: IsoDate, to: IsoDate): number {
       86_400_000,
   );
 }
+
+/** Suma días a una fecha ISO (negativos para restar). */
+export function addDays(date: IsoDate, days: number): IsoDate {
+  const time = Date.parse(`${date}T12:00:00Z`) + days * 86_400_000;
+  return new Date(time).toISOString().slice(0, 10);
+}
+
+/** Lunes de la semana ISO de la fecha. */
+export function weekStart(date: IsoDate): IsoDate {
+  const weekday = new Date(`${date}T12:00:00Z`).getUTCDay(); // 0 = domingo
+  return addDays(date, -((weekday + 6) % 7));
+}
+
+const WEEK = new Intl.DateTimeFormat('es-ES', {
+  day: 'numeric',
+  month: 'short',
+  timeZone: 'UTC',
+});
+
+/** «6 oct», para rotular semanas y días. */
+export function shortDayLabel(date: IsoDate): string {
+  return WEEK.format(new Date(`${date}T12:00:00Z`)).replace('.', '');
+}

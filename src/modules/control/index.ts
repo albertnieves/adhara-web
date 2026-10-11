@@ -29,6 +29,7 @@ export type {
   TaskStatus,
 } from './domain/labels';
 export {
+  addDays,
   addMonths,
   dayLabel,
   daysBetween,
@@ -40,6 +41,8 @@ export {
   monthShortLabel,
   monthStart,
   monthsEndingAt,
+  shortDayLabel,
+  weekStart,
 } from './domain/months';
 export type { IsoDate, MonthKey } from './domain/months';
 export {
@@ -84,7 +87,14 @@ export type {
   ProjectBalance,
   TaskCounts,
 } from './domain/work';
-export { euros, percent, signedEuros, signedPercent } from './domain/format';
+export {
+  euros,
+  integer,
+  madridDateTime,
+  percent,
+  signedEuros,
+  signedPercent,
+} from './domain/format';
 export {
   ADI_CUTOFF,
   CV2_CUTOFF,
@@ -169,3 +179,34 @@ export type {
   InterestGap,
   InterestItem,
 } from './domain/attention';
+export {
+  BACKUP_FORMAT,
+  BACKUP_PATH_PATTERN,
+  BACKUP_RETENTION_DAYS,
+  BACKUP_STALE_HOURS,
+  BACKUP_VERSION,
+  MAX_DOWNLOAD_BYTES,
+  backupDayOf,
+  backupDocumentSchema,
+  backupFileName,
+  backupStoragePath,
+  expiredBackups,
+  formatBytes,
+  hoursSince,
+  madridStamp,
+  supabaseRefOf,
+} from './domain/backup';
+export type { BackupDocument } from './domain/backup';
+export {
+  LATEST_MIGRATION,
+  REPO_MIGRATIONS,
+  migrationDiff,
+} from './domain/migrations';
+export type { AppliedMigration, MigrationDiff } from './domain/migrations';
+export {
+  MODEL_PRICES,
+  PRICING_SOURCE,
+  formatMicroUsd,
+  usageCostMicroUsd,
+} from './domain/assistant-pricing';
+export type { ModelPrice, TokenUsage } from './domain/assistant-pricing';

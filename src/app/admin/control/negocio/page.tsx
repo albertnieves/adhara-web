@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { PageHeader } from '@/modules/admin';
 import { requireControl } from '@/modules/control/server';
 import {
   businessMonths,
@@ -14,7 +13,7 @@ import {
   topVariants,
 } from '@/modules/control';
 import { listCosts, listMonthFacts } from '@/modules/control/server';
-import { MonthBars } from '@/modules/control/ui';
+import { ConsoleHeader, MonthBars } from '@/modules/control/ui';
 import { VAT_GENERAL_BP } from '@/modules/pricing';
 import { listAllVariants } from '@/modules/reports/server';
 import { Table } from '@/components/ui';
@@ -45,7 +44,7 @@ export default async function BusinessPage({
 
   return (
     <main>
-      <PageHeader eyebrow="Negocio" title="Ventas y beneficio">
+      <ConsoleHeader section="Negocio" title="Ventas y beneficio">
         <nav aria-label="Periodo" className="flex flex-wrap gap-2">
           {PERIODS.map((p) => (
             <Link
@@ -62,7 +61,7 @@ export default async function BusinessPage({
             </Link>
           ))}
         </nav>
-      </PageHeader>
+      </ConsoleHeader>
 
       <p className="text-fg-muted mb-10 max-w-3xl text-sm leading-relaxed">
         Ventas de la tienda (mostrador y ventas registradas desde Inventario)
@@ -77,7 +76,7 @@ export default async function BusinessPage({
         del beneficio, lo hace el coste de lo vendido.
       </p>
 
-      <div className="grid gap-10 lg:grid-cols-2">
+      <div className="grid grid-cols-2 gap-8">
         <MonthBars
           title="Beneficio por mes"
           data={rows.map((r) => ({ month: r.month, value: r.profitCents }))}
@@ -96,11 +95,12 @@ export default async function BusinessPage({
       </div>
 
       <section className="mt-14">
-        <h2 className="mb-4 text-2xl font-light">Mes a mes</h2>
+        <h2 className="mb-3 text-lg font-semibold">Mes a mes</h2>
         <div className="overflow-x-auto">
           <Table
             caption={`Cuenta de resultados de los últimos ${count} meses`}
             stacked={false}
+            density="compact"
             className="min-w-[60rem]"
           >
             <thead>
@@ -235,7 +235,7 @@ export default async function BusinessPage({
       </section>
 
       <section className="mt-14">
-        <h2 className="mb-4 text-2xl font-light">
+        <h2 className="mb-3 text-lg font-semibold">
           Lo más vendido en {count} meses
         </h2>
         {top.length === 0 ? (

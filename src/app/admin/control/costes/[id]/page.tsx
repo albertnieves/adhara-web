@@ -1,11 +1,14 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { PageHeader } from '@/modules/admin';
 import { requireControl } from '@/modules/control/server';
 import { madridToday } from '@/modules/control';
 import { listCosts } from '@/modules/control/server';
-import { CostForm, DeleteControlItem } from '@/modules/control/ui';
+import {
+  ConsoleHeader,
+  CostForm,
+  DeleteControlItem,
+} from '@/modules/control/ui';
 import { buttonClass, Card } from '@/components/ui';
 
 export const metadata: Metadata = { title: 'Coste' };
@@ -21,19 +24,19 @@ export default async function CostPage({
   if (!cost) notFound();
   return (
     <main className="max-w-4xl">
-      <PageHeader eyebrow="Costes" title={cost.concept}>
+      <ConsoleHeader section="Costes" title={cost.concept}>
         <Link
           href="/admin/control/costes"
           className={buttonClass('outline', 'md')}
         >
           Todos los costes
         </Link>
-      </PageHeader>
+      </ConsoleHeader>
       <Card as="section">
         <CostForm cost={cost} today={madridToday()} />
       </Card>
       <section className="border-border mt-14 border-t pt-8">
-        <h2 className="mb-2 text-xl font-light">Borrar</h2>
+        <h2 className="mb-2 text-lg font-semibold">Borrar</h2>
         <p className="text-fg-muted mb-4 text-sm">
           Si el coste ya no se paga, mejor ponle fecha de fin: así sigue
           contando en los meses en que se pagó.

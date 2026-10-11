@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { PageHeader } from '@/modules/admin';
 import { requireControl } from '@/modules/control/server';
 import type { ControlArea, ControlCost, CostState } from '@/modules/control';
 import {
@@ -19,7 +18,7 @@ import {
   recurringMonthlyCents,
 } from '@/modules/control';
 import { listCosts } from '@/modules/control/server';
-import { KeyFigure, MonthBars } from '@/modules/control/ui';
+import { ConsoleHeader, KeyFigure, MonthBars } from '@/modules/control/ui';
 import { Badge, buttonClass, EmptyState, Table } from '@/components/ui';
 
 export const metadata: Metadata = { title: 'Costes' };
@@ -51,6 +50,7 @@ function CostTable({
       <Table
         caption={`Costes del ${AREA_LABELS[area].toLowerCase()}`}
         stacked={false}
+        density="compact"
         className="min-w-[48rem]"
       >
         <thead>
@@ -127,14 +127,14 @@ export default async function CostsPage() {
 
   return (
     <main>
-      <PageHeader eyebrow="Negocio" title="Costes">
+      <ConsoleHeader section="Negocio" title="Costes">
         <Link
           href="/admin/control/costes/nuevo"
           className={buttonClass('primary', 'md')}
         >
           Añadir coste
         </Link>
-      </PageHeader>
+      </ConsoleHeader>
 
       <p className="text-fg-muted mb-10 max-w-3xl text-sm leading-relaxed">
         Importes sin IVA. Los mensuales cuentan cada mes de su vigencia, los
@@ -144,7 +144,7 @@ export default async function CostsPage() {
         cada formato al venderse.
       </p>
 
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="grid grid-cols-4 gap-3">
         <KeyFigure
           label="Fijos del negocio"
           value={euros(business)}
@@ -185,7 +185,7 @@ export default async function CostsPage() {
       ) : (
         CONTROL_AREAS.map((area) => (
           <section key={area} className="mt-14">
-            <h2 className="mb-4 text-2xl font-light">{AREA_LABELS[area]}</h2>
+            <h2 className="mb-3 text-lg font-semibold">{AREA_LABELS[area]}</h2>
             <CostTable
               area={area}
               costs={costs.filter((c) => c.area === area)}
