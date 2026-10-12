@@ -1,11 +1,13 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
+import { after } from 'next/server';
 import { z } from 'zod';
 import type { ActionState } from '@/modules/admin';
 import { fail, ok } from '@/modules/admin';
 import { isAllowed } from '@/modules/auth';
 import { requirePermission } from '@/modules/auth/server';
+import { sendOrderEmails } from '@/modules/mail/server';
 import { ORDER_STATUS_LABELS, orderNumberLabel } from '../domain/labels';
 import type { OrderStatus } from '../domain/status';
 import { ORDER_STATUSES, ORDER_TRANSITIONS } from '../domain/status';
@@ -59,6 +61,10 @@ export async function changeWebOrderStatus(
     p_tracking_reference: t.tracking ?? undefined,
   });
   if (error) return fail(describeOrderError(error));
+  // Pagado, listo para recoger o enviado encolan un correo al cliente (P06):
+  // sale después de responder; si falla, lo reintenta la tarea programada.
+  if (['paid', 'ready_for_pickup', 'shipped'].includes(t.to))
+    after(() => sendOrderEmails(5).then(() => undefined));
   revalidatePath('/admin/pedidos', 'layout');
   revalidatePath('/admin');
   return ok(

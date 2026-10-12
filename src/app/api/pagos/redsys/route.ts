@@ -1,4 +1,6 @@
+import { after } from 'next/server';
 import { createOrdersClient } from '@/lib/supabase/privileged';
+import { sendOrderEmails } from '@/modules/mail/server';
 import { redsysConfig } from '@/modules/payments/server/config';
 import { readRedsysNotification } from '@/modules/payments/server/redsys';
 
@@ -60,5 +62,9 @@ export async function POST(request: Request) {
   const decision = data as { action: string; reason: string | null };
   if (decision.action === 'reject' || decision.action === 'review')
     console.warn('[pagos] cobro', decision.action, decision.reason);
+  // El pago confirmado encoló la confirmación al cliente (P06): sale después
+  // de responder al banco; si falla, la reintenta la tarea programada.
+  if (decision.action === 'confirm')
+    after(() => sendOrderEmails(5).then(() => undefined));
   return new Response('OK', { status: 200 });
 }

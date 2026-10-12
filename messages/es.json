@@ -336,5 +336,30 @@
       "expired": "La reserva ha caducado: haz el pedido otra vez.",
       "generic": "No hemos podido conectar con el banco. Inténtalo de nuevo en unos minutos."
     }
+  },
+  "email": {
+    "subjectPaid": "Pedido Nº {number} confirmado",
+    "subjectReady": "Tu pedido Nº {number} está listo para recoger",
+    "subjectShipped": "Tu pedido Nº {number} va de camino",
+    "greeting": "Hola, {name}:",
+    "paidLead": "Hemos recibido el pago de tu pedido Nº {number}. Gracias por tu compra.",
+    "pickupNext": "Te escribiremos cuando esté listo para recoger en la tienda: {address}.",
+    "shippingNext": "Te escribiremos cuando salga hacia esta dirección: {address}.",
+    "readyLead": "Tu pedido Nº {number} ya está listo. Puedes recogerlo en la tienda: {address}.",
+    "readyHours": "Horario: {hours}.",
+    "readyBring": "Trae el número de pedido. Si viene otra persona a recogerlo, que lo traiga también.",
+    "shippedLead": "Tu pedido Nº {number} ha salido hacia esta dirección: {address}.",
+    "tracking": "Número de seguimiento: {tracking}.",
+    "summary": "Tu pedido",
+    "items": "Artículos",
+    "shipping": "Envío",
+    "pickup": "Recogida en la tienda",
+    "free": "Gratis",
+    "total": "Total (IVA incluido)",
+    "withdrawal": "Tienes 14 días naturales desde que recibes el pedido para desistir de la compra, salvo en los perfumes que se hayan desprecintado. Te lo explicamos en las condiciones de venta, que adjuntamos, y en {url}",
+    "seller": "Vendedor: {holder}, NIF {taxId}, {address}.",
+    "contact": "¿Dudas? Responde a este correo o escríbenos a {email}.",
+    "attachment": "condiciones-de-venta.txt",
+    "signature": "L’Atelier du Désert · Perfumería árabe en Castelldefels"
   }
 }

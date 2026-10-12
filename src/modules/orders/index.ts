@@ -20,6 +20,7 @@ export type {
 export {
   FULFILLMENT_LABELS,
   ORDER_ERRORS,
+  ORDER_EMAIL_LABELS,
   ORDER_EVENT_LABELS,
   ORDER_STATUS_LABELS,
   PAYMENT_DECISION_LABELS,
@@ -27,6 +28,7 @@ export {
   PAYMENT_REASON_LABELS,
   incidentOpen,
   orderNumberLabel,
+  orderEmailBadge,
   orderStatusBadge,
   panelTransitions,
   transitionAction,

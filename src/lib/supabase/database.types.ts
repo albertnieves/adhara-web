@@ -346,6 +346,53 @@ export type Database = {
           },
         ];
       };
+      order_emails: {
+        Row: {
+          attempts: number;
+          created_at: string;
+          id: number;
+          kind: string;
+          last_error: string | null;
+          locked_until: string | null;
+          order_id: string;
+          provider_id: string | null;
+          sent_at: string | null;
+          status: string;
+        };
+        Insert: {
+          attempts?: number;
+          created_at?: string;
+          id?: never;
+          kind: string;
+          last_error?: string | null;
+          locked_until?: string | null;
+          order_id: string;
+          provider_id?: string | null;
+          sent_at?: string | null;
+          status?: string;
+        };
+        Update: {
+          attempts?: number;
+          created_at?: string;
+          id?: never;
+          kind?: string;
+          last_error?: string | null;
+          locked_until?: string | null;
+          order_id?: string;
+          provider_id?: string | null;
+          sent_at?: string | null;
+          status?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'order_emails_order_id_fkey';
+            columns: ['order_id'];
+            isOneToOne: false;
+            referencedRelation: 'orders';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       order_events: {
         Row: {
           actor_id: string | null;
@@ -1873,6 +1920,16 @@ export type Database = {
         };
         Returns: Json;
       };
+      web_order_email_result: {
+        Args: {
+          p_error?: string;
+          p_id: number;
+          p_ok: boolean;
+          p_provider_id?: string;
+        };
+        Returns: undefined;
+      };
+      web_order_emails_claim: { Args: { p_limit?: number }; Returns: Json };
       web_order_new_attempt: {
         Args: { p_order_id: string; p_provider: string };
         Returns: Json;

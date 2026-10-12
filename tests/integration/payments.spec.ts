@@ -123,6 +123,13 @@ test('pago aceptado: banco, vuelta antes del aviso y pedido pagado una sola vez'
     reservation: 'committed',
   });
 
+  // La confirmación al cliente queda en la cola (P06), una sola vez.
+  const { data: emails } = await admin
+    .from('order_emails')
+    .select('kind, status')
+    .eq('order_id', placed.id);
+  expect(emails).toEqual([{ kind: 'order_paid', status: 'pending' }]);
+
   // El banco repite la notificación: un solo cobro.
   expect((await notify(page.request, body)).status()).toBe(200);
   expect(await payments(placed.id)).toEqual([

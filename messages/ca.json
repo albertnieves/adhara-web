@@ -336,5 +336,30 @@
       "expired": "La reserva ha caducat: fes la comanda una altra vegada.",
       "generic": "No hem pogut connectar amb el banc. Torna-ho a provar d’aquí a uns minuts."
     }
+  },
+  "email": {
+    "subjectPaid": "Comanda núm. {number} confirmada",
+    "subjectReady": "La teva comanda núm. {number} està a punt per recollir",
+    "subjectShipped": "La teva comanda núm. {number} és de camí",
+    "greeting": "Hola, {name}:",
+    "paidLead": "Hem rebut el pagament de la teva comanda núm. {number}. Gràcies per la teva compra.",
+    "pickupNext": "T’escriurem quan estigui a punt per recollir a la botiga: {address}.",
+    "shippingNext": "T’escriurem quan surti cap a aquesta adreça: {address}.",
+    "readyLead": "La teva comanda núm. {number} ja està a punt. Pots recollir-la a la botiga: {address}.",
+    "readyHours": "Horari: {hours}.",
+    "readyBring": "Porta el número de comanda. Si la ve a recollir una altra persona, que també el porti.",
+    "shippedLead": "La teva comanda núm. {number} ha sortit cap a aquesta adreça: {address}.",
+    "tracking": "Número de seguiment: {tracking}.",
+    "summary": "La teva comanda",
+    "items": "Articles",
+    "shipping": "Enviament",
+    "pickup": "Recollida a la botiga",
+    "free": "Gratuït",
+    "total": "Total (IVA inclòs)",
+    "withdrawal": "Tens 14 dies naturals des que reps la comanda per desistir de la compra, excepte en els perfums que s’hagin desprecintat. T’ho expliquem a les condicions de venda, que adjuntem, i a {url}",
+    "seller": "Venedor: {holder}, NIF {taxId}, {address}.",
+    "contact": "Dubtes? Respon aquest correu o escriu-nos a {email}.",
+    "attachment": "condicions-de-venda.txt",
+    "signature": "L’Atelier du Désert · Perfumeria àrab a Castelldefels"
   }
 }

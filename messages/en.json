@@ -336,5 +336,30 @@
       "expired": "Your reservation has expired: please place the order again.",
       "generic": "We could not connect to the bank. Please try again in a few minutes."
     }
+  },
+  "email": {
+    "subjectPaid": "Order no. {number} confirmed",
+    "subjectReady": "Your order no. {number} is ready to collect",
+    "subjectShipped": "Your order no. {number} is on its way",
+    "greeting": "Hello {name},",
+    "paidLead": "We have received the payment for your order no. {number}. Thank you for your purchase.",
+    "pickupNext": "We will write to you when it is ready to collect at the shop: {address}.",
+    "shippingNext": "We will write to you when it leaves for this address: {address}.",
+    "readyLead": "Your order no. {number} is ready. You can collect it at the shop: {address}.",
+    "readyHours": "Opening hours: {hours}.",
+    "readyBring": "Bring your order number. If someone else collects it for you, they should bring it too.",
+    "shippedLead": "Your order no. {number} has left for this address: {address}.",
+    "tracking": "Tracking number: {tracking}.",
+    "summary": "Your order",
+    "items": "Items",
+    "shipping": "Delivery",
+    "pickup": "Collection in store",
+    "free": "Free",
+    "total": "Total (VAT included)",
+    "withdrawal": "You have 14 calendar days from receiving your order to withdraw from the purchase, except for fragrances whose seal has been removed. We explain this in the terms of sale, which we attach, and at {url}",
+    "seller": "Seller: {holder}, tax ID {taxId}, {address}.",
+    "contact": "Any questions? Reply to this email or write to {email}.",
+    "attachment": "terms-of-sale.txt",
+    "signature": "L’Atelier du Désert · Arabian perfumery in Castelldefels"
   }
 }

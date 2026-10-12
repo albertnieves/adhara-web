@@ -124,6 +124,20 @@ test('administrador de la tienda: prepara y entrega un pedido y resuelve una inc
     reserved: before.reserved - 1,
   });
   await expect(page.getByText('unidades descontadas del stock')).toBeVisible();
+  // Correos al cliente (P06): sin proveedor en la CI, esperan en la cola.
+  const emails = page.locator('section').filter({
+    has: page.getByRole('heading', { name: 'Correos al cliente' }),
+  });
+  await expect(
+    emails.getByText('Confirmación del pago, con las condiciones'),
+  ).toBeVisible();
+  await expect(
+    emails.getByText('Aviso de «listo para recoger»'),
+  ).toBeVisible();
+  await expect(emails.getByText('Pendiente de envío')).toHaveCount(2);
+  await expect(
+    emails.getByText('El correo aún no está configurado'),
+  ).toBeVisible();
 
   await page.goto(`/admin/pedidos/${incident.order_id}`);
   await expect(page.getByRole('note')).toContainText(

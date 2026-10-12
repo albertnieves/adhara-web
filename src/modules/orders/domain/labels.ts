@@ -87,6 +87,26 @@ export const ORDER_EVENT_LABELS: Readonly<Record<string, string>> = {
   status_changed: 'Cambio de estado',
 };
 
+/** Correos al cliente (P06). */
+export const ORDER_EMAIL_LABELS: Readonly<Record<string, string>> = {
+  order_paid: 'Confirmación del pago, con las condiciones',
+  ready_for_pickup: 'Aviso de «listo para recoger»',
+  shipped: 'Aviso de envío',
+};
+
+/** Estado de un correo en la ficha: texto y tono. */
+export function orderEmailBadge(email: { status: string; attempts: number }): {
+  label: string;
+  tone: 'success' | 'warning' | 'danger' | 'neutral';
+} {
+  if (email.status === 'sent') return { label: 'Enviado', tone: 'success' };
+  if (email.status === 'failed')
+    return { label: 'No se pudo enviar', tone: 'danger' };
+  if (email.attempts > 0)
+    return { label: `Reintentando (${email.attempts})`, tone: 'warning' };
+  return { label: 'Pendiente de envío', tone: 'neutral' };
+}
+
 /** Errores de admin_transition_order (y los generales del panel si no). */
 export const ORDER_ERRORS: Readonly<Record<string, string>> = {
   stale_revision:

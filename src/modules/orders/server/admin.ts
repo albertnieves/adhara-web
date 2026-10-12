@@ -156,6 +156,15 @@ export type WebOrderDetail = {
     reason: string | null;
     receivedAt: string;
   }[];
+  /** Correos al cliente (P06): qué salió y qué espera, sin su contenido. */
+  emails: {
+    kind: string;
+    status: string;
+    attempts: number;
+    lastError: string | null;
+    sentAt: string | null;
+    createdAt: string;
+  }[];
   events: {
     id: number;
     kind: string;
@@ -193,6 +202,7 @@ export async function getWebOrder(
     attemptsResult,
     paymentsResult,
     eventsResult,
+    emailsResult,
   ] = await Promise.all([
     supabase
       .from('order_lines')
@@ -225,12 +235,18 @@ export async function getWebOrder(
       .eq('order_id', id)
       .order('at')
       .order('id'),
+    supabase
+      .from('order_emails')
+      .select('kind, status, attempts, last_error, sent_at, created_at')
+      .eq('order_id', id)
+      .order('id'),
   ]);
   const lines = must(linesResult) ?? [];
   const contact = must(contactResult);
   const attempts = must(attemptsResult) ?? [];
   const payments = must(paymentsResult) ?? [];
   const events = must(eventsResult) ?? [];
+  const emails = must(emailsResult) ?? [];
 
   // Cada incidencia por su transacción: ¿cambió el estado del pedido?
   const keptStatus = new Map<string, boolean>();
@@ -325,6 +341,14 @@ export async function getWebOrder(
       decision: p.decision,
       reason: p.reason,
       receivedAt: p.received_at,
+    })),
+    emails: emails.map((e) => ({
+      kind: e.kind,
+      status: e.status,
+      attempts: e.attempts,
+      lastError: e.last_error,
+      sentAt: e.sent_at,
+      createdAt: e.created_at,
     })),
     events: events.map((e) => ({
       id: e.id,

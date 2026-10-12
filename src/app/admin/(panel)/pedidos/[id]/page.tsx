@@ -7,13 +7,16 @@ import { formatEuros } from '@/lib/money';
 import { PageHeader, PrintButton } from '@/modules/admin';
 import { isAllowed } from '@/modules/auth';
 import { requirePermission } from '@/modules/auth/server';
+import { mailConfig } from '@/modules/mail/server';
 import {
   FULFILLMENT_LABELS,
+  ORDER_EMAIL_LABELS,
   ORDER_EVENT_LABELS,
   ORDER_STATUS_LABELS,
   PAYMENT_DECISION_LABELS,
   PAYMENT_OUTCOME_LABELS,
   PAYMENT_REASON_LABELS,
+  orderEmailBadge,
   orderStatusBadge,
   panelTransitions,
 } from '@/modules/orders';
@@ -98,7 +101,7 @@ export default async function WebOrderPage({
     withCustomer: canCustomers,
   });
   if (!detail) notFound();
-  const { order, lines, contact, attempts, payments, events } = detail;
+  const { order, lines, contact, attempts, payments, emails, events } = detail;
   const badge = orderStatusBadge(order);
   const incidents = payments.filter((p) => p.incidentOpen);
   const actions = panelTransitions(order, session);
@@ -411,6 +414,44 @@ export default async function WebOrderPage({
               . Nunca se guardan datos de la tarjeta.
             </p>
           </>
+        )}
+      </Section>
+
+      <Section title="Correos al cliente" className="print:hidden">
+        {emails.length === 0 ? (
+          <p className="text-fg-muted text-sm">
+            Aún no hay correos: el primero sale al confirmarse el pago.
+          </p>
+        ) : (
+          <ul className="divide-border border-border divide-y border-y text-sm">
+            {emails.map((email) => {
+              const status = orderEmailBadge(email);
+              return (
+                <li
+                  key={email.kind}
+                  className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 py-3"
+                >
+                  <span>{ORDER_EMAIL_LABELS[email.kind] ?? email.kind}</span>
+                  <span className="flex flex-wrap items-center gap-2">
+                    <Badge tone={status.tone}>{status.label}</Badge>
+                    <span className="text-fg-muted text-xs tabular-nums">
+                      {email.sentAt
+                        ? DATE_TIME.format(new Date(email.sentAt))
+                        : email.lastError
+                          ? `Último error: ${email.lastError}`
+                          : ''}
+                    </span>
+                  </span>
+                </li>
+              );
+            })}
+          </ul>
+        )}
+        {!mailConfig() && (
+          <p className="text-fg-muted mt-3 text-xs">
+            El correo aún no está configurado: los avisos esperan en la cola y
+            saldrán en cuanto se configure el proveedor.
+          </p>
         )}
       </Section>
 
