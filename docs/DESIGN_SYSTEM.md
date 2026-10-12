@@ -59,6 +59,7 @@ Una combinación que no está en la matriz no está permitida. Para añadir una,
 - **Familias (D1):** Cormorant Garamond (`font-display`, titulares) y Manrope (`font-sans`, todo lo demás), autoalojadas. En la consola, `font-display` vale Manrope y las cifras van en la monoespaciada del sistema (`font-mono`), §2.7.
 - **Escala cerrada:** los tamaños de Tailwind (`text-xs` a `text-5xl`), `text-2xs` (11 px, el mínimo) y `text-display` (titular fluido de la portada). Espaciados `tracking-caps-sm`, `tracking-caps`, `tracking-caps-lg` y `tracking-display`.
 - **Componentes:** `Heading` separa el nivel (h1–h4, estructura) del tamaño (`display`, `h1`–`h4`, aspecto); `Text` (cuerpo, pequeño, nota, cifras tabulares); `Eyebrow` (versalitas de 11 px, siempre en Manrope).
+- **Cifras largas en tarjetas:** un importe no baja de línea, así que su tamaño se elige por el ancho de la tarjeta con consultas de contenedor (`@container` y `@min-[…]:text-*`, siempre dentro de la escala). Lo usan las cifras del inicio del panel: «Stock a coste» con seis cifras cabe a 390, 768, 1280 y 1440 px (`tests/integration/layout-audit.spec.ts`).
 
 **No se hace:** `text-[…]` ni `tracking-[…]` arbitrarios, ni texto de menos de 11 px. Excepción permanente: la etiqueta de estante impresa (`PriceLabelCard`), en pt y mm.
 

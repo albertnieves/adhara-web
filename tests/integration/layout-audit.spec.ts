@@ -7,7 +7,7 @@ import {
   axeBaseline,
   formatFindings,
 } from '../support/layout-audit';
-import { admin, login, makeControlOwner, user } from './support';
+import { admin, login, makeControlOwner, psql, user } from './support';
 
 /*
  * Red de seguridad del sistema de diseño (DS-01) en el panel: todas sus
@@ -121,6 +121,72 @@ test('panel: diseño sin solapes ni desbordes en todas sus pantallas', async ({
   const { reports, violations } = await auditAll(page, routes, AUDIT_WIDTHS);
   expect(reports.join('\n'), reports.join('\n')).toBe('');
   expect(violations, violations.join('\n')).toEqual([]);
+});
+
+/** Formato con el coste centinela de la base de pruebas (9.876,54 € sin IVA). */
+const SENTINEL_VARIANT = '00000000-0000-4000-8000-00000000ce03';
+
+test('inicio: «Stock a coste» cabe en su tarjeta con importes de seis cifras', async ({
+  page,
+}) => {
+  test.setTimeout(5 * 60_000);
+  await login(page, await user('system_admin'));
+  const { data: store, error } = await admin
+    .from('stock_locations')
+    .select('id')
+    .eq('active', true)
+    .eq('kind', 'store')
+    .order('created_at')
+    .limit(1)
+    .single();
+  if (error) throw error;
+  const { data: before } = await admin
+    .from('inventory_levels')
+    .select('on_hand, reserved')
+    .eq('variant_id', SENTINEL_VARIANT)
+    .eq('location_id', store.id)
+    .maybeSingle();
+  const vars = { variant: SENTINEL_VARIANT, location: String(store.id) };
+  // 12 unidades libres del centinela: más de 118.000 € a coste. Directo en la
+  // base local, sin movimientos, y se deja como estaba al terminar.
+  psql(
+    `insert into public.inventory_levels (variant_id, location_id, on_hand)
+       values (:'variant', :'location', 12)
+     on conflict (variant_id, location_id)
+       do update set on_hand = 12 + public.inventory_levels.reserved;`,
+    vars,
+  );
+  try {
+    const { reports, violations } = await auditAll(
+      page,
+      ['/admin'],
+      AUDIT_WIDTHS,
+      {
+        suffix: '-stock-a-coste',
+        after: async () => {
+          await expect(page.getByText(/^\d{3}\.\d{3},\d{2}\s€$/)).toBeVisible();
+        },
+      },
+    );
+    expect(reports.join('\n'), reports.join('\n')).toBe('');
+    expect(violations, violations.join('\n')).toEqual([]);
+  } finally {
+    psql(
+      before
+        ? `update public.inventory_levels
+             set on_hand = :'on_hand', reserved = :'reserved'
+           where variant_id = :'variant' and location_id = :'location';`
+        : `delete from public.inventory_levels
+           where variant_id = :'variant' and location_id = :'location';`,
+      before
+        ? {
+            ...vars,
+            on_hand: String(before.on_hand),
+            reserved: String(before.reserved),
+          }
+        : vars,
+    );
+  }
 });
 
 test('consola: escritorio sin solapes ni desbordes y aviso por debajo de 1280 px', async ({
