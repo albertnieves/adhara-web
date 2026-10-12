@@ -20,6 +20,20 @@ import {
 import { countOpenWebOrders } from '@/modules/orders/server';
 import { buttonClass, cardClass, Eyebrow } from '@/components/ui';
 
+/**
+ * Tamaño de la cifra. Las cortas (recuentos) usan el grande de siempre; las
+ * largas (importes como «118.518,48 €») bajan por la escala según el ancho de
+ * su tarjeta (consultas de contenedor), para que nunca se salgan de ella
+ * con dos o cuatro columnas ni en móviles estrechos.
+ */
+function statValueSize(value: string | number) {
+  const length = String(value).length;
+  if (length <= 7) return 'text-4xl sm:text-5xl';
+  if (length <= 12)
+    return 'text-xl @min-[8.25rem]:text-2xl @min-[10.5rem]:text-3xl @min-[12.5rem]:text-4xl @min-[16.5rem]:text-5xl';
+  return 'text-lg @min-[8rem]:text-xl @min-[9.5rem]:text-2xl @min-[12rem]:text-3xl @min-[14.5rem]:text-4xl @min-[19rem]:text-5xl';
+}
+
 function Stat({
   label,
   value,
@@ -38,12 +52,12 @@ function Stat({
       className={cardClass({
         padding: 'sm',
         interactive: Boolean(href),
-        className: 'h-full sm:p-6',
+        className: '@container h-full sm:p-6',
       })}
     >
       <Eyebrow className="tracking-caps! sm:tracking-caps-lg!">{label}</Eyebrow>
       <p
-        className={`font-display mt-2 text-4xl font-light lining-nums tabular-nums sm:mt-3 sm:text-5xl ${tone === 'alert' ? 'text-danger' : ''}`}
+        className={`font-display mt-2 font-light whitespace-nowrap lining-nums tabular-nums sm:mt-3 ${statValueSize(value)} ${tone === 'alert' ? 'text-danger' : ''}`}
       >
         {value}
       </p>
