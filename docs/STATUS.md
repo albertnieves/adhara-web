@@ -1,4 +1,4 @@
-# Estado real — 11/10/2026
+# Estado real — 12/10/2026
 
 ## En esta rama: pedidos web (PR #31, 10–12/10/2026)
 
@@ -14,7 +14,7 @@ Plan en [PLAN_PEDIDOS_WEB.md](PLAN_PEDIDOS_WEB.md); decisiones §131–140.
 - **P06 (12/10):** correos de los pedidos (cola en la base; confirmación con las condiciones adjuntas, avisos de recogida y de envío) con Resend por su API, sin SDK; esperan en la cola sin `RESEND_API_KEY` y `EMAIL_FROM`. Devoluciones desde la ficha (cancelar y devolver, todo, una parte o un cobro de más) que solo da por hechas la respuesta firmada del banco.
 - **P07 (12/10):** E2E con banco simulado (pago aceptado, denegado y reintento, firma falsa, importe alterado, duplicados, otro comercio, última unidad, pago tardío y devoluciones).
 - **Comprobado en local (P04–P07, base reiniciada):** pgTAP 680/680 en 18 archivos; tipos generados iguales, `db lint` y concurrencia correctos; 573 unitarias en 52 archivos; `e2e.yml` con `WEB_CHECKOUT=1` y el TPV simulado: tienda pública 241 correctas y 25 omitidas, panel con sesión 36/36 (pagos, devoluciones y correos incluidos); auditoría visual de la página del pedido y de la ficha con devoluciones.
-- **Pendiente:** probar un pago y una devolución en el entorno de pruebas de Redsys (necesita los datos de pruebas del banco; desde aquí no se llega a ese entorno) y un correo real al configurar Resend. **Las cinco migraciones `20261011230000` a `20261012200000` no están aplicadas en `adhara-dev`**: se aplican al fusionar, antes de desplegar, y después de las cinco de la consola (`20261010120000` y `20261011090000`–`20261011090300`), de las que dependen.
+- **Pendiente:** probar un pago y una devolución en el entorno de pruebas de Redsys (necesita los datos de pruebas del banco; desde aquí no se llega a ese entorno) y un correo real al configurar Resend. **Las diez migraciones del 10 al 12/10 (las cinco de la consola y las cinco de pedidos) están aplicadas en `adhara-dev` desde el 12/10**, con las mismas versiones que en el repositorio (DECISIONS §141).
 - **Bloqueado a propósito:** el envío a una zona sin tarifa activa en el panel (no hay precio por defecto); la venta entera, hasta encender `WEB_CHECKOUT` con el TPV configurado.
 - **Plan Pro de Vercel** contratado por el usuario el 11/10 (§134).
 
@@ -22,7 +22,7 @@ Plan en [PLAN_PEDIDOS_WEB.md](PLAN_PEDIDOS_WEB.md); decisiones §131–140.
 
 ## Consola del titular (11/10, rama `claude/serene-dirac-rsrqcx`)
 
-A petición del usuario: el control pasa a ser una consola solo para su cuenta y solo para ordenador, con las métricas de cada perfume, visitas, copias de seguridad y utilidades del sistema. Decisiones §127–130; guía en [ADMIN_OPERATIONS.md](ADMIN_OPERATIONS.md#consola-del-titular-control-del-negocio-y-del-proyecto). **Las migraciones `20261010120000` y `20261011090000`–`20261011090300` están validadas en Supabase local y pendientes de aplicar en `adhara-dev` con autorización del usuario**; esta rama no debe desplegarse antes.
+A petición del usuario: el control pasa a ser una consola solo para su cuenta y solo para ordenador, con las métricas de cada perfume, visitas, copias de seguridad y utilidades del sistema. Decisiones §127–130; guía en [ADMIN_OPERATIONS.md](ADMIN_OPERATIONS.md#consola-del-titular-control-del-negocio-y-del-proyecto). Las migraciones `20261010120000` y `20261011090000`–`20261011090300` están aplicadas en `adhara-dev` desde el 12/10, con autorización del usuario (DECISIONS §141).
 
 - **Solo el titular:** `business.control` con MFA y estar en `internal.control_owners` (entra el administrador del sistema activo al aplicar la migración). Cualquier otra cuenta recibe 404.
 - **Consola oscura solo para ordenador** (desde 1280 px; por debajo, un aviso en la misma URL), con menú lateral fijo, tablas compactas y cifras monoespaciadas.
@@ -35,7 +35,7 @@ A petición del usuario: el control pasa a ser una consola solo para su cuenta y
 
 ## Control del negocio y del proyecto (10/10, rama `claude/serene-dirac-rsrqcx`)
 
-A petición del usuario: un panel aparte para gestionar el cliente y el negocio. Decisiones §122–126; guía en [ADMIN_OPERATIONS.md](ADMIN_OPERATIONS.md#control-del-negocio-y-del-proyecto). **La migración `20261010120000_business_control.sql` está validada en Supabase local y pendiente de aplicar en `adhara-dev` con autorización del usuario**; hasta entonces, el control y el mostrador desplegados fallarían al leer sus tablas y columnas nuevas, así que esta rama no debe desplegarse antes que la migración.
+A petición del usuario: un panel aparte para gestionar el cliente y el negocio. Decisiones §122–126; guía en [ADMIN_OPERATIONS.md](ADMIN_OPERATIONS.md#control-del-negocio-y-del-proyecto). La migración `20261010120000_business_control.sql` está aplicada en `adhara-dev` desde el 12/10 (DECISIONS §141).
 
 - **`/admin/control`**, sección aparte con su propio menú, solo para el administrador del sistema con MFA (permiso nuevo `business.control`; el administrador de la tienda recibe 404). Enlazada como «Control del negocio» en el pie del menú del panel.
   - **Resumen:** ventas sin IVA, margen, costes y beneficio del mes y su evolución en 12 meses; tareas abiertas, vencidas y del cliente; pendiente de cobrar y balance del proyecto; lo urgente y las próximas entregas.
@@ -234,7 +234,7 @@ Plan en [PLAN_INFORMES.md](PLAN_INFORMES.md). Validado con Supabase local; su mi
 
 ### Base de datos (`adhara-dev`, Frankfurt)
 
-Diecisiete migraciones en `supabase/migrations/` (detalle en supabase/README.md): personal y permisos (PR #5), catálogo, inventario, gestión del personal, borrado de niveles con su formato, roles preasignados, costes y registro de costes por lotes; las de la entrega de Codex y las fases R y S, y la del asistente. Las 17 están aplicadas en `adhara-dev` (la del asistente, el 02/10, como `20261002044249`). RLS en todas las tablas públicas; costes fuera de la API (`internal`), solo accesibles con permiso de costes y MFA; historial de PVP, de costes, movimientos y auditoría de solo inserción.
+Diecisiete migraciones en `supabase/migrations/` (detalle en supabase/README.md): personal y permisos (PR #5), catálogo, inventario, gestión del personal, borrado de niveles con su formato, roles preasignados, costes y registro de costes por lotes; las de la entrega de Codex y las fases R y S, y la del asistente. Las 17 están aplicadas en `adhara-dev` (la del asistente, el 02/10, como `20261002044249`). Desde el 12/10 son 29, todas aplicadas: las dos de la web pública (en remoto como `20261009161818` y `20261009164152`), las cinco de la consola y las cinco de pedidos, estas diez con la versión del repositorio (DECISIONS §141). RLS en todas las tablas públicas; costes fuera de la API (`internal`), solo accesibles con permiso de costes y MFA; historial de PVP, de costes, movimientos y auditoría de solo inserción.
 
 Datos cargados: los 4 perfumes del piloto como **borradores sin PVP** (`supabase/data/20260929_pilot_products.sql`), con marca, concentración y formato solo cuando constan en la caja o la ficha oficial (Khamrah sin formato), e imágenes oficiales de marca marcadas como provisionales. Ubicación: Tienda de Castelldefels. Cuentas del personal creadas por el usuario el 30/09 y con su rol aplicado automáticamente (administrador del sistema y administrador de la tienda). El administrador del sistema tiene la verificación en dos pasos activa desde el 01/10; el de la tienda aún no (lectura del 02/10).
 
@@ -311,7 +311,7 @@ La revisión visual con perfumes se hizo en local con un Supabase simulado que d
 
 ## Pendiente del usuario
 
-- **Control del negocio y consola (10–11/10):** autorizar que se apliquen en `adhara-dev`, por orden y antes de desplegar la rama, las migraciones `20261010120000` y `20261011090000`–`20261011090300` (y, si se quiere, la carga `20261010_control_inicial.sql`); comprobar que tu cuenta queda en la lista de titulares; configurar en Vercel, solo servidor, `CRON_SECRET` y `SUPABASE_SECRET_KEY` (si no lo están ya) para la copia diaria y, opcional, `SUPABASE_BACKUPS_TOKEN` (token personal de Supabase limitado a «Backups: Read»), sin pegar nada en el chat; descargar de vez en cuando una copia y guardarla fuera; que la asesoría confirme si la política de privacidad debe mencionar la medición anónima de visitas (DECISIONS §129); después, dar de alta los costes reales y completar importes y facturación de las entregas en `/admin/control`.
+- **Control del negocio y consola (10–11/10):** sus migraciones ya están aplicadas (12/10) y tu cuenta es la única de la lista de titulares; si se quiere, cargar `20261010_control_inicial.sql`; configurar en Vercel, solo servidor, `CRON_SECRET` y `SUPABASE_SECRET_KEY` (si no lo están ya) para la copia diaria y, opcional, `SUPABASE_BACKUPS_TOKEN` (token personal de Supabase limitado a «Backups: Read»), sin pegar nada en el chat; descargar de vez en cuando una copia y guardarla fuera; que la asesoría confirme si la política de privacidad debe mencionar la medición anónima de visitas (DECISIONS §129); después, dar de alta los costes reales y completar importes y facturación de las entregas en `/admin/control`.
 
 0. **Catálogo olfativo y suscripción (09/10):** crear en Sender un token de API (y un grupo «Web») y ponerlos en Vercel, solo servidor, como `SENDER_API_TOKEN` y `SENDER_GROUP_ID`; activar en Sender la doble confirmación o un correo de bienvenida; y que la asesoría revise el texto de privacidad de la suscripción junto con los textos legales (punto 8).
 

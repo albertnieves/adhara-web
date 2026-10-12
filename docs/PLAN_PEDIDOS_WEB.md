@@ -11,8 +11,8 @@ de datos de pedidos, cobros y reservas; P03, la cesta y el checkout; P04, el pag
 por redirección; P05, el panel; P06, los correos y las devoluciones, y P07, las pruebas de
 extremo a extremo con un banco simulado. **La tienda sigue sin vender**: el checkout está
 apagado (`WEB_CHECKOUT`) y sin las variables del TPV y del correo no hay cobro ni avisos.
-Las migraciones `20261011230000` a `20261012200000` **no están aplicadas en `adhara-dev`**
-(se aplican al fusionar, como las demás, después de las de la consola, de las que dependen). No se instalan SDK de pagos ni de correo. Las
+Las migraciones `20261011230000` a `20261012200000` están aplicadas en `adhara-dev` desde el
+12/10, después de las de la consola, de las que dependen (DECISIONS §141). No se instalan SDK de pagos ni de correo. Las
 casillas solo se cierran con evidencia.
 
 ## Flujo previsto
