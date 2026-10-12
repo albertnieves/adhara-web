@@ -67,6 +67,12 @@ export type CheckoutInput = z.infer<typeof checkoutInput>;
 
 export type CheckoutField = keyof CheckoutInput;
 
+/** Formulario firmado que el navegador envía al banco (P04). */
+export type PaymentRedirect = {
+  url: string;
+  fields: Readonly<Record<string, string>>;
+};
+
 export type CheckoutState =
   | { status: 'idle' }
   | {
@@ -76,6 +82,9 @@ export type CheckoutState =
       /** Perfume que falta en outOfStock, si se sabe. */
       product?: string;
     }
+  /** Pedido creado: el navegador va al banco a pagarlo. */
+  | { status: 'redirect'; number: number; form: PaymentRedirect }
+  /** Pedido creado sin TPV configurado: queda pendiente de pago. */
   | {
       status: 'placed';
       number: number;

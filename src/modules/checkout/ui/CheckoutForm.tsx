@@ -19,6 +19,7 @@ import type { CheckoutField, CheckoutState } from '../domain/input';
 import type { ShippingRate } from '../domain/shipping';
 import { isPostalCode, shippingCost, shippingZone } from '../domain/shipping';
 import { placeOrder } from '../server/actions';
+import { PaymentRedirectForm } from './PaymentRedirectForm';
 
 const IDLE: CheckoutState = { status: 'idle' };
 
@@ -33,8 +34,8 @@ export type CheckoutLine = {
  * «Finalizar compra»: datos, entrega (recogida gratis o envío a la península
  * y Baleares con la tarifa del panel) y resumen. Los importes que se ven aquí
  * son orientativos; los que cuentan los calcula la base al crear el pedido.
- * Se mantiene montado tras el pedido (la cesta queda vacía) para enseñar la
- * confirmación.
+ * Se mantiene montado tras el pedido (la cesta queda vacía): con el TPV
+ * configurado lleva al banco a pagar (P04); sin él, enseña la confirmación.
  */
 export function CheckoutForm({
   locale,
@@ -65,6 +66,17 @@ export function CheckoutForm({
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
     startTransition(() => dispatch(formData));
+  }
+
+  if (state.status === 'redirect') {
+    return (
+      <section className="max-w-2xl space-y-6">
+        <Heading level={2} size="h2">
+          {t('placedTitle', { number: state.number })}
+        </Heading>
+        <PaymentRedirectForm form={state.form} />
+      </section>
+    );
   }
 
   if (state.status === 'placed') {

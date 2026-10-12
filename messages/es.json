@@ -303,5 +303,38 @@
       "generic": "No hemos podido registrar el pedido. Inténtalo de nuevo en unos minutos.",
       "review": "Revisa los datos marcados."
     }
+  },
+  "order": {
+    "title": "Tu pedido",
+    "number": "Pedido Nº {number}",
+    "bankDescription": "Pedido Nº {number}",
+    "redirecting": "Te llevamos a la página segura del banco para pagar con tarjeta…",
+    "goToBank": "Ir al pago seguro",
+    "connecting": "Conectando con el banco…",
+    "paidTitle": "Pago confirmado",
+    "paidPickup": "Gracias por tu compra. Te avisaremos cuando esté listo para recoger en {address}; trae el número de pedido.",
+    "paidShipping": "Gracias por tu compra. Lo preparamos y te avisaremos cuando salga hacia tu dirección.",
+    "confirmingTitle": "Confirmando el pago…",
+    "confirmingText": "El banco nos está avisando del pago. Esta página se actualiza sola en unos segundos.",
+    "confirmingSlow": "Está tardando más de lo normal. No vuelvas a pagar: si el cargo aparece en tu banco, el pedido queda registrado y te lo confirmaremos.",
+    "failedTitle": "El pago no se ha completado",
+    "failedText": "El banco no ha autorizado el pago o lo has cancelado.",
+    "awaitingTitle": "Pendiente de pago",
+    "reservedUntil": "Tus perfumes siguen reservados hasta las {time}.",
+    "retry": "Volver a intentar el pago",
+    "pay": "Pagar ahora",
+    "expiredTitle": "La reserva ha caducado",
+    "expiredText": "Pasó el tiempo para pagar y los perfumes han vuelto a la tienda. Puedes hacer el pedido otra vez.",
+    "reviewTitle": "Estamos revisando tu pago",
+    "reviewText": "Hemos recibido el pago, pero tenemos que comprobar algo antes de preparar el pedido. Te escribiremos; si tienes dudas, escríbenos a {email}.",
+    "cancelledTitle": "Pedido cancelado",
+    "cancelledText": "Este pedido está cancelado. Si tienes dudas, escríbenos a {email}.",
+    "notFoundTitle": "No encontramos tu pedido",
+    "notFoundText": "El estado del pedido solo se ve desde el navegador con el que se hizo. Si has pagado y tienes dudas, escríbenos a {email}.",
+    "backToCatalog": "Ver el catálogo",
+    "retryErrors": {
+      "expired": "La reserva ha caducado: haz el pedido otra vez.",
+      "generic": "No hemos podido conectar con el banco. Inténtalo de nuevo en unos minutos."
+    }
   }
 }

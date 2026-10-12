@@ -7,7 +7,10 @@ import {
   cartCount,
   checkoutInput,
   fieldErrors,
+  isOrderId,
+  orderPhase,
   parseCart,
+  readReturnResult,
   serializeCart,
   setLineQuantity,
   shippingCost,
@@ -192,5 +195,40 @@ describe('formulario de finalizar compra', () => {
         phone: 'phoneInvalid',
       });
     }
+  });
+});
+
+describe('vuelta del banco (P04)', () => {
+  const pending = { status: 'pending_payment', payable: true };
+
+  it('el estado sale de la base; la URL solo cambia el mensaje', () => {
+    expect(orderPhase(pending, 'ok')).toBe('confirming');
+    expect(orderPhase(pending, 'ko')).toBe('payment_failed');
+    expect(orderPhase(pending, null)).toBe('awaiting_payment');
+    // Decir «ok» en la URL no confirma nada sin la notificación del banco.
+    expect(orderPhase({ ...pending, payable: false }, 'ok')).toBe('expired');
+  });
+
+  it.each([
+    ['paid', 'paid'],
+    ['processing', 'paid'],
+    ['ready_for_pickup', 'paid'],
+    ['shipped', 'paid'],
+    ['completed', 'paid'],
+    ['needs_attention', 'review'],
+    ['cancelled', 'cancelled'],
+    ['refunded', 'cancelled'],
+  ])('%s → %s, venga como venga del banco', (status, phase) => {
+    for (const result of ['ok', 'ko', null] as const)
+      expect(orderPhase({ status, payable: false }, result)).toBe(phase);
+  });
+
+  it('solo ok y ko cuentan como resultado; la cookie solo admite un uuid', () => {
+    expect(readReturnResult('ok')).toBe('ok');
+    expect(readReturnResult(['ok'])).toBeNull();
+    expect(readReturnResult('OK')).toBeNull();
+    expect(isOrderId('6f1d5b8e-2a3c-4c5d-8e9f-0a1b2c3d4e5f')).toBe(true);
+    expect(isOrderId('1001')).toBe(false);
+    expect(isOrderId("' or 1=1 --")).toBe(false);
   });
 });

@@ -17,15 +17,17 @@ import {
 
 type Route = [path: string, name: string, status?: number];
 
-// Cesta y checkout (P03): solo existen con WEB_CHECKOUT=1 (e2e.yml).
+// Cesta, checkout (P03) y pedido (P04): solo existen con WEB_CHECKOUT=1 (e2e.yml).
 const CHECKOUT_ON: Route[] = [
   ['/es/cesta', 'cesta-es'],
   ['/en/basket', 'cesta-en'],
   ['/es/finalizar-compra', 'finalizar-compra-es'],
+  ['/es/pedido', 'pedido-es'],
 ];
 const CHECKOUT_OFF: Route[] = [
   ['/es/cesta', 'cesta-apagada', 404],
   ['/es/finalizar-compra', 'finalizar-compra-apagada', 404],
+  ['/es/pedido', 'pedido-apagada', 404],
 ];
 
 const ROUTES: Route[] = [

@@ -26,4 +26,13 @@ export type {
   CheckoutField,
   CheckoutInput,
   CheckoutState,
+  PaymentRedirect,
 } from './domain/input';
+export {
+  ORDER_COOKIE,
+  ORDER_MAX_AGE,
+  isOrderId,
+  orderPhase,
+  readReturnResult,
+} from './domain/order';
+export type { OrderPhase, OrderStatusView, ReturnResult } from './domain/order';

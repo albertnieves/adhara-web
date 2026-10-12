@@ -436,6 +436,12 @@ export const es: LegalCopy = {
                     'Guardar los perfumes que añades a la cesta mientras compras. Solo se crea si usas la cesta.',
                     '30 días',
                   ],
+                  [
+                    'atelier_pedido',
+                    'Propia',
+                    'Recordar el pedido que acabas de hacer para enseñarte su estado al volver del banco. Solo se crea al hacer un pedido.',
+                    '30 días',
+                  ],
                 ],
               },
             },

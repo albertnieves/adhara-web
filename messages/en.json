@@ -303,5 +303,38 @@
       "generic": "We could not place your order. Please try again in a few minutes.",
       "review": "Please check the highlighted fields."
     }
+  },
+  "order": {
+    "title": "Your order",
+    "number": "Order no. {number}",
+    "bankDescription": "Order no. {number}",
+    "redirecting": "Taking you to the bank’s secure page to pay by card…",
+    "goToBank": "Go to secure payment",
+    "connecting": "Connecting to the bank…",
+    "paidTitle": "Payment confirmed",
+    "paidPickup": "Thank you for your order. We will let you know when it is ready to collect at {address}; bring your order number.",
+    "paidShipping": "Thank you for your order. We are preparing it and will let you know when it is on its way.",
+    "confirmingTitle": "Confirming your payment…",
+    "confirmingText": "The bank is letting us know about your payment. This page updates itself in a few seconds.",
+    "confirmingSlow": "This is taking longer than usual. Please do not pay again: if the charge appears in your bank, your order is registered and we will confirm it.",
+    "failedTitle": "The payment was not completed",
+    "failedText": "The bank did not authorise the payment, or you cancelled it.",
+    "awaitingTitle": "Awaiting payment",
+    "reservedUntil": "Your fragrances are reserved until {time}.",
+    "retry": "Try the payment again",
+    "pay": "Pay now",
+    "expiredTitle": "Your reservation has expired",
+    "expiredText": "The time to pay has passed and the fragrances are back in the shop. You can place the order again.",
+    "reviewTitle": "We are checking your payment",
+    "reviewText": "We have received your payment, but we need to check something before preparing your order. We will be in touch; if you have any questions, write to {email}.",
+    "cancelledTitle": "Order cancelled",
+    "cancelledText": "This order has been cancelled. If you have any questions, write to {email}.",
+    "notFoundTitle": "We cannot find your order",
+    "notFoundText": "An order’s status can only be seen in the browser it was placed from. If you have paid and have any questions, write to {email}.",
+    "backToCatalog": "View the catalogue",
+    "retryErrors": {
+      "expired": "Your reservation has expired: please place the order again.",
+      "generic": "We could not connect to the bank. Please try again in a few minutes."
+    }
   }
 }

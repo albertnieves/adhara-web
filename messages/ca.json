@@ -303,5 +303,38 @@
       "generic": "No hem pogut registrar la comanda. Torna-ho a provar d’aquí a uns minuts.",
       "review": "Revisa les dades marcades."
     }
+  },
+  "order": {
+    "title": "La teva comanda",
+    "number": "Comanda núm. {number}",
+    "bankDescription": "Comanda núm. {number}",
+    "redirecting": "T’enviem a la pàgina segura del banc per pagar amb targeta…",
+    "goToBank": "Anar al pagament segur",
+    "connecting": "Connectant amb el banc…",
+    "paidTitle": "Pagament confirmat",
+    "paidPickup": "Gràcies per la teva compra. T’avisarem quan estigui a punt per recollir a {address}; porta el número de comanda.",
+    "paidShipping": "Gràcies per la teva compra. La preparem i t’avisarem quan surti cap a la teva adreça.",
+    "confirmingTitle": "Confirmant el pagament…",
+    "confirmingText": "El banc ens està avisant del pagament. Aquesta pàgina s’actualitza sola en uns segons.",
+    "confirmingSlow": "Està trigant més del normal. No tornis a pagar: si el càrrec apareix al teu banc, la comanda queda registrada i te la confirmarem.",
+    "failedTitle": "El pagament no s’ha completat",
+    "failedText": "El banc no ha autoritzat el pagament o l’has cancel·lat.",
+    "awaitingTitle": "Pendent de pagament",
+    "reservedUntil": "Els teus perfums continuen reservats fins a les {time}.",
+    "retry": "Tornar a intentar el pagament",
+    "pay": "Pagar ara",
+    "expiredTitle": "La reserva ha caducat",
+    "expiredText": "Ha passat el temps per pagar i els perfums han tornat a la botiga. Pots fer la comanda una altra vegada.",
+    "reviewTitle": "Estem revisant el teu pagament",
+    "reviewText": "Hem rebut el pagament, però hem de comprovar alguna cosa abans de preparar la comanda. T’escriurem; si tens dubtes, escriu-nos a {email}.",
+    "cancelledTitle": "Comanda cancel·lada",
+    "cancelledText": "Aquesta comanda està cancel·lada. Si tens dubtes, escriu-nos a {email}.",
+    "notFoundTitle": "No trobem la teva comanda",
+    "notFoundText": "L’estat de la comanda només es veu des del navegador amb què es va fer. Si has pagat i tens dubtes, escriu-nos a {email}.",
+    "backToCatalog": "Veure el catàleg",
+    "retryErrors": {
+      "expired": "La reserva ha caducat: fes la comanda una altra vegada.",
+      "generic": "No hem pogut connectar amb el banc. Torna-ho a provar d’aquí a uns minuts."
+    }
   }
 }

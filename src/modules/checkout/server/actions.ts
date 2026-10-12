@@ -1,6 +1,7 @@
 'use server';
 
 import { createOrdersClient } from '@/lib/supabase/privileged';
+import { REDSYS_PROVIDER } from '@/modules/payments/domain/redsys';
 import type { CheckoutState } from '../domain/input';
 import { checkoutInput, fieldErrors } from '../domain/input';
 import {
@@ -9,8 +10,10 @@ import {
   isVariantId,
   setLineQuantity,
 } from '../domain/cart';
+import type { PaymentRedirect } from '../domain/input';
 import { readCart, writeCart } from './cart';
 import { checkoutEnabled } from './flag';
+import { paymentFormFor, rememberOrder, rememberedOrderId } from './order';
 import { quoteCart } from './quote';
 
 /*
@@ -19,8 +22,8 @@ import { quoteCart } from './quote';
  * Sin el interruptor WEB_CHECKOUT nada de esto responde.
  */
 
-/** Redsys por redirección (STATUS); se confirma con el banco en P04. */
-const PAYMENT_PROVIDER = 'redsys';
+/** Redsys por redirección (DECISIONS §137). */
+const PAYMENT_PROVIDER = REDSYS_PROVIDER;
 
 export type AddToCartState =
   | { status: 'idle' }
@@ -146,13 +149,25 @@ export async function placeOrder(
     return { status: 'error', error: 'generic' };
   }
   const summary = data as {
+    order_id: string;
     number: number;
     items_cents: number;
     shipping_cents: number;
     total_cents: number;
     reserved_until: string;
+    payment_reference: string;
   };
   await writeCart([]);
+  // La página de vuelta del banco enseña este pedido y deja reintentar el pago.
+  await rememberOrder(summary.order_id);
+  const payment = await paymentFormFor({
+    reference: summary.payment_reference,
+    totalCents: summary.total_cents,
+    number: summary.number,
+    locale: input.locale,
+  });
+  if (payment)
+    return { status: 'redirect', number: summary.number, form: payment };
   return {
     status: 'placed',
     number: summary.number,
@@ -162,4 +177,58 @@ export async function placeOrder(
     totalCents: summary.total_cents,
     reservedUntil: summary.reserved_until,
   };
+}
+
+export type RetryPaymentState =
+  | { status: 'idle' }
+  | { status: 'redirect'; form: PaymentRedirect }
+  | { status: 'error'; error: 'expired' | 'generic' };
+
+/**
+ * Vuelve a pagar el pedido de este navegador con una referencia nueva
+ * (web_order_new_attempt): el banco no admite repetir un número de pedido.
+ * Solo mientras la reserva siga en pie; el importe es el del pedido.
+ */
+export async function retryPayment(
+  _: RetryPaymentState,
+  form: FormData,
+): Promise<RetryPaymentState> {
+  if (!checkoutEnabled()) return { status: 'error', error: 'generic' };
+  const locale = form.get('locale');
+  const orderId = await rememberedOrderId();
+  const supabase = createOrdersClient();
+  if (
+    !orderId ||
+    !supabase ||
+    (locale !== 'es' && locale !== 'ca' && locale !== 'en')
+  )
+    return { status: 'error', error: 'generic' };
+  const { data, error } = await supabase.rpc('web_order_new_attempt', {
+    p_order_id: orderId,
+    p_provider: PAYMENT_PROVIDER,
+  });
+  if (error) {
+    if (error.message === 'order_not_payable')
+      return { status: 'error', error: 'expired' };
+    console.error(
+      '[checkout] nuevo intento de pago',
+      error.code,
+      error.message,
+    );
+    return { status: 'error', error: 'generic' };
+  }
+  const attempt = data as {
+    number: number;
+    total_cents: number;
+    payment_reference: string;
+  };
+  const payment = await paymentFormFor({
+    reference: attempt.payment_reference,
+    totalCents: attempt.total_cents,
+    number: attempt.number,
+    locale,
+  });
+  return payment
+    ? { status: 'redirect', form: payment }
+    : { status: 'error', error: 'generic' };
 }

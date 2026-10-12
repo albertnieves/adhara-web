@@ -1892,6 +1892,7 @@ export type Database = {
         Args: { p_limit?: number };
         Returns: number;
       };
+      web_order_status: { Args: { p_order_id: string }; Returns: Json };
     };
     Enums: {
       [_ in never]: never;

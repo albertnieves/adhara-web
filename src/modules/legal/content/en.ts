@@ -427,6 +427,12 @@ export const en: LegalCopy = {
                     'Keep the fragrances you add to your basket while you shop. It is only created if you use the basket.',
                     '30 days',
                   ],
+                  [
+                    'atelier_pedido',
+                    'Ours',
+                    'Remember the order you have just placed so we can show you its status when you return from the bank. It is only created when you place an order.',
+                    '30 days',
+                  ],
                 ],
               },
             },

@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 import type { Page } from '@playwright/test';
 import { randomUUID } from 'node:crypto';
+import { fakeBank, nextVisit } from './bank';
 import type { TestProduct } from './support';
 import {
   admin,
@@ -13,8 +14,9 @@ import {
 
 /*
  * Cesta y checkout de la tienda (PLAN_PEDIDOS_WEB, P03) contra Supabase
- * local, con WEB_CHECKOUT=1 (e2e.yml). Sin TPV todavía: el pedido queda
- * pendiente de pago con su reserva y la confirmación lo dice.
+ * local, con WEB_CHECKOUT=1 y el TPV simulado de e2e.yml: el pedido queda
+ * pendiente de pago con su reserva y el navegador va al banco. El pago en
+ * sí está en payments.spec.ts.
  */
 
 test.use({ viewport: { width: 390, height: 844 } });
@@ -70,6 +72,7 @@ async function orderByEmail(email: string) {
 test('cesta y recogida en tienda: del perfume al pedido reservado', async ({
   page,
 }) => {
+  const visits = await fakeBank(page);
   const product = await makeProduct(5);
   await addToBasket(page, product);
   await expect(
@@ -102,12 +105,8 @@ test('cesta y recogida en tienda: del perfume al pedido reservado', async ({
   await expect(page.getByLabel('Email', { exact: true })).toHaveValue(email);
   await page.getByText('He leído y acepto las').click();
   await page.getByRole('button', { name: 'Confirmar pedido y pagar' }).click();
-  await expect(
-    page.getByRole('heading', { name: /^Pedido Nº \d+ registrado$/ }),
-  ).toBeVisible();
-  await expect(
-    page.getByText('El pago con tarjeta aún no está conectado'),
-  ).toBeVisible();
+  const bank = await nextVisit(page, visits, 1);
+  expect(bank.DS_MERCHANT_AMOUNT).toBe('9980');
 
   const order = await orderByEmail(email);
   expect(order.orders).toMatchObject({
@@ -126,6 +125,7 @@ test('cesta y recogida en tienda: del perfume al pedido reservado', async ({
 test('envío a domicilio: zona, tarifa del panel y dirección', async ({
   page,
 }) => {
+  const visits = await fakeBank(page);
   setRates();
   const product = await makeProduct(5);
   await addToBasket(page, product);
@@ -163,9 +163,8 @@ test('envío a domicilio: zona, tarifa del panel y dirección', async ({
   ).toBeVisible();
   await page.getByLabel('Teléfono').fill('+34 600 000 000');
   await page.getByRole('button', { name: 'Confirmar pedido y pagar' }).click();
-  await expect(
-    page.getByRole('heading', { name: /^Pedido Nº \d+ registrado$/ }),
-  ).toBeVisible();
+  // Al banco con artículos y envío.
+  expect((await nextVisit(page, visits, 1)).DS_MERCHANT_AMOUNT).toBe('5485');
 
   const order = await orderByEmail(email);
   expect(order.postal_code).toBe('08860');
