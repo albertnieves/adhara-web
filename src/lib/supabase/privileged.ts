@@ -27,3 +27,19 @@ export function createJobClient() {
     auth: { persistSession: false, autoRefreshToken: false },
   });
 }
+
+/**
+ * Pedidos web (DECISIONS §131): solo para llamar a las funciones web_order_*
+ * desde el checkout (formatos, cantidades y contacto ya validados; la función
+ * vuelve a validarlo todo y calcula precio, envío y stock), la tarea de
+ * caducidad de reservas (tras CRON_SECRET) y, con P04, la notificación del TPV
+ * tras verificar su firma. Nunca para leer o escribir tablas directamente.
+ */
+export function createOrdersClient() {
+  const config = getSupabaseConfig();
+  const key = process.env.SUPABASE_SECRET_KEY;
+  if (!config || !key) return null;
+  return createClient<Database>(config.url, key, {
+    auth: { persistSession: false, autoRefreshToken: false },
+  });
+}

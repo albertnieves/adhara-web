@@ -39,8 +39,7 @@ Enlazados en la barra inferior del pie de todas las páginas, en pequeño junto 
 | Dato                                                                          | Dónde aparece                      |
 | ----------------------------------------------------------------------------- | ---------------------------------- |
 | Teléfono de contacto (en el panel)                                            | Aviso legal, condiciones           |
-| Zonas de envío                                                                | Condiciones, envíos                |
-| Tarifa de envío e importe para envío gratis                                   | Envíos                             |
+| Tarifa de envío e importe para envío gratis (se fijan en el panel, §136)      | Envíos                             |
 | Plazo de entrega y transportista                                              | Envíos, privacidad (destinatarios) |
 | Medios de pago (tarjeta por TPV virtual, Bizum…)                              | Condiciones                        |
 | Si se adhiere al arbitraje de consumo (Junta Arbitral de Consum de Catalunya) | Condiciones                        |
@@ -52,7 +51,7 @@ Enlazados en la barra inferior del pie de todas las páginas, en pequeño junto 
 3. **Recogida gratuita en la tienda** de Castelldefels como opción de entrega, y devoluciones a la misma dirección.
 4. **Venta solo a mayores de edad**; Club L’Atelier desde 14 años (art. 7 LOPDGDD).
 5. **Garantía legal de 3 años**, sin garantía comercial adicional.
-6. **Sin aviso de cookies:** la web solo usa cookies técnicas, exentas por el art. 22.2 LSSI. La política lista solo la del idioma (`NEXT_LOCALE`), que es la que reciben los clientes; las de sesión y vista previa del equipo y la de Vercel mientras la web es privada no se citan. **Si se añade analítica, publicidad, un mapa incrustado o un píxel, hace falta un aviso con consentimiento previo y actualizar la política.**
+6. **Sin aviso de cookies:** la web solo usa cookies técnicas, exentas por el art. 22.2 LSSI. La política lista las que reciben los clientes: idioma (`NEXT_LOCALE`), aviso de entrada (`atelier_aviso`), la cesta (`atelier_cesta`, 30 días, solo si se usa, P03) y el último pedido (`atelier_pedido`, 30 días, solo al hacer un pedido, para enseñar su estado al volver del banco, P04); las de sesión y vista previa del equipo y la de Vercel mientras la web es privada no se citan. **Si se añade analítica, publicidad, un mapa incrustado o un píxel, hace falta un aviso con consentimiento previo y actualizar la política.**
 7. **Proveedores en privacidad, por categorías:** alojamiento y base de datos en la UE (Vercel, París; Supabase, Fráncfort), email del Club (Sender, Lituania), y banco, transportista y email de pedidos. Las transferencias se explican sin nombrar a nadie. El asistente del panel (Anthropic) no se cita porque no trata datos de clientes; si llegan los mensajes con borradores de IA (A6.3), hay que añadirlo.
 8. **Sin plataforma ODR europea:** dejó de existir el 20/07/2025, así que no se enlaza.
 9. Los textos están en los tres idiomas sin cláusula de prevalencia (el Código de consumo de Cataluña exige la información también en catalán).
@@ -64,4 +63,5 @@ Enlazados en la barra inferior del pie de todas las páginas, en pequeño junto 
 - Contratos de encargo de tratamiento (DPA) con Vercel, Supabase y Sender, y más adelante con el banco, el transportista y el proveedor de email.
 - Registro de actividades de tratamiento (documento interno, no se publica).
 - Hojas oficiales de reclamación en la tienda y el cartel que las anuncia.
-- Al activar la compra online: repasar condiciones, envíos y privacidad con los datos reales del checkout y enviar las condiciones en el email de confirmación (soporte duradero).
+- Al activar la compra online: repasar condiciones, envíos y privacidad con los datos reales del checkout. El correo de confirmación ya adjunta las condiciones de venta en texto (soporte duradero, DECISIONS §138) y resume el desistimiento y los datos del vendedor: revisar que la asesoría da por bueno ese adjunto.
+- Zonas de envío ya decididas (12/10, DECISIONS §136): España peninsular e Illes Balears; ni Canarias, ni Ceuta, ni Melilla (`LEGAL_ENTITY.shippingZones`). Las tarifas del panel se copian a `shippingCost` y `freeShippingFrom` al activar la venta, junto con `LEGAL_UPDATED_AT`.

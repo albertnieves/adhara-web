@@ -32,6 +32,24 @@ En el Mostrador, cada línea cobra el PVP salvo que se escriba otro precio por u
 
 Catálogo → ficha del perfume → «Perfil olfativo». Las notas se escriben como claves separadas por comas (`bergamot, rose`); la lista «Notas disponibles» da cada clave con su nombre. Una clave que no existe no se guarda: si hace falta una nota nueva, se añade al vocabulario del código con su nombre en es, ca y en. La URL `https` de la fuente es obligatoria y las estaciones y el momento solo se marcan si la fuente los indica. El catálogo olfativo de la tienda (`/es/catalogo-olfativo`) se actualiza al guardar; no muestra precio ni compra.
 
+## Pedidos web
+
+Web → Pedidos web (con `orders.view`). **La tienda aún no vende online**: la cesta, el pago con tarjeta, los correos y las devoluciones están hechos, pero la venta se enciende cuando estén configurados el TPV y el correo (PLAN_PEDIDOS_WEB, «Pendientes para activar ventas»). Un pedido entra en «Por preparar» solo cuando el banco confirma el pago; los que esperan pago o caducaron sin pagar tienen sus propios filtros y no son trabajo de preparación. Se filtra también por forma de entrega y por fechas (días de Madrid).
+
+- **Recogida en tienda:** «Empezar a preparar» → «Listo para recoger» → «Entregado al cliente». Al entregar, comprobar el nombre y el número de pedido; las unidades reservadas se descuentan del stock en ese momento y aparecen en Movimientos con la referencia «Pedido web» y su número.
+- **Envío:** la ficha muestra la dirección y el teléfono del cliente (con `customers.view`). «Marcar enviado» (con número de seguimiento opcional) descuenta el stock; después, «Marcar entregado». Solo se envía a la península y Baleares.
+- **Incidencias:** cobros que no cuadran (importe distinto, segundo cobro o pago llegado cuando la reserva ya había caducado). Revisar el cobro en el portal del banco; si es correcto, «Dar por pagado» lo pasa a «Por preparar» (vuelve a reservar las unidades si hace falta y hay stock). Si no, «Cancelar y devolver el dinero» en «Devoluciones». Un segundo cobro se devuelve con «Devolver este cobro» y deja de ser incidencia cuando el banco lo acepta.
+- **Devoluciones** (con `orders.refund` y MFA, y el TPV configurado): «Cancelar y devolver el dinero» en un pedido pagado sin entregar (las unidades vuelven a la tienda), «Devolver todo» o «Devolver una parte» en uno entregado, y «Devolver este cobro» en un cobro de más. El panel pide confirmación con el importe y manda la devolución al banco: **solo cuando el banco la acepta** el pedido cambia y aparece «Devuelto». Si la rechaza, no se ha devuelto nada (se ve su código). Si no responde con claridad, comprobarla en el portal de Redsys antes de «Volver a enviar la devolución»; el banco nunca devuelve más de lo cobrado.
+- **Correos al cliente:** la confirmación del pago (con las condiciones de venta adjuntas) y los avisos de «listo para recoger» y de envío salen solos con cada paso; la ficha dice si salió cada uno. Si el correo no está configurado, esperan en la cola y salen después.
+- **Permisos:** el encargado ve pedidos y artículos, pero no los datos del cliente ni los botones. Preparar y entregar exigen `orders.fulfill`; resolver una incidencia y devolver, `orders.refund`. Ver nombre, email y teléfono exige además `customers.view`.
+- La ficha guarda los precios del momento de la compra, las notificaciones del banco (nunca datos de la tarjeta) y una cronología con quién hizo cada paso. Si otra persona cambió el pedido a la vez, el panel pide recargar.
+
+### Tarifas de envío
+
+Configuración → Tarifas de envío (administrador del sistema, `settings.manage` con MFA). Hay dos zonas: **Península** e **Illes Balears**; Canarias, Ceuta y Melilla no tienen envío (IGIC y aduana). Para cada zona: precio con IVA, importe de artículos desde el que el envío es gratis (vacío: nunca) y «Ofrecer el envío». Una zona apagada, o que nunca se ha guardado, no se puede elegir en el checkout. El precio se cobra tal cual lo guardas: los pedidos ya hechos conservan el envío que pagaron. Cada cambio queda en Auditoría. La recogida en la tienda siempre es gratis.
+
+Antes de encender la venta online (P04), poner aquí las tarifas reales y copiarlas a los textos legales de envíos.
+
 ## Suscriptores a promociones
 
 Web → Suscriptores muestra las altas de la sección «Club L’Atelier» de la tienda (con `customers.view`), su idioma, fecha y estado: pendiente, en Sender o baja. «Exportar CSV» descarga la lista para importarla en Sender o abrirla en Excel. Con `customers.manage` (MFA) se puede dar de baja o borrar (derecho de supresión); si Sender está conectado, el cambio se hace también allí.

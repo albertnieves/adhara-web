@@ -7,6 +7,8 @@ import { Badge, Button, Eyebrow, Price } from '@/components/ui';
 import type { BadgeTone } from '@/components/ui';
 import type { Availability, ProductVariant } from '@/modules/catalog';
 import { variantLabel } from '@/modules/catalog';
+import { AddToCartButton } from '@/modules/checkout/ui';
+import { trackProductEvent } from './TrackEvent';
 
 const TONE: Record<Availability, BadgeTone> = {
   in_stock: 'success',
@@ -19,13 +21,21 @@ const LABEL: Record<Availability, 'inStock' | 'lowStock' | 'outOfStock'> = {
   out_of_stock: 'outOfStock',
 };
 
-/** Formato, precio y disponibilidad. La compra online llega en la Fase 10. */
+/**
+ * Formato, precio y disponibilidad. Con el checkout encendido (`cart`, ver
+ * WEB_CHECKOUT), «Añadir a la cesta»; si no, la compra online sigue «próximamente».
+ */
 export function PurchasePanel({
   variants,
   availability,
+  cart = false,
+  slug,
 }: {
   variants: ProductVariant[];
   availability: Record<string, Availability>;
+  cart?: boolean;
+  /** Necesario con `cart`: la consola cuenta los añadidos por perfume. */
+  slug?: string;
 }) {
   const t = useTranslations('product');
   const locale = useLocale();
@@ -93,9 +103,20 @@ export function PurchasePanel({
       {status && <Badge tone={TONE[status]}>{t(LABEL[status])}</Badge>}
 
       <div className="space-y-4">
-        <Button size="lg" disabled className="w-full">
-          {t('buySoon')}
-        </Button>
+        {cart &&
+        slug &&
+        selected?.priceCents != null &&
+        status !== 'out_of_stock' ? (
+          <AddToCartButton
+            key={selected.id}
+            variantId={selected.id}
+            onAdded={() => trackProductEvent(slug, 'add_to_cart')}
+          />
+        ) : (
+          <Button size="lg" disabled className="w-full">
+            {cart && status === 'out_of_stock' ? t('outOfStock') : t('buySoon')}
+          </Button>
+        )}
         <p className="text-fg-muted text-sm leading-relaxed">
           {t('storeNote')}
         </p>

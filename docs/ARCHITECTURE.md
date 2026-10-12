@@ -28,9 +28,13 @@ flowchart LR
   S -->|cliente anónimo, ISR| DB[("Supabase<br/>public + RLS")]
   A -->|requireStaff / requirePermission| DB
   A -->|funciones admin_*| I[(internal / private)]
-  C[Vercel Cron] -->|CRON_SECRET| J[api/cron/informe-diario]
+  C[Vercel Cron] -->|CRON_SECRET| J[api/cron/*]
   J -->|clave privilegiada| DB
   A -->|herramientas de solo lectura| L[Claude API]
+  S -->|formulario firmado| R[Redsys]
+  R -->|notificación firmada| N[api/pagos/redsys]
+  N -->|web_order_*| DB
+  J -->|correos| M[Resend]
   J -->|resumen| L
 ```
 
@@ -45,24 +49,28 @@ flowchart LR
 - `src/lib/`: infraestructura compartida (clientes de Supabase, dinero, CSV, identificadores de petición).
 - `src/components/ui/`: primitivas del sistema de diseño (Fase 2), las mismas para la tienda y el panel, sin datos ni lógica de dominio. Su referencia está en `/admin/diseno`.
 
-| Módulo                | Qué hace                                                                       |
-| --------------------- | ------------------------------------------------------------------------------ |
-| `auth`                | Matriz de permisos, decisión de acceso al panel, sesión, MFA, invitaciones     |
-| `admin`               | Piezas comunes del panel: `useAdminAction`, `Sheet`, avisos, búsqueda          |
-| `catalog`             | Perfumes, formatos, imágenes, importación CSV, lecturas de la tienda           |
-| `pricing`             | Margen, Ómnibus, revisión de cambios de PVP y cambios masivos (dominio puro)   |
-| `inventory`           | Movimientos, recuentos, niveles y vigilante de stock                           |
-| `purchasing`          | Proveedores, pedidos de compra, recepciones y propuestas de reposición         |
-| `reports`             | Existencias y cierre, rotación, márgenes, compras y auditoría                  |
-| `control`             | Consola del titular: negocio, métricas por perfume, visitas, copias, estado    |
-| `assistant`           | Informe diario, resumen y chat con herramientas de solo lectura                |
-| `content`             | Portada y datos de la tienda con borrador, revisiones y publicación            |
-| `storefront`          | Componentes y lecturas de la tienda pública                                    |
-| `i18n`                | Rutas por idioma, carga de mensajes, metadatos y `buildAlternates`             |
-| `unboxing`            | Escena 3D bajo demanda de la ficha                                             |
-| `brand`               | Logotipo y nombre de la marca                                                  |
-| `design`              | Catálogo de tokens, matriz de contraste y página de referencia `/admin/diseno` |
-| `orders`, `messaging` | Reglas puras preparadas para pedidos y mensajes (fases A5 y A6), sin pantallas |
+| Módulo       | Qué hace                                                                                  |
+| ------------ | ----------------------------------------------------------------------------------------- |
+| `auth`       | Matriz de permisos, decisión de acceso al panel, sesión, MFA, invitaciones                |
+| `admin`      | Piezas comunes del panel: `useAdminAction`, `Sheet`, avisos, búsqueda                     |
+| `catalog`    | Perfumes, formatos, imágenes, importación CSV, lecturas de la tienda                      |
+| `pricing`    | Margen, Ómnibus, revisión de cambios de PVP y cambios masivos (dominio puro)              |
+| `inventory`  | Movimientos, recuentos, niveles y vigilante de stock                                      |
+| `purchasing` | Proveedores, pedidos de compra, recepciones y propuestas de reposición                    |
+| `reports`    | Existencias y cierre, rotación, márgenes, compras y auditoría                             |
+| `control`    | Consola del titular: negocio, métricas por perfume, visitas, copias, estado               |
+| `assistant`  | Informe diario, resumen y chat con herramientas de solo lectura                           |
+| `content`    | Portada y datos de la tienda con borrador, revisiones y publicación                       |
+| `storefront` | Componentes y lecturas de la tienda pública                                               |
+| `i18n`       | Rutas por idioma, carga de mensajes, metadatos y `buildAlternates`                        |
+| `unboxing`   | Escena 3D bajo demanda de la ficha                                                        |
+| `brand`      | Logotipo y nombre de la marca                                                             |
+| `design`     | Catálogo de tokens, matriz de contraste y página de referencia `/admin/diseno`            |
+| `orders`     | Pedidos web: estados, transiciones, cobros, incidencias y panel (P05)                     |
+| `checkout`   | Cesta en cookie, zonas y tarifas de envío, checkout y caducidad (P03)                     |
+| `payments`   | Redsys por redirección: firma, formulario de pago, notificación y devoluciones (P04, P06) |
+| `mail`       | Correos de los pedidos: plantillas es/ca/en, cola y envío con Resend (P06)                |
+| `messaging`  | Reglas puras preparadas para los mensajes (fase A6), sin pantallas                        |
 
 Reglas de importación: los componentes de cliente solo importan `index.ts`; los secretos y el acceso privilegiado solo existen en módulos `server-only`; `@typescript-eslint/no-explicit-any` y `consistent-type-imports` son errores.
 
@@ -71,6 +79,7 @@ Reglas de importación: los componentes de cliente solo importan `index.ts`; los
 - **Tienda:** páginas estáticas con ISR de 5 minutos, leídas con un cliente anónimo sin cookies (`createSupabasePublicClient`); el panel revalida al guardar (DECISIONS §36). Nunca ve costes ni unidades.
 - **Vista previa del personal:** Draft Mode de Next, que se activa solo desde el panel con `catalog.edit` y MFA; en ese modo la tienda lee con la sesión y la RLS decide (DECISIONS §47).
 - **Panel:** dinámico, `private, no-store`, con la sesión del usuario (`createSupabaseServerClient`). Escrituras sensibles mediante funciones `admin_*`.
+- **Cesta y checkout (P03, tras `WEB_CHECKOUT=1`):** la cesta vive en la cookie técnica `atelier_cesta` (solo formatos y cantidades); `/cesta` y `/finalizar-compra` son dinámicas y leen precio y stock en cada visita con el cliente anónimo. El contador de la cabecera lee la cookie en el navegador, así que el resto de la tienda sigue siendo estática. El pedido lo crea `web_order_create`, que vuelve a calcular precio, envío y stock (DECISIONS §136). Con el TPV configurado, el navegador va al banco con un formulario firmado en el servidor y el pago lo confirma solo la notificación del banco (`/api/pagos/redsys`, §137); la vuelta lleva a `/pedido`.
 - **Dinero:** céntimos enteros; IVA y porcentajes en puntos básicos ([PRICING.md](PRICING.md)).
 
 | Cliente de Supabase          | Clave                          | Uso                                            |
@@ -78,11 +87,12 @@ Reglas de importación: los componentes de cliente solo importan `index.ts`; los
 | `createSupabaseServerClient` | Publicable + cookies de sesión | Panel y vista previa                           |
 | `createSupabasePublicClient` | Publicable, sin cookies        | Tienda estática                                |
 | `createAuthAdminClient`      | Secreta                        | Solo invitaciones de Auth, tras `staff.manage` |
-| `createJobClient`            | Secreta                        | Solo el informe diario (cron o `reports.view`) |
+| `createJobClient`            | Secreta                        | Informe diario y copia diaria (§128)           |
+| `createOrdersClient`         | Secreta                        | Solo funciones `web_order_*` (§131, §136)      |
 
 ## Tareas programadas y asistente
 
-Vercel Cron (`vercel.json`, 05:15 UTC) llama a `/api/cron/informe-diario` con `CRON_SECRET`; guarda el informe del día anterior y su resumen. El chat del panel (`/admin/asistente/consulta`) usa el _tool runner_ del SDK de Anthropic con herramientas zod de solo lectura que leen con la sesión de quien pregunta (DECISIONS §77–81).
+Vercel Cron (`vercel.json`) llama con `CRON_SECRET` a `/api/cron/informe-diario` (05:15 UTC; guarda el informe del día anterior y su resumen), `/api/cron/copia-diaria` (03:30 UTC) y, cada 5 minutos (plan Pro), `/api/cron/caducar-reservas`, que libera las reservas de pedidos web sin pagar (`web_order_release_expired`, DECISIONS §136), y `/api/cron/enviar-correos`, que envía los correos de los pedidos que sigan en la cola (§138). El chat del panel (`/admin/asistente/consulta`) usa el _tool runner_ del SDK de Anthropic con herramientas zod de solo lectura que leen con la sesión de quien pregunta (DECISIONS §77–81).
 
 ## Despliegue y entornos
 

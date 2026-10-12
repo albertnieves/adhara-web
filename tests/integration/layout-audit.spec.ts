@@ -31,6 +31,7 @@ const ROUTES = [
   '/admin/reposicion',
   '/admin/compras',
   '/admin/compras/proveedores',
+  '/admin/pedidos',
   '/admin/informes',
   '/admin/informes/inventario',
   '/admin/informes/rotacion',
@@ -70,6 +71,21 @@ async function anyProductId() {
     .limit(1)
     .maybeSingle();
   return product ? String(product.id) : undefined;
+}
+
+/**
+ * Un pedido web ya cobrado, si hay (los crea admin-orders.spec.ts, que corre
+ * antes): su ficha enseña pagos, devoluciones y correos.
+ */
+async function anyOrderId() {
+  const { data: order } = await admin
+    .from('orders')
+    .select('id')
+    .neq('status', 'pending_payment')
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  return order ? String(order.id) : undefined;
 }
 
 /**
@@ -113,10 +129,11 @@ test('panel: diseño sin solapes ni desbordes en todas sus pantallas', async ({
   makeControlOwner(email);
   await login(page, email);
 
-  const product = await anyProductId();
+  const [product, order] = await Promise.all([anyProductId(), anyOrderId()]);
   const routes = [
     ...ROUTES,
     ...(product ? [`/admin/catalogo/${product}`] : []),
+    ...(order ? [`/admin/pedidos/${order}`] : []),
   ];
   const { reports, violations } = await auditAll(page, routes, AUDIT_WIDTHS);
   expect(reports.join('\n'), reports.join('\n')).toBe('');

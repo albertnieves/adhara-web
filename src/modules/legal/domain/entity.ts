@@ -30,8 +30,12 @@ export const LEGAL_ENTITY: Record<
   registry: null,
   /** Dominio definitivo de la web. */
   domain: 'www.latelierdudesert.com',
-  /** Zonas de envío (p. ej. España peninsular y Baleares). */
-  shippingZones: null,
+  /** Zonas de envío: las decidió el usuario el 12/10/2026 (DECISIONS §136). */
+  shippingZones: {
+    es: 'la España peninsular y las Illes Balears',
+    ca: 'l’Espanya peninsular i les Illes Balears',
+    en: 'mainland Spain and the Balearic Islands',
+  },
   /** Tarifa de envío. */
   shippingCost: null,
   /** Importe a partir del cual el envío es gratis. */
@@ -50,7 +54,7 @@ export const LEGAL_ENTITY: Record<
 export const LEGAL_CONTACT_EMAIL = 'latelierdudesert@gmail.com';
 
 /** Fecha de la versión vigente de los textos (AAAA-MM-DD). */
-export const LEGAL_UPDATED_AT = '2026-10-10';
+export const LEGAL_UPDATED_AT = '2026-10-12';
 
 /**
  * Cookie técnica que recuerda que el visitante aceptó el aviso de entrada.

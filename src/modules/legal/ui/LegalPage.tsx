@@ -3,29 +3,20 @@ import { draftMode } from 'next/headers';
 import { Fragment } from 'react';
 import { Eyebrow, Heading, Table, Td, Text, Th } from '@/components/ui';
 import { Star } from '@/modules/brand';
-import { storeContent, STORE_DEFAULTS } from '@/modules/content';
-import { readStoreContent } from '@/modules/content/server';
 import { Link } from '@/modules/i18n';
 import { alternatesMetadata } from '@/modules/i18n/metadata';
 import type { Locale } from '@/modules/i18n/seo';
 import { LEGAL_COPY } from '../content';
-import {
-  LEGAL_CONTACT_EMAIL,
-  LEGAL_ENTITY,
-  LEGAL_UPDATED_AT,
-} from '../domain/entity';
-import { resolveValue, visibleSegments } from '../domain/placeholders';
+import { LEGAL_UPDATED_AT } from '../domain/entity';
+import { visibleSegments } from '../domain/placeholders';
 import type { LegalSegment } from '../domain/placeholders';
 import { LEGAL_PATHS } from '../domain/routes';
 import { LEGAL_DOCUMENTS } from '../domain/types';
-import type {
-  LegalBlock,
-  LegalCopy,
-  LegalDocumentKey,
-  LegalField,
-} from '../domain/types';
+import type { LegalBlock, LegalCopy, LegalDocumentKey } from '../domain/types';
+import type { LegalValues } from '../server/values';
+import { legalValues } from '../server/values';
 
-type Values = Partial<Record<LegalField, string | null>>;
+type Values = LegalValues;
 
 export function legalMetadata(doc: LegalDocumentKey, locale: Locale): Metadata {
   const { title, summary } = LEGAL_COPY[locale].documents[doc];
@@ -33,24 +24,6 @@ export function legalMetadata(doc: LegalDocumentKey, locale: Locale): Metadata {
     title,
     description: summary,
     ...alternatesMetadata(LEGAL_PATHS[doc], locale),
-  };
-}
-
-/** Datos para los marcadores: los del titular y los de la tienda (panel). */
-async function legalValues(locale: Locale): Promise<Values> {
-  const data = await readStoreContent('store', 'es');
-  const store = data ? storeContent.parse(data.payload) : STORE_DEFAULTS;
-  const entity = Object.fromEntries(
-    Object.entries(LEGAL_ENTITY).map(([field, value]) => [
-      field,
-      resolveValue(value, locale),
-    ]),
-  );
-  return {
-    ...entity,
-    email: store.email || LEGAL_CONTACT_EMAIL,
-    phone: store.phone || null,
-    storeAddress: [store.address, store.city].filter(Boolean).join(', '),
   };
 }
 

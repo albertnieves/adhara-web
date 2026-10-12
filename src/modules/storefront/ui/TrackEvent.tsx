@@ -2,8 +2,8 @@
 
 import { useEffect, useRef } from 'react';
 
-/** Interés que mide la tienda; add_to_cart llegará cuando exista el carrito. */
-export type TrackedKind = 'view' | 'scent_view' | 'unboxing';
+/** Interés que mide la tienda (add_to_cart, con la cesta de P03). */
+export type TrackedKind = 'view' | 'scent_view' | 'unboxing' | 'add_to_cart';
 
 /** Global Privacy Control o «Do Not Track» activados: no se envía nada. */
 function optedOut() {

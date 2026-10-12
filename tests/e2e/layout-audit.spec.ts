@@ -15,7 +15,22 @@ import {
  * Recorre sus propias anchuras: solo se ejecuta en el proyecto de escritorio.
  */
 
-const ROUTES: [path: string, name: string, status?: number][] = [
+type Route = [path: string, name: string, status?: number];
+
+// Cesta, checkout (P03) y pedido (P04): solo existen con WEB_CHECKOUT=1 (e2e.yml).
+const CHECKOUT_ON: Route[] = [
+  ['/es/cesta', 'cesta-es'],
+  ['/en/basket', 'cesta-en'],
+  ['/es/finalizar-compra', 'finalizar-compra-es'],
+  ['/es/pedido', 'pedido-es'],
+];
+const CHECKOUT_OFF: Route[] = [
+  ['/es/cesta', 'cesta-apagada', 404],
+  ['/es/finalizar-compra', 'finalizar-compra-apagada', 404],
+  ['/es/pedido', 'pedido-apagada', 404],
+];
+
+const ROUTES: Route[] = [
   ['/es', 'inicio-es'],
   ['/ca', 'inicio-ca'],
   ['/en', 'inicio-en'],
@@ -34,6 +49,7 @@ const ROUTES: [path: string, name: string, status?: number][] = [
   ['/es/envios-y-devoluciones', 'envios-y-devoluciones-es'],
   ['/admin/acceso', 'panel-acceso'],
   ['/admin/recuperar', 'panel-recuperar'],
+  ...(process.env.WEB_CHECKOUT === '1' ? CHECKOUT_ON : CHECKOUT_OFF),
 ];
 
 test.beforeEach(({}, testInfo) => {

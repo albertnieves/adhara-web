@@ -1,5 +1,6 @@
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import {
   PERMANENT_COLOR_EXCEPTIONS,
@@ -12,7 +13,7 @@ import {
  * queda fuera; el resto de excepciones está en design-guard-exceptions.ts.
  */
 
-const ROOT = new URL('../../', import.meta.url).pathname;
+const ROOT = fileURLToPath(new URL('../../', import.meta.url));
 
 function sourceFiles(dir: string): string[] {
   return readdirSync(dir).flatMap((name) => {

@@ -11,7 +11,18 @@ jobs:
   e2e:
     runs-on: ubuntu-latest
     timeout-minutes: 25
+    # Cesta y checkout encendidos (P03) con un TPV simulado (P04): en
+    # producción siguen apagados hasta conectar el TPV (DECISIONS §136–137).
+    # 999008881 es el comercio de pruebas público de Redsys; el banco lo hacen
+    # las pruebas (page.route) y la clave se genera en cada ejecución.
+    env:
+      WEB_CHECKOUT: '1'
+      REDSYS_MERCHANT_CODE: '999008881'
+      REDSYS_TERMINAL: '1'
+      REDSYS_ENVIRONMENT: test
     steps:
+      - name: Clave de firma de un solo uso para el TPV simulado
+        run: echo "REDSYS_SECRET_KEY=$(openssl rand -base64 24)" >> "$GITHUB_ENV"
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4

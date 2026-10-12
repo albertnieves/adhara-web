@@ -4,6 +4,7 @@ import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, getTranslations } from 'next-intl/server';
 import { draftMode } from 'next/headers';
 import { BRAND_NAME } from '@/modules/brand';
+import { checkoutEnabled } from '@/modules/checkout/server';
 import { routing } from '@/modules/i18n';
 import { requireLocale } from '@/modules/i18n/server';
 import { siteUrl } from '@/modules/i18n/seo';
@@ -56,7 +57,7 @@ export default async function LocaleLayout({
           >
             {t('skip')}
           </a>
-          <Header />
+          <Header cart={checkoutEnabled()} />
           <div id="contenido">{children}</div>
           <NewsletterSection />
           <Footer />

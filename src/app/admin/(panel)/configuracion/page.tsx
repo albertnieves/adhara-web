@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { PageHeader } from '@/modules/admin';
 import { getAdminContent } from '@/modules/content/server';
 import { ContentEditor } from '@/modules/content/ContentEditor';
@@ -8,6 +9,12 @@ export default async function SettingsPage() {
   return (
     <main>
       <PageHeader eyebrow="Configuración" title="Datos de la tienda">
+        <Link
+          href="/admin/configuracion/envios"
+          className={buttonClass('outline', 'lg')}
+        >
+          Tarifas de envío
+        </Link>
         <form action={enterStorefrontPreview}>
           <button className={buttonClass('outline', 'lg')}>
             Vista previa del borrador

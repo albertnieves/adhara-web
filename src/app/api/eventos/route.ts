@@ -11,7 +11,8 @@ import type { TrackedKind } from '@/modules/storefront';
  * Responde siempre 204 sin datos, cuente o no (quien llama no sabe si el
  * perfume existe ni si se ha contado); 400 solo si el cuerpo no es JSON. Se
  * descartan sin contar los bots, las peticiones de otro origen y los cuerpos
- * de más de 512 bytes. add_to_cart no se acepta aquí: llegará con el carrito.
+ * de más de 512 bytes. add_to_cart lo envía la cesta (P03), que solo existe
+ * con el checkout encendido.
  */
 export const dynamic = 'force-dynamic';
 
@@ -22,6 +23,7 @@ const KINDS = [
   'view',
   'scent_view',
   'unboxing',
+  'add_to_cart',
 ] as const satisfies readonly TrackedKind[];
 
 const eventInput = z.object({

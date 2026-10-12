@@ -1,0 +1,85 @@
+import type { Metadata } from 'next';
+import { getTranslations } from 'next-intl/server';
+import { notFound } from 'next/navigation';
+import { Heading } from '@/components/ui';
+import {
+  checkoutEnabled,
+  quoteCart,
+  readCart,
+} from '@/modules/checkout/server';
+import { CheckoutForm } from '@/modules/checkout/ui';
+import { STORE_DEFAULTS, storeContent } from '@/modules/content';
+import { readStoreContent } from '@/modules/content/server';
+import { Link } from '@/modules/i18n';
+import { requireLocale } from '@/modules/i18n/server';
+
+/**
+ * Finalizar compra (P03): la cesta sale de la cookie y los importes del
+ * catálogo y de las tarifas activas; el pedido lo crea la base con
+ * web_order_create. El pago con tarjeta llega con P04.
+ */
+export const dynamic = 'force-dynamic';
+
+type Params = Promise<{ locale: string }>;
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Params;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({
+    locale: requireLocale(locale),
+    namespace: 'checkout',
+  });
+  return { title: t('title') };
+}
+
+export default async function CheckoutPage({ params }: { params: Params }) {
+  const { locale } = await params;
+  const lang = requireLocale(locale);
+  if (!checkoutEnabled()) notFound();
+  const [t, lines, storeData] = await Promise.all([
+    getTranslations('checkout'),
+    readCart(),
+    readStoreContent('store', 'es'),
+  ]);
+  const quote = await quoteCart(lines);
+  const store = storeData
+    ? storeContent.parse(storeData.payload)
+    : STORE_DEFAULTS;
+
+  return (
+    <main className="mx-auto max-w-[90rem] px-5 pt-32 pb-20 sm:px-10">
+      <Link
+        href="/cesta"
+        className="link-underline text-fg-muted text-2xs tracking-caps-lg uppercase"
+      >
+        ← {t('back')}
+      </Link>
+      <Heading level={1} size="h1" className="mt-6 mb-12">
+        {t('title')}
+      </Heading>
+      <CheckoutForm
+        locale={lang}
+        lines={quote.lines.flatMap((line) =>
+          line.product
+            ? [
+                {
+                  variantId: line.variantId,
+                  label:
+                    `${line.product.name} ${line.product.variantLabel}`.trim(),
+                  quantity: line.quantity,
+                  lineTotalCents: line.product.lineTotalCents,
+                },
+              ]
+            : [],
+        )}
+        itemsCents={quote.itemsCents}
+        purchasable={quote.purchasable}
+        rates={quote.rates}
+        store={{ address: store.address, city: store.city }}
+      />
+    </main>
+  );
+}

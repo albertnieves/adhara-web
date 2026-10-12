@@ -15,6 +15,11 @@ export const PERMANENT_COLOR_EXCEPTIONS: Readonly<
     reason:
       'Fondo de la escena 3D: three.js no lee variables CSS (refleja --color-stage).',
   },
+  'src/modules/mail/domain/order-email.ts': {
+    count: 5,
+    reason:
+      'Correos de los pedidos: los clientes de correo no leen variables CSS (refleja marfil, papel, tinta, línea y humo; lo comprueba order-email.test.ts).',
+  },
 };
 
 /**

@@ -117,3 +117,55 @@ export async function login(page: Page, email: string) {
   await expect(page).toHaveURL(/\/admin$/);
   return secret;
 }
+
+export type TestProduct = { variantId: string; name: string; slug: string };
+
+/**
+ * Perfume publicado de 49,90 €, sin coste (no altera el stock a coste del
+ * inicio), con `units` en la tienda registradas por un administrador de la
+ * tienda. Hay que archivarlo al terminar (archiveProduct).
+ */
+export async function sellableProduct(units: number): Promise<TestProduct> {
+  const id = randomUUID().slice(0, 8);
+  const name = `Perfume pedidos ${id}`;
+  const slug = `perfume-pedidos-${id}`;
+  const email = await user('store_admin');
+  psql(
+    `begin;
+     with b as (
+       insert into public.brands (slug, name)
+       values ('marca-pedidos-' || :'id', 'Marca pedidos ' || :'id') returning id
+     ), p as (
+       insert into public.products (brand_id, slug, name, source_ref)
+       select b.id, :'slug', :'name', 'tests/integration/support.ts'
+       from b returning id
+     )
+     insert into public.product_variants (product_id, sku, size_ml, retail_price_cents)
+     select p.id, 'PED-' || :'id', 100, 4990 from p;
+     update public.products set status = 'published' where slug = :'slug';
+     select set_config('request.jwt.claims', json_build_object(
+       'sub', (select id from auth.users where email = :'email'),
+       'aal', 'aal2', 'role', 'authenticated')::text, true);
+     select public.admin_record_inventory_movement(v.id,
+       (select id from public.stock_locations where code = 'castelldefels'),
+       'PURCHASE_RECEIPT', ${units})
+     from public.product_variants v
+     join public.products p on p.id = v.product_id where p.slug = :'slug';
+     commit;`,
+    { id, name, slug, email },
+  );
+  const { data, error } = await admin
+    .from('product_variants')
+    .select('id, products!inner(slug)')
+    .eq('products.slug', slug)
+    .single();
+  if (error) throw error;
+  return { variantId: String(data.id), name, slug };
+}
+
+/** Fuera de la tienda pública; los pedidos lo siguen nombrando. */
+export function archiveProduct(product: TestProduct) {
+  psql(`update public.products set status = 'archived' where slug = :'slug';`, {
+    slug: product.slug,
+  });
+}

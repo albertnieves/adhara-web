@@ -15,6 +15,7 @@ export {
   resolveValue,
 } from './domain/placeholders';
 export type { LegalSegment } from './domain/placeholders';
+export { legalDocumentText } from './domain/plain-text';
 export { LEGAL_PATHS } from './domain/routes';
 export { LEGAL_DOCUMENTS, LEGAL_FIELDS } from './domain/types';
 export type {

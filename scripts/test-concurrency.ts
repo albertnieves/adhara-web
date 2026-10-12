@@ -163,6 +163,112 @@ assert.equal(
   ).text.trim(),
   '1',
 );
+// Pedidos web (PLAN_PEDIDOS_WEB, P02): solo el servidor, con la clave privilegiada.
+const server = (sql: string) =>
+  `begin; set local role service_role; select set_config('request.jwt.claims','{"role":"service_role"}',true); ${sql}; commit;`;
+const shopBrand = randomUUID(),
+  shopProduct = randomUUID(),
+  lastUnit = randomUUID(),
+  lateUnit = randomUUID();
+const shop =
+  await query(`insert into public.brands(id,slug,name) values('${shopBrand}','concurrency-orders','Prueba local');
+insert into public.products(id,brand_id,slug,name) values('${shopProduct}','${shopBrand}','concurrency-orders','Prueba local');
+insert into public.product_variants(id,product_id,size_ml,retail_price_cents) values('${lastUnit}','${shopProduct}',100,5000),('${lateUnit}','${shopProduct}',50,3000);
+update public.products set status='published' where id='${shopProduct}';
+insert into public.inventory_levels(variant_id,location_id,on_hand) values('${lastUnit}','${location}',1),('${lateUnit}','${location}',1);`);
+assert.equal(shop.code, 0, shop.text);
+const createOrder = (variantId: string) =>
+  server(
+    `select public.web_order_create('${randomUUID()}','es','click_collect','${location}','[{"variant_id":"${variantId}","quantity":1}]'::jsonb,'{"full_name":"Prueba","email":"prueba@test.invalid"}'::jsonb,'redsys',30); select pg_sleep(0.2)`,
+  );
+const level = async (variantId: string) =>
+  (
+    await query(
+      `select on_hand || '/' || reserved from public.inventory_levels where variant_id='${variantId}'`,
+    )
+  ).text.trim();
+const reference = async (variantId: string) =>
+  (
+    await query(
+      `select a.reference from public.order_payment_attempts a join public.order_lines l on l.order_id=a.order_id where l.variant_id='${variantId}'`,
+    )
+  ).text.trim();
+// 1. La última unidad y 12 compras simultáneas: un solo pedido la reserva.
+const buyers = await Promise.all(
+  Array.from({ length: 12 }, () => query(createOrder(lastUnit))),
+);
+assert.equal(
+  buyers.filter((x) => x.code === 0).length,
+  1,
+  JSON.stringify(buyers),
+);
+assert.equal(
+  buyers.filter((x) => x.text.includes('insufficient_stock')).length,
+  11,
+);
+assert.equal(await level(lastUnit), '1/1');
+// 2. La misma notificación del banco 8 veces a la vez: una sola confirmación.
+const lastRef = await reference(lastUnit);
+const notices = await Promise.all(
+  Array.from({ length: 8 }, () =>
+    query(
+      server(
+        `select public.web_order_record_payment('redsys','${lastRef}','tx-concurrency','succeeded',5000,'EUR') ->> 'action'; select pg_sleep(0.2)`,
+      ),
+    ),
+  ),
+);
+assert.ok(
+  notices.every((x) => x.code === 0),
+  JSON.stringify(notices),
+);
+const actions = notices.map((x) =>
+  x.text.split('\n').find((line) => line === 'confirm' || line === 'ignore'),
+);
+assert.equal(actions.filter((x) => x === 'confirm').length, 1);
+assert.equal(actions.filter((x) => x === 'ignore').length, 7);
+assert.equal(
+  (
+    await query(
+      `select count(*) || '/' || (select count(*) from public.order_events e join public.order_lines l on l.order_id=e.order_id where l.variant_id='${lastUnit}' and e.kind='payment_confirmed') from public.order_payments where transaction_id='tx-concurrency'`,
+    )
+  ).text.trim(),
+  '1/1',
+);
+// 3. Cobro y caducidad a la vez: o pagado con la reserva, o incidencia sin ella.
+const late = await query(createOrder(lateUnit));
+assert.equal(late.code, 0, late.text);
+const lateRef = await reference(lateUnit);
+await query(
+  `update public.orders o set reserved_until = now() - interval '1 minute' from public.order_lines l where l.order_id=o.id and l.variant_id='${lateUnit}'`,
+);
+const race = await Promise.all([
+  query(
+    server(`select public.web_order_release_expired(); select pg_sleep(0.2)`),
+  ),
+  query(
+    server(
+      `select public.web_order_record_payment('redsys','${lateRef}','tx-late','succeeded',3000,'EUR'); select pg_sleep(0.2)`,
+    ),
+  ),
+]);
+assert.ok(
+  race.every((x) => x.code === 0),
+  JSON.stringify(race),
+);
+const lateState = (
+  await query(
+    `select o.status || '/' || o.reservation from public.orders o join public.order_lines l on l.order_id=o.id where l.variant_id='${lateUnit}'`,
+  )
+).text.trim();
+assert.ok(
+  ['paid/committed', 'needs_attention/released'].includes(lateState),
+  lateState,
+);
+assert.equal(
+  await level(lateUnit),
+  lateState === 'paid/committed' ? '1/1' : '1/0',
+);
 console.log(
-  'Concurrencia real correcta: precio, imagen, recepción y último administrador. Fixtures permanecen solo en el contenedor local hasta db reset.',
+  'Concurrencia real correcta: precio, imagen, recepción, último administrador y pedidos web. Fixtures permanecen solo en el contenedor local hasta db reset.',
 );

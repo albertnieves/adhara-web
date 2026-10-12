@@ -17,6 +17,7 @@ import {
   listMovements,
   listStock,
 } from '@/modules/inventory/server';
+import { countOpenWebOrders } from '@/modules/orders/server';
 import { buttonClass, cardClass, Eyebrow } from '@/components/ui';
 
 /**
@@ -80,7 +81,7 @@ export default async function AdminHome() {
   const canStock = can('inventory.view');
   const canCost = canCatalog && can('pricing.view_cost');
 
-  const [products, location, latestResult] = await Promise.all([
+  const [products, location, latestResult, webOrders] = await Promise.all([
     canCatalog ? listAdminProducts(staff.supabase, canStock) : [],
     canStock ? getDefaultLocation(staff.supabase) : null,
     // El informe es secundario: si su tabla aún no existe en el entorno (sin
@@ -89,6 +90,14 @@ export default async function AdminHome() {
       ? getLatestReport(staff.supabase).catch((error: unknown) => {
           console.error('[admin] informe diario', error);
           return 'error' as const;
+        })
+      : null,
+    // Igual que el informe: si la tabla aún no existe (entorno sin migrar), el
+    // inicio se muestra sin el indicador.
+    can('orders.view')
+      ? countOpenWebOrders(staff.supabase).catch((error: unknown) => {
+          console.error('[admin] pedidos web', error);
+          return null;
         })
       : null,
   ]);
@@ -241,6 +250,29 @@ export default async function AdminHome() {
       )}
 
       <section className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
+        {webOrders && (
+          <>
+            <Stat
+              label="Pedidos web por preparar"
+              value={webOrders.toPrepare}
+              href="/admin/pedidos"
+              note={
+                webOrders.pickup > 0
+                  ? `${webOrders.pickup} listos para recoger`
+                  : 'Pagados, pendientes de preparar o entregar'
+              }
+            />
+            {webOrders.attention > 0 && (
+              <Stat
+                label="Incidencias de pago"
+                value={webOrders.attention}
+                href="/admin/pedidos?vista=incidencias"
+                tone="alert"
+                note="Revisa el cobro en el TPV"
+              />
+            )}
+          </>
+        )}
         {canCatalog && (
           <>
             <Stat

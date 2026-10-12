@@ -6,8 +6,8 @@ import { quantile } from './product-metrics';
 /**
  * Visitas e interés de los productos, con los contadores anónimos de
  * admin_control_attention (migración 20261011090200): uno por producto, día
- * de Madrid y tipo, sin nada que identifique a quien mira. «add_to_cart» se
- * acepta para cuando exista la cesta; hoy no se emite.
+ * de Madrid y tipo, sin nada que identifique a quien mira. «add_to_cart» lo
+ * emite la cesta (P03), que solo existe con el checkout encendido.
  */
 
 export const ATTENTION_KINDS = [
