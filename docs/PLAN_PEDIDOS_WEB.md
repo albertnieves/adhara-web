@@ -1,6 +1,6 @@
 # Pedidos de la web y confirmación de tarjeta
 
-Estado: **PR de trabajo: P01 (reglas) y P02 (base de datos) hechas** · 11/10/2026.
+Estado: **PR de trabajo: P01 (reglas), P02 (base de datos) y P05 (panel) hechas** · 12/10/2026.
 
 Objetivo solicitado: al pagar con tarjeta en la web, el pedido aparece automáticamente
 en el panel con sus datos y queda disponible para preparar y entregar. La compra debe
@@ -119,6 +119,28 @@ zonas y tarifas reales; **reembolsos y cancelaciones con cobro bloqueados**
 (pendiente de la asesoría y de la facturación); la retención de datos personales
 (RGPD) se decidirá con la ficha de cliente.
 
+## P05 — panel de pedidos (hecho el 12/10)
+
+Web → **Pedidos web** (`/admin/pedidos`, con `orders.view`) y ficha `/admin/pedidos/[id]`;
+guía para el personal en [ADMIN_OPERATIONS.md](ADMIN_OPERATIONS.md#pedidos-web). Decisión §135.
+
+- **Listado:** vistas con recuento (abiertos por defecto, por preparar, en preparación,
+  para recoger, enviados, incidencias, esperando pago, sin pagar, cerrados y todos),
+  filtros por entrega y por fechas de Madrid, cliente solo con `customers.view`.
+- **Ficha:** estado, entrega, fechas y total; artículos con el precio congelado; cliente
+  (o un aviso sin `customers.view`); notificaciones del banco e idas al banco, sin datos
+  de tarjeta; incidencias abiertas con su motivo y qué hacer (la que llevó el pedido a
+  «Incidencia» se resuelve al darlo por pagado; un segundo cobro sigue abierto hasta P06);
+  cronología con quién hizo cada paso.
+- **Pasos:** los de `status.ts` que la sesión puede dar (`panelTransitions`), sin los del
+  sistema ni los reembolsos. Entregar, enviar y «Dar por pagado» piden confirmación con
+  el diálogo del sistema de diseño; la base vuelve a comprobar permiso, MFA y revisión.
+- **Inicio del panel:** «Pedidos web por preparar» y, si las hay, «Incidencias de pago».
+- **Pruebas:** unitarias (`orders-panel.test.ts`), sin sesión (`admin-orders-access.spec.ts`),
+  recorrido autenticado contra Supabase local (`tests/integration/admin-orders.spec.ts`:
+  preparar, listo, entregar con descuento de stock, resolver una incidencia, y el encargado
+  sin datos del cliente ni botones) y la auditoría visual del panel con la lista y una ficha.
+
 ## Entregas de esta PR
 
 - [x] P01 — Reglas de decisión para notificaciones ya verificadas y pruebas unitarias.
@@ -130,14 +152,14 @@ zonas y tarifas reales; **reembolsos y cancelaciones con cobro bloqueados**
       servidor y la tarea programada que llame a `web_order_release_expired`.
 - [ ] P04 — Adaptador del TPV, notificación autenticada, confirmación atómica,
       conciliación y pruebas oficiales de sandbox. Sin credenciales en el repositorio.
-- [ ] P05 — Panel → Pedidos web: listado, filtros, ficha, incidencias, preparación,
+- [x] P05 — Panel → Pedidos web: listado, filtros, ficha, incidencias, preparación,
       envío/recogida y entrega; usar el sistema de diseño y permisos existentes.
 - [ ] P06 — Confirmación para el comprador, cola de correo y reembolsos con su proveedor.
 - [ ] P07 — Validación integrada: pago correcto/rechazado, firma falsa, importe alterado,
       duplicados concurrentes, última unidad, caducidad contra pago, pago tardío, permisos
       y ausencia de datos personales/costes en respuestas públicas; E2E móvil/escritorio.
 
-La base del panel (P05) puede avanzar sin credenciales del banco. La activación de P03–P04
+El panel (P05) ya está hecho sin credenciales del banco. La activación de P03–P04
 requiere TPV de pruebas y las decisiones comerciales. La idempotencia, autorización y
 atomicidad ya están demostradas en SQL (pgTAP y concurrencia real); falta el E2E (P07).
 

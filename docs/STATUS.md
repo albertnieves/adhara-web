@@ -1,13 +1,14 @@
 # Estado real — 11/10/2026
 
-## En esta rama: pedidos web (PR #31, 10–11/10/2026)
+## En esta rama: pedidos web (PR #31, 10–12/10/2026)
 
-Plan en [PLAN_PEDIDOS_WEB.md](PLAN_PEDIDOS_WEB.md); decisiones §131–134.
+Plan en [PLAN_PEDIDOS_WEB.md](PLAN_PEDIDOS_WEB.md); decisiones §131–135.
 
 - **P01 (10/10):** reglas de dominio y pruebas para decidir la confirmación de una notificación de tarjeta ya verificada (referencia, céntimos y moneda, duplicados y pagos que requieren revisión).
 - **P02 (11/10):** migración `20261011230000_web_orders.sql` con pedidos, líneas, contacto (solo con `customers.view`), intentos de pago, notificaciones, cronología y reserva de stock con caducidad. Solo el servidor crea pedidos y registra cobros; el panel cambia el estado con `admin_transition_order`.
 - **Comprobado en local** (Supabase local reiniciado): pgTAP 571/571 en 14 archivos (79 nuevas); concurrencia real (última unidad, notificación duplicada, cobro contra caducidad); tipos generados iguales; `db lint` sin errores.
-- **Pendiente:** no hay todavía checkout, adaptador del banco ni pantalla de pedidos (P03–P07). **La migración no está aplicada en `adhara-dev`**: se aplica al fusionar.
+- **P05 (12/10):** Web → Pedidos web en el panel: lista con vistas (por preparar, incidencias, esperando pago…), filtros por entrega y fechas, ficha con artículos, cliente (solo con `customers.view`), pagos, incidencias y cronología, y los pasos preparar → listo para recoger → entregado (o enviado) con confirmación. Indicador en el inicio. Guía en [ADMIN_OPERATIONS.md](ADMIN_OPERATIONS.md#pedidos-web).
+- **Pendiente:** no hay todavía checkout ni adaptador del banco (P03, P04), ni correo y reembolsos (P06): la lista de pedidos estará vacía hasta entonces. **La migración no está aplicada en `adhara-dev`**: se aplica al fusionar.
 - **Bloqueado a propósito:** el envío, hasta que haya tarifas reales; los reembolsos, hasta el adaptador del proveedor.
 - **Plan Pro de Vercel** contratado por el usuario el 11/10 (§134).
 

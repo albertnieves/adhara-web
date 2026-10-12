@@ -32,6 +32,16 @@ En el Mostrador, cada línea cobra el PVP salvo que se escriba otro precio por u
 
 Catálogo → ficha del perfume → «Perfil olfativo». Las notas se escriben como claves separadas por comas (`bergamot, rose`); la lista «Notas disponibles» da cada clave con su nombre. Una clave que no existe no se guarda: si hace falta una nota nueva, se añade al vocabulario del código con su nombre en es, ca y en. La URL `https` de la fuente es obligatoria y las estaciones y el momento solo se marcan si la fuente los indica. El catálogo olfativo de la tienda (`/es/catalogo-olfativo`) se actualiza al guardar; no muestra precio ni compra.
 
+## Pedidos web
+
+Web → Pedidos web (con `orders.view`). **La tienda aún no cobra con tarjeta**: la lista se llenará cuando se active el pago (PLAN_PEDIDOS_WEB, P03–P04). Un pedido entra en «Por preparar» solo cuando el banco confirma el pago; los que esperan pago o caducaron sin pagar tienen sus propios filtros y no son trabajo de preparación. Se filtra también por forma de entrega y por fechas (días de Madrid).
+
+- **Recogida en tienda:** «Empezar a preparar» → «Listo para recoger» → «Entregado al cliente». Al entregar, comprobar el nombre y el número de pedido; las unidades reservadas se descuentan del stock en ese momento y aparecen en Movimientos con la referencia «Pedido web» y su número.
+- **Envío:** «Marcar enviado» (con número de seguimiento opcional) descuenta el stock; después, «Marcar entregado». Aún no se venden envíos: faltan zonas y tarifas reales.
+- **Incidencias:** cobros que no cuadran (importe distinto, segundo cobro o pago llegado cuando la reserva ya había caducado). Revisar el cobro en el TPV del banco; si es correcto, «Dar por pagado» lo pasa a «Por preparar» (vuelve a reservar las unidades si hace falta y hay stock). Cancelar y devolver el dinero todavía se hace en el TPV: el panel no marca nada como reembolsado hasta tener la conexión con el banco, así que un segundo cobro sigue en «Incidencias» hasta entonces.
+- **Permisos:** el encargado ve pedidos y artículos, pero no los datos del cliente ni los botones. Preparar y entregar exigen `orders.fulfill`; resolver una incidencia, `orders.refund`. Ver nombre, email y teléfono exige además `customers.view`.
+- La ficha guarda los precios del momento de la compra, las notificaciones del banco (nunca datos de la tarjeta) y una cronología con quién hizo cada paso. Si otra persona cambió el pedido a la vez, el panel pide recargar.
+
 ## Suscriptores a promociones
 
 Web → Suscriptores muestra las altas de la sección «Club L’Atelier» de la tienda (con `customers.view`), su idioma, fecha y estado: pendiente, en Sender o baja. «Exportar CSV» descarga la lista para importarla en Sender o abrirla en Excel. Con `customers.manage` (MFA) se puede dar de baja o borrar (derecho de supresión); si Sender está conectado, el cambio se hace también allí.

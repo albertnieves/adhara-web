@@ -538,3 +538,17 @@ Continúa la PR #31 a petición del usuario («sigue trabajando en la PR 31»). 
      - Queda resuelto el pendiente «Hobby no admite uso comercial» (§118).
      - Permite la tarea programada frecuente que necesita la caducidad de reservas, que se añadirá con el checkout (P03).
      - Siguen pendientes para producción: `adhara-prod`, la revisión legal, los derechos de las fotos y la MFA del administrador de la tienda.
+
+## Pedidos web: panel (P05) — 12/10/2026
+
+A petición del usuario («haz la P05»). Plan en [PLAN_PEDIDOS_WEB.md](PLAN_PEDIDOS_WEB.md#p05--panel-de-pedidos-hecho-el-1210).
+
+135. **Panel de pedidos web.**
+     - **Dónde:** «Pedidos web» va en el grupo Web del menú, en el sitio del antiguo «Pedidos · Próximamente». Lo ve quien tiene `orders.view` (los tres roles).
+     - **Lectura:** con la sesión de quien mira, sobre la RLS de P02 y sin funciones `admin_*` de lectura. El contacto ni se pide sin `customers.view`: el encargado no recibe el nombre del cliente en el HTML ni en la carga RSC (lo comprueba la prueba autenticada).
+     - **Vista por defecto, «Abiertos»:** lo pagado que falta entregar (por preparar, en preparación, para recoger y enviado) y las incidencias. Lo que espera pago o caducó sin pagar tiene vistas propias y no cuenta como trabajo, como pedía el plan.
+     - **Incidencias:** un pedido en `needs_attention` o con una notificación en revisión que no cambió su estado (un segundo cobro en un pedido ya pagado, un cobro en un pedido cerrado). La que llevó el pedido a «Incidencia» queda resuelta al «Dar por pagado» y la ficha la muestra como «Incidencia resuelta»; las otras siguen abiertas hasta devolver el dinero, que llega con P06 (`incidentOpen`). Lo encontró la revisión de las capturas: al principio, una incidencia resuelta seguía contando para siempre.
+     - **Pasos de la ficha (`panelTransitions`):** salen del cuadro de `status.ts` con el permiso de la sesión, sin los del sistema ni los que reembolsan (la base los rechaza hasta P06). Sobre la incidencia, la ficha explica que cancelar y devolver el dinero se hace por ahora en el TPV.
+     - **Confirmación:** entregar, enviar y «Dar por pagado» la piden con `useConfirm` del sistema de diseño, porque mueven stock o resuelven un cobro. Preparar y «listo para recoger» no la piden.
+     - **Inicio del panel:** «Pedidos web por preparar» (pagados y en preparación, con los listos para recoger en la nota) y «Incidencias de pago» solo si hay alguna. Si la tabla aún no existe en el entorno (sin migrar), el inicio se muestra igual, como con el informe diario.
+     - **Fuera de P05:** imprimir una hoja de preparación propia (la ficha se imprime sin acciones, pagos ni cronología), avisos al personal por correo (llegan con el proveedor de correo, P06) y el tablero del mostrador para recogidas (ADMIN_PLAN §A5). La lista basta mientras el volumen sea bajo.
