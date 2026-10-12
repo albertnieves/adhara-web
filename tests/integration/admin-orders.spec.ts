@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 import { randomUUID } from 'node:crypto';
-import { admin, login, psql, user } from './support';
+import type { TestProduct } from './support';
+import { admin, archiveProduct, login, sellableProduct, user } from './support';
 
 /*
  * Pedidos web en el panel (PLAN_PEDIDOS_WEB, P05) contra Supabase local. Los
@@ -9,58 +10,18 @@ import { admin, login, psql, user } from './support';
  * coste (no altera el stock a coste del inicio), y lo archiva al terminar.
  */
 
-type Product = { variantId: string; name: string };
-
-/** Perfume publicado de 49,90 € con `units` en la tienda (las registra un administrador de la tienda). */
-async function sellableProduct(units: number): Promise<Product> {
-  const id = randomUUID().slice(0, 8);
-  const name = `Perfume pedidos ${id}`;
-  const email = await user('store_admin');
-  psql(
-    `begin;
-     with b as (
-       insert into public.brands (slug, name)
-       values ('marca-pedidos-' || :'id', 'Marca pedidos ' || :'id') returning id
-     ), p as (
-       insert into public.products (brand_id, slug, name, source_ref)
-       select b.id, 'perfume-pedidos-' || :'id', :'name', 'tests/integration/admin-orders.spec.ts'
-       from b returning id
-     )
-     insert into public.product_variants (product_id, sku, size_ml, retail_price_cents)
-     select p.id, 'PED-' || :'id', 100, 4990 from p;
-     update public.products set status = 'published' where name = :'name';
-     select set_config('request.jwt.claims', json_build_object(
-       'sub', (select id from auth.users where email = :'email'),
-       'aal', 'aal2', 'role', 'authenticated')::text, true);
-     select public.admin_record_inventory_movement(v.id,
-       (select id from public.stock_locations where code = 'castelldefels'),
-       'PURCHASE_RECEIPT', ${units})
-     from public.product_variants v
-     join public.products p on p.id = v.product_id where p.name = :'name';
-     commit;`,
-    { id, name, email },
-  );
-  const { data, error } = await admin
-    .from('product_variants')
-    .select('id, products!inner(name)')
-    .eq('products.name', name)
-    .single();
-  if (error) throw error;
-  const product = { variantId: String(data.id), name };
-  created.push(product);
-  return product;
-}
+type Product = TestProduct;
 
 const created: Product[] = [];
 
-/** Fuera de la tienda pública al terminar; los pedidos lo siguen nombrando. */
+async function makeProduct(units: number) {
+  const made = await sellableProduct(units);
+  created.push(made);
+  return made;
+}
+
 test.afterEach(() => {
-  for (const product of created.splice(0)) {
-    psql(
-      `update public.products set status = 'archived' where name = :'name';`,
-      { name: product.name },
-    );
-  }
+  for (const made of created.splice(0)) archiveProduct(made);
 });
 
 async function level(product: Product) {
@@ -118,7 +79,7 @@ function customer() {
 test('administrador de la tienda: prepara y entrega un pedido y resuelve una incidencia', async ({
   page,
 }) => {
-  const product = await sellableProduct(3);
+  const product = await makeProduct(3);
   const buyer = customer();
   const order = await paidOrder(product, buyer, 4990);
   const incident = await paidOrder(product, customer(), 499);
@@ -193,7 +154,7 @@ test('administrador de la tienda: prepara y entrega un pedido y resuelve una inc
 test('encargado: ve los pedidos sin datos del cliente ni pasos', async ({
   page,
 }) => {
-  const product = await sellableProduct(1);
+  const product = await makeProduct(1);
   const buyer = customer();
   const order = await paidOrder(product, buyer, 4990);
 

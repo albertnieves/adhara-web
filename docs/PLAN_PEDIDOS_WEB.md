@@ -1,6 +1,6 @@
 # Pedidos de la web y confirmación de tarjeta
 
-Estado: **PR de trabajo: P01 (reglas), P02 (base de datos) y P05 (panel) hechas** · 12/10/2026.
+Estado: **PR de trabajo: P01 (reglas), P02 (base de datos), P03 (checkout, apagado) y P05 (panel) hechas** · 12/10/2026.
 
 Objetivo solicitado: al pagar con tarjeta en la web, el pedido aparece automáticamente
 en el panel con sus datos y queda disponible para preparar y entregar. La compra debe
@@ -141,15 +141,44 @@ guía para el personal en [ADMIN_OPERATIONS.md](ADMIN_OPERATIONS.md#pedidos-web)
   preparar, listo, entregar con descuento de stock, resolver una incidencia, y el encargado
   sin datos del cliente ni botones) y la auditoría visual del panel con la lista y una ficha.
 
+## P03 — cesta y checkout (hecho el 12/10, apagado)
+
+Decisiones del usuario del 12/10: **recogida en tienda y envíos**, **envío a la península y
+Baleares** (Canarias, Ceuta y Melilla fuera por el IGIC y la aduana), **tarifas editables en el
+panel** y **checkout construido pero apagado** hasta conectar el TPV. Decisión §136.
+
+- **Interruptor `WEB_CHECKOUT`:** sin `WEB_CHECKOUT=1` en Vercel la tienda sigue igual que
+  antes («Compra online próximamente») y `/cesta` y `/finalizar-compra` responden 404. La CI
+  lo enciende para probarlo todo (e2e.yml).
+- **Cesta** (`/es/cesta`, `/ca/cistella`, `/en/basket`): cookie técnica `atelier_cesta` con
+  formatos y cantidades (30 días; hasta 20 formatos y 10 unidades de cada uno). Los precios y
+  la disponibilidad se leen del catálogo publicado en cada visita.
+- **Finalizar compra** (`/es/finalizar-compra`, `/ca/finalitzar-compra`, `/en/checkout`):
+  nombre, email y teléfono; recogida gratis en la tienda o envío con dirección (teléfono
+  obligatorio); resumen con el envío según el código postal y la tarifa de su zona; aceptación
+  de las condiciones de venta, enlace a privacidad y al desistimiento; botón «Confirmar pedido
+  y pagar». El servidor llama a `web_order_create` con la clave privilegiada (§131) y la base
+  recalcula precios, envío y stock. Sin TPV, la confirmación dice que el pago aún no está
+  conectado y la reserva caduca sola.
+- **Panel → Configuración → Tarifas de envío** (`settings.manage`, con MFA): precio por zona, envío
+  gratis opcional desde un importe y si se ofrece. Sin tarifa activa no se ofrece el envío.
+- **Base de datos** (`20261012120000_web_checkout.sql`): `shipping_rates` con RLS (la tienda
+  solo lee las activas), `private.shipping_zone` por código postal, `admin_save_shipping_rate`
+  y `web_order_create` con envío (y, sin ubicación, la tienda).
+- **Caducidad:** `/api/cron/caducar-reservas` cada 5 minutos (Vercel Cron, plan Pro) con
+  `CRON_SECRET`.
+- **Pruebas:** pgTAP `14_web_checkout` (36), unitarias (`checkout.test.ts`), recorrido completo
+  en `tests/integration/checkout.spec.ts` (cesta, recogida, envío con zona y tarifa, rutas en
+  ca y en, tarifas del panel) y auditoría visual de la cesta y el checkout.
+
 ## Entregas de esta PR
 
 - [x] P01 — Reglas de decisión para notificaciones ya verificadas y pruebas unitarias.
 - [x] P02 — Persistencia de pedidos, líneas, contactos, intentos, eventos y reservas;
       migración con RLS, proyecciones por permiso, pgTAP y tipos generados.
-- [ ] P03 — Checkout es/ca/en: contacto, entrega, resumen calculado en servidor,
-      idempotencia, reserva y caducidad. Tarifas reales antes de habilitar envíos.
-      La base ya crea, reserva y caduca; falta la pantalla, la llamada desde el
-      servidor y la tarea programada que llame a `web_order_release_expired`.
+- [x] P03 — Checkout es/ca/en: contacto, entrega, resumen calculado en servidor,
+      idempotencia, reserva y caducidad. Apagado (`WEB_CHECKOUT`) hasta P04; las tarifas
+      reales las pone el titular en el panel.
 - [ ] P04 — Adaptador del TPV, notificación autenticada, confirmación atómica,
       conciliación y pruebas oficiales de sandbox. Sin credenciales en el repositorio.
 - [x] P05 — Panel → Pedidos web: listado, filtros, ficha, incidencias, preparación,
@@ -159,18 +188,17 @@ guía para el personal en [ADMIN_OPERATIONS.md](ADMIN_OPERATIONS.md#pedidos-web)
       duplicados concurrentes, última unidad, caducidad contra pago, pago tardío, permisos
       y ausencia de datos personales/costes en respuestas públicas; E2E móvil/escritorio.
 
-El panel (P05) ya está hecho sin credenciales del banco. La activación de P03–P04
-requiere TPV de pruebas y las decisiones comerciales. La idempotencia, autorización y
-atomicidad ya están demostradas en SQL (pgTAP y concurrencia real); falta el E2E (P07).
-
-La caducidad de reservas necesita una tarea programada frecuente (propuesta: cada 5 minutos),
-que el plan Hobby de Vercel no permitía. Con el plan Pro, contratado por el usuario el 11/10
-(§134), se añadirá en P03 junto al checkout, protegida con `CRON_SECRET`.
+Hecho sin credenciales del banco: P02, P03 (apagado) y P05. Encender la venta exige P04 (TPV
+de pruebas y de producción) y las tarifas reales en el panel. La idempotencia, autorización y
+atomicidad ya están demostradas en SQL (pgTAP y concurrencia real) y el checkout en E2E sin
+pago; falta el E2E con pago (P07).
 
 ## Pendientes para activar ventas
 
 Confirmar proveedor/TPV y configurar sus credenciales de pruebas en el entorno del
-servidor, nunca por chat; decidir recogida, envíos o ambas, con zonas y tarifas reales;
+servidor, nunca por chat; poner las tarifas de envío reales en el panel (recogida y envíos a
+la península y Baleares ya decididos); limitar en el Firewall de Vercel las peticiones de
+`/finalizar-compra` por IP antes de encender `WEB_CHECKOUT`;
 confirmar tratamiento de pagos tardíos (propuesta inicial: revisión manual), facturación
 y proveedor de correo. Mantener los requisitos de apertura de `STATUS.md`.
 

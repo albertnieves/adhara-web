@@ -421,6 +421,12 @@ export const en: LegalCopy = {
                     'Remember that you accepted the website terms, so we do not ask again.',
                     '1 year',
                   ],
+                  [
+                    'atelier_cesta',
+                    'Ours',
+                    'Keep the fragrances you add to your basket while you shop. It is only created if you use the basket.',
+                    '30 days',
+                  ],
                 ],
               },
             },

@@ -424,6 +424,12 @@ export const ca: LegalCopy = {
                     'Recordar que has acceptat les condicions del web, per no tornar-te-les a demanar.',
                     '1 any',
                   ],
+                  [
+                    'atelier_cesta',
+                    'Pròpia',
+                    'Guardar els perfums que afegeixes a la cistella mentre compres. Només es crea si fas servir la cistella.',
+                    '30 dies',
+                  ],
                 ],
               },
             },

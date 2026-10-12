@@ -152,8 +152,10 @@ select set_config('request.jwt.claims', '{"role": "service_role"}', true);
 
 select throws_ok(
   $$select pg_temp.create_order('00000000-0000-4000-8000-0000000013d9',
-    '[{"variant_id": "00000000-0000-4000-8000-0000000013c1", "quantity": 1}]', 'shipping')$$,
-  '22023', 'shipping_unavailable', 'sin tarifas reales no se vende con envío');
+    '[{"variant_id": "00000000-0000-4000-8000-0000000013c1", "quantity": 1}]', 'shipping',
+    '{"full_name": "Cliente", "email": "cliente@test.invalid", "phone": "600000000",
+      "address_line1": "Calle de prueba 1", "postal_code": "08860", "city": "Castelldefels"}')$$,
+  '22023', 'shipping_unavailable', 'sin tarifa activa no se vende con envío (P03, 14)');
 select throws_ok(
   $$select pg_temp.create_order('00000000-0000-4000-8000-0000000013d9',
     '[{"variant_id": "00000000-0000-4000-8000-0000000013c1", "quantity": 1}]', 'click_collect',

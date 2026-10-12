@@ -892,6 +892,33 @@ export type Database = {
           },
         ];
       };
+      shipping_rates: {
+        Row: {
+          active: boolean;
+          free_from_cents: number | null;
+          price_cents: number;
+          updated_at: string;
+          updated_by: string | null;
+          zone: string;
+        };
+        Insert: {
+          active?: boolean;
+          free_from_cents?: number | null;
+          price_cents: number;
+          updated_at?: string;
+          updated_by?: string | null;
+          zone: string;
+        };
+        Update: {
+          active?: boolean;
+          free_from_cents?: number | null;
+          price_cents?: number;
+          updated_at?: string;
+          updated_by?: string | null;
+          zone?: string;
+        };
+        Relationships: [];
+      };
       staff_members: {
         Row: {
           active: boolean;
@@ -1630,6 +1657,28 @@ export type Database = {
           p_payload: Json;
         };
         Returns: number;
+      };
+      admin_save_shipping_rate: {
+        Args: {
+          p_active: boolean;
+          p_free_from_cents: number;
+          p_price_cents: number;
+          p_zone: string;
+        };
+        Returns: {
+          active: boolean;
+          free_from_cents: number | null;
+          price_cents: number;
+          updated_at: string;
+          updated_by: string | null;
+          zone: string;
+        };
+        SetofOptions: {
+          from: '*';
+          to: 'shipping_rates';
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
       };
       admin_save_supplier: {
         Args: {

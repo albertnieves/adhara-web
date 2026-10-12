@@ -6,6 +6,7 @@ import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Eyebrow } from '@/components/ui';
 import { Logo } from '@/modules/brand';
+import { CartLink } from '@/modules/checkout/ui';
 import { Link, routing, usePathname } from '@/modules/i18n';
 
 const EASE = [0.22, 1, 0.36, 1] as const;
@@ -44,7 +45,8 @@ function LanguageLinks({
   );
 }
 
-export function Header() {
+/** `cart`: con el checkout encendido (WEB_CHECKOUT), enlace a la cesta. */
+export function Header({ cart = false }: { cart?: boolean }) {
   const t = useTranslations('nav');
   const pathname = usePathname();
   const reduced = useReducedMotion();
@@ -127,11 +129,12 @@ export function Header() {
             <Logo />
           </Link>
 
-          <div className="flex justify-end">
+          <div className="flex items-center justify-end gap-6">
             <LanguageLinks
               pathname={pathname}
               className="text-2xs tracking-caps hidden items-center gap-4 md:flex"
             />
+            {cart && <CartLink />}
           </div>
         </div>
       </header>

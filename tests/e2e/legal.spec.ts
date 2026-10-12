@@ -42,10 +42,12 @@ test('el índice lleva a cada sección y no se publican datos pendientes', async
   await expect(
     page.getByRole('heading', { name: 'Perfumes precintados' }),
   ).toBeInViewport();
-  // Sin datos del titular ni de envíos, esas líneas no se ven en la tienda.
+  // Los datos que faltan no se ven en la tienda; los decididos, sí.
   await expect(page.locator('mark[data-pending]')).toHaveCount(0);
   await expect(page.getByText('Pendiente', { exact: false })).toHaveCount(0);
-  await expect(page.getByText(/^Enviamos a/)).toHaveCount(0);
+  await expect(
+    page.getByText('Enviamos a la España peninsular y las Illes Balears.'),
+  ).toBeVisible();
   await expect(
     page.getByText(/^A la atención de L’Atelier du Désert, .+Castelldefels:$/),
   ).toBeVisible();

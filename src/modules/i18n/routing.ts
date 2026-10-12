@@ -42,5 +42,12 @@ export const routing = defineRouting({
       ca: '/perfum/[slug]',
       en: '/fragrance/[slug]',
     },
+    // Cesta y checkout (P03): 404 mientras WEB_CHECKOUT no esté encendido.
+    '/cesta': { es: '/cesta', ca: '/cistella', en: '/basket' },
+    '/finalizar-compra': {
+      es: '/finalizar-compra',
+      ca: '/finalitzar-compra',
+      en: '/checkout',
+    },
   },
 });

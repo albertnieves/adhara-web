@@ -2,14 +2,16 @@
 
 ## En esta rama: pedidos web (PR #31, 10–12/10/2026)
 
-Plan en [PLAN_PEDIDOS_WEB.md](PLAN_PEDIDOS_WEB.md); decisiones §131–135.
+Plan en [PLAN_PEDIDOS_WEB.md](PLAN_PEDIDOS_WEB.md); decisiones §131–136.
 
 - **P01 (10/10):** reglas de dominio y pruebas para decidir la confirmación de una notificación de tarjeta ya verificada (referencia, céntimos y moneda, duplicados y pagos que requieren revisión).
 - **P02 (11/10):** migración `20261011230000_web_orders.sql` con pedidos, líneas, contacto (solo con `customers.view`), intentos de pago, notificaciones, cronología y reserva de stock con caducidad. Solo el servidor crea pedidos y registra cobros; el panel cambia el estado con `admin_transition_order`.
 - **Comprobado en local** (Supabase local reiniciado): pgTAP 571/571 en 14 archivos (79 nuevas); concurrencia real (última unidad, notificación duplicada, cobro contra caducidad); tipos generados iguales; `db lint` sin errores.
 - **P05 (12/10):** Web → Pedidos web en el panel: lista con vistas (por preparar, incidencias, esperando pago…), filtros por entrega y fechas, ficha con artículos, cliente (solo con `customers.view`), pagos, incidencias y cronología, y los pasos preparar → listo para recoger → entregado (o enviado) con confirmación. Indicador en el inicio. Guía en [ADMIN_OPERATIONS.md](ADMIN_OPERATIONS.md#pedidos-web).
-- **Pendiente:** no hay todavía checkout ni adaptador del banco (P03, P04), ni correo y reembolsos (P06): la lista de pedidos estará vacía hasta entonces. **La migración no está aplicada en `adhara-dev`**: se aplica al fusionar.
-- **Bloqueado a propósito:** el envío, hasta que haya tarifas reales; los reembolsos, hasta el adaptador del proveedor.
+- **P03 (12/10, apagado):** cesta y «Finalizar compra» en es/ca/en con recogida en la tienda o envío a la península y Baleares; tarifas en Panel → Configuración → Tarifas de envío; caducidad de reservas cada 5 minutos. Detrás del interruptor `WEB_CHECKOUT`: sin él, la tienda sigue sin vender y las páginas nuevas responden 404.
+- **Comprobado en local (P03, base reiniciada):** pgTAP 607/607 en 15 archivos (36 nuevas); tipos generados iguales, `db lint` y concurrencia correctos; 522 unitarias; `e2e.yml` con `WEB_CHECKOUT=1`: tienda pública 238 correctas y 24 omitidas, más las 2 del texto de envíos, que pasan tras ajustar la prueba a las zonas ya decididas; panel con sesión 29/29 (nuevo `checkout.spec.ts`: recogida, envío por zonas, rutas ca/en y tarifas del panel).
+- **Pendiente:** adaptador del banco (P04), correo y reembolsos (P06) y E2E con pago (P07). **Las migraciones `20261011230000` y `20261012120000` no están aplicadas en `adhara-dev`**: se aplican al fusionar, antes de desplegar.
+- **Bloqueado a propósito:** el envío a una zona sin tarifa activa en el panel (no hay precio por defecto); los reembolsos, hasta el adaptador del proveedor.
 - **Plan Pro de Vercel** contratado por el usuario el 11/10 (§134).
 
 **Tienda visual (es/ca/en) y panel de administración operativos sobre `adhara-dev`, desplegados en Vercel y públicos desde el 10/10 en `latelierdudesert.com`, sin Vercel Authentication y todavía con `noindex` (DECISIONS §118). `main` incluye las fases R y S (PR #9), la entrega de acceso y edición de Codex (PR #10) y el panel con el asistente (PR #11); sus 17 migraciones están aplicadas en `adhara-dev` (comprobado el 02/10). La tienda muestra 50 perfumes publicados con PVP. La Fase 1 está cerrada (PR #12): sus 19 criterios están cumplidos o con una excepción escrita ([informe](phases/FASE_1_REPORT.md)). La Fase 2 (sistema de diseño) está terminada a falta de la revisión visual del usuario ([informe](phases/FASE_2_REPORT.md)): 12 de 13 criterios cumplidos. Siguiente: checkout con pago con tarjeta, que espera los datos del TPV virtual (ver «Pendiente del usuario»).**

@@ -50,8 +50,8 @@ test('un evento válido responde 204 sin datos ni caché', async ({
 
 test('lo que no cuenta también responde 204', async ({ request }) => {
   const cases: { data: object; headers: Record<string, string> }[] = [
-    // Tipo que la tienda no envía (add_to_cart llegará con el carrito).
-    { data: { slug: 'perfume-centinela', kind: 'add_to_cart' }, headers: {} },
+    // Tipo que no existe.
+    { data: { slug: 'perfume-centinela', kind: 'purchase' }, headers: {} },
     // Bot y otro origen.
     {
       data: { slug: 'perfume-centinela', kind: 'view' },

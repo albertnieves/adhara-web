@@ -4,6 +4,7 @@ import { getTranslations } from 'next-intl/server';
 import { draftMode } from 'next/headers';
 import { notFound } from 'next/navigation';
 import { variantLabel } from '@/modules/catalog';
+import { checkoutEnabled } from '@/modules/checkout/server';
 import {
   getAvailability,
   getStorefrontProduct,
@@ -113,6 +114,8 @@ export default async function ProductPage({ params }: { params: Params }) {
             <PurchasePanel
               variants={product.variants}
               availability={availability}
+              slug={product.slug}
+              cart={checkoutEnabled() && !draft.isEnabled}
             />
           </Reveal>
 

@@ -11,6 +11,10 @@ jobs:
   e2e:
     runs-on: ubuntu-latest
     timeout-minutes: 25
+    # Cesta y checkout encendidos (P03): en producción siguen apagados hasta
+    # conectar el TPV (DECISIONS §136).
+    env:
+      WEB_CHECKOUT: '1'
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
