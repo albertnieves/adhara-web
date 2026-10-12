@@ -8,6 +8,7 @@ import { PageHeader, PrintButton } from '@/modules/admin';
 import { isAllowed } from '@/modules/auth';
 import { requirePermission } from '@/modules/auth/server';
 import { mailConfig } from '@/modules/mail/server';
+import { redsysConfig } from '@/modules/payments/server/config';
 import {
   FULFILLMENT_LABELS,
   ORDER_EMAIL_LABELS,
@@ -16,13 +17,15 @@ import {
   PAYMENT_DECISION_LABELS,
   PAYMENT_OUTCOME_LABELS,
   PAYMENT_REASON_LABELS,
+  REFUND_STATUS_LABELS,
   orderEmailBadge,
   orderStatusBadge,
   panelTransitions,
+  refundOptions,
 } from '@/modules/orders';
 import type { WebOrderDetail } from '@/modules/orders/server';
 import { getWebOrder } from '@/modules/orders/server';
-import { OrderActions } from '@/modules/orders/ui';
+import { OrderActions, RefundActions } from '@/modules/orders/ui';
 import { Badge, Eyebrow, Table } from '@/components/ui';
 
 export const metadata: Metadata = { title: 'Pedido web' };
@@ -101,7 +104,16 @@ export default async function WebOrderPage({
     withCustomer: canCustomers,
   });
   if (!detail) notFound();
-  const { order, lines, contact, attempts, payments, emails, events } = detail;
+  const { order, lines, contact, attempts, payments, refunds, emails, events } =
+    detail;
+  const tpvReady = redsysConfig() !== null;
+  const openRefund = refunds.find(
+    (r) => r.status === 'requested' || r.status === 'unknown',
+  );
+  const refundChoices = tpvReady
+    ? refundOptions(order, payments, session, { pending: Boolean(openRefund) })
+    : [];
+  const canRefund = isAllowed(session, 'orders.refund');
   const badge = orderStatusBadge(order);
   const incidents = payments.filter((p) => p.incidentOpen);
   const actions = panelTransitions(order, session);
@@ -191,9 +203,8 @@ export default async function WebOrderPage({
           )}
           <p className="text-fg-muted mt-2">
             {order.status === 'needs_attention'
-              ? 'Revisa el cobro en el TPV del banco. Si es correcto, «Dar por pagado» lo pasa a la cola de preparación; si no, cancela y devuelve el dinero desde el TPV.'
-              : 'El pedido sigue su curso. Devuelve desde el TPV lo cobrado de más.'}{' '}
-            Las devoluciones llegarán al panel con la conexión al banco.
+              ? 'Revisa el cobro en el portal del banco. Si es correcto, «Dar por pagado» lo pasa a la cola de preparación; si no, cancela y devuelve el dinero en «Devoluciones».'
+              : 'El pedido sigue su curso. Devuelve lo cobrado de más en «Devoluciones».'}
           </p>
         </div>
       )}
@@ -416,6 +427,72 @@ export default async function WebOrderPage({
           </>
         )}
       </Section>
+
+      {(refunds.length > 0 || (canRefund && payments.length > 0)) && (
+        <Section title="Devoluciones" className="print:hidden">
+          {refunds.length > 0 && (
+            <ul className="divide-border border-border mb-6 divide-y border-y text-sm">
+              {refunds.map((refund) => {
+                const status = REFUND_STATUS_LABELS[refund.status];
+                return (
+                  <li
+                    key={refund.id}
+                    className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 py-3"
+                  >
+                    <span>
+                      <span className="tabular-nums">
+                        {euros(refund.amountCents)}
+                      </span>
+                      <span className="text-fg-muted">
+                        {' · '}
+                        {refund.toStatus
+                          ? ORDER_STATUS_LABELS[refund.toStatus].toLowerCase()
+                          : 'cobro de más'}
+                        {' · '}
+                        {DATE_TIME.format(new Date(refund.createdAt))}
+                        {refund.actorName ? ` · ${refund.actorName}` : ''}
+                      </span>
+                    </span>
+                    <span className="flex flex-wrap items-center gap-2">
+                      <Badge tone={status.tone}>{status.label}</Badge>
+                      {(refund.responseCode || refund.error) && (
+                        <span className="text-fg-muted text-xs">
+                          {refund.responseCode
+                            ? `Código ${refund.responseCode}`
+                            : refund.error}
+                        </span>
+                      )}
+                    </span>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+          {openRefund?.status === 'unknown' && (
+            <p className="text-warning mb-4 text-sm">
+              El banco no respondió con claridad a la última devolución.
+              Compruébala en el portal de Redsys antes de volver a enviarla.
+            </p>
+          )}
+          {canRefund && tpvReady ? (
+            <RefundActions
+              orderId={order.id}
+              revision={order.revision}
+              options={refundChoices}
+              unknownRefundId={
+                openRefund?.status === 'unknown' ? openRefund.id : null
+              }
+            />
+          ) : (
+            canRefund && (
+              <p className="text-fg-muted text-sm">
+                El TPV aún no está conectado: las devoluciones se hacen en el
+                portal del banco.
+              </p>
+            )
+          )}
+        </Section>
+      )}
 
       <Section title="Correos al cliente" className="print:hidden">
         {emails.length === 0 ? (

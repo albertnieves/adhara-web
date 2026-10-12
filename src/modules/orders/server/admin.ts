@@ -116,6 +116,8 @@ export type WebOrderDetail = {
     currency: string;
     paidAt: string | null;
     trackingReference: string | null;
+    /** Transacción del cobro del pedido (también si fue incidencia). */
+    receivedTransactionId: string | null;
     revision: number;
     createdAt: string;
   };
@@ -146,6 +148,8 @@ export type WebOrderDetail = {
   payments: {
     /** En revisión: abierta o ya resuelta (incidentOpen); null si no lo está. */
     incidentOpen: boolean | null;
+    /** Devuelto de este cobro con respuesta del banco. */
+    refundedCents: number;
     id: number;
     provider: string;
     transactionId: string;
@@ -155,6 +159,19 @@ export type WebOrderDetail = {
     decision: string;
     reason: string | null;
     receivedAt: string;
+  }[];
+  /** Devoluciones pedidas al banco (P06) y lo que respondió. */
+  refunds: {
+    id: string;
+    paymentId: number;
+    toStatus: OrderStatus | null;
+    amountCents: number;
+    status: 'requested' | 'succeeded' | 'failed' | 'unknown';
+    responseCode: string | null;
+    error: string | null;
+    actorName: string | null;
+    createdAt: string;
+    resolvedAt: string | null;
   }[];
   /** Correos al cliente (P06): qué salió y qué espera, sin su contenido. */
   emails: {
@@ -203,6 +220,7 @@ export async function getWebOrder(
     paymentsResult,
     eventsResult,
     emailsResult,
+    refundsResult,
   ] = await Promise.all([
     supabase
       .from('order_lines')
@@ -240,6 +258,11 @@ export async function getWebOrder(
       .select('kind, status, attempts, last_error, sent_at, created_at')
       .eq('order_id', id)
       .order('id'),
+    supabase
+      .from('order_refunds')
+      .select('*')
+      .eq('order_id', id)
+      .order('created_at'),
   ]);
   const lines = must(linesResult) ?? [];
   const contact = must(contactResult);
@@ -247,6 +270,16 @@ export async function getWebOrder(
   const payments = must(paymentsResult) ?? [];
   const events = must(eventsResult) ?? [];
   const emails = must(emailsResult) ?? [];
+  const refunds = must(refundsResult) ?? [];
+  // Lo ya devuelto de cada cobro: un cobro de más devuelto entero cierra su
+  // incidencia.
+  const refunded = new Map<number, number>();
+  for (const refund of refunds)
+    if (refund.status === 'succeeded')
+      refunded.set(
+        refund.payment_id,
+        (refunded.get(refund.payment_id) ?? 0) + refund.amount_cents,
+      );
 
   // Cada incidencia por su transacción: ¿cambió el estado del pedido?
   const keptStatus = new Map<string, boolean>();
@@ -292,6 +325,7 @@ export async function getWebOrder(
       currency: order.currency,
       paidAt: order.paid_at,
       trackingReference: order.tracking_reference,
+      receivedTransactionId: order.received_transaction_id,
       revision: order.revision,
       createdAt: order.created_at,
     },
@@ -330,8 +364,9 @@ export async function getWebOrder(
         p.decision === 'review'
           ? incidentOpen(order.status as OrderStatus, {
               keptStatus: keptStatus.get(p.transaction_id) ?? true,
-            })
+            }) && (refunded.get(p.id) ?? 0) < p.amount_cents
           : null,
+      refundedCents: refunded.get(p.id) ?? 0,
       id: p.id,
       provider: p.provider,
       transactionId: p.transaction_id,
@@ -341,6 +376,20 @@ export async function getWebOrder(
       decision: p.decision,
       reason: p.reason,
       receivedAt: p.received_at,
+    })),
+    refunds: refunds.map((r) => ({
+      id: r.id,
+      paymentId: r.payment_id,
+      toStatus: r.to_status as OrderStatus | null,
+      amountCents: r.amount_cents,
+      status: r.status as 'requested' | 'succeeded' | 'failed' | 'unknown',
+      responseCode: r.response_code,
+      error: r.error,
+      actorName: r.requested_by
+        ? (names.get(r.requested_by) ?? 'Personal')
+        : null,
+      createdAt: r.created_at,
+      resolvedAt: r.resolved_at,
     })),
     emails: emails.map((e) => ({
       kind: e.kind,

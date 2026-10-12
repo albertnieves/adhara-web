@@ -47,3 +47,5 @@ export type {
   OrderViewFacts,
   ParsedOrderFilter,
 } from './domain/filters';
+export { REFUND_STATUS_LABELS, refundOptions } from './domain/refunds';
+export type { RefundOption, RefundablePayment } from './domain/refunds';

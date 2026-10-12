@@ -85,6 +85,9 @@ export const ORDER_EVENT_LABELS: Readonly<Record<string, string>> = {
   payment_not_paid: 'Pago no completado',
   reservation_released: 'Reserva caducada: unidades devueltas al stock',
   status_changed: 'Cambio de estado',
+  refund_requested: 'Devolución pedida al banco',
+  refund_succeeded: 'Devolución aceptada por el banco',
+  refund_failed: 'Devolución rechazada por el banco',
 };
 
 /** Correos al cliente (P06). */
@@ -122,6 +125,15 @@ export const ORDER_ERRORS: Readonly<Record<string, string>> = {
     'No hay unidades disponibles para volver a reservar este pedido.',
   invalid_tracking: 'El número de seguimiento no es válido.',
   unknown_order: 'El pedido no existe.',
+  invalid_payment: 'Ese cobro no se puede devolver desde este pedido.',
+  invalid_amount:
+    'El importe no es válido: no puede superar lo cobrado menos lo ya devuelto.',
+  refund_in_progress:
+    'Ya hay una devolución de este pedido esperando la respuesta del banco.',
+  nothing_to_refund: 'Este cobro ya está devuelto entero.',
+  refund_not_retryable: 'Esa devolución ya tiene respuesta del banco.',
+  unknown_refund: 'La devolución no existe.',
+  invalid_request: 'La petición no es válida. Recarga la página.',
 };
 
 /**

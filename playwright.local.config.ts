@@ -20,9 +20,21 @@ export default defineConfig({
       },
     },
   ],
-  webServer: {
-    command: 'pnpm start',
-    url: 'http://localhost:3000/api/health',
-    reuseExistingServer: false,
-  },
+  webServer: [
+    {
+      command: 'pnpm start',
+      url: 'http://localhost:3000/api/health',
+      reuseExistingServer: false,
+      // Devoluciones contra la API REST simulada (solo con REDSYS_ENVIRONMENT=test).
+      env: {
+        REDSYS_TEST_REST_URL:
+          'http://localhost:3999/sis/rest/trataPeticionREST',
+      },
+    },
+    {
+      command: 'node tests/integration/fake-redsys.ts',
+      url: 'http://localhost:3999/health',
+      reuseExistingServer: false,
+    },
+  ],
 });

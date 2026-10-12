@@ -73,11 +73,15 @@ async function anyProductId() {
   return product ? String(product.id) : undefined;
 }
 
-/** Un pedido web, si hay (los crea admin-orders.spec.ts, que corre antes). */
+/**
+ * Un pedido web ya cobrado, si hay (los crea admin-orders.spec.ts, que corre
+ * antes): su ficha enseña pagos, devoluciones y correos.
+ */
 async function anyOrderId() {
   const { data: order } = await admin
     .from('orders')
     .select('id')
+    .neq('status', 'pending_payment')
     .order('created_at', { ascending: false })
     .limit(1)
     .maybeSingle();

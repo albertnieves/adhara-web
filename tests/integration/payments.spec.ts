@@ -11,7 +11,14 @@ import {
   notify,
 } from './bank';
 import type { TestProduct } from './support';
-import { admin, archiveProduct, psql, sellableProduct } from './support';
+import {
+  admin,
+  archiveProduct,
+  login,
+  psql,
+  sellableProduct,
+  user,
+} from './support';
 
 /*
  * Pago con tarjeta de extremo a extremo (PLAN_PEDIDOS_WEB, P04 y P07) contra
@@ -418,4 +425,120 @@ test('la página del pedido sin pedido en este navegador no enseña nada', async
     ).toBeVisible();
   }
   expect(GATEWAY).toContain('sis-t.redsys.es');
+});
+
+/** Próxima respuesta de la API REST simulada (tests/integration/fake-redsys.ts). */
+async function bankNext(modo: 'aceptar' | 'rechazar' | 'sin_respuesta') {
+  const response = await fetch('http://localhost:3999/siguiente', {
+    method: 'POST',
+    body: JSON.stringify({ modo }),
+  });
+  expect(response.ok).toBe(true);
+}
+
+test('devolución desde el panel: la da por hecha el banco, no el botón', async ({
+  page,
+}) => {
+  const visits = await fakeBank(page);
+  const product = await makeProduct(3);
+  const { email, submit } = await checkout(page, product);
+  await submit();
+  const params = await nextVisit(page, visits, 1);
+  const reference = params.DS_MERCHANT_ORDER!;
+  await notify(
+    page.request,
+    notificationBody({ order: reference, amount: '4990' }),
+  );
+  const placed = await order(email);
+  expect(placed).toMatchObject({ status: 'paid', reservation: 'committed' });
+
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await login(page, await user('store_admin'));
+  await page.goto(`/admin/pedidos/${placed.id}`);
+  const refundButton = page.getByRole('button', {
+    name: /^Cancelar y devolver el dinero \(49,90\s€\)$/,
+  });
+  const ask = async () => {
+    await refundButton.click();
+    await page
+      .getByRole('dialog')
+      .getByRole('button', { name: 'Pedir la devolución' })
+      .click();
+  };
+
+  // 1. El banco la rechaza: el pedido sigue pagado.
+  await bankNext('rechazar');
+  await ask();
+  await expect(
+    page.getByText(/el banco ha rechazado la devolución \(código 0950\)/),
+  ).toBeVisible();
+  expect((await order(email)).status).toBe('paid');
+
+  // 2. Sin respuesta clara: aviso y reenvío tras comprobarlo.
+  await bankNext('sin_respuesta');
+  await ask();
+  await expect(
+    page.getByText(/el banco no ha dado una respuesta clara/),
+  ).toBeVisible();
+  await page.reload();
+  await expect(
+    page.getByText(
+      'El banco no respondió con claridad a la última devolución.',
+    ),
+  ).toBeVisible();
+  await expect(refundButton).toHaveCount(0);
+  expect((await order(email)).status).toBe('paid');
+  await bankNext('aceptar');
+  await page
+    .getByRole('button', { name: 'Volver a enviar la devolución' })
+    .click();
+  await page
+    .getByRole('dialog')
+    .getByRole('button', { name: 'Volver a enviar' })
+    .click();
+  await expect(
+    page.getByText(/el banco ha aceptado la devolución/),
+  ).toBeVisible();
+
+  // 3. Aceptada: cancelado y las unidades vuelven a la tienda.
+  expect(await order(email)).toMatchObject({
+    status: 'cancelled',
+    reservation: 'released',
+  });
+  const { data: refunds } = await admin
+    .from('order_refunds')
+    .select('status, amount_cents, to_status, response_code, error')
+    .eq('order_id', placed.id)
+    .order('created_at');
+  expect(refunds).toEqual([
+    {
+      status: 'failed',
+      amount_cents: 4990,
+      to_status: 'cancelled',
+      response_code: '0950',
+      error: null,
+    },
+    {
+      status: 'succeeded',
+      amount_cents: 4990,
+      to_status: 'cancelled',
+      response_code: '0900',
+      error: null,
+    },
+  ]);
+  await page.reload();
+  await expect(page.getByText('Devuelto', { exact: true })).toBeVisible();
+  // Al banco solo llegan devoluciones (tipo 3) de ese cobro por su importe.
+  const sent = (await (
+    await fetch('http://localhost:3999/peticiones')
+  ).json()) as Record<string, string>[];
+  expect(
+    sent
+      .filter((r) => r.DS_MERCHANT_ORDER === reference)
+      .map((r) => [r.DS_MERCHANT_TRANSACTIONTYPE, r.DS_MERCHANT_AMOUNT]),
+  ).toEqual([
+    ['3', '4990'],
+    ['3', '4990'],
+    ['3', '4990'],
+  ]);
 });

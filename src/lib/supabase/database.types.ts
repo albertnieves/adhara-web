@@ -583,6 +583,72 @@ export type Database = {
           },
         ];
       };
+      order_refunds: {
+        Row: {
+          amount_cents: number;
+          created_at: string;
+          error: string | null;
+          id: string;
+          order_id: string;
+          payment_id: number;
+          provider: string;
+          reference: string;
+          request_id: string;
+          requested_by: string | null;
+          resolved_at: string | null;
+          response_code: string | null;
+          status: string;
+          to_status: string | null;
+        };
+        Insert: {
+          amount_cents: number;
+          created_at?: string;
+          error?: string | null;
+          id?: string;
+          order_id: string;
+          payment_id: number;
+          provider: string;
+          reference: string;
+          request_id: string;
+          requested_by?: string | null;
+          resolved_at?: string | null;
+          response_code?: string | null;
+          status?: string;
+          to_status?: string | null;
+        };
+        Update: {
+          amount_cents?: number;
+          created_at?: string;
+          error?: string | null;
+          id?: string;
+          order_id?: string;
+          payment_id?: number;
+          provider?: string;
+          reference?: string;
+          request_id?: string;
+          requested_by?: string | null;
+          resolved_at?: string | null;
+          response_code?: string | null;
+          status?: string;
+          to_status?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'order_refunds_order_id_fkey';
+            columns: ['order_id'];
+            isOneToOne: false;
+            referencedRelation: 'orders';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'order_refunds_payment_id_fkey';
+            columns: ['payment_id'];
+            isOneToOne: false;
+            referencedRelation: 'order_payments';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       orders: {
         Row: {
           channel: string;
@@ -1676,6 +1742,17 @@ export type Database = {
           value_received_net_cents: number;
         }[];
       };
+      admin_request_refund: {
+        Args: {
+          p_amount_cents: number;
+          p_order_id: string;
+          p_payment_id: number;
+          p_request_id: string;
+          p_revision: number;
+          p_to: string;
+        };
+        Returns: Json;
+      };
       admin_restore_content: {
         Args: {
           p_expected: number;
@@ -1685,6 +1762,7 @@ export type Database = {
         };
         Returns: number;
       };
+      admin_retry_refund: { Args: { p_refund_id: string }; Returns: Json };
       admin_review_price: {
         Args: {
           p_compare_at: number;
@@ -1942,6 +2020,15 @@ export type Database = {
           p_provider: string;
           p_reference: string;
           p_transaction_id: string;
+        };
+        Returns: Json;
+      };
+      web_order_refund_result: {
+        Args: {
+          p_error?: string;
+          p_refund_id: string;
+          p_response_code?: string;
+          p_status: string;
         };
         Returns: Json;
       };

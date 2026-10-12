@@ -362,3 +362,101 @@ describe('reglas del protocolo', () => {
     expect(redsysConfig({})).toBeNull();
   });
 });
+
+describe('devoluciones por la API REST', async () => {
+  const { redsysRefund, redsysRestUrl } =
+    await import('@/modules/payments/server/refund');
+  const config = { ...DOC_CONFIG, terminal: '1' };
+  /** Respuesta del banco firmada con la clave del comercio. */
+  const bank = (params: Record<string, string>) =>
+    signRedsysRequest(
+      { secretKey: DOC_KEY },
+      { ...params, DS_MERCHANT_ORDER: params.Ds_Order ?? '' },
+    );
+  const answer = (body: unknown, status = 200) =>
+    vi.fn(async () => Response.json(body, { status }));
+  const refund = { reference: '123456789012', amountCents: 4990 };
+  const accepted = {
+    Ds_Amount: '4990',
+    Ds_Currency: '978',
+    Ds_Order: '123456789012',
+    Ds_MerchantCode: '999008881',
+    Ds_Terminal: '1',
+    Ds_Response: '0900',
+    Ds_TransactionType: '3',
+  };
+
+  it('pide una devolución firmada (tipo 3) por el importe y la referencia', async () => {
+    const fetcher = answer(bank(accepted));
+    expect(await redsysRefund(config, refund, fetcher)).toEqual({
+      status: 'succeeded',
+      code: '0900',
+    });
+    const [url, init] = fetcher.mock.calls[0] as unknown as [
+      string,
+      RequestInit,
+    ];
+    expect(url).toBe(
+      'https://sis-t.redsys.es:25443/sis/rest/trataPeticionREST',
+    );
+    const sent = JSON.parse(String(init.body));
+    expect(decodeMerchantParameters(sent.Ds_MerchantParameters)).toEqual({
+      DS_MERCHANT_AMOUNT: '4990',
+      DS_MERCHANT_ORDER: '123456789012',
+      DS_MERCHANT_MERCHANTCODE: '999008881',
+      DS_MERCHANT_CURRENCY: '978',
+      DS_MERCHANT_TRANSACTIONTYPE: '3',
+      DS_MERCHANT_TERMINAL: '1',
+    });
+    expect(sent.Ds_Signature).toBe(
+      redsysSign(DOC_KEY, '123456789012', sent.Ds_MerchantParameters),
+    );
+  });
+
+  it('el banco la rechaza: con su código, o con un error SIS', async () => {
+    expect(
+      await redsysRefund(
+        config,
+        refund,
+        answer(bank({ ...accepted, Ds_Response: '0950' })),
+      ),
+    ).toEqual({ status: 'failed', code: '0950' });
+    expect(
+      await redsysRefund(config, refund, answer({ errorCode: 'SIS0057' })),
+    ).toEqual({ status: 'failed', code: 'SIS0057' });
+  });
+
+  it('sin respuesta clara nunca se da por hecha ni por rechazada', async () => {
+    const forged = bank(accepted);
+    forged.Ds_Signature = forged.Ds_Signature.replace(/^./, (c) =>
+      c === 'A' ? 'B' : 'A',
+    );
+    for (const [fetcher, code] of [
+      [answer(forged), 'bad_signature'],
+      [answer(bank({ ...accepted, Ds_Amount: '1' })), 'mismatch'],
+      [answer(bank({ ...accepted, Ds_Order: '999999999999' })), 'mismatch'],
+      [answer({}, 502), 'http_502'],
+      [vi.fn(async () => new Response('no es json')), 'invalid_response'],
+      [
+        vi.fn(async () => {
+          throw new Error('sin red');
+        }),
+        'network',
+      ],
+    ] as const)
+      expect(await redsysRefund(config, refund, fetcher)).toEqual({
+        status: 'unknown',
+        code,
+      });
+  });
+
+  it('el banco simulado solo se puede usar en el entorno de pruebas', () => {
+    const env = { REDSYS_TEST_REST_URL: 'http://localhost:3999/rest' };
+    expect(redsysRestUrl({ environment: 'test' }, env)).toBe(
+      'http://localhost:3999/rest',
+    );
+    expect(redsysRestUrl({ environment: 'live' }, env)).toBe(
+      'https://sis.redsys.es/sis/rest/trataPeticionREST',
+    );
+  });
+});
