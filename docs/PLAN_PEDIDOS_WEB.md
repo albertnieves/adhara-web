@@ -1,19 +1,19 @@
 # Pedidos de la web y confirmación de tarjeta
 
-Estado: **PR de trabajo: P01 (reglas), P02 (base de datos), P03 (checkout, apagado) y P05 (panel) hechas** · 12/10/2026.
+Estado: **PR de trabajo: P01–P07 hechas sin los datos del banco ni del correo; falta probar P04 en el entorno de pruebas del banco** · 12/10/2026.
 
 Objetivo solicitado: al pagar con tarjeta en la web, el pedido aparece automáticamente
 en el panel con sus datos y queda disponible para preparar y entregar. La compra debe
 quedar registrada aunque el cliente cierre la pestaña después del pago.
 
-P01 añadió `planCardPaymentConfirmation` (decisión pura) a `modules/orders`. P02 añade
-la migración `20261011230000_web_orders.sql`: pedidos, líneas, contacto, intentos de
-pago, notificaciones, cronología y reserva de stock, con las funciones que crean el
-pedido, registran el cobro, liberan reservas caducadas y cambian el estado desde el
-panel (detalle abajo). **Todavía no hay checkout, adaptador del banco ni pantallas**:
-nadie llama aún a esas funciones fuera de las pruebas, la tienda sigue sin vender y
-la migración **no se ha aplicado en `adhara-dev`** (se aplicará al fusionar, como las
-demás). No se instalan SDK de pagos. Las casillas solo se cierran con evidencia.
+P01 añadió `planCardPaymentConfirmation` (decisión pura) a `modules/orders`; P02, la base
+de datos de pedidos, cobros y reservas; P03, la cesta y el checkout; P04, el pago con Redsys
+por redirección; P05, el panel; P06, los correos y las devoluciones, y P07, las pruebas de
+extremo a extremo con un banco simulado. **La tienda sigue sin vender**: el checkout está
+apagado (`WEB_CHECKOUT`) y sin las variables del TPV y del correo no hay cobro ni avisos.
+Las migraciones `20261011230000` a `20261012200000` **no están aplicadas en `adhara-dev`**
+(se aplican al fusionar, como las demás). No se instalan SDK de pagos ni de correo. Las
+casillas solo se cierran con evidencia.
 
 ## Flujo previsto
 
@@ -117,7 +117,9 @@ Límites de P02, a propósito: **envío bloqueado** (`shipping_unavailable`) has
 zonas y tarifas reales; **reembolsos y cancelaciones con cobro bloqueados**
 (`refund_unavailable`) hasta el adaptador del proveedor (P06); sin desglose de IVA
 (pendiente de la asesoría y de la facturación); la retención de datos personales
-(RGPD) se decidirá con la ficha de cliente.
+(RGPD) se decidirá con la ficha de cliente. El envío se abrió en P03 (con tarifa activa) y
+las devoluciones en P06 (solo con la respuesta del banco); `admin_transition_order` sigue
+rechazando los pasos con devolución, que van por `admin_request_refund`.
 
 ## P05 — panel de pedidos (hecho el 12/10)
 
@@ -171,6 +173,58 @@ panel** y **checkout construido pero apagado** hasta conectar el TPV. Decisión 
   en `tests/integration/checkout.spec.ts` (cesta, recogida, envío con zona y tarifa, rutas en
   ca y en, tarifas del panel) y auditoría visual de la cesta y el checkout.
 
+## P04 — pago con Redsys (hecho el 12/10, sin probar en el banco)
+
+Decisión §137. Módulo `payments` (sin librerías): firma HMAC_SHA256_V1 con los vectores del
+manual de Redsys, formulario de pago y lectura de la notificación.
+
+- **Ida al banco:** con el TPV configurado, «Confirmar pedido y pagar» crea el pedido y lleva
+  el navegador a la página del banco con el importe y la referencia de la base. En el banco se
+  ve el idioma del pedido y la descripción «Pedido Nº …».
+- **Notificación** (`/api/pagos/redsys`): firma, comercio, terminal y tipo de operación; luego
+  `web_order_record_payment`. Es lo único que marca un pedido como pagado.
+- **Vuelta** (`/api/pagos/redsys/retorno` → `/es/pedido`, `/ca/comanda`, `/en/order`): estado
+  del pedido de ese navegador (cookie httpOnly `atelier_pedido`) sin datos personales
+  (`web_order_status`, migración `20261012180000_web_payments.sql`): pagado, «confirmando el
+  pago» (se refresca solo), no completado con «Volver a intentar el pago», reserva caducada,
+  en revisión o cancelado.
+- **Variables (Vercel, solo servidor):** `REDSYS_MERCHANT_CODE`, `REDSYS_TERMINAL`,
+  `REDSYS_SECRET_KEY` y `REDSYS_ENVIRONMENT` (`test` o `live`). En el portal del banco hace
+  falta la notificación online por HTTP; la URL va en cada pago.
+- **Falta:** un pago y una devolución de prueba en el entorno de pruebas de Redsys con los
+  datos de pruebas del banco (desde aquí no se llega a ese entorno).
+
+## P06 — correos y devoluciones (hecho el 12/10)
+
+Decisiones §138 y §139.
+
+- **Correos** (migración `20261012190000_order_emails.sql`): cola `order_emails` que se llena
+  con el paso que motiva cada correo (pagado, listo para recoger, enviado) en la misma
+  transacción; salen con Resend justo después y cada 5 minutos (`/api/cron/enviar-correos`).
+  La confirmación lleva las condiciones de venta adjuntas en texto. Sin `RESEND_API_KEY` y
+  `EMAIL_FROM` esperan en la cola. La ficha dice si salió cada uno.
+- **Devoluciones** (migración `20261012200000_order_refunds.sql`): desde la ficha, con
+  `orders.refund` y MFA: cancelar y devolver, devolver todo o una parte de un pedido
+  entregado, o devolver un cobro de más. El servidor las pide al banco por su API REST y solo
+  su respuesta firmada (0900) las da por hechas. Sin respuesta clara, se comprueban en el
+  portal del banco antes de volver a enviarlas.
+
+## P07 — validación integrada (hecha el 12/10)
+
+Decisión §140. Además de pgTAP (680 pruebas en 18 archivos) y la concurrencia real de P02:
+
+- `tests/integration/payments.spec.ts` con un banco simulado: pago aceptado (también volviendo
+  antes del aviso), denegado y reintento, firma falsa, importe alterado tras firmar, aviso
+  repetido, otro comercio, otro tipo de operación, referencia desconocida, importe distinto
+  (incidencia), última unidad entre dos navegadores, pago tardío tras liberar la reserva, la
+  página del pedido sin pedido y la devolución desde el panel (rechazo, sin respuesta y
+  aceptación).
+- `tests/unit/redsys.test.ts`, `order-email.test.ts` y `order-refunds.test.ts`: firma con los
+  vectores del manual, plantillas en los tres idiomas, adaptador de Resend y opciones de
+  devolución.
+- Auditoría visual de la tienda (cesta, checkout y pedido) y del panel (ficha de un pedido
+  cobrado, con devoluciones y correos).
+
 ## Entregas de esta PR
 
 - [x] P01 — Reglas de decisión para notificaciones ya verificadas y pruebas unitarias.
@@ -181,26 +235,33 @@ panel** y **checkout construido pero apagado** hasta conectar el TPV. Decisión 
       reales las pone el titular en el panel.
 - [ ] P04 — Adaptador del TPV, notificación autenticada, confirmación atómica,
       conciliación y pruebas oficiales de sandbox. Sin credenciales en el repositorio.
+      Hecho y probado con un banco simulado; falta la prueba en el sandbox de Redsys.
 - [x] P05 — Panel → Pedidos web: listado, filtros, ficha, incidencias, preparación,
       envío/recogida y entrega; usar el sistema de diseño y permisos existentes.
-- [ ] P06 — Confirmación para el comprador, cola de correo y reembolsos con su proveedor.
-- [ ] P07 — Validación integrada: pago correcto/rechazado, firma falsa, importe alterado,
+- [x] P06 — Confirmación para el comprador, cola de correo y reembolsos con su proveedor.
+- [x] P07 — Validación integrada: pago correcto/rechazado, firma falsa, importe alterado,
       duplicados concurrentes, última unidad, caducidad contra pago, pago tardío, permisos
       y ausencia de datos personales/costes en respuestas públicas; E2E móvil/escritorio.
 
-Hecho sin credenciales del banco: P02, P03 (apagado) y P05. Encender la venta exige P04 (TPV
-de pruebas y de producción) y las tarifas reales en el panel. La idempotencia, autorización y
-atomicidad ya están demostradas en SQL (pgTAP y concurrencia real) y el checkout en E2E sin
-pago; falta el E2E con pago (P07).
+Todo está hecho sin los datos del banco ni del correo. Encender la venta exige configurar el
+TPV (primero el de pruebas, para hacer un pago y una devolución de prueba) y el correo, poner
+las tarifas reales en el panel y encender `WEB_CHECKOUT`.
 
 ## Pendientes para activar ventas
 
-Confirmar proveedor/TPV y configurar sus credenciales de pruebas en el entorno del
-servidor, nunca por chat; poner las tarifas de envío reales en el panel (recogida y envíos a
-la península y Baleares ya decididos); limitar en el Firewall de Vercel las peticiones de
-`/finalizar-compra` por IP antes de encender `WEB_CHECKOUT`;
-confirmar tratamiento de pagos tardíos (propuesta inicial: revisión manual), facturación
-y proveedor de correo. Mantener los requisitos de apertura de `STATUS.md`.
+1. **TPV:** variables `REDSYS_*` de pruebas en Vercel (nunca por chat), un pago y una
+   devolución de prueba en el entorno de pruebas de Redsys, y después las de producción con
+   `REDSYS_ENVIRONMENT=live`.
+2. **Correo:** dominio verificado en Resend (SPF y DKIM en el DNS de Vercel),
+   `RESEND_API_KEY` y `EMAIL_FROM`; comprobar que llega la confirmación con las condiciones.
+3. **Tarifas de envío** reales en el panel.
+4. **Firewall de Vercel:** límite de peticiones por IP para `/finalizar-compra` y
+   `/api/pagos/redsys`.
+5. **Legal:** revisión de la asesoría con los datos reales (tarifas, plazo, transportista,
+   medios de pago) y nueva fecha de los textos.
+6. Aplicar las migraciones en `adhara-dev` al fusionar y encender `WEB_CHECKOUT=1`.
+7. Decisiones que siguen abiertas: facturación e IVA desglosado, y si un pago tardío se
+   devuelve siempre o se intenta servir (hoy: revisión manual).
 
 La referencia anterior a Stripe en A5 es histórica: no se elige ni instala Stripe
 por defecto; se sigue el TPV previsto en el estado actual del proyecto.
