@@ -131,9 +131,7 @@ test('administrador de la tienda: prepara y entrega un pedido y resuelve una inc
   await expect(
     emails.getByText('Confirmación del pago, con las condiciones'),
   ).toBeVisible();
-  await expect(
-    emails.getByText('Aviso de «listo para recoger»'),
-  ).toBeVisible();
+  await expect(emails.getByText('Aviso de «listo para recoger»')).toBeVisible();
   await expect(emails.getByText('Pendiente de envío')).toHaveCount(2);
   await expect(
     emails.getByText('El correo aún no está configurado'),
