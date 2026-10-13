@@ -1,4 +1,12 @@
-# Estado real — 12/10/2026
+# Estado real — 13/10/2026
+
+## Tarjeta de visita (13/10, rama `claude/elegant-thompson-ltwwig`)
+
+A petición del usuario. Decisión §142; ficha y archivos en [brand/tarjetas/README.md](brand/tarjetas/README.md).
+
+- **Hecho:** archivo de imprenta (`tarjeta-visita.pdf`, 55 × 85 mm vertical con 3 mm de sangrado, textos en curvas), vistas de cada cara, maqueta y el QR suelto. El QR abre `latelierdudesert.com/catalogo`, que redirige al catálogo en el idioma del navegador.
+- **Comprobado:** medidas y cajas del PDF (61 × 91 mm, TrimBox a 3 mm, sin tipografías); el QR se lee con zxing-cpp en el PDF a 600 ppp y en 40 fotos simuladas, y con OpenCV en el reverso. Falta escanearlo con móviles en la prueba impresa.
+- **Pendiente del usuario:** elegir imprenta, papel y acabados; si se quieren teléfono o Instagram, ponerlos en Panel → Configuración y regenerar.
 
 ## En esta rama: pedidos web (PR #31, 10–12/10/2026)
 
