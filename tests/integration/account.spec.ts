@@ -231,7 +231,10 @@ test('pedidos de la cuenta: los de invitado con su email y los hechos con la ses
   await page.getByLabel('Dirección', { exact: true }).fill('Calle Mayor 1');
   await page.getByLabel('Código postal').fill('08860');
   await page.getByRole('button', { name: 'Guardar', exact: true }).click();
-  await expect(page.getByText('Datos guardados.')).toBeVisible();
+  // Exacto: «Borrar la cuenta» también dice «…los datos guardados.».
+  await expect(
+    page.getByText('Datos guardados.', { exact: true }),
+  ).toBeVisible();
   const saved = await admin
     .from('customer_accounts')
     .select('phone, address_line1, postal_code, city')
