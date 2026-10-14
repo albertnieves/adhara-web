@@ -1,30 +1,12 @@
-# Estado real — 13/10/2026
+# Estado real — 14/10/2026
 
-## Tarjeta de visita (13/10, rama `claude/elegant-thompson-ltwwig`)
+## Tarjeta de visita (13–14/10, rama `claude/elegant-thompson-ltwwig`)
 
-A petición del usuario. Decisión §142; ficha y archivos en [brand/tarjetas/README.md](brand/tarjetas/README.md).
+A petición del usuario. Decisiones §142–143; ficha, archivos y pasos del pedido en [brand/tarjetas/README.md](brand/tarjetas/README.md).
 
-- **Hecho:** archivo de imprenta (`tarjeta-visita.pdf`, 55 × 85 mm vertical con 3 mm de sangrado, textos en curvas), vistas de cada cara, maqueta y el QR suelto. El QR abre `latelierdudesert.com/catalogo`, que redirige al catálogo en el idioma del navegador.
-- **Comprobado:** medidas y cajas del PDF (61 × 91 mm, TrimBox a 3 mm, sin tipografías); el QR se lee con zxing-cpp en el PDF a 600 ppp y en 40 fotos simuladas, y con OpenCV en el reverso. Falta escanearlo con móviles en la prueba impresa.
-- **Pendiente del usuario:** elegir imprenta, papel y acabados; si se quieren teléfono o Instagram, ponerlos en Panel → Configuración y regenerar.
-
-## En esta rama: pedidos web (PR #31, 10–12/10/2026)
-
-Plan en [PLAN_PEDIDOS_WEB.md](PLAN_PEDIDOS_WEB.md); decisiones §131–140.
-
-- **P01 (10/10):** reglas de dominio y pruebas para decidir la confirmación de una notificación de tarjeta ya verificada (referencia, céntimos y moneda, duplicados y pagos que requieren revisión).
-- **P02 (11/10):** migración `20261011230000_web_orders.sql` con pedidos, líneas, contacto (solo con `customers.view`), intentos de pago, notificaciones, cronología y reserva de stock con caducidad. Solo el servidor crea pedidos y registra cobros; el panel cambia el estado con `admin_transition_order`.
-- **Comprobado en local** (Supabase local reiniciado): pgTAP 571/571 en 14 archivos (79 nuevas); concurrencia real (última unidad, notificación duplicada, cobro contra caducidad); tipos generados iguales; `db lint` sin errores.
-- **P05 (12/10):** Web → Pedidos web en el panel: lista con vistas (por preparar, incidencias, esperando pago…), filtros por entrega y fechas, ficha con artículos, cliente (solo con `customers.view`), pagos, incidencias y cronología, y los pasos preparar → listo para recoger → entregado (o enviado) con confirmación. Indicador en el inicio. Guía en [ADMIN_OPERATIONS.md](ADMIN_OPERATIONS.md#pedidos-web).
-- **P03 (12/10, apagado):** cesta y «Finalizar compra» en es/ca/en con recogida en la tienda o envío a la península y Baleares; tarifas en Panel → Configuración → Tarifas de envío; caducidad de reservas cada 5 minutos. Detrás del interruptor `WEB_CHECKOUT`: sin él, la tienda sigue sin vender y las páginas nuevas responden 404.
-- **Comprobado en local (P03, base reiniciada):** pgTAP 607/607 en 15 archivos (36 nuevas); tipos generados iguales, `db lint` y concurrencia correctos; 522 unitarias; `e2e.yml` con `WEB_CHECKOUT=1`: tienda pública 238 correctas y 24 omitidas, más las 2 del texto de envíos, que pasan tras ajustar la prueba a las zonas ya decididas; panel con sesión 29/29 (nuevo `checkout.spec.ts`: recogida, envío por zonas, rutas ca/en y tarifas del panel).
-- **P04 (12/10):** pago con Redsys por redirección sin librerías (firma con los vectores del manual): ida al banco, notificación firmada que es lo único que marca un pedido como pagado, vuelta a `/es/pedido` (estado sin datos personales, «confirmando el pago» y «Volver a intentar el pago»). Variables `REDSYS_*` solo de servidor; sin ellas el checkout se queda como en P03.
-- **P06 (12/10):** correos de los pedidos (cola en la base; confirmación con las condiciones adjuntas, avisos de recogida y de envío) con Resend por su API, sin SDK; esperan en la cola sin `RESEND_API_KEY` y `EMAIL_FROM`. Devoluciones desde la ficha (cancelar y devolver, todo, una parte o un cobro de más) que solo da por hechas la respuesta firmada del banco.
-- **P07 (12/10):** E2E con banco simulado (pago aceptado, denegado y reintento, firma falsa, importe alterado, duplicados, otro comercio, última unidad, pago tardío y devoluciones).
-- **Comprobado en local (P04–P07, base reiniciada):** pgTAP 680/680 en 18 archivos; tipos generados iguales, `db lint` y concurrencia correctos; 573 unitarias en 52 archivos; `e2e.yml` con `WEB_CHECKOUT=1` y el TPV simulado: tienda pública 241 correctas y 25 omitidas, panel con sesión 36/36 (pagos, devoluciones y correos incluidos); auditoría visual de la página del pedido y de la ficha con devoluciones.
-- **Pendiente:** probar un pago y una devolución en el entorno de pruebas de Redsys (necesita los datos de pruebas del banco; desde aquí no se llega a ese entorno) y un correo real al configurar Resend. **Las diez migraciones del 10 al 12/10 (las cinco de la consola y las cinco de pedidos) están aplicadas en `adhara-dev` desde el 12/10**, con las mismas versiones que en el repositorio (DECISIONS §141).
-- **Bloqueado a propósito:** el envío a una zona sin tarifa activa en el panel (no hay precio por defecto); la venta entera, hasta encender `WEB_CHECKOUT` con el TPV configurado.
-- **Plan Pro de Vercel** contratado por el usuario el 11/10 (§134).
+- **Hecho:** diseño definitivo «la puerta del atelier» (arco dorado en las dos caras, oud y marfil, solo en castellano), preparado para Instaprint: `tarjeta-visita.pdf` (55 × 85 mm vertical con 3 mm de sangrado, textos en curvas), un PDF por cara, vistas, maqueta y el QR suelto. El QR abre `latelierdudesert.com/catalogo`, que redirige al catálogo en el idioma del navegador.
+- **Comprobado:** medidas y cajas de los PDF (61 × 91 mm, TrimBox a 3 mm, sin tipografías); el QR se lee con zxing-cpp en el PDF a 600 ppp y en 40 fotos simuladas, y con OpenCV en el reverso. Falta escanearlo con móviles en la tarjeta impresa.
+- **Pendiente del usuario:** hacer el pedido (recomendado: «Tarjetas Laminadas» mate de Instaprint); si se quieren teléfono o Instagram, ponerlos en Panel → Configuración y regenerar.
 
 **Tienda visual (es/ca/en) y panel de administración operativos sobre `adhara-dev`, desplegados en Vercel y públicos desde el 10/10 en `latelierdudesert.com`, sin Vercel Authentication y todavía con `noindex` (DECISIONS §118). `main` incluye las fases R y S (PR #9), la entrega de acceso y edición de Codex (PR #10) y el panel con el asistente (PR #11); sus 17 migraciones están aplicadas en `adhara-dev` (comprobado el 02/10). La tienda muestra 50 perfumes publicados con PVP. La Fase 1 está cerrada (PR #12): sus 19 criterios están cumplidos o con una excepción escrita ([informe](phases/FASE_1_REPORT.md)). La Fase 2 (sistema de diseño) está terminada a falta de la revisión visual del usuario ([informe](phases/FASE_2_REPORT.md)): 12 de 13 criterios cumplidos. Siguiente: checkout con pago con tarjeta, que espera los datos del TPV virtual (ver «Pendiente del usuario»).**
 

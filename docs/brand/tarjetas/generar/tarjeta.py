@@ -4,6 +4,8 @@ Genera, en docs/brand/tarjetas/:
 - tarjeta-visita.pdf: archivo de imprenta, 2 páginas (anverso y reverso) de
   61 × 91 mm (55 × 85 mm más 3 mm de sangrado), textos en curvas y cajas
   TrimBox y BleedBox;
+- tarjeta-visita-anverso.pdf y tarjeta-visita-reverso.pdf: las mismas páginas
+  por separado, para las imprentas que piden un archivo por cara;
 - tarjeta-visita-anverso.png y tarjeta-visita-reverso.png: vistas al corte;
 - tarjeta-visita-maqueta.jpg: las dos caras sobre arena, para enseñarla;
 - qr-catalogo.svg: el QR suelto, con su margen de silencio.
@@ -41,12 +43,13 @@ WEB = 'latelierdudesert.com'
 # Líneas de contacto del reverso: (texto, tono). Máximo 4. El teléfono y el
 # Instagram se añaden aquí cuando estén en Panel → Configuración.
 CONTACT = [
-    ('Carrer de Pompeu Fabra, 1', 'muted'),
+    ('C/ Pompeu Fabra, 1', 'muted'),
     ('08860 Castelldefels · Barcelona', 'muted'),
     ('latelierdudesert@gmail.com', 'soft'),
 ]
 CITY = 'CASTELLDEFELS'
-CATALOGUE = 'Catálogo · Catàleg · Catalogue'
+# Solo en castellano (el QR abre la web en el idioma del móvil).
+CTA = 'Descubre la colección'
 
 # --- Paleta (src/app/globals.css) ----------------------------------------------
 
@@ -57,6 +60,8 @@ SMOKE = '#6b645b'
 GOLD = '#a8844f'
 GOLD_SOFT = '#d6bf98'
 OUD = '#2a1d15'
+OUD_DEEP = '#1c130d'  # fuera del arco, en el anverso
+SAND = '#ebe4d8'  # fuera del arco, en el reverso
 TONES = {'muted': SMOKE, 'soft': INK_SOFT}
 
 # --- Geometría en mm: página con sangrado y corte en x 3–58, y 3–88. -------------
@@ -222,42 +227,66 @@ def star_use(cx, cy, h, fill, opacity=1):
     )
 
 
+# El arco de las dos caras: de medio punto, cerrado abajo, a 4,5 mm del corte
+# por los lados y por abajo y a 5,5 mm por arriba.
+ARCH_TOP, ARCH_R, ARCH_BOTTOM = 8.5, 23, 83.5
+
+
+def door():
+    """Interior del arco (sin hueco), para rellenarlo."""
+    yc = ARCH_TOP + ARCH_R
+    return (
+        f'M{num(CX - ARCH_R)} {ARCH_BOTTOM}V{num(yc)}'
+        f'A{ARCH_R} {ARCH_R} 0 0 1 {num(CX + ARCH_R)} {num(yc)}V{ARCH_BOTTOM}Z'
+    )
+
+
+def door_frame():
+    return (
+        f'<path d="{arch(CX, ARCH_TOP, ARCH_R, ARCH_BOTTOM, 2, True)}" fill="none" '
+        f'stroke="{GOLD}" stroke-width="0.22"/>' + star_use(CX, ARCH_TOP, 2.6, GOLD)
+    )
+
+
+# Estrellas en las enjutas (fuera del arco), las mismas en las dos caras.
+CORNER_STARS = [(7.4, 9.2, 1.5, 0.8), (12.2, 6.4, 0.8, 0.55), (53.4, 10.6, 1.2, 0.7), (48.6, 6.6, 0.7, 0.5)]
+
+
 def front():
-    """Anverso, la noche: el arco (la puerta del atelier) sube desde el borde
-    inferior y enmarca el logotipo en marfil. Estrellas sueltas, como el cielo
-    del emblema."""
-    parts = [
-        f'<rect width="{PAGE_W}" height="{PAGE_H}" fill="url(#night)"/>',
-        star_use(7.0, 10.0, 1.6, GOLD_SOFT, 0.75),
-        star_use(9.05, 15.85, 0.9, GOLD_SOFT, 0.5),
-        star_use(52.2, 13.2, 1.2, GOLD_SOFT, 0.6),
-        star_use(53.8, 22.2, 0.8, GOLD_SOFT, 0.45),
-        f'<path d="{arch(CX, 11, 20, PAGE_H, 2.2, False)}" fill="none" stroke="{GOLD}" stroke-width="0.22"/>',
-        star_use(CX, 11, 2.8, GOLD),
+    """Anverso, la noche: la puerta del atelier, con un resplandor dentro, el
+    logotipo en marfil y estrellas en el cielo de fuera."""
+    return [
+        f'<rect width="{PAGE_W}" height="{PAGE_H}" fill="{OUD_DEEP}"/>',
+        f'<path d="{door()}" fill="url(#night)"/>',
+        *[star_use(x, y, h, GOLD_SOFT, op) for x, y, h, op in CORNER_STARS],
+        door_frame(),
+        star_use(21.5, 18.6, 1.0, GOLD_SOFT, 0.6),
+        star_use(40.2, 16.4, 1.3, GOLD_SOFT, 0.7),
         # Lockup del sprite sin cambios: un solo color, marfil sobre oscuro.
-        f'<use href="#lockup" x="15" y="29.5" width="31" height="{num(31 * 839 / 834)}" fill="{IVORY}"/>',
-        text_path(CITY, font='sans', weight=500, size=pt(5.5), x=CX, y=75, fill=GOLD_SOFT, tracking=0.58),
+        f'<use href="#lockup" x="15" y="30" width="31" height="{num(31 * 839 / 834)}" fill="{IVORY}"/>',
+        text_path(CITY, font='sans', weight=500, size=pt(5.5), x=CX, y=76.5, fill=GOLD_SOFT, tracking=0.58),
     ]
-    return parts
 
 
 def back(qr_n, qr_body):
-    """Reverso, el día: el mismo arco, cerrado, enmarca el QR al catálogo."""
+    """Reverso, el día: la misma puerta, en marfil sobre arena, con el QR al
+    catálogo y el contacto."""
     qr_size = 24
-    qr_x, qr_y = CX - qr_size / 2, 31
+    qr_x, qr_y = CX - qr_size / 2, 28.5
     module = qr_size / qr_n
     n = len(CONTACT)
     assert 1 <= n <= 4, 'El reverso admite de 1 a 4 líneas de contacto.'
     step = 3.2
-    first = 77.5 - step * (n - 1) / 2
+    first = 70.1 - step * (n - 1) / 2
     parts = [
-        f'<rect width="{PAGE_W}" height="{PAGE_H}" fill="{IVORY}"/>',
-        text_path(CATALOGUE, font='serif-italic', weight=400, size=2.9, x=CX, y=11.4, fill=SMOKE),
-        f'<path d="{arch(CX, 16, 17, 60, 1.9, True)}" fill="none" stroke="{GOLD}" stroke-width="0.22"/>',
-        star_use(CX, 16, 2.4, GOLD),
+        f'<rect width="{PAGE_W}" height="{PAGE_H}" fill="{SAND}"/>',
+        f'<path d="{door()}" fill="{IVORY}"/>',
+        *[star_use(x, y, h, GOLD, op) for x, y, h, op in CORNER_STARS],
+        door_frame(),
+        text_path(CTA, font='serif-italic', weight=400, size=2.9, x=CX, y=24.1, fill=SMOKE),
         f'<g transform="translate({num(qr_x)} {num(qr_y)}) scale({num(module)})">{qr_body}</g>',
-        text_path(WEB, font='serif', weight=500, size=3.7, x=CX, y=67, fill=INK),
-        f'<rect x="{num(CX - 2.5)}" y="69.6" width="5" height="0.15" fill="{GOLD}"/>',
+        text_path(WEB, font='serif', weight=500, size=3.7, x=CX, y=61.1, fill=INK),
+        f'<rect x="{num(CX - 2.5)}" y="63.6" width="5" height="0.15" fill="{GOLD}"/>',
     ]
     for i, (line, tone) in enumerate(CONTACT):
         y = first + i * step + (0.6 if tone == 'soft' and i > 0 and CONTACT[i - 1][1] != 'soft' else 0)
@@ -350,6 +379,17 @@ def set_boxes(pdf_path):
     assert b'/FontDescriptor' not in data, 'El PDF no debe llevar tipografías: textos en curvas.'
 
 
+def split_faces(pdf_path, outs):
+    """Un PDF por cara, para las imprentas que piden un archivo por lado."""
+    reader = PdfReader(pdf_path)
+    for page, out in zip(reader.pages, outs):
+        writer = PdfWriter()
+        writer.add_page(page)
+        writer.add_metadata({'/Title': f'L’Atelier du Désert · Tarjeta de visita · {out.stem.rsplit("-", 1)[-1]}'})
+        with open(out, 'wb') as f:
+            writer.write(f)
+
+
 def check_qr(png):
     from PIL import Image
 
@@ -406,6 +446,7 @@ def main():
         html_path.write_text(html)
         render(html_path, pdf, pngs)
     set_boxes(pdf)
+    split_faces(pdf, [OUT / 'tarjeta-visita-anverso.pdf', OUT / 'tarjeta-visita-reverso.pdf'])
     (OUT / 'qr-catalogo.svg').write_text(standalone_qr)
     check_qr(pngs[1])
     mockup(*pngs, OUT / 'tarjeta-visita-maqueta.jpg')
