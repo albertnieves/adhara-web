@@ -9,7 +9,7 @@ A petición del usuario: que los clientes puedan crear una cuenta (email y contr
 - **Tienda (es/ca/en):** entrar, crear la cuenta con confirmación del email, Google, recuperar la contraseña, «Mis pedidos» con la ficha de cada uno, «Mis datos» (teléfono y dirección de envío) y borrar la cuenta. El checkout rellena los datos y deja el pedido en la cuenta; sin sesión, invita a entrar y vuelve. «Cuenta» en la cabecera (en el móvil, en el menú).
 - **Seguridad:** pgTAP `18` comprueba que una cuenta de cliente no ve nada del panel ni más que un visitante; el personal no borra su cuenta ni cambia la contraseña sin MFA desde la tienda.
 - **Textos legales (borrador):** privacidad y cookies con la cuenta y Google.
-- **Comprobado en local sin Docker** (§146): lint, tipos, format, unitarias (585 en 53 archivos), build y prueba de humo con capturas; pgTAP en Postgres 16 con emulación de Supabase: `18` 50/50 y el resto sin regresiones. **Pendiente de la CI de la PR:** tipos generados, `db lint`, E2E de la cuenta (`account.spec.ts`) y auditoría de diseño de sus páginas.
+- **Comprobado en local sin Docker** (§146): lint, tipos, format, unitarias (585 en 53 archivos), build y prueba de humo con capturas; pgTAP en Postgres 16 con emulación de Supabase: `18` 50/50 y el resto sin regresiones (en la CI, 730/730 en 19 archivos); tipos generados con postgres-meta contra la base emulada. **Pendiente de la CI de la PR:** `db lint`, concurrencia, E2E de la cuenta (`account.spec.ts`) y auditoría de diseño de sus páginas.
 - **Para encenderla** (usuario): correo de Auth con Resend, alta pública y plantillas en Supabase, cliente OAuth de Google, captcha, migración, revisión legal y `CUSTOMER_ACCOUNTS=1` (lista en el plan).
 
 ## Pedidos web (PR #31, fusionada; 10–12/10/2026)

@@ -1943,6 +1943,7 @@ export type Database = {
           channel: string;
           created_at: string;
           currency: string;
+          customer_id: string | null;
           fulfillment: string;
           id: string;
           items_cents: number;
