@@ -32,7 +32,7 @@ export async function generateMetadata({
     locale: requireLocale(locale),
     namespace: 'checkout',
   });
-  return { title: t('title') };
+  return { title: t('title'), robots: { index: false, follow: false } };
 }
 
 export default async function CheckoutPage({ params }: { params: Params }) {

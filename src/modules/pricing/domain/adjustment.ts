@@ -3,7 +3,9 @@ import { BASIS_POINTS, divideHalfEven } from '@/lib/money';
 
 /** Cambio masivo de PVP (por marca, línea o selección). Cada resultado se revisa con reviewPriceChange. */
 export type PriceAdjustment =
-  { kind: 'percent'; bp: BasisPoints } | { kind: 'fixed'; cents: Cents };
+  | { kind: 'percent'; bp: BasisPoints }
+  | { kind: 'fixed'; cents: Cents }
+  | { kind: 'round' };
 
 /** exact: sin redondeo; ends_95: x,95 más cercano; ends_00: euro entero más cercano. */
 export type PriceEnding = 'exact' | 'ends_95' | 'ends_00';
@@ -28,12 +30,14 @@ export function adjustRetailPrice(
   ending: PriceEnding,
 ): Cents | null {
   const raw =
-    adjustment.kind === 'percent'
-      ? divideHalfEven(
-          currentGrossCents * (BASIS_POINTS + adjustment.bp),
-          BASIS_POINTS,
-        )
-      : currentGrossCents + adjustment.cents;
+    adjustment.kind === 'round'
+      ? currentGrossCents
+      : adjustment.kind === 'percent'
+        ? divideHalfEven(
+            currentGrossCents * (BASIS_POINTS + adjustment.bp),
+            BASIS_POINTS,
+          )
+        : currentGrossCents + adjustment.cents;
   if (raw <= 0) return null;
   return roundToEnding(raw, ending);
 }

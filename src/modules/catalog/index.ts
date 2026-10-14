@@ -1,4 +1,8 @@
 export {
+  productStructuredData,
+  serializeJsonLd,
+} from './domain/structured-data';
+export {
   AUDIENCES,
   AVAILABILITY,
   CONCENTRATIONS,

@@ -48,8 +48,8 @@ export type BulkState =
 const paramsInput = z.object({
   brandId: z.union([z.uuid(), z.literal('')]),
   scope: z.enum(['published', 'all']),
-  kind: z.enum(['percent', 'fixed']),
-  value: z.string().trim().min(1).max(12),
+  kind: z.enum(['percent', 'fixed', 'round']),
+  value: z.string().trim().max(12),
   ending: z.enum(['exact', 'ends_95', 'ends_00']),
 });
 
@@ -63,16 +63,19 @@ function readParams(formData: FormData) {
   });
   if (!parsed.success) return null;
   const { kind, value } = parsed.data;
+  if (kind === 'round' && parsed.data.ending === 'exact') return null;
   const adjustment: PriceAdjustment | null =
-    kind === 'percent'
-      ? (() => {
-          const bp = parsePercent(value);
-          return bp === null ? null : { kind: 'percent', bp };
-        })()
-      : (() => {
-          const cents = parseSignedEuros(value);
-          return cents === null ? null : { kind: 'fixed', cents };
-        })();
+    kind === 'round'
+      ? { kind: 'round' }
+      : kind === 'percent'
+        ? (() => {
+            const bp = parsePercent(value);
+            return bp === null ? null : { kind: 'percent', bp };
+          })()
+        : (() => {
+            const cents = parseSignedEuros(value);
+            return cents === null ? null : { kind: 'fixed', cents };
+          })();
   return adjustment ? { ...parsed.data, adjustment } : null;
 }
 
@@ -117,7 +120,7 @@ export async function bulkChangePrices(
     return {
       status: 'error',
       message:
-        'Revisa el ajuste: un porcentaje como +5 o -10 (entre -90 % y +300 %), o un importe como +2 o -1,50.',
+        'Revisa el ajuste: un porcentaje como +5 o -10 (entre -90 % y +300 %), un importe como +2 o -1,50, o Solo redondear con una terminación distinta de Sin redondeo.',
     };
   }
 

@@ -42,6 +42,38 @@ describe('entradas del cambio masivo', () => {
 });
 
 describe('plan del cambio masivo', () => {
+  it('redondea sin ajuste y mantiene exclusiones y avisos de coste', () => {
+    const rows = planBulkPriceChange(
+      [
+        variant({ retailCents: 2999 }),
+        variant({ retailCents: 4402 }),
+        variant({ retailCents: 3000 }),
+        variant({ retailCents: 2999, compareAtCents: 4000 }),
+        variant({ retailCents: null }),
+        variant({ retailCents: 2999, costNetCents: 4000 }),
+      ],
+      { kind: 'round' },
+      'ends_00',
+      options,
+    );
+    expect(rows.map((row) => row.proposedCents)).toEqual([
+      3000,
+      4400,
+      3000,
+      null,
+      null,
+      3000,
+    ]);
+    expect(rows.map((row) => row.excluded)).toEqual([
+      null,
+      null,
+      'unchanged',
+      'on_sale',
+      'no_price',
+      null,
+    ]);
+    expect(rows[5]?.confirm).toContain('below_cost');
+  });
   it('calcula el nuevo PVP con redondeo y lo revisa', () => {
     const [row] = planBulkPriceChange(
       [variant({})],

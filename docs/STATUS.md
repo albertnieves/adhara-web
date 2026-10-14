@@ -1,4 +1,12 @@
-# Estado real — 12/10/2026
+# Estado real — 14/10/2026
+
+## En esta rama: preparación SEO y revisión de precios
+
+`codex/production-seo-pricing`, sobre `main` 7b9c5c6. Sitemap multilingüe de contenido publicado con lectura anónima, indexación condicionada a producción y aprobación explícita, JSON-LD Product y metadatos sociales en fichas. Cesta y checkout conservan noindex. El panel añade «Solo redondear» reutilizando las revisiones de PVP, permisos y avisos de margen.
+
+Consulta de solo lectura: 50 formatos publicados, 33 con céntimos. Informe de redondeo y referencias EUR en [PRODUCTION_SEO_PRICING.md](PRODUCTION_SEO_PRICING.md) y su CSV. Las referencias de distribuidores no se presentan como tarifa oficial del fabricante. No se han modificado PVP remotos, activado indexación ni desplegado producción. No cierra F3, F15 ni F17 completas.
+
+Validación: `pnpm check` correcto (579 unitarias y build), formato correcto. La evidencia de navegador y límites de la entrega se registran en el informe enlazado.
 
 ## En esta rama: pedidos web (PR #31, 10–12/10/2026)
 
