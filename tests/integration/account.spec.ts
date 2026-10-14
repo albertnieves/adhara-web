@@ -132,6 +132,8 @@ test('alta con email: confirmar, entrar, salir y volver a entrar', async ({
   await expect(
     page.getByText('La contraseña debe tener al menos 12 caracteres.'),
   ).toBeVisible();
+  // Lo escrito sigue ahí tras el error (React no vacía el formulario).
+  await expect(page.getByLabel('Email', { exact: true })).toHaveValue(email);
   await page.getByLabel('Contraseña', { exact: true }).fill(password);
   await page.getByRole('button', { name: 'Crear la cuenta' }).click();
   await expect(
@@ -225,10 +227,23 @@ test('pedidos de la cuenta: los de invitado con su email y los hechos con la ses
       'Completa dirección, código postal y ciudad, o deja la dirección vacía.',
     ),
   ).toBeVisible();
+  await expect(page.getByLabel('Ciudad')).toHaveValue('Castelldefels');
   await page.getByLabel('Dirección', { exact: true }).fill('Calle Mayor 1');
   await page.getByLabel('Código postal').fill('08860');
   await page.getByRole('button', { name: 'Guardar', exact: true }).click();
   await expect(page.getByText('Datos guardados.')).toBeVisible();
+  const saved = await admin
+    .from('customer_accounts')
+    .select('phone, address_line1, postal_code, city')
+    .eq('user_id', customer.id)
+    .single();
+  if (saved.error) throw saved.error;
+  expect(saved.data).toEqual({
+    phone: '600 000 000',
+    address_line1: 'Calle Mayor 1',
+    postal_code: '08860',
+    city: 'Castelldefels',
+  });
   await page.reload();
   await expect(page.getByLabel('Código postal')).toHaveValue('08860');
 
@@ -303,6 +318,7 @@ test('recuperar la contraseña desde la tienda', async ({ page }) => {
   await page.getByLabel('Repeat the password').fill(`${fresh}x`);
   await page.getByRole('button', { name: 'Save password' }).click();
   await expect(page.getByText("The passwords don't match.")).toBeVisible();
+  await expect(page.getByLabel('New password')).toHaveValue(fresh);
   await page.getByLabel('Repeat the password').fill(fresh);
   await page.getByRole('button', { name: 'Save password' }).click();
   await expect(page).toHaveURL(/\/en\/account\?contrasena=1$/);

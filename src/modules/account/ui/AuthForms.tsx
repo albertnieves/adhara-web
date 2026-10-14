@@ -1,7 +1,6 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { useActionState } from 'react';
 import { Field, Heading, Input, SubmitButton } from '@/components/ui';
 import { Link } from '@/modules/i18n';
 import type { AccountFormState } from '../domain/input';
@@ -14,9 +13,13 @@ import {
   signInAction,
   signUpAction,
 } from '../server/actions';
-import { FormAlert, Honeypot, Notice, useAccountError } from './shared';
-
-const IDLE: AccountFormState = { status: 'idle' };
+import {
+  FormAlert,
+  Honeypot,
+  Notice,
+  useAccountError,
+  useAccountForm,
+} from './shared';
 
 type Common = { locale: AccountLocale; next?: string | null };
 
@@ -69,9 +72,9 @@ export function OrDivider() {
 
 export function SignInForm({ locale, next }: Common) {
   const t = useTranslations('account');
-  const [state, dispatch] = useActionState(signInAction, IDLE);
+  const { state, dispatch, pending, onSubmit } = useAccountForm(signInAction);
   return (
-    <form action={dispatch} className="space-y-5">
+    <form action={dispatch} onSubmit={onSubmit} className="space-y-5">
       <Hidden locale={locale} next={next} />
       <Field label={t('email')}>
         <Input
@@ -96,6 +99,7 @@ export function SignInForm({ locale, next }: Common) {
       <SubmitButton
         size="lg"
         className="w-full"
+        pending={pending}
         pendingLabel={t('signIn.submitting')}
       >
         {t('signIn.submit')}
@@ -110,7 +114,7 @@ export function SignInForm({ locale, next }: Common) {
 export function SignUpForm({ locale, next }: Common) {
   const t = useTranslations('account');
   const message = useAccountError();
-  const [state, dispatch] = useActionState(signUpAction, IDLE);
+  const { state, dispatch, pending, onSubmit } = useAccountForm(signUpAction);
   if (state.status === 'sent')
     return (
       <section className="space-y-4">
@@ -121,7 +125,12 @@ export function SignUpForm({ locale, next }: Common) {
       </section>
     );
   return (
-    <form action={dispatch} noValidate className="space-y-5">
+    <form
+      action={dispatch}
+      onSubmit={onSubmit}
+      noValidate
+      className="space-y-5"
+    >
       <Hidden locale={locale} next={next} />
       <Honeypot />
       <Field
@@ -167,6 +176,7 @@ export function SignUpForm({ locale, next }: Common) {
       <SubmitButton
         size="lg"
         className="w-full"
+        pending={pending}
         pendingLabel={t('register.submitting')}
       >
         {t('register.submit')}
@@ -178,7 +188,7 @@ export function SignUpForm({ locale, next }: Common) {
 export function RecoveryForm({ locale }: { locale: AccountLocale }) {
   const t = useTranslations('account');
   const message = useAccountError();
-  const [state, dispatch] = useActionState(recoveryAction, IDLE);
+  const { state, dispatch, pending, onSubmit } = useAccountForm(recoveryAction);
   if (state.status === 'sent')
     return (
       <section className="space-y-4">
@@ -192,7 +202,12 @@ export function RecoveryForm({ locale }: { locale: AccountLocale }) {
       </section>
     );
   return (
-    <form action={dispatch} noValidate className="space-y-5">
+    <form
+      action={dispatch}
+      onSubmit={onSubmit}
+      noValidate
+      className="space-y-5"
+    >
       <Hidden locale={locale} />
       <Honeypot />
       <Field label={t('email')} error={message(fieldError(state, 'email'))}>
@@ -209,6 +224,7 @@ export function RecoveryForm({ locale }: { locale: AccountLocale }) {
       <SubmitButton
         size="lg"
         className="w-full"
+        pending={pending}
         pendingLabel={t('recover.submitting')}
       >
         {t('recover.submit')}
@@ -223,9 +239,15 @@ export function RecoveryForm({ locale }: { locale: AccountLocale }) {
 export function NewPasswordForm({ locale }: { locale: AccountLocale }) {
   const t = useTranslations('account');
   const message = useAccountError();
-  const [state, dispatch] = useActionState(newPasswordAction, IDLE);
+  const { state, dispatch, pending, onSubmit } =
+    useAccountForm(newPasswordAction);
   return (
-    <form action={dispatch} noValidate className="space-y-5">
+    <form
+      action={dispatch}
+      onSubmit={onSubmit}
+      noValidate
+      className="space-y-5"
+    >
       <Hidden locale={locale} />
       <Field
         label={t('newPassword.password')}
@@ -262,6 +284,7 @@ export function NewPasswordForm({ locale }: { locale: AccountLocale }) {
       <SubmitButton
         size="lg"
         className="w-full"
+        pending={pending}
         pendingLabel={t('newPassword.submitting')}
       >
         {t('newPassword.submit')}

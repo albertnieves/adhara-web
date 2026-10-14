@@ -1,14 +1,10 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { useActionState } from 'react';
 import { Checkbox, Eyebrow, Field, Input, SubmitButton } from '@/components/ui';
-import type { AccountFormState } from '../domain/input';
 import type { AccountLocale } from '../domain/paths';
 import { deleteAccountAction, saveAccountAction } from '../server/actions';
-import { FormAlert, Notice, useAccountError } from './shared';
-
-const IDLE: AccountFormState = { status: 'idle' };
+import { FormAlert, Notice, useAccountError, useAccountForm } from './shared';
 
 export type AccountDetailsDefaults = {
   fullName: string;
@@ -32,14 +28,20 @@ export function AccountDetailsForm({
 }) {
   const t = useTranslations('account');
   const message = useAccountError();
-  const [state, dispatch] = useActionState(saveAccountAction, IDLE);
+  const { state, dispatch, pending, onSubmit } =
+    useAccountForm(saveAccountAction);
   const error = (field: string) =>
     state.status === 'error'
       ? message(state.fields?.[field as keyof NonNullable<typeof state.fields>])
       : undefined;
   const address = defaults.address;
   return (
-    <form action={dispatch} noValidate className="space-y-10">
+    <form
+      action={dispatch}
+      onSubmit={onSubmit}
+      noValidate
+      className="space-y-10"
+    >
       <input type="hidden" name="locale" value={locale} />
       <section className="space-y-4">
         <Eyebrow as="h2">{t('details.contact')}</Eyebrow>
@@ -118,7 +120,11 @@ export function AccountDetailsForm({
       <div className="space-y-4">
         <FormAlert state={state} />
         {state.status === 'saved' && <Notice>{t('details.saved')}</Notice>}
-        <SubmitButton size="lg" pendingLabel={t('details.saving')}>
+        <SubmitButton
+          size="lg"
+          pending={pending}
+          pendingLabel={t('details.saving')}
+        >
           {t('details.save')}
         </SubmitButton>
       </div>
@@ -130,9 +136,10 @@ export function AccountDetailsForm({
 export function DeleteAccountForm({ locale }: { locale: AccountLocale }) {
   const t = useTranslations('account');
   const message = useAccountError();
-  const [state, dispatch] = useActionState(deleteAccountAction, IDLE);
+  const { state, dispatch, pending, onSubmit } =
+    useAccountForm(deleteAccountAction);
   return (
-    <form action={dispatch} className="space-y-4">
+    <form action={dispatch} onSubmit={onSubmit} className="space-y-4">
       <input type="hidden" name="locale" value={locale} />
       <p className="text-fg-muted text-sm leading-relaxed">
         {t('delete.text')}
@@ -147,7 +154,11 @@ export function DeleteAccountForm({ locale }: { locale: AccountLocale }) {
       {state.status === 'error' && !state.fields?.confirm && (
         <FormAlert state={state} />
       )}
-      <SubmitButton variant="danger" pendingLabel={t('delete.submitting')}>
+      <SubmitButton
+        variant="danger"
+        pending={pending}
+        pendingLabel={t('delete.submitting')}
+      >
         {t('delete.submit')}
       </SubmitButton>
     </form>
