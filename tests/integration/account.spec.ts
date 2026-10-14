@@ -265,7 +265,9 @@ test('pedidos de la cuenta: los de invitado con su email y los hechos con la ses
     customer.email,
   );
   await expect(page.getByLabel('Teléfono')).toHaveValue('600 000 000');
-  await page.getByText('He leído y acepto las').click();
+  // La casilla, no su etiqueta: a 768 px el centro de la etiqueta cae en el
+  // enlace a las condiciones de venta.
+  await page.getByRole('checkbox', { name: /He leído y acepto las/ }).check();
   await page.getByRole('button', { name: 'Confirmar pedido y pagar' }).click();
   await nextVisit(page, visits, 1);
   const { data, error } = await admin
