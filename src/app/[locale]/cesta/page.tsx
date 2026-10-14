@@ -38,7 +38,7 @@ export async function generateMetadata({
     locale: requireLocale(locale),
     namespace: 'cart',
   });
-  return { title: t('title') };
+  return { title: t('title'), robots: { index: false, follow: false } };
 }
 
 function QuantityButton({

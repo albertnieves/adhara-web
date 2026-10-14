@@ -3,14 +3,20 @@ import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import { draftMode } from 'next/headers';
 import { notFound } from 'next/navigation';
-import { variantLabel } from '@/modules/catalog';
+import {
+  heroMedia,
+  productStructuredData,
+  serializeJsonLd,
+  variantLabel,
+} from '@/modules/catalog';
 import { checkoutEnabled } from '@/modules/checkout/server';
 import {
   getAvailability,
   getStorefrontProduct,
   listStorefrontProducts,
 } from '@/modules/catalog/server';
-import { Link } from '@/modules/i18n';
+import { getPathname, Link } from '@/modules/i18n';
+import { siteUrl } from '@/modules/i18n/seo';
 import { alternatesMetadata } from '@/modules/i18n/metadata';
 import { requireLocale } from '@/modules/i18n/server';
 import { findSceneSlug } from '@/modules/unboxing';
@@ -40,11 +46,34 @@ export async function generateMetadata({
   requireLocale(locale);
   const product = await getStorefrontProduct(slug, locale);
   if (!product) return {};
+  const image = heroMedia(product);
+  const url = new URL(
+    getPathname({
+      locale,
+      href: { pathname: '/perfume/[slug]', params: { slug } },
+    }),
+    siteUrl(),
+  ).href;
   // El español es la base (nombre, marca, precio); ca y en cuentan como
   // publicados cuando tienen texto propio.
   return {
     title: `${product.name} · ${product.brand.name}`,
     description: product.tagline ?? undefined,
+    openGraph: {
+      type: 'website',
+      url,
+      title: `${product.name} · ${product.brand.name}`,
+      description: product.tagline ?? undefined,
+      ...(image
+        ? { images: [{ url: image.url, alt: image.alt ?? product.name }] }
+        : {}),
+    },
+    twitter: {
+      card: image ? 'summary_large_image' : 'summary',
+      title: `${product.name} · ${product.brand.name}`,
+      description: product.tagline ?? undefined,
+      ...(image ? { images: [image.url] } : {}),
+    },
     ...alternatesMetadata(
       { pathname: '/perfume/[slug]', params: { slug } },
       locale,
@@ -74,6 +103,26 @@ export default async function ProductPage({ params }: { params: Params }) {
 
   return (
     <main className="pt-18">
+      {!draft.isEnabled && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: serializeJsonLd(
+              productStructuredData(
+                product,
+                new URL(
+                  getPathname({
+                    locale,
+                    href: { pathname: '/perfume/[slug]', params: { slug } },
+                  }),
+                  siteUrl(),
+                ).href,
+                { enabled: checkoutEnabled(), availability },
+              ),
+            ),
+          }}
+        />
+      )}
       {trackSlug && <TrackEvent slug={trackSlug} kind="view" />}
       <div className="grid lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)]">
         <div className="lg:sticky lg:top-18 lg:self-start">

@@ -117,22 +117,36 @@ export function BulkPricing({
           <Select
             name="kind"
             value={params.kind}
-            onChange={(e) => set('kind')(e.target.value)}
+            onChange={(e) =>
+              setParams((previous) => ({
+                ...previous,
+                kind: e.target.value,
+                ...(e.target.value === 'round' ? { ending: 'ends_00' } : {}),
+              }))
+            }
           >
             <option value="percent">Porcentaje</option>
             <option value="fixed">Importe fijo</option>
+            <option value="round">Solo redondear</option>
           </Select>
         </Field>
         <Field
           label={params.kind === 'percent' ? 'Porcentaje' : 'Importe (€)'}
-          hint={params.kind === 'percent' ? 'Ej.: +5 o -10' : 'Ej.: +2 o -1,50'}
+          hint={
+            params.kind === 'round'
+              ? 'Sin sumar ni restar al PVP actual'
+              : params.kind === 'percent'
+                ? 'Ej.: +5 o -10'
+                : 'Ej.: +2 o -1,50'
+          }
         >
           <Input
             name="value"
             value={params.value}
             onChange={(e) => set('value')(e.target.value)}
             inputMode="decimal"
-            required
+            required={params.kind !== 'round'}
+            disabled={params.kind === 'round'}
             className="tabular-nums"
           />
         </Field>
@@ -144,7 +158,9 @@ export function BulkPricing({
           >
             <option value="ends_95">A ,95 más cercano</option>
             <option value="ends_00">A euro entero</option>
-            <option value="exact">Sin redondeo</option>
+            <option value="exact" disabled={params.kind === 'round'}>
+              Sin redondeo
+            </option>
           </Select>
         </Field>
         <div className="flex flex-wrap items-center gap-4 sm:col-span-2 xl:col-span-5">
@@ -160,6 +176,8 @@ export function BulkPricing({
           <p className="text-fg-muted text-xs">
             Hasta {MAX_BULK_ROWS} formatos por cambio. Los que están en rebaja
             se cambian desde su ficha (Ómnibus).
+            {params.kind === 'round' &&
+              ' Solo redondear parte del PVP actual; no consulta precios de otras tiendas.'}
           </p>
           {state.status === 'error' && (
             <p role="alert" className="text-danger text-sm">
