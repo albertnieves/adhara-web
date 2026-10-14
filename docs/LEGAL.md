@@ -55,6 +55,7 @@ Enlazados en la barra inferior del pie de todas las páginas, en pequeño junto 
 7. **Proveedores en privacidad, por categorías:** alojamiento y base de datos en la UE (Vercel, París; Supabase, Fráncfort), email del Club (Sender, Lituania), y banco, transportista y email de pedidos. Las transferencias se explican sin nombrar a nadie. El asistente del panel (Anthropic) no se cita porque no trata datos de clientes; si llegan los mensajes con borradores de IA (A6.3), hay que añadirlo.
 8. **Sin plataforma ODR europea:** dejó de existir el 20/07/2025, así que no se enlaza.
 9. Los textos están en los tres idiomas sin cláusula de prevalencia (el Código de consumo de Cataluña exige la información también en catalán).
+10. **Cuenta de cliente (borrador, 14/10, §142):** la privacidad tiene la sección «Cuenta de cliente» (datos, finalidad, base jurídica del contrato y conservación hasta borrar la cuenta) y cita a Google como responsable independiente al entrar con Google; las cookies, la sesión de la cuenta y la del acceso con Google, sin nombres internos. La cuenta está apagada: al encenderla, revisar con la asesoría y cambiar `LEGAL_UPDATED_AT`.
 
 ## Qué falta revisar con la asesoría
 

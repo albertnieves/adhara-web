@@ -5,6 +5,7 @@ import { useLocale, useTranslations } from 'next-intl';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Eyebrow } from '@/components/ui';
+import { AccountLink } from '@/modules/account/ui';
 import { Logo } from '@/modules/brand';
 import { CartLink } from '@/modules/checkout/ui';
 import { Link, routing, usePathname } from '@/modules/i18n';
@@ -45,8 +46,17 @@ function LanguageLinks({
   );
 }
 
-/** `cart`: con el checkout encendido (WEB_CHECKOUT), enlace a la cesta. */
-export function Header({ cart = false }: { cart?: boolean }) {
+/**
+ * `cart`: con el checkout encendido (WEB_CHECKOUT), enlace a la cesta.
+ * `account`: con la cuenta de cliente (CUSTOMER_ACCOUNTS), enlace a la cuenta.
+ */
+export function Header({
+  cart = false,
+  account = false,
+}: {
+  cart?: boolean;
+  account?: boolean;
+}) {
   const t = useTranslations('nav');
   const pathname = usePathname();
   const reduced = useReducedMotion();
@@ -134,6 +144,7 @@ export function Header({ cart = false }: { cart?: boolean }) {
               pathname={pathname}
               className="text-2xs tracking-caps hidden items-center gap-4 md:flex"
             />
+            {account && <AccountLink />}
             {cart && <CartLink />}
           </div>
         </div>
@@ -166,6 +177,9 @@ export function Header({ cart = false }: { cart?: boolean }) {
                   href: '/catalogo-olfativo' as const,
                   label: t('scentCatalog'),
                 },
+                ...(account
+                  ? [{ href: '/cuenta' as const, label: t('accountLabel') }]
+                  : []),
               ].map((item, index) => (
                 <motion.li
                   key={item.href}

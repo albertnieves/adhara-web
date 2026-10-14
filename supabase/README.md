@@ -37,6 +37,7 @@ Proyecto de desarrollo: **`adhara-dev`** (ref `xgpsislololgbakzcmad`), región `
 | 20261012180000 | `web_order_status`: estado del pedido para la página de vuelta del banco, sin datos personales (`service_role`)                                                                                                                                                                           |
 | 20261012190000 | Correos de pedidos: cola `order_emails` llenada por disparador y funciones de envío para el servidor                                                                                                                                                                                      |
 | 20261012200000 | Devoluciones: `order_refunds`, `admin_request_refund` y `admin_retry_refund` (orders.refund con MFA) y `web_order_refund_result`                                                                                                                                                          |
+| 20261013120000 | Cuenta de cliente (sin aplicar en `adhara-dev`): `customer_accounts` (cada cliente lee su ficha; escribe `customer_save_account`), `orders.customer_id`, `customer_orders` y `customer_order` (sus pedidos por vínculo o por email verificado) y `web_order_create` con `p_customer_id`   |
 
 La matriz de permisos se genera desde `src/modules/auth/domain/permissions.ts`; `tests/unit/permissions-sql.test.ts` falla si ambas divergen. Del mismo modo, `tests/unit/inventory-sql.test.ts` compara tipos, efectos, permisos y motivos de los movimientos con `src/modules/inventory/domain/movements.ts`.
 
@@ -76,11 +77,11 @@ Antes de tener Docker, las pruebas se ejecutaron contra `adhara-dev` con `tests/
 
 ## Configuración de Auth (panel de Supabase)
 
-- Registro público desactivado (hecho por el usuario el 29/09/2026).
+- Registro público desactivado (hecho por el usuario el 29/09/2026). En local está abierto (con confirmación del email) para probar la cuenta de cliente; en el proyecto se abre al encenderla (docs/PLAN_CUENTA_CLIENTE.md, «Para encender»).
 - **URL Configuration:** Site URL = URL del despliegue (Preview de Vercel mientras no haya producción); añadirla también en Redirect URLs.
 - **Email Templates:** en _Invite user_ y _Reset password_, el enlace debe ser
   `{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=invite` y
-  `{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=recovery` respectivamente.
+  `{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=recovery&next={{ .RedirectTo }}` respectivamente. Con la cuenta de cliente, también _Confirm signup_: `{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email&next={{ .RedirectTo }}`. El texto de las tres está en `templates/` (la recuperación y el alta, en es/ca/en). `next` no cambia nada para el personal: sin él, o si la cuenta es del personal, el enlace lleva al panel.
 - Alta del personal: los emails preasignados en `private.pending_staff_grants` reciben su rol al crear la cuenta (Authentication → Users → Add user → Create new user, con «Auto Confirm User») o al aceptar la invitación. Alternativa: `pnpm bootstrap:owner` con `BOOTSTRAP_OWNER_EMAIL`, `SUPABASE_SECRET_KEY` y `NEXT_PUBLIC_SUPABASE_URL` en el entorno.
 
 ## Datos

@@ -317,6 +317,21 @@ export const es: LegalCopy = {
           ],
         },
         {
+          id: 'cuenta',
+          title: 'Cuenta de cliente',
+          blocks: [
+            {
+              list: [
+                'Datos: nombre, email y contraseña (la guardamos cifrada y nadie puede leerla) y, si los guardas, teléfono y dirección de envío. Si entras con Google, Google nos da tu nombre y tu email.',
+                'Finalidad: darte acceso a tu cuenta, enseñarte tus pedidos (también los que hiciste sin cuenta con el mismo email, una vez verificado) y rellenar tus datos al comprar.',
+                'Base jurídica: la ejecución del contrato que aceptas al crear la cuenta (art. 6.1.b del RGPD).',
+                'Conservación: hasta que borres la cuenta, que puedes hacer cuando quieras desde «Mis datos». Los pedidos se conservan, ya sin vínculo con la cuenta, durante los plazos del apartado anterior.',
+              ],
+            },
+            'Crear una cuenta es opcional: puedes comprar sin ella.',
+          ],
+        },
+        {
           id: 'seguridad-web',
           title: 'Funcionamiento y seguridad de la web',
           blocks: [
@@ -342,6 +357,7 @@ export const es: LegalCopy = {
                 'La entidad bancaria que procesa los pagos, la empresa de transporte y el proveedor de los emails de los pedidos.',
               ],
             },
+            'Si eliges entrar con Google, Google comprueba tu identidad como responsable independiente, según su propia [política de privacidad](https://policies.google.com/privacy).',
             'También pueden acceder nuestra asesoría, para la contabilidad y los impuestos, y las administraciones públicas cuando una ley lo exija.',
           ],
         },
@@ -441,6 +457,18 @@ export const es: LegalCopy = {
                     'Propia',
                     'Recordar el pedido que acabas de hacer para enseñarte su estado al volver del banco. Solo se crea al hacer un pedido.',
                     '30 días',
+                  ],
+                  [
+                    'Sesión de la cuenta',
+                    'Propia',
+                    'Mantener iniciada la sesión de tu cuenta de cliente. Solo se crean si entras en tu cuenta y se borran al cerrar la sesión.',
+                    'Hasta que cierras la sesión (como máximo, 400 días)',
+                  ],
+                  [
+                    'Acceso con Google',
+                    'Propia',
+                    'Completar de forma segura el acceso con Google. Solo se crea al pulsar «Continuar con Google».',
+                    'Se borra al terminar el acceso',
                   ],
                 ],
               },

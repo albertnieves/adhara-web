@@ -1,6 +1,7 @@
 'use server';
 
 import { createOrdersClient } from '@/lib/supabase/privileged';
+import { orderCustomerId } from '@/modules/account/server';
 import { REDSYS_PROVIDER } from '@/modules/payments/domain/redsys';
 import type { CheckoutState } from '../domain/input';
 import { checkoutInput, fieldErrors } from '../domain/input';
@@ -104,6 +105,9 @@ export async function placeOrder(
   const supabase = createOrdersClient();
   if (!supabase) return { status: 'error', error: 'generic' };
   const shipping = input.fulfillment === 'shipping';
+  // Con la cuenta de cliente y la sesión iniciada, el pedido queda en su
+  // cuenta (validada con Supabase Auth; la base comprueba que existe).
+  const customerId = await orderCustomerId();
   const { data, error } = await supabase.rpc('web_order_create', {
     p_request_id: input.requestId,
     p_locale: input.locale,
@@ -127,6 +131,7 @@ export async function placeOrder(
       }),
     },
     p_provider: PAYMENT_PROVIDER,
+    ...(customerId && { p_customer_id: customerId }),
   });
   if (error) {
     if (error.message === 'insufficient_stock') {

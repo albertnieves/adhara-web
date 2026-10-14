@@ -5,6 +5,7 @@ import {
   refreshSupabaseSession,
   refreshSupabaseSessionInto,
 } from '@/lib/supabase/proxy';
+import { readsCustomerSession } from '@/modules/account';
 import { routing } from '@/modules/i18n';
 
 const intl = createMiddleware(routing);
@@ -16,7 +17,12 @@ export default async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   if (pathname !== '/admin' && !pathname.startsWith('/admin/')) {
     const response = intl(request);
-    return request.cookies.has(PREVIEW_COOKIE)
+    // Vista previa del personal y, con la cuenta de cliente encendida
+    // (CUSTOMER_ACCOUNTS, como accountsEnabled), sus páginas y el checkout:
+    // leen la sesión, así que aquí se refrescan sus cookies.
+    const customer =
+      process.env.CUSTOMER_ACCOUNTS === '1' && readsCustomerSession(pathname);
+    return customer || request.cookies.has(PREVIEW_COOKIE)
       ? refreshSupabaseSessionInto(request, response)
       : response;
   }
