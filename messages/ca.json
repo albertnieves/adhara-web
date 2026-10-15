@@ -243,7 +243,8 @@
     "checkout": "Finalitza la compra",
     "blocked": "Revisa la cistella: hi ha perfums esgotats o que ja no estan a la venda.",
     "continue": "Continua comprant",
-    "maxNote": "Màxim {max} unitats per format."
+    "maxNote": "Màxim {max} unitats per format.",
+    "discountNote": "Tens un codi de descompte? L’apliques en finalitzar la compra."
   },
   "checkout": {
     "title": "Finalitza la compra",
@@ -267,6 +268,26 @@
     "province": "Província (opcional)",
     "zoneUnavailableNote": "Encara no enviem a aquesta zona. Pots triar la recollida a la botiga.",
     "summary": "Resum",
+    "discount": {
+      "label": "Codi de descompte",
+      "apply": "Aplica",
+      "applying": "Comprovant…",
+      "applied": "Codi {code} aplicat",
+      "remove": "Treu",
+      "line": "Descompte ({code})",
+      "excludesSale": "No s’aplica als perfums rebaixats.",
+      "errors": {
+        "invalid": "Aquest codi no existeix o ja no està actiu.",
+        "notStarted": "Aquest codi encara no està actiu.",
+        "expired": "Aquest codi ha caducat.",
+        "exhausted": "Aquest codi ja s’ha fet servir totes les vegades previstes.",
+        "minimum": "La teva compra no arriba al mínim d’aquest codi.",
+        "minimumAmount": "Aquest codi és per a compres de {amount} o més en articles.",
+        "notApplicable": "Aquest codi no s’aplica als perfums rebaixats de la teva cistella.",
+        "used": "Ja has fet servir aquest codi amb aquest correu.",
+        "generic": "No hem pogut comprovar el codi. Torna-ho a provar d’aquí a uns minuts."
+      }
+    },
     "items": "Articles",
     "shippingCost": "Enviament",
     "free": "Gratuït",
@@ -299,6 +320,7 @@
       "outOfStockAny": "Ja no queden prou unitats d’un perfum. Revisa la cistella.",
       "shippingUnavailable": "Encara no enviem a aquesta zona. Pots triar la recollida a la botiga.",
       "unavailable": "Un perfum de la teva cistella ja no està a la venda. Revisa la cistella.",
+      "discount": "El codi de descompte ja no és vàlid per a aquesta comanda. Revisa’l al resum.",
       "disabled": "La compra en línia encara no està disponible.",
       "generic": "No hem pogut registrar la comanda. Torna-ho a provar d’aquí a uns minuts.",
       "review": "Revisa les dades marcades."
@@ -352,6 +374,7 @@
     "tracking": "Número de seguiment: {tracking}.",
     "summary": "La teva comanda",
     "items": "Articles",
+    "discount": "Descompte ({code})",
     "shipping": "Enviament",
     "pickup": "Recollida a la botiga",
     "free": "Gratuït",

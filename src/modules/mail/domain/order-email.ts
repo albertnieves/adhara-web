@@ -22,6 +22,9 @@ export type OrderEmailJob = {
   locale: 'es' | 'ca' | 'en';
   fulfillment: 'click_collect' | 'shipping';
   items_cents: number;
+  /** Código de descuento del pedido (§149); 0 y null sin código. */
+  discount_cents: number;
+  discount_code: string | null;
   shipping_cents: number;
   total_cents: number;
   tracking_reference: string | null;
@@ -150,6 +153,14 @@ export function renderOrderEmail(
       money(line.line_total_cents),
     ]),
     [t('items'), money(job.items_cents)],
+    ...(job.discount_cents > 0
+      ? [
+          [
+            t('discount', { code: job.discount_code ?? '' }),
+            `−${money(job.discount_cents)}`,
+          ] as [string, string],
+        ]
+      : []),
     [
       job.fulfillment === 'shipping' ? t('shipping') : t('pickup'),
       job.shipping_cents === 0 ? t('free') : money(job.shipping_cents),

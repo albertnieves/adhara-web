@@ -161,6 +161,7 @@ export const es: LegalCopy = {
             'Los precios están en euros e incluyen el IVA. Los gastos de envío no están incluidos: se indican antes de pagar y se explican en [envíos y devoluciones](doc:shipping).',
             'Se aplica el precio que aparece al hacer el pedido. Cuando anunciamos una rebaja, el precio anterior que mostramos es el más bajo de los 30 días previos.',
             'Si por un error evidente un precio no se corresponde con el real (por ejemplo, 0 € o un precio irrisorio), te avisaremos antes de enviar el pedido y podrás confirmarlo con el precio correcto o cancelarlo sin coste.',
+            'Códigos de descuento: los de nuestras campañas se escriben al finalizar la compra. Cada código indica su descuento y sus condiciones (fechas, compra mínima, si vale una vez por email o un número limitado de veces y si se aplica a los artículos rebajados). Se aplica a los artículos, no a los gastos de envío, y solo uno por pedido. El descuento aparece en el resumen antes de pagar. Si devuelves un artículo de un pedido con descuento, te devolvemos lo que pagaste por él: su precio menos la parte proporcional del descuento.',
           ],
         },
         {

@@ -243,7 +243,8 @@
     "checkout": "Finalizar compra",
     "blocked": "Revisa la cesta: hay perfumes agotados o que ya no están a la venta.",
     "continue": "Seguir comprando",
-    "maxNote": "Máximo {max} unidades por formato."
+    "maxNote": "Máximo {max} unidades por formato.",
+    "discountNote": "¿Tienes un código de descuento? Lo aplicas al finalizar la compra."
   },
   "checkout": {
     "title": "Finalizar compra",
@@ -267,6 +268,26 @@
     "province": "Provincia (opcional)",
     "zoneUnavailableNote": "Aún no enviamos a esta zona. Puedes elegir la recogida en la tienda.",
     "summary": "Resumen",
+    "discount": {
+      "label": "Código de descuento",
+      "apply": "Aplicar",
+      "applying": "Comprobando…",
+      "applied": "Código {code} aplicado",
+      "remove": "Quitar",
+      "line": "Descuento ({code})",
+      "excludesSale": "No se aplica a los perfumes rebajados.",
+      "errors": {
+        "invalid": "Este código no existe o ya no está activo.",
+        "notStarted": "Este código aún no está activo.",
+        "expired": "Este código ha caducado.",
+        "exhausted": "Este código ya se ha usado todas las veces previstas.",
+        "minimum": "Tu compra no llega al mínimo de este código.",
+        "minimumAmount": "Este código es para compras de {amount} o más en artículos.",
+        "notApplicable": "Este código no se aplica a los perfumes rebajados de tu cesta.",
+        "used": "Ya has usado este código con este email.",
+        "generic": "No hemos podido comprobar el código. Inténtalo de nuevo en unos minutos."
+      }
+    },
     "items": "Artículos",
     "shippingCost": "Envío",
     "free": "Gratis",
@@ -299,6 +320,7 @@
       "outOfStockAny": "Ya no quedan unidades suficientes de un perfume. Revisa la cesta.",
       "shippingUnavailable": "Aún no enviamos a esta zona. Puedes elegir la recogida en la tienda.",
       "unavailable": "Un perfume de tu cesta ya no está a la venta. Revisa la cesta.",
+      "discount": "El código de descuento ya no vale para este pedido. Revísalo en el resumen.",
       "disabled": "La compra online aún no está disponible.",
       "generic": "No hemos podido registrar el pedido. Inténtalo de nuevo en unos minutos.",
       "review": "Revisa los datos marcados."
@@ -352,6 +374,7 @@
     "tracking": "Número de seguimiento: {tracking}.",
     "summary": "Tu pedido",
     "items": "Artículos",
+    "discount": "Descuento ({code})",
     "shipping": "Envío",
     "pickup": "Recogida en la tienda",
     "free": "Gratis",
