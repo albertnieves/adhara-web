@@ -16,6 +16,12 @@ export const routing = defineRouting({
       ca: '/cataleg-olfactiu/[slug]',
       en: '/scent-catalogue/[slug]',
     },
+    '/casas': { es: '/casas', ca: '/cases', en: '/houses' },
+    '/casas/[slug]': {
+      es: '/casas/[slug]',
+      ca: '/cases/[slug]',
+      en: '/houses/[slug]',
+    },
     '/aviso-legal': {
       es: '/aviso-legal',
       ca: '/avis-legal',

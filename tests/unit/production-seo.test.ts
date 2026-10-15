@@ -49,6 +49,7 @@ describe('apertura a buscadores', () => {
     listProducts.mockResolvedValue([
       {
         slug: 'perfume-de-prueba',
+        brand: { slug: 'marca-de-prueba' },
         translations: [
           { locale: 'ca', tagline: 'Text', description: null },
           { locale: 'en', tagline: null, description: null },
@@ -63,6 +64,20 @@ describe('apertura a buscadores', () => {
     );
     expect(urls).not.toContain(
       'https://latelierdudesert.com/en/fragrance/perfume-de-prueba',
+    );
+    // Las casas con algún perfume publicado, en los tres idiomas.
+    expect(urls).toEqual(
+      expect.arrayContaining([
+        'https://latelierdudesert.com/es/casas',
+        'https://latelierdudesert.com/ca/cases',
+        'https://latelierdudesert.com/en/houses',
+        'https://latelierdudesert.com/es/casas/marca-de-prueba',
+        'https://latelierdudesert.com/ca/cases/marca-de-prueba',
+        'https://latelierdudesert.com/en/houses/marca-de-prueba',
+      ]),
+    );
+    expect(urls.filter((url) => url.includes('marca-de-prueba'))).toHaveLength(
+      3,
     );
     expect(
       urls.some((url) => /admin|checkout|cesta|pedido|auth/.test(url)),

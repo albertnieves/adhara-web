@@ -12,6 +12,7 @@
     "skip": "Salta al contingut",
     "home": "Inici",
     "scentCatalog": "Catàleg olfactiu",
+    "houses": "Cases",
     "cart": "Cistella"
   },
   "home": {
@@ -29,6 +30,7 @@
     "experienceBody": "Cada fragància es presenta com a la botiga: la capsa s’obre, el flascó s’eleva i gira davant teu. Després, és teu per mirar-lo des de qualsevol angle.",
     "experienceCta": "Viu-ho amb {name}",
     "brandsEyebrow": "Cases",
+    "brandsCta": "Veure totes les cases",
     "storeEyebrow": "La botiga",
     "storeTitle": "Castelldefels",
     "storeBody": "Vine a descobrir les fragàncies en persona. La compra en línia arribarà molt aviat."
@@ -53,6 +55,17 @@
     "empty": "La col·lecció s’està preparant amb dades verificades. Torna aviat.",
     "emptyFiltered": "Cap perfum coincideix amb la teva cerca.",
     "clear": "Neteja els filtres"
+  },
+  "houses": {
+    "eyebrow": "Cases",
+    "title": "Les cases",
+    "lead": "Les cases de perfumeria de la nostra col·lecció.",
+    "metaDescription": "Les cases de perfumeria àrab de la col·lecció de L’Atelier du Désert, a Castelldefels.",
+    "brandEyebrow": "Casa",
+    "brandMetaDescription": "Perfums de {brand} a L’Atelier du Désert, perfumeria àrab a Castelldefels.",
+    "back": "Totes les cases",
+    "viewBrand": "Veure-ho tot de {brand}",
+    "empty": "Les cases apareixeran aquí quan la col·lecció estigui publicada."
   },
   "audience": {
     "women": "Dona",

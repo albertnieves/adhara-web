@@ -5,6 +5,7 @@ export { Footer } from './ui/Footer';
 export { Header } from './ui/Header';
 export { Hero } from './ui/Hero';
 export { ProductCard } from './ui/ProductCard';
+export { ProductImage } from './ui/ProductImage';
 export { PreviewBanner } from './ui/PreviewBanner';
 export { ProductStage } from './ui/ProductStage';
 export { PurchasePanel } from './ui/PurchasePanel';

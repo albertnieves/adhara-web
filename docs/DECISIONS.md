@@ -605,3 +605,15 @@ A petición del usuario («acaba todo lo que puedas de esta fase antes de fusion
      - **Cómo:** un solo archivo con las diez en orden, dentro de una transacción (todo o nada). Al empezar se para si el proyecto no es `adhara-dev` o si ya hay migraciones posteriores al 09/10. Registra cada una en `supabase_migrations.schema_migrations` con la versión y el texto de su archivo, así que no hubo que renombrar archivos. Lo ejecutó el usuario en el SQL Editor.
      - **Ensayo previo en local:** base con las migraciones hasta `20261009150100` y el registro de `20261009164152`; se aplicó sin errores, una segunda ejecución se rechazó y pgTAP pasó 680/680.
      - **Comprobado en `adhara-dev`:** diez versiones con el mismo md5 que sus archivos; huellas de funciones (con permisos), columnas, políticas, restricciones, disparadores y permisos de tablas iguales a una base creada desde el repositorio; un único titular (el administrador del sistema activo); todas las tablas de `public` con RLS. Asesor de seguridad: sin tipos de aviso nuevos. Hay avisos esperados: tablas de `internal` y `private` sin políticas, funciones `admin_*` con permiso comprobado dentro y `track_product_event` pública con freno. Las `web_order_*` no son ejecutables por `anon` ni `authenticated`.
+
+## Páginas de casa — 15/10/2026
+
+Primera parte de «Marcas y colecciones» (H4 de [ROADMAP.md](ROADMAP.md)), sin bloqueos de datos ni del usuario. Los números §142–146 quedan para la PR #37 y el §147 para la PR #39, aún abiertas.
+
+148. **Una página por casa y un índice de casas.**
+     - **Qué:** `/casas` y `/casas/[slug]` (ca `/cases`, en `/houses`) con los perfumes de cada casa en el orden de la colección. Se llega desde el pie, desde la portada («Ver todas las casas», bajo las casas en bucle), desde el antetítulo de la ficha y desde «Ver todo de…» junto a «También de…».
+     - **Datos:** salen de la colección que ya lee la tienda (`listStorefrontProducts`): RLS solo devuelve publicados y la vista previa del personal añade los borradores. Sin consultas nuevas ni migración. Una casa sin perfumes a la vista no sale en el índice ni en el sitemap y su página es 404.
+     - **Sin textos sobre las casas:** `brands` solo tiene nombre y slug y no se inventan descripciones (AGENTS.md). Si se quieren, con su fuente, son una columna nueva por idioma y su editor en el panel.
+     - **Idiomas y SEO:** la página de cada casa cuenta como publicada en los tres idiomas, porque solo lleva textos de la interfaz y nombres comunes. El sitemap añade el índice y una entrada por casa con algún perfume publicado; sigue vacío mientras la indexación no se active.
+     - **Cabecera y menú móvil sin cambios:** la PR #37 los toca; si se quiere el enlace también allí, se añade cuando se fusione.
+     - **Fuera:** colecciones editoriales (esperan la revisión de los tonos de colección, D3, en el criterio 13 de la Fase 2) y búsqueda global.

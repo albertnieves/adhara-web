@@ -12,6 +12,7 @@
     "skip": "Skip to content",
     "home": "Home",
     "scentCatalog": "Scent catalogue",
+    "houses": "Houses",
     "cart": "Basket"
   },
   "home": {
@@ -29,6 +30,7 @@
     "experienceBody": "Each fragrance is presented as it is in store: the box opens, the bottle rises and turns before you. Then it is yours to explore from any angle.",
     "experienceCta": "Experience it with {name}",
     "brandsEyebrow": "Houses",
+    "brandsCta": "View all houses",
     "storeEyebrow": "The boutique",
     "storeTitle": "Castelldefels",
     "storeBody": "Come and discover the fragrances in person. Online shopping is coming very soon."
@@ -53,6 +55,17 @@
     "empty": "The collection is being prepared with verified data. Please come back soon.",
     "emptyFiltered": "No fragrance matches your search.",
     "clear": "Clear filters"
+  },
+  "houses": {
+    "eyebrow": "Houses",
+    "title": "The houses",
+    "lead": "The perfume houses in our collection.",
+    "metaDescription": "The Arabian perfume houses in the L’Atelier du Désert collection, in Castelldefels.",
+    "brandEyebrow": "House",
+    "brandMetaDescription": "{brand} fragrances at L’Atelier du Désert, Arabian perfumery in Castelldefels.",
+    "back": "All houses",
+    "viewBrand": "View all from {brand}",
+    "empty": "The houses will appear here once the collection is published."
   },
   "audience": {
     "women": "Women",

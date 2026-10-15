@@ -143,7 +143,17 @@ export default async function ProductPage({ params }: { params: Params }) {
             >
               ← {t('product.back')}
             </Link>
-            <Eyebrow className="mt-12">{product.brand.name}</Eyebrow>
+            <Eyebrow className="mt-12">
+              <Link
+                href={{
+                  pathname: '/casas/[slug]',
+                  params: { slug: product.brand.slug },
+                }}
+                className="link-underline"
+              >
+                {product.brand.name}
+              </Link>
+            </Eyebrow>
             <Heading level={1} size="h1" className="mt-3">
               {product.name}
             </Heading>
@@ -207,10 +217,19 @@ export default async function ProductPage({ params }: { params: Params }) {
 
       {related.length > 0 && (
         <section className="border-border mx-auto max-w-[90rem] border-t px-5 py-28 sm:px-10">
-          <Reveal>
-            <Heading level={2} size="h2" className="mb-14">
+          <Reveal className="mb-14 flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+            <Heading level={2} size="h2">
               {t('product.related', { brand: product.brand.name })}
             </Heading>
+            <Link
+              href={{
+                pathname: '/casas/[slug]',
+                params: { slug: product.brand.slug },
+              }}
+              className="link-underline text-2xs tracking-caps-lg self-start uppercase sm:self-auto"
+            >
+              {t('houses.viewBrand', { brand: product.brand.name })}
+            </Link>
           </Reveal>
           <ul className="grid grid-cols-2 gap-x-3 gap-y-10 sm:gap-x-6 sm:gap-y-16 lg:grid-cols-4">
             {related.map((item, index) => (

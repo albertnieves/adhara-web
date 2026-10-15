@@ -84,6 +84,32 @@ export function lowestPrice(product: StorefrontProduct): Cents | null {
   return prices.length ? Math.min(...prices) : null;
 }
 
+/** Una casa (marca) de la tienda con los perfumes que se ven de ella. */
+export type StorefrontBrand = {
+  slug: string;
+  name: string;
+  products: StorefrontProduct[];
+};
+
+/**
+ * Casas con algún perfume en la lista, ordenadas por nombre. Cada una conserva
+ * el orden en que llegan sus perfumes (el de la colección). Solo salen de los
+ * perfumes que se ven: una casa sin publicados no tiene página.
+ */
+export function groupByBrand(products: StorefrontProduct[]): StorefrontBrand[] {
+  const brands = new Map<string, StorefrontBrand>();
+  for (const product of products) {
+    const { slug, name } = product.brand;
+    if (!slug) continue;
+    const brand = brands.get(slug) ?? { slug, name, products: [] };
+    brand.products.push(product);
+    brands.set(slug, brand);
+  }
+  return [...brands.values()].sort((a, b) =>
+    a.name.localeCompare(b.name, 'es'),
+  );
+}
+
 /** Imagen principal: la marcada como «hero»; si no, la primera por posición. */
 export function heroMedia(product: StorefrontProduct): ProductMedia | null {
   const sorted = [...product.media].sort((a, b) => a.position - b.position);

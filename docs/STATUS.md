@@ -1,4 +1,17 @@
-# Estado real — 14/10/2026
+# Estado real — 15/10/2026
+
+## En esta rama: páginas de casa (15/10)
+
+`claude/kind-bardeen-hkgu3e`, sobre `main` ab70b29. Primera parte de «Marcas y colecciones» (H4); decisión §148.
+
+- **`/es/casas`, `/ca/cases` y `/en/houses`:** índice con las casas que tienen algún perfume publicado, su número de perfumes y, desde 768 px, hasta tres fotos de muestra.
+- **Página de cada casa** (`/es/casas/lattafa`…) con sus perfumes en el orden de la colección; 404 si la casa no existe o no tiene publicados. En la vista previa del personal salen también los borradores.
+- **Enlaces:** antetítulo de la ficha, «Ver todo de…» junto a «También de…», «Ver todas las casas» en la portada y «Casas» en el pie.
+- **Sitemap:** el índice y una entrada por casa con publicados, en los tres idiomas; sigue vacío mientras la indexación esté apagada.
+- **Sin migraciones ni textos inventados:** las casas solo tienen nombre; una descripción por casa, con fuente, sería una columna nueva y su editor en el panel.
+- **Fuera:** colecciones editoriales (esperan la revisión de los tonos D3) y búsqueda global. La cabecera y el menú móvil no cambian porque los toca la PR #37.
+- **Comprobado en local** (Supabase local con Docker, base nueva con el perfume centinela, como `e2e.yml`, y `WEB_CHECKOUT=1` con el TPV simulado): `pnpm check` correcto (580 unitarias y build); `format:check` y `scan:secrets` correctos; tienda pública 261 correctas y 29 omitidas, con `houses.spec.ts` (pie, tres idiomas, 404, ficha → casa → índice y casa centinela), la auditoría de diseño y axe del índice en los tres idiomas, del 404 y de la casa del perfume publicado, y sin costes ni centinela en `/es/casas` ni en la casa centinela; panel con sesión 37/37. Con casas ficticias añadidas solo a esa base local (una de nombre largo con cuatro perfumes y fotos), auditoría y axe sin fallos a 390, 768, 1280 y 1440 px. Sin migraciones; nada aplicado en `adhara-dev`.
+- **Visto de paso, sin tocar:** con el checkout encendido, a 768 px el logotipo de la cabecera queda pegado al selector de idioma (la cabecera no cambia en esta rama; la auditoría no lo marca).
 
 ## En esta rama: preparación SEO y revisión de precios
 

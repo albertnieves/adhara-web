@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { StorefrontProduct } from '@/modules/catalog';
 import {
+  groupByBrand,
   heroMedia,
   lowestPrice,
   slugify,
@@ -88,6 +89,24 @@ describe('catálogo de la tienda', () => {
     );
     expect(slugify('Oud & Rose')).toBe('oud-and-rose');
     expect(slugify('***')).toBe('');
+  });
+
+  it('las casas salen de los perfumes visibles, por nombre y sin reordenar sus perfumes', () => {
+    const product = (id: string, slug: string, name: string) => ({
+      ...base,
+      id,
+      slug: id,
+      brand: { slug, name },
+    });
+    const brands = groupByBrand([
+      product('yara', 'lattafa', 'Lattafa'),
+      product('club', 'armaf', 'Armaf'),
+      product('asad', 'lattafa', 'Lattafa'),
+      product('huerfano', '', ''),
+    ]);
+    expect(brands.map((brand) => brand.slug)).toEqual(['armaf', 'lattafa']);
+    expect(brands[1]!.products.map((p) => p.id)).toEqual(['yara', 'asad']);
+    expect(groupByBrand([])).toEqual([]);
   });
 
   it('solo se usan escenas 3D que existen', () => {
