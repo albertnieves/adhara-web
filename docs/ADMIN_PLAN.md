@@ -124,7 +124,7 @@ Necesito: cuenta de Stripe, proveedor de email, zonas y tarifas de envío, polí
 
 ### A6 — Mensajes con clientes (nueva)
 
-- **A6.1 Bandeja básica:** formulario de contacto del storefront y email entrante/saliente. Conversaciones enlazadas a cliente y pedido, notas internas, asignación, plantillas y plazo de respuesta (`isOverdue`).
+- **A6.1 Bandeja básica:** formulario de contacto del storefront y email entrante/saliente. Conversaciones enlazadas a cliente y pedido, notas internas, asignación, plantillas y plazo de respuesta (`isOverdue`). **Hecha el 16/10 en la rama `claude/bandeja-mensajes`, con el formulario apagado** ([PLAN_BANDEJA_MENSAJES.md](PLAN_BANDEJA_MENSAJES.md), DECISIONS §153–157).
 - **A6.2 WhatsApp Business** (API oficial de Meta): requiere verificación de empresa, número dedicado y plantillas aprobadas para mensajes fuera de la ventana de 24 h.
 - **A6.3 Borradores del agente:** propuesta de respuesta con el contexto del pedido; nunca se envía sin que una persona la revise.
 

@@ -51,5 +51,7 @@ export const routing = defineRouting({
       en: '/checkout',
     },
     '/pedido': { es: '/pedido', ca: '/comanda', en: '/order' },
+    // Formulario de contacto (A6.1): 404 mientras CONTACT_FORM no esté encendido.
+    '/contacto': { es: '/contacto', ca: '/contacte', en: '/contact' },
   },
 });

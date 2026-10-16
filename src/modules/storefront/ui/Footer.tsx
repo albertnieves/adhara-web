@@ -7,6 +7,7 @@ import { Logo } from '@/modules/brand';
 import { Link } from '@/modules/i18n';
 import type { Locale } from '@/modules/i18n/seo';
 import { LEGAL_COPY, LEGAL_DOCUMENTS, LEGAL_PATHS } from '@/modules/legal';
+import { contactEnabled } from '@/modules/messaging/server';
 import { FAQ_ANCHOR } from './Faq';
 
 export async function Footer() {
@@ -76,6 +77,13 @@ export async function Footer() {
             {store.email && (
               <p>
                 <a href={`mailto:${store.email}`}>{store.email}</a>
+              </p>
+            )}
+            {contactEnabled() && (
+              <p>
+                <Link href="/contacto" className="link-underline text-fg">
+                  {t('contact')}
+                </Link>
               </p>
             )}
             {store.hours && (

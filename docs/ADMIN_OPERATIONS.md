@@ -50,6 +50,18 @@ Configuración → Tarifas de envío (administrador del sistema, `settings.manag
 
 Antes de encender la venta online (P04), poner aquí las tarifas reales y copiarlas a los textos legales de envíos.
 
+## Mensajes
+
+Web → Mensajes (con `messages.view`). Cada consulta de un cliente es una conversación: las que llegan por el formulario de contacto de la web y por email, con su número («Consulta nº 1001»). **El formulario de la web aún está apagado** (`CONTACT_FORM`): se enciende cuando la asesoría revise la privacidad y esté configurado el correo (PLAN_BANDEJA_MENSAJES, «Para encenderlo»).
+
+- **Vistas:** «Por responder» (el cliente espera; por defecto), «Esperando al cliente» (ya contestada), «Asignadas a mí», «Resueltas», «Spam» y «Todas». «Fuera de plazo» marca las que llevan más de 24 horas sin respuesta; el inicio del panel las cuenta en «Mensajes por responder».
+- **Responder:** en la ficha, escribir la respuesta (o elegir una plantilla, que rellena el texto y se puede cambiar) y «Enviar respuesta». Sale por email en el idioma de la conversación, con la firma de la tienda y el último mensaje del cliente citado debajo; no hace falta despedirse con la firma. La conversación pasa a «Esperando al cliente» y la ficha dice si el correo salió. Si el correo no está configurado, la respuesta se guarda y sale cuando lo esté.
+- **Cuando el cliente contesta** a ese correo, su contestación aparece en la misma conversación y vuelve a «Por responder» (con el subdominio de respuestas configurado; si no, llega al email de la tienda). Si contesta desde otra dirección, se abre una conversación nueva. Los adjuntos no se guardan: la ficha dice cuántos traía; si hacen falta, pedirlos por otra vía.
+- **Nota interna:** la ve solo el personal (para dejar dicho qué se ha hecho o qué falta). No cambia el estado ni el plazo.
+- **Gestión:** «Marcar como resuelta», «Es spam» y «Reabrir»; asignar a una persona del personal que pueda responder; enlazar el pedido por su número (el formulario lo enlaza solo si el email es el del pedido). «Borrar conversación» (con `customers.manage`) la borra entera, con sus datos: para spam o cuando el cliente pide que borremos sus datos.
+- **Plantillas** (Mensajes → Plantillas): título, idioma y texto de las respuestas frecuentes (envíos, devoluciones de perfumes precintados, disponibilidad). Una apagada no aparece al responder.
+- **Permisos:** el encargado ve las conversaciones y los mensajes, pero no el nombre ni el email del cliente, ni puede responder. Responder, anotar, asignar y las plantillas exigen `messages.reply` con MFA. Si otra persona cambió la conversación a la vez, el panel pide recargar.
+
 ## Suscriptores a promociones
 
 Web → Suscriptores muestra las altas de la sección «Club L’Atelier» de la tienda (con `customers.view`), su idioma, fecha y estado: pendiente, en Sender o baja. «Exportar CSV» descarga la lista para importarla en Sender o abrirla en Excel. Con `customers.manage` (MFA) se puede dar de baja o borrar (derecho de supresión); si Sender está conectado, el cambio se hace también allí.

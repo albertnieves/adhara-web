@@ -115,7 +115,8 @@
     "rights": "© {year} L’Atelier du Désert",
     "staffAccess": "Accés de l’equip",
     "faq": "Preguntes freqüents",
-    "legal": "Legal"
+    "legal": "Legal",
+    "contact": "Escriu-nos"
   },
   "faq": {
     "eyebrow": "Dubtes",
@@ -361,5 +362,54 @@
     "contact": "Dubtes? Respon aquest correu o escriu-nos a {email}.",
     "attachment": "condicions-de-venda.txt",
     "signature": "L’Atelier du Désert · Perfumeria àrab a Castelldefels"
+  },
+  "contact": {
+    "title": "Contacte",
+    "description": "Escriu-nos sobre una comanda, un perfum o el que necessitis. Et responem per correu electrònic.",
+    "lead": "Escriu-nos sobre una comanda, un perfum o el que necessitis. Et respondrem per correu electrònic al més aviat possible, normalment en menys d’un dia.",
+    "topic": "Sobre què ens escrius?",
+    "topics": {
+      "order": "Una comanda",
+      "product": "Un perfum",
+      "other": "Una altra cosa"
+    },
+    "fullName": "Nom",
+    "email": "Correu electrònic",
+    "emailHint": "Et respondrem a aquesta adreça.",
+    "orderNumber": "Número de comanda (opcional)",
+    "orderNumberHint": "És al correu de confirmació de la comanda.",
+    "subject": "Assumpte (opcional)",
+    "message": "Missatge",
+    "submit": "Envia el missatge",
+    "sending": "S’està enviant…",
+    "privacy": "Farem servir les teves dades només per respondre’t. Més informació a la <link>política de privacitat</link>.",
+    "sentTitle": "Missatge rebut",
+    "sentLead": "Gràcies per escriure’ns. La teva consulta és la núm. {number}: la veuràs a l’assumpte de la nostra resposta.",
+    "sentGeneric": "Gràcies per escriure’ns.",
+    "sentNext": "Et respondrem per correu electrònic al més aviat possible. Si vols afegir-hi alguna cosa, contesta la nostra resposta.",
+    "another": "Envia un altre missatge",
+    "store": "La botiga",
+    "subjects": {
+      "order": "Consulta sobre una comanda",
+      "product": "Consulta sobre un perfum",
+      "other": "Consulta"
+    },
+    "errors": {
+      "nameRequired": "Escriu el teu nom.",
+      "emailInvalid": "Revisa el correu electrònic: no sembla vàlid.",
+      "messageRequired": "Escriu el teu missatge.",
+      "messageTooLong": "El missatge és massa llarg: com a màxim, 5000 caràcters.",
+      "orderNumberInvalid": "El número de comanda són només xifres, com 1024.",
+      "busy": "Hem rebut molts missatges seguits. Torna-ho a provar d’aquí a una estona.",
+      "disabled": "El formulari no està disponible ara mateix.",
+      "generic": "No s’ha pogut enviar el missatge. Torna-ho a provar.",
+      "fields": "Revisa els camps marcats."
+    }
+  },
+  "messageEmail": {
+    "reference": "Consulta núm. {number}",
+    "signature": "L’Atelier du Désert · Perfumeria àrab a Castelldefels",
+    "replyHint": "Per continuar la conversa, respon aquest correu.",
+    "quoteIntro": "El teu missatge:"
   }
 }

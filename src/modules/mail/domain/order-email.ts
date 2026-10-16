@@ -1,4 +1,5 @@
 import { formatEuros } from '@/lib/money';
+import { escapeHtml, fill } from './text';
 
 /*
  * Correos de los pedidos web (P06, DECISIONS §138): confirmación del pago
@@ -77,22 +78,6 @@ export type RenderedEmail = {
   html: string;
   attachments: { filename: string; content: string }[];
 };
-
-function fill(template: string | undefined, values: Record<string, string>) {
-  if (template === undefined) throw new Error('Falta un texto del correo');
-  return template.replace(/\{(\w+)\}/g, (whole, key: string) =>
-    key in values ? values[key]! : whole,
-  );
-}
-
-function escapeHtml(text: string) {
-  return text
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
-}
 
 function shippingAddress(job: OrderEmailJob) {
   const a = job.address;

@@ -17,6 +17,7 @@ import {
   listMovements,
   listStock,
 } from '@/modules/inventory/server';
+import { countOpenConversations } from '@/modules/messaging/server';
 import { countOpenWebOrders } from '@/modules/orders/server';
 import { buttonClass, cardClass, Eyebrow } from '@/components/ui';
 
@@ -81,26 +82,34 @@ export default async function AdminHome() {
   const canStock = can('inventory.view');
   const canCost = canCatalog && can('pricing.view_cost');
 
-  const [products, location, latestResult, webOrders] = await Promise.all([
-    canCatalog ? listAdminProducts(staff.supabase, canStock) : [],
-    canStock ? getDefaultLocation(staff.supabase) : null,
-    // El informe es secundario: si su tabla aún no existe en el entorno (sin
-    // migrar) o falla la lectura, el inicio se muestra igual.
-    can('agent.use')
-      ? getLatestReport(staff.supabase).catch((error: unknown) => {
-          console.error('[admin] informe diario', error);
-          return 'error' as const;
-        })
-      : null,
-    // Igual que el informe: si la tabla aún no existe (entorno sin migrar), el
-    // inicio se muestra sin el indicador.
-    can('orders.view')
-      ? countOpenWebOrders(staff.supabase).catch((error: unknown) => {
-          console.error('[admin] pedidos web', error);
-          return null;
-        })
-      : null,
-  ]);
+  const [products, location, latestResult, webOrders, messages] =
+    await Promise.all([
+      canCatalog ? listAdminProducts(staff.supabase, canStock) : [],
+      canStock ? getDefaultLocation(staff.supabase) : null,
+      // El informe es secundario: si su tabla aún no existe en el entorno (sin
+      // migrar) o falla la lectura, el inicio se muestra igual.
+      can('agent.use')
+        ? getLatestReport(staff.supabase).catch((error: unknown) => {
+            console.error('[admin] informe diario', error);
+            return 'error' as const;
+          })
+        : null,
+      // Igual que el informe: si la tabla aún no existe (entorno sin migrar), el
+      // inicio se muestra sin el indicador.
+      can('orders.view')
+        ? countOpenWebOrders(staff.supabase).catch((error: unknown) => {
+            console.error('[admin] pedidos web', error);
+            return null;
+          })
+        : null,
+      // Igual: sin la tabla de mensajes (entorno sin migrar), sin indicador.
+      can('messages.view')
+        ? countOpenConversations(staff.supabase).catch((error: unknown) => {
+            console.error('[admin] mensajes', error);
+            return null;
+          })
+        : null,
+    ]);
   const [stock, movements] = location
     ? await Promise.all([
         listStock(staff.supabase, location.id),
@@ -272,6 +281,19 @@ export default async function AdminHome() {
               />
             )}
           </>
+        )}
+        {messages && (
+          <Stat
+            label="Mensajes por responder"
+            value={messages.open}
+            href="/admin/mensajes"
+            tone={messages.overdue > 0 ? 'alert' : 'default'}
+            note={
+              messages.overdue > 0
+                ? `${messages.overdue} fuera de plazo (más de 24 h)`
+                : 'Consultas de clientes que esperan respuesta'
+            }
+          />
         )}
         {canCatalog && (
           <>

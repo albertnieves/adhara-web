@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 import type { Page } from '@playwright/test';
+import { randomUUID } from 'node:crypto';
 import {
   AUDIT_WIDTHS,
   DESKTOP_WIDTHS,
@@ -32,6 +33,8 @@ const ROUTES = [
   '/admin/compras',
   '/admin/compras/proveedores',
   '/admin/pedidos',
+  '/admin/mensajes',
+  '/admin/mensajes/plantillas',
   '/admin/informes',
   '/admin/informes/inventario',
   '/admin/informes/rotacion',
@@ -89,6 +92,50 @@ async function anyOrderId() {
 }
 
 /**
+ * Una conversación con asunto, nombre y mensaje largos (sin espacios donde
+ * más desbordan) y una plantilla, para auditar la ficha y la lista de la
+ * bandeja (A6.1). Se borran al terminar.
+ */
+async function auditConversation() {
+  const long = 'Perfumeríaárabeconunnombremuylargoquenocabe'.repeat(3);
+  const submitted = await admin.rpc('web_contact_submit', {
+    p_request_id: randomUUID(),
+    p_locale: 'en',
+    p_topic: 'order',
+    p_full_name: 'Cliente de la auditoría con un nombre bastante largo',
+    p_email: `auditoria-${randomUUID().slice(0, 8)}@test.invalid`,
+    p_subject: `Consulta de la auditoría ${long}`,
+    p_body: `Mensaje de la auditoría.\n\n${long}\n\nCon varias líneas.`,
+  });
+  if (submitted.error) throw submitted.error;
+  const number = (submitted.data as { number: number }).number;
+  const { data: row, error } = await admin
+    .from('conversations')
+    .select('id')
+    .eq('number', number)
+    .single();
+  if (error) throw error;
+  const { data: template, error: templateError } = await admin
+    .from('message_templates')
+    .insert({
+      title: `Auditoría ${randomUUID().slice(0, 8)}`,
+      locale: 'en',
+      body: `Template body ${long}`,
+    })
+    .select('id')
+    .single();
+  if (templateError) throw templateError;
+  return {
+    id: String(row.id),
+    templateId: String(template.id),
+    cleanup: async () => {
+      await admin.from('conversations').delete().eq('id', row.id);
+      await admin.from('message_templates').delete().eq('id', template.id);
+    },
+  };
+}
+
+/**
  * Audita rutas a unas anchuras y devuelve los informes y lo que dice axe.
  * `after` comprueba algo más en la última anchura de cada ruta.
  */
@@ -129,13 +176,20 @@ test('panel: diseño sin solapes ni desbordes en todas sus pantallas', async ({
   makeControlOwner(email);
   await login(page, email);
 
-  const [product, order] = await Promise.all([anyProductId(), anyOrderId()]);
+  const [product, order, conversation] = await Promise.all([
+    anyProductId(),
+    anyOrderId(),
+    auditConversation(),
+  ]);
   const routes = [
     ...ROUTES,
     ...(product ? [`/admin/catalogo/${product}`] : []),
     ...(order ? [`/admin/pedidos/${order}`] : []),
+    `/admin/mensajes/${conversation.id}`,
+    `/admin/mensajes/plantillas/${conversation.templateId}`,
   ];
   const { reports, violations } = await auditAll(page, routes, AUDIT_WIDTHS);
+  await conversation.cleanup();
   expect(reports.join('\n'), reports.join('\n')).toBe('');
   expect(violations, violations.join('\n')).toEqual([]);
 });

@@ -19,3 +19,27 @@ export function mailConfig(
   if (!apiKey || !/^[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+$/.test(address)) return null;
   return { apiKey, from };
 }
+
+/**
+ * Base de la API de Resend. Las pruebas de extremo a extremo apuntan a una
+ * API simulada con RESEND_TEST_API_URL, que solo se acepta si es una
+ * dirección local: fuera de las pruebas no cambia nada.
+ */
+export function resendApiBase(
+  env: Record<string, string | undefined> = process.env,
+): string {
+  const override = env.RESEND_TEST_API_URL?.trim();
+  if (override) {
+    try {
+      const url = new URL(override);
+      if (
+        url.protocol === 'http:' &&
+        (url.hostname === 'localhost' || url.hostname === '127.0.0.1')
+      )
+        return url.toString().replace(/\/$/, '');
+    } catch {
+      // Una URL mal escrita se ignora.
+    }
+  }
+  return 'https://api.resend.com';
+}

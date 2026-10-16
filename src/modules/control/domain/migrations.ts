@@ -37,6 +37,7 @@ export const REPO_MIGRATIONS: readonly (readonly [
   ['20261012180000', 'web_payments'],
   ['20261012190000', 'order_emails'],
   ['20261012200000', 'order_refunds'],
+  ['20261016120000', 'customer_messages'],
 ];
 
 /** Última migración que espera este código. */
