@@ -1,4 +1,4 @@
-# Estado real — 15/10/2026
+# Estado real — 16/10/2026
 
 ## En esta rama: códigos de descuento para las campañas de Sender (15/10)
 
@@ -6,7 +6,7 @@
 
 - **Panel → Web → Códigos de descuento** (`promotions.manage` con MFA): alta y cambio de códigos de campaña en porcentaje (1–90 %) o en euros, con compra mínima, fechas, usos máximos, un uso por email y «no aplicar a rebajados»; lista con usos, pedidos cobrados y lo descontado; auditoría de cada cambio.
 - **Tienda:** campo «Código de descuento» en el resumen de «Finalizar compra» (Intro aplica, no compra). La base calcula el descuento sobre los artículos (nunca el envío); el envío gratis se calcula ya descontado; el banco cobra el total con descuento. Página del pedido, correo de confirmación y ficha del panel con la línea del descuento.
-- **Base:** migración `20261015120000_discount_codes.sql` (tabla con RLS, columnas en `orders`, `web_order_create` con `p_discount_code`, `web_order_discount_quote` solo para el servidor y copia diaria). **Sin aplicar en `adhara-dev`.** Coordinación con la PR #37 en §152.
+- **Base:** migración `20261015120000_discount_codes.sql` (tabla con RLS, columnas en `orders`, `web_order_create` con `p_discount_code`, `web_order_discount_quote` solo para el servidor y copia diaria). **Aplicada en `adhara-dev` el 16/10** desde el editor SQL (el conector no admite el `drop`, §141) y comprobada: versión registrada con el mismo md5 que el archivo, 79 objetos (funciones con permisos, columnas, restricciones, índices, política, disparador) iguales a una base local hecha desde el repositorio y asesor de seguridad sin avisos nuevos; ningún dato tocado. Coordinación con la PR #37 en §152.
 - **Textos legales (borrador):** párrafo de códigos en las condiciones de venta (es/ca/en) y `LEGAL_UPDATED_AT` al 15/10; queda la revisión de la asesoría (Ómnibus y devolución proporcional).
 - **Comprobado en local** (Supabase local con Docker, base reiniciada, `WEB_CHECKOUT=1` y TPV simulado): pgTAP 729/729 en 19 archivos (49 nuevas en `19_discount_codes`), tipos generados iguales, `db lint` sin errores y concurrencia correcta (un código de un uso con 10 pedidos a la vez y un uso por email con 6); `pnpm check` correcto (591 unitarias, 12 nuevas, y build); `format:check` y `scan:secrets` correctos; tienda pública 243 correctas y 25 omitidas; panel con sesión 40/40, con `discounts.spec.ts` (código con Intro, pago por el total con descuento, rechazos y alta y cambio en el panel) y la auditoría de diseño y axe de las pantallas nuevas.
 - **Fuera:** enlaces que apliquen el código solos, códigos únicos por suscriptor y promociones automáticas.
