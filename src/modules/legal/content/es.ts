@@ -294,7 +294,7 @@ export const es: LegalCopy = {
           blocks: [
             {
               list: [
-                'Datos: los que nos des al escribirnos o llamarnos (nombre, email, teléfono y tu mensaje).',
+                'Datos: los que nos des al escribirnos (por el formulario de contacto o por email) o llamarnos: nombre, email, teléfono, tu mensaje y, si lo indicas, el número de pedido.',
                 'Finalidad: responderte y atender tu consulta o reclamación.',
                 'Base jurídica: nuestro interés legítimo en atenderte o, si nos pides información antes de comprar, la aplicación de medidas precontractuales.',
                 'Conservación: el tiempo necesario para resolverla y, después, bloqueados durante los plazos de prescripción de posibles responsabilidades.',
@@ -339,7 +339,7 @@ export const es: LegalCopy = {
               list: [
                 'Proveedores de alojamiento web y de base de datos, con servidores en la Unión Europea.',
                 'El proveedor de envío de los correos del Club L’Atelier.',
-                'La entidad bancaria que procesa los pagos, la empresa de transporte y el proveedor de los emails de los pedidos.',
+                'La entidad bancaria que procesa los pagos, la empresa de transporte y el proveedor de los emails de los pedidos y de las respuestas a tus consultas.',
               ],
             },
             'También pueden acceder nuestra asesoría, para la contabilidad y los impuestos, y las administraciones públicas cuando una ley lo exija.',

@@ -54,7 +54,7 @@ export const LEGAL_ENTITY: Record<
 export const LEGAL_CONTACT_EMAIL = 'latelierdudesert@gmail.com';
 
 /** Fecha de la versión vigente de los textos (AAAA-MM-DD). */
-export const LEGAL_UPDATED_AT = '2026-10-12';
+export const LEGAL_UPDATED_AT = '2026-10-16';
 
 /**
  * Cookie técnica que recuerda que el visitante aceptó el aviso de entrada.

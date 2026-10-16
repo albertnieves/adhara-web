@@ -1,4 +1,15 @@
-# Estado real — 14/10/2026
+# Estado real — 16/10/2026
+
+## En esta rama: bandeja de mensajes con clientes (A6.1, 16/10)
+
+`claude/bandeja-mensajes`, sobre `main` ab70b29. A petición del usuario, siguiente fase del roadmap (H3), en paralelo a las PR abiertas. Plan en [PLAN_BANDEJA_MENSAJES.md](PLAN_BANDEJA_MENSAJES.md); decisiones §153–157; guía en [ADMIN_OPERATIONS.md](ADMIN_OPERATIONS.md#mensajes).
+
+- **Formulario de contacto** en `/es/contacto`, `/ca/contacte` y `/en/contact` (tema, nombre, email, nº de pedido opcional, asunto y mensaje), **apagado tras `CONTACT_FORM`**: sin él, 404 y sin enlace en el pie. La base aplica 3 consultas por email y hora y 30 en total cada 10 minutos; el pedido solo se enlaza si el email es el suyo.
+- **Panel → Web → Mensajes:** vistas por responder, esperando al cliente, asignadas a mí, resueltas, spam y todas, con «Fuera de plazo» a las 24 horas; ficha con el hilo, respuesta con plantillas, nota interna, estado, asignación, pedido enlazado y borrado (spam o supresión). Plantillas por idioma. Indicador en el inicio.
+- **Correo:** la respuesta sale por Resend (al momento y con la tarea de correos) con «Responder a» `consulta-<clave>@<subdominio>`; la contestación del cliente vuelve a su conversación por el webhook firmado de Resend Inbound (`/api/correo/entrante`), solo como texto y sin el hilo citado.
+- **Base:** migración `20261016120000_customer_messages.sql` con RLS (el contacto, solo con `customers.view`), funciones del servidor solo para `service_role` y del panel con `messages.reply` y MFA, auditoría sin textos ni emails y copia diaria. **Sin aplicar en `adhara-dev`.**
+- **Comprobado en local** (Supabase local con Docker, base reiniciada como en la CI, `WEB_CHECKOUT=1`, `CONTACT_FORM=1` y el TPV simulado): pgTAP 767/767 en 19 archivos (87 nuevas en `20_customer_messages`); tipos generados iguales, `db lint` sin errores y concurrencia correcta 5 veces seguidas (límite por email exacto con 8 envíos a la vez, formulario repetido y doble respuesta); `pnpm check` correcto (613 unitarias, 34 nuevas: paridad SQL/TS, firma Svix con el vector de su documentación, lectura del correo, recorte de citas, correo de respuesta y formulario); `format:check` y `scan:secrets` correctos; tienda pública 254 correctas y 30 omitidas (formulario en es/ca/en, webhook sin configurar y auditoría de diseño y axe del formulario); panel con sesión 39/39: el recorrido completo (formulario → panel → plantilla → respuesta → cola → contestación firmada del cliente → nota → resuelta → borrado), el encargado sin datos del cliente y la auditoría de diseño y axe de la lista, la ficha y las plantillas. La revisión de las capturas encontró y corrigió un asunto largo sin espacios que desbordaba la ficha y la tabla.
+- **Para encenderlo:** aplicar la migración; en Resend, dominio de envío, subdominio de recepción (MX en Vercel) y webhook `email.received`; en Vercel, `INBOUND_EMAIL_DOMAIN` y `RESEND_WEBHOOK_SECRET` (y `RESEND_API_KEY` y `EMAIL_FROM`); revisión de la asesoría; `CONTACT_FORM=1`.
 
 ## En esta rama: preparación SEO y revisión de precios
 
@@ -334,7 +345,7 @@ La revisión visual con perfumes se hizo en local con un Supabase simulado que d
    - integración **por redirección** (la tarjeta se teclea en la página del banco, nunca en la nuestra), con EMV 3DS, moneda EUR, Visa y Mastercard, notificación online por HTTP y devoluciones activadas; Bizum, Apple Pay o Google Pay si se quieren;
    - acceso al portal de Redsys (Canales) para ver operaciones y devolver.
      La web ya está preparada (P04, §137): con esos datos se configuran en Vercel `REDSYS_MERCHANT_CODE`, `REDSYS_TERMINAL`, `REDSYS_SECRET_KEY` y `REDSYS_ENVIRONMENT` (`test` primero; `live` después de un pago y una devolución de prueba). Recogida y envíos ya decididos (§136); quedan quién emite las facturas y si un pago que llega sin stock se devuelve siempre (hoy: revisión manual). Alternativa si el banco tarda: Stripe (cuenta verificada con el IBAN del negocio; habría que escribir su adaptador).
-7. **Correo transaccional** para confirmaciones de pedido y avisos (recomendado Resend), con acceso al DNS del dominio para SPF y DKIM y el remitente (p. ej. `pedidos@…`). La web ya está preparada (P06, §138): se configuran `RESEND_API_KEY` y `EMAIL_FROM` en Vercel; hasta entonces los correos esperan en la cola.
+7. **Correo transaccional** para confirmaciones de pedido y avisos (recomendado Resend), con acceso al DNS del dominio para SPF y DKIM y el remitente (p. ej. `pedidos@…`). La web ya está preparada (P06, §138): se configuran `RESEND_API_KEY` y `EMAIL_FROM` en Vercel; hasta entonces los correos esperan en la cola. Para la bandeja de mensajes (§155), además: en Resend, un subdominio de recepción (p. ej. `respuestas.latelierdudesert.com`, con su registro MX en el DNS de Vercel) y un webhook `email.received` hacia `/api/correo/entrante`; en Vercel, `INBOUND_EMAIL_DOMAIN` y `RESEND_WEBHOOK_SECRET`. Después, decidir el plazo de respuesta (hoy 24 h) y encender el formulario (`CONTACT_FORM=1`) tras la revisión de la asesoría.
 8. **Datos legales para vender online** (LSSI y consumo): los cinco textos están en la web (§113–115) y los datos del titular ya están puestos (§116: autónoma, NIE, domicilio de la tienda, email y dominio). Faltan el teléfono (Panel → Configuración, donde conviene poner también el email), los datos de envíos, pagos y arbitraje para la compra online, confirmar las decisiones supuestas de [LEGAL.md](LEGAL.md) y la revisión de la asesoría.
 9. **Producción:** dominio `latelierdudesert.com` comprado el 10/10 (DNS en Vercel); añadirlo a la configuración de Auth de Supabase cuando se use para entrar al panel (DECISIONS §117); plan Pro de Vercel contratado el 11/10 (DECISIONS §134); proyecto `adhara-prod` en Supabase (plan con copias diarias); derechos de las fotos oficiales o fotos propias; y la MFA del administrador de la tienda.
 10. Decisiones de la fase R: proveedores, plazos y múltiplos; si hay TPV; parámetros del vigilante; si el coste del pedido debe pasar a ser el vigente al recibir (PLAN_TIENDA_REPOSICION.md).
@@ -352,7 +363,7 @@ La revisión visual con perfumes se hizo en local con un Supabase simulado que d
 - Panel: precio del PDF como referencia (A2); compras y proveedores (A3). Confirmar con la asesoría qué debe llevar la etiqueta de estante (precio por unidad de medida, etc.).
 - Fotos propias y derechos de las imágenes oficiales antes de abrir al público.
 - Escenas 3D para el resto del catálogo (hoy solo las 4 del piloto); medidas reales del kit de tienda.
-- Checkout, pedidos, clientes y mensajes (fases A5–A7 del panel; F10–F14).
+- Clientes (A7) y WhatsApp y borradores del asistente para los mensajes (A6.2–A6.3); la bandeja básica (A6.1) está en la rama `claude/bandeja-mensajes`.
 
 ## Historial
 

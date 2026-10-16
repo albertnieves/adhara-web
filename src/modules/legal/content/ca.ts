@@ -287,7 +287,7 @@ export const ca: LegalCopy = {
           blocks: [
             {
               list: [
-                'Dades: les que ens donis en escriure’ns o trucar-nos (nom, correu, telèfon i el teu missatge).',
+                'Dades: les que ens donis en escriure’ns (pel formulari de contacte o per correu electrònic) o trucar-nos: nom, correu, telèfon, el teu missatge i, si l’indiques, el número de comanda.',
                 'Finalitat: respondre’t i atendre la teva consulta o reclamació.',
                 'Base jurídica: el nostre interès legítim a atendre’t o, si ens demanes informació abans de comprar, l’aplicació de mesures precontractuals.',
                 'Conservació: el temps necessari per resoldre-la i, després, bloquejades durant els terminis de prescripció de possibles responsabilitats.',
@@ -332,7 +332,7 @@ export const ca: LegalCopy = {
               list: [
                 'Proveïdors d’allotjament web i de base de dades, amb servidors a la Unió Europea.',
                 'El proveïdor d’enviament dels correus del Club L’Atelier.',
-                'L’entitat bancària que processa els pagaments, l’empresa de transport i el proveïdor dels correus de les comandes.',
+                'L’entitat bancària que processa els pagaments, l’empresa de transport i el proveïdor dels correus de les comandes i de les respostes a les teves consultes.',
               ],
             },
             'També hi poden accedir la nostra assessoria, per a la comptabilitat i els impostos, i les administracions públiques quan una llei ho exigeixi.',

@@ -30,6 +30,14 @@ const CHECKOUT_OFF: Route[] = [
   ['/es/pedido', 'pedido-apagada', 404],
 ];
 
+// Contacto (A6.1): solo existe con CONTACT_FORM=1 (e2e.yml).
+const CONTACT_ON: Route[] = [
+  ['/es/contacto', 'contacto-es'],
+  ['/ca/contacte', 'contacto-ca'],
+  ['/en/contact', 'contacto-en'],
+];
+const CONTACT_OFF: Route[] = [['/es/contacto', 'contacto-apagado', 404]];
+
 const ROUTES: Route[] = [
   ['/es', 'inicio-es'],
   ['/ca', 'inicio-ca'],
@@ -50,6 +58,7 @@ const ROUTES: Route[] = [
   ['/admin/acceso', 'panel-acceso'],
   ['/admin/recuperar', 'panel-recuperar'],
   ...(process.env.WEB_CHECKOUT === '1' ? CHECKOUT_ON : CHECKOUT_OFF),
+  ...(process.env.CONTACT_FORM === '1' ? CONTACT_ON : CONTACT_OFF),
 ];
 
 test.beforeEach(({}, testInfo) => {
