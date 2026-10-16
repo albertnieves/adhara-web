@@ -58,6 +58,9 @@ export type AccountOrder = {
   status: CustomerOrderStatus;
   fulfillment: 'click_collect' | 'shipping';
   itemsCents: number;
+  /** Código de descuento del pedido (DECISIONS §149), 0 y null sin código. */
+  discountCents: number;
+  discountCode: string | null;
   shippingCents: number;
   totalCents: number;
   refundedCents: number;

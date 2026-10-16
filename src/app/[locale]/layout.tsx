@@ -9,6 +9,7 @@ import { checkoutEnabled } from '@/modules/checkout/server';
 import { routing } from '@/modules/i18n';
 import { requireLocale } from '@/modules/i18n/server';
 import { siteUrl } from '@/modules/i18n/seo';
+import { indexingEnabled } from '@/modules/i18n/indexing';
 import { LegalConsent } from '@/modules/legal';
 import { NewsletterSection } from '@/modules/newsletter/server';
 import { Footer, Header, PreviewBanner } from '@/modules/storefront';
@@ -22,11 +23,12 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'meta' });
+  const index = indexingEnabled() && !(await draftMode()).isEnabled;
   return {
     metadataBase: siteUrl(),
     title: { default: t('title'), template: `%s · ${BRAND_NAME}` },
     description: t('description'),
-    robots: { index: false, follow: false },
+    robots: { index, follow: index },
   };
 }
 

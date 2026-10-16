@@ -22,8 +22,9 @@ import {
  * Cuenta de cliente (PLAN_CUENTA_CLIENTE) contra Supabase local, con
  * CUSTOMER_ACCOUNTS=1 y WEB_CHECKOUT=1 (e2e.yml): alta con confirmación del
  * email, acceso, recuperación, Google hasta la puerta de Supabase, pedidos de
- * la cuenta, datos que rellenan el checkout, el personal en la tienda y
- * borrar la cuenta. Los correos se leen del Mailpit de Supabase local.
+ * la cuenta, datos que rellenan el checkout (con un código de descuento,
+ * DECISIONS §152), el personal en la tienda y borrar la cuenta. Los correos
+ * se leen del Mailpit de Supabase local.
  */
 
 const created: TestProduct[] = [];
@@ -87,11 +88,23 @@ async function signIn(page: Page, email: string, secret = password) {
   await page.getByRole('button', { name: 'Entrar', exact: true }).click();
 }
 
+/** Código de campaña del 10 % creado en la base local (DECISIONS §149). */
+function discountCode() {
+  const code = `CTA-${randomUUID().slice(0, 6).toUpperCase()}`;
+  psql(
+    `insert into public.discount_codes (code, kind, percent_bp)
+     values (:'code', 'percent', 1000);`,
+    { code },
+  );
+  return code;
+}
+
 /** Pedido de recogida pendiente de pago hecho por el servidor (como el checkout). */
 async function serverOrder(
   product: TestProduct,
   email: string,
   customerId?: string,
+  discount?: string,
 ) {
   const { data, error } = await admin.rpc('web_order_create', {
     p_request_id: randomUUID(),
@@ -102,6 +115,7 @@ async function serverOrder(
     p_contact: { full_name: 'Cliente de prueba', email },
     p_provider: 'redsys',
     ...(customerId && { p_customer_id: customerId }),
+    ...(discount && { p_discount_code: discount }),
   });
   if (error) throw error;
   return (data as { number: number }).number;
@@ -250,7 +264,9 @@ test('pedidos de la cuenta: los de invitado con su email y los hechos con la ses
   await page.reload();
   await expect(page.getByLabel('Código postal')).toHaveValue('08860');
 
-  // El checkout rellena los datos y el pedido queda en la cuenta.
+  // El checkout rellena los datos y el pedido queda en la cuenta, también
+  // con un código de descuento.
+  const code = discountCode();
   await page.goto(`/es/perfume/${product.slug}`);
   await page.getByRole('button', { name: 'Añadir a la cesta' }).click();
   await expect(page.getByText('Añadido a tu cesta.')).toBeVisible();
@@ -265,21 +281,36 @@ test('pedidos de la cuenta: los de invitado con su email y los hechos con la ses
     customer.email,
   );
   await expect(page.getByLabel('Teléfono')).toHaveValue('600 000 000');
+  await page.getByLabel('Código de descuento').fill(code);
+  await page.getByRole('button', { name: 'Aplicar' }).click();
+  await expect(page.getByText(`Código ${code} aplicado`)).toBeVisible();
   // La casilla, no su etiqueta: a 768 px el centro de la etiqueta cae en el
   // enlace a las condiciones de venta.
   await page.getByRole('checkbox', { name: /He leído y acepto las/ }).check();
   await page.getByRole('button', { name: 'Confirmar pedido y pagar' }).click();
-  await nextVisit(page, visits, 1);
+  expect((await nextVisit(page, visits, 1)).DS_MERCHANT_AMOUNT).toBe('4491');
   const { data, error } = await admin
     .from('orders')
-    .select('number, customer_id')
+    .select('number, discount_code, discount_cents, total_cents')
     .eq('customer_id', customer.id);
   if (error) throw error;
-  expect(data).toHaveLength(1);
+  expect(data).toEqual([
+    {
+      number: data[0]!.number,
+      discount_code: code,
+      discount_cents: 499,
+      total_cents: 4491,
+    },
+  ]);
   await page.goto('/es/cuenta');
-  await expect(
-    page.getByRole('link', { name: `Ver el pedido Nº ${data[0]!.number}` }),
-  ).toBeVisible();
+  const placed = page.getByRole('link', {
+    name: `Ver el pedido Nº ${data[0]!.number}`,
+  });
+  await expect(placed).toBeVisible();
+  await placed.click();
+  await expect(page.getByText(`Descuento (${code})`)).toBeVisible();
+  await expect(page.getByText(/−4,99\s€/)).toBeVisible();
+  await expect(page.getByText(/44,91\s€/)).toBeVisible();
 });
 
 test('sin sesión, el checkout invita a entrar y vuelve con los datos', async ({
@@ -427,7 +458,13 @@ test('cuenta con sesión: diseño sin solapes ni desbordes y sin fallos de axe',
   test.setTimeout(5 * 60_000);
   const product = await makeProduct();
   const customer = await confirmedCustomer('Dora Diseño');
-  const number = await serverOrder(product, customer.email, customer.id);
+  // Con código, para revisar también la línea del descuento.
+  const number = await serverOrder(
+    product,
+    customer.email,
+    customer.id,
+    discountCode(),
+  );
   await signIn(page, customer.email);
   await expect(page).toHaveURL(/\/es\/cuenta$/);
   const reports: string[] = [];

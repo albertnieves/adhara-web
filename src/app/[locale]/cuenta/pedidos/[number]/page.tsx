@@ -41,8 +41,9 @@ export default async function AccountOrderPage({ params }: { params: Params }) {
   const lang = requireLocale(locale);
   const session = await requireCustomer(lang, accountPath(lang, '/cuenta'));
   if (!/^[1-9][0-9]{0,11}$/.test(number)) notFound();
-  const [t, order, storeData] = await Promise.all([
+  const [t, tc, order, storeData] = await Promise.all([
     getTranslations('account'),
+    getTranslations('checkout'),
     getAccountOrder(session, Number(number)),
     readStoreContent('store', 'es'),
   ]);
@@ -152,6 +153,16 @@ export default async function AccountOrderPage({ params }: { params: Params }) {
         <dl className="ml-auto grid max-w-sm grid-cols-[1fr_auto] gap-x-6 gap-y-2 text-sm">
           <dt className="text-fg-muted">{t('order.subtotal')}</dt>
           <dd className="text-right tabular-nums">{euros(order.itemsCents)}</dd>
+          {order.discountCents > 0 && (
+            <>
+              <dt className="text-fg-muted">
+                {tc('discount.line', { code: order.discountCode ?? '' })}
+              </dt>
+              <dd className="text-right tabular-nums">
+                −{euros(order.discountCents)}
+              </dd>
+            </>
+          )}
           <dt className="text-fg-muted">{t('order.shippingCost')}</dt>
           <dd className="text-right tabular-nums">
             {order.shippingCents === 0

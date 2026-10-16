@@ -87,6 +87,8 @@ type OrderRow = {
   status: string;
   fulfillment: string;
   items_cents: number;
+  discount_cents: number;
+  discount_code: string | null;
   shipping_cents: number;
   total_cents: number;
   refunded_cents: number;
@@ -131,6 +133,8 @@ export async function getAccountOrder(
     status: customerOrderStatus(row.status),
     fulfillment: row.fulfillment === 'shipping' ? 'shipping' : 'click_collect',
     itemsCents: row.items_cents,
+    discountCents: row.discount_cents,
+    discountCode: row.discount_code,
     shippingCents: row.shipping_cents,
     totalCents: row.total_cents,
     refundedCents: row.refunded_cents,

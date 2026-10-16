@@ -2,13 +2,14 @@
 -- alta abierta, una sesión no significa «personal». Una cuenta de cliente (con
 -- o sin aal2) no ve en ninguna tabla pública más que un visitante, no pasa
 -- ninguna función del panel y solo lee su ficha y sus pedidos: los vinculados
--- al hacerlos y los de invitado con su email, si lo tiene verificado.
+-- al hacerlos y los de invitado con su email, si lo tiene verificado, con el
+-- descuento si llevaban código (§152).
 -- Datos ficticios; la transacción se revierte.
 begin;
 create extension if not exists pgtap with schema extensions;
 set search_path = public, extensions;
 
-select plan(50);
+select plan(54);
 
 insert into auth.users (id, email, email_confirmed_at) values
   ('00000000-0000-4000-8000-000000000181', 'sistema@test.invalid', now()),
@@ -34,6 +35,8 @@ select '00000000-0000-4000-8000-0000000018c1', l.id, 20
 from public.stock_locations l where l.code = 'castelldefels';
 
 -- Datos sensibles para que la comparación con el visitante signifique algo.
+insert into public.discount_codes (code, kind, amount_cents)
+values ('CUENTAS-5', 'amount', 500);
 insert into public.newsletter_subscribers (email, locale, consent_version, source)
 values ('suscriptor@test.invalid', 'es', 'v1', 'footer');
 insert into public.audit_log (actor_id, action, entity)
@@ -48,7 +51,8 @@ language sql as $$
   );
 $$;
 create function pg_temp.order_for(
-  p_request uuid, p_email text, p_customer uuid default null
+  p_request uuid, p_email text, p_customer uuid default null,
+  p_code text default null
 ) returns bigint
 language sql as $$
   select (public.web_order_create(
@@ -56,7 +60,8 @@ language sql as $$
     '[{"variant_id": "00000000-0000-4000-8000-0000000018c1", "quantity": 1}]',
     jsonb_build_object('full_name', 'Cliente de prueba', 'email', p_email,
                        'phone', '600000000'),
-    'redsys', 30, p_customer) ->> 'number')::bigint;
+    'redsys', 30, p_discount_code => p_code, p_customer_id => p_customer)
+    ->> 'number')::bigint;
 $$;
 -- Números de los pedidos, copiados por postgres: un cliente no lee orders.
 create temp table numbers (request uuid primary key, number bigint);
@@ -90,7 +95,7 @@ grant select on numbers to anon, authenticated, service_role;
 grant execute on function pg_temp.act_as(text, text), pg_temp.visible_rows(),
   pg_temp.number_of(uuid)
   to anon, authenticated;
-grant execute on function pg_temp.order_for(uuid, text, uuid) to service_role;
+grant execute on function pg_temp.order_for(uuid, text, uuid, text) to service_role;
 
 -- ---------------------------------------------------------------------------
 -- Superficie
@@ -128,6 +133,16 @@ select is_empty(
                             'newsletter_subscribe', 'storefront_availability',
                             'track_product_event')$$,
   'ninguna función sin guarda de permiso fuera de las públicas por diseño');
+-- Detrás de los códigos de descuento (DECISIONS §152): una sola versión, con
+-- los dos parámetros opcionales.
+select is(
+  (select array_agg(pg_get_function_identity_arguments(p.oid)) from pg_proc p
+   join pg_namespace n on n.oid = p.pronamespace
+   where n.nspname = 'public' and p.proname = 'web_order_create'),
+  array['p_request_id uuid, p_locale text, p_fulfillment text, p_location_id uuid, '
+        'p_items jsonb, p_contact jsonb, p_provider text, p_hold_minutes integer, '
+        'p_discount_code text, p_customer_id uuid'],
+  'una sola web_order_create, con el código y la cuenta');
 
 -- ---------------------------------------------------------------------------
 -- Pedidos de prueba (servidor)
@@ -146,9 +161,9 @@ select pg_temp.order_for('00000000-0000-4000-8000-0000000018d2', 'regalo@test.in
                          '00000000-0000-4000-8000-000000000182');
 -- 3: invitado con el email de B (sin verificar).
 select pg_temp.order_for('00000000-0000-4000-8000-0000000018d3', 'cliente-b@test.invalid');
--- 4: con la sesión de C.
+-- 4: con la sesión de C y un código de descuento.
 select pg_temp.order_for('00000000-0000-4000-8000-0000000018d4', 'cliente-c@test.invalid',
-                         '00000000-0000-4000-8000-000000000184');
+                         '00000000-0000-4000-8000-000000000184', 'cuentas-5');
 -- 5: de A, sin pagar y con la reserva ya liberada.
 select pg_temp.order_for('00000000-0000-4000-8000-0000000018d5', 'cliente-a@test.invalid');
 reset role;
@@ -163,7 +178,7 @@ select is(
   (public.web_order_create('00000000-0000-4000-8000-0000000018d1', 'es', 'click_collect',
     null, '[{"variant_id": "00000000-0000-4000-8000-0000000018c1", "quantity": 1}]',
     '{"full_name": "Otro", "email": "otro@test.invalid"}', 'redsys', 30,
-    '00000000-0000-4000-8000-000000000184') ->> 'number')::bigint,
+    p_customer_id => '00000000-0000-4000-8000-000000000184') ->> 'number')::bigint,
   pg_temp.number_of('00000000-0000-4000-8000-0000000018d1'),
   'repetir la petición devuelve el mismo pedido');
 select is(
@@ -175,6 +190,11 @@ select is(
    where o.request_id = '00000000-0000-4000-8000-0000000018d2'
      and e.kind = 'created' and (e.detail ->> 'with_account')::boolean),
   1, 'la cronología dice que se hizo con cuenta (sin decir cuál)');
+select is(
+  (select row(customer_id, discount_code, discount_cents, total_cents)::text
+   from public.orders where request_id = '00000000-0000-4000-8000-0000000018d4'),
+  '(00000000-0000-4000-8000-000000000184,CUENTAS-5,500,4495)',
+  'un pedido con cuenta y código guarda los dos');
 -- El 1 se paga; el 5 caduca.
 select public.web_order_record_payment('redsys', a.reference, 'tx-cuentas-1', 'succeeded',
                                        4995, 'EUR')
@@ -223,8 +243,8 @@ select cmp_ok(
 select is(
   (select count(*)::int from seen where who = 'anon' and n > 0
    and rel in ('staff_members', 'audit_log', 'orders', 'order_contacts',
-               'newsletter_subscribers', 'customer_accounts')),
-  0, 'un visitante no ve personal, auditoría, pedidos, contactos, suscriptores ni fichas');
+               'newsletter_subscribers', 'customer_accounts', 'discount_codes')),
+  0, 'un visitante no ve personal, auditoría, pedidos, contactos, suscriptores, fichas ni códigos');
 select is_empty(
   $$select c.who || ': ' || c.rel from seen c
     join seen a on a.rel = c.rel and a.who = 'anon'
@@ -261,7 +281,7 @@ select throws_ok(
   $$select public.web_order_create(gen_random_uuid(), 'es', 'click_collect', null,
     '[{"variant_id": "00000000-0000-4000-8000-0000000018c1", "quantity": 1}]',
     '{"full_name": "A", "email": "cliente-a@test.invalid"}', 'redsys', 30,
-    '00000000-0000-4000-8000-000000000182')$$,
+    p_customer_id => '00000000-0000-4000-8000-000000000182')$$,
   '42501', null, 'ni crea pedidos por la API');
 reset role;
 
@@ -298,6 +318,10 @@ select ok(
        ?| array['order_id', 'request_id', 'events', 'payments', 'location_id',
                 'received_transaction_id', 'revision']),
   'sin identificadores internos, cobros ni cronología');
+select ok(
+  public.customer_order(pg_temp.number_of('00000000-0000-4000-8000-0000000018d1'))
+    @> '{"discount_code": null, "discount_cents": 0, "total_cents": 4995}',
+  'sin código, ni código ni descuento');
 select is(
   public.customer_order(pg_temp.number_of('00000000-0000-4000-8000-0000000018d4')),
   null, 'el pedido de otra cuenta no existe para A');
@@ -314,6 +338,11 @@ select results_eq(
   'select number from public.customer_orders()',
   format('select %s::bigint', pg_temp.number_of('00000000-0000-4000-8000-0000000018d4')),
   'C solo ve el suyo');
+select ok(
+  public.customer_order(pg_temp.number_of('00000000-0000-4000-8000-0000000018d4'))
+    @> '{"discount_code": "CUENTAS-5", "discount_cents": 500, "items_cents": 4995,
+         "total_cents": 4495}',
+  'y en su ficha, el código y lo descontado');
 reset role;
 
 -- ---------------------------------------------------------------------------

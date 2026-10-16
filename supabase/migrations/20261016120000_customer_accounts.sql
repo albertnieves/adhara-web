@@ -116,6 +116,8 @@ as $$
     'fulfillment', o.fulfillment,
     'items_cents', o.items_cents,
     'shipping_cents', o.shipping_cents,
+    'discount_code', o.discount_code,
+    'discount_cents', o.discount_cents,
     'total_cents', o.total_cents,
     'created_at', o.created_at,
     'paid_at', o.paid_at,
@@ -222,11 +224,11 @@ $$;
 -- Pedido con la sesión iniciada: web_order_create guarda la cuenta
 -- ---------------------------------------------------------------------------
 
--- Igual que en P03 (20261012120000) con p_customer_id: la cuenta de la sesión,
--- que el servidor comprueba con Supabase Auth antes de llamar. null para un
--- pedido de invitado. Un reintento con la misma clave devuelve el pedido ya
--- creado sin tocarlo.
-drop function public.web_order_create(uuid, text, text, uuid, jsonb, jsonb, text, integer);
+-- Igual que en los códigos de descuento (20261015120000) con p_customer_id: la
+-- cuenta de la sesión, que el servidor comprueba con Supabase Auth antes de
+-- llamar. null para un pedido de invitado. Un reintento con la misma clave
+-- devuelve el pedido ya creado sin tocarlo.
+drop function public.web_order_create(uuid, text, text, uuid, jsonb, jsonb, text, integer, text);
 
 create function public.web_order_create(
   p_request_id uuid,
@@ -237,6 +239,7 @@ create function public.web_order_create(
   p_contact jsonb,
   p_provider text,
   p_hold_minutes integer default 30,
+  p_discount_code text default null,
   p_customer_id uuid default null
 )
 returns jsonb
@@ -248,12 +251,16 @@ declare
   v_order public.orders;
   v_attempt public.order_payment_attempts;
   v_rate public.shipping_rates;
+  v_code public.discount_codes;
+  v_base record;
   v_items_cents bigint;
+  v_discount_cents integer := 0;
   v_shipping_cents integer := 0;
   v_lines integer;
   v_unavailable uuid;
   v_zone text;
   v_location uuid := p_location_id;
+  v_code_text text := nullif(upper(btrim(coalesce(p_discount_code, ''))), '');
   v_name text := btrim(coalesce(p_contact ->> 'full_name', ''));
   v_email text := lower(btrim(coalesce(p_contact ->> 'email', '')));
   v_phone text := nullif(btrim(coalesce(p_contact ->> 'phone', '')), '');
@@ -350,9 +357,21 @@ begin
   if v_lines = 0 then
     raise exception 'invalid_items' using errcode = '22023';
   end if;
+
+  -- Código: su fila bloqueada hasta el final, para contar usos sin carreras.
+  if v_code_text is not null then
+    select * into v_code from public.discount_codes d
+    where d.code = v_code_text
+    for update;
+    select * into v_base from private.discount_base(p_items, coalesce(v_code.exclude_sale_items, false));
+    v_discount_cents := private.discount_amount(v_code, v_items_cents, v_base.eligible_cents, v_email);
+  end if;
+
   if p_fulfillment = 'shipping' then
+    -- Envío gratis según lo que se paga por los artículos (con el descuento).
     v_shipping_cents := case
-      when v_rate.free_from_cents is not null and v_items_cents >= v_rate.free_from_cents
+      when v_rate.free_from_cents is not null
+        and v_items_cents - v_discount_cents >= v_rate.free_from_cents
         then 0
       else v_rate.price_cents
     end;
@@ -365,10 +384,12 @@ begin
   -- aquí y, cuando la primera termina, recibe el pedido ya creado.
   insert into public.orders (
     request_id, locale, fulfillment, location_id, items_cents, shipping_cents,
-    total_cents, reserved_until, customer_id
+    discount_code_id, discount_code, discount_cents, total_cents, reserved_until,
+    customer_id
   ) values (
     p_request_id, p_locale, p_fulfillment, v_location, v_items_cents::integer,
-    v_shipping_cents, (v_items_cents + v_shipping_cents)::integer,
+    v_shipping_cents, v_code.id, v_code.code, v_discount_cents,
+    (v_items_cents + v_shipping_cents - v_discount_cents)::integer,
     now() + make_interval(mins => p_hold_minutes), p_customer_id
   )
   on conflict (request_id) do nothing
@@ -406,6 +427,8 @@ begin
           jsonb_build_object('total_cents', v_order.total_cents, 'lines', v_lines,
                              'fulfillment', v_order.fulfillment,
                              'shipping_cents', v_order.shipping_cents,
+                             'discount_code', v_order.discount_code,
+                             'discount_cents', v_order.discount_cents,
                              'zone', v_zone,
                              'with_account', p_customer_id is not null,
                              'reserved_until', v_order.reserved_until));
@@ -432,6 +455,7 @@ as $f$
     'public.stock_locations',
     'public.stock_watch_settings',
     'public.shipping_rates',
+    'public.discount_codes',
     'public.brands',
     'public.products',
     'public.product_translations',
@@ -497,8 +521,8 @@ grant execute on function
 
 -- Solo el servidor con la clave privilegiada, como antes.
 revoke execute on function
-  public.web_order_create(uuid, text, text, uuid, jsonb, jsonb, text, integer, uuid)
+  public.web_order_create(uuid, text, text, uuid, jsonb, jsonb, text, integer, text, uuid)
   from public, anon, authenticated;
 grant execute on function
-  public.web_order_create(uuid, text, text, uuid, jsonb, jsonb, text, integer, uuid)
+  public.web_order_create(uuid, text, text, uuid, jsonb, jsonb, text, integer, text, uuid)
   to service_role;

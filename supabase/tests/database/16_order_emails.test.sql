@@ -155,6 +155,7 @@ select is(
       where request_id = '00000000-0000-4000-8000-0000000016d2'),
     'locale', 'ca', 'fulfillment', 'shipping', 'items_cents', 7000,
     'shipping_cents', 500, 'total_cents', 7500, 'tracking_reference', 'TRK-123',
+    'discount_code', null, 'discount_cents', 0,
     'full_name', 'Client d''enviament', 'email', 'envio@test.invalid',
     'address', jsonb_build_object('line1', 'Carrer Major 1', 'line2', null,
       'postal_code', '08860', 'city', 'Castelldefels', 'province', null)),

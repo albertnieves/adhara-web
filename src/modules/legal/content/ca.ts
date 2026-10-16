@@ -154,6 +154,7 @@ export const ca: LegalCopy = {
             'Els preus són en euros i inclouen l’IVA. Les despeses d’enviament no hi són incloses: s’indiquen abans de pagar i s’expliquen a [enviaments i devolucions](doc:shipping).',
             'S’aplica el preu que apareix en fer la comanda. Quan anunciem una rebaixa, el preu anterior que mostrem és el més baix dels 30 dies previs.',
             'Si per un error evident un preu no es correspon amb el real (per exemple, 0 € o un preu irrisori), t’avisarem abans d’enviar la comanda i podràs confirmar-la amb el preu correcte o cancel·lar-la sense cost.',
+            'Codis de descompte: els de les nostres campanyes s’escriuen en finalitzar la compra. Cada codi indica el seu descompte i les seves condicions (dates, compra mínima, si val una vegada per correu o un nombre limitat de vegades i si s’aplica als articles rebaixats). S’aplica als articles, no a les despeses d’enviament, i només un per comanda. El descompte apareix al resum abans de pagar. Si tornes un article d’una comanda amb descompte, et retornem el que vas pagar per ell: el seu preu menys la part proporcional del descompte.',
           ],
         },
         {

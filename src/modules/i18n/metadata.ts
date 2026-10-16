@@ -8,7 +8,7 @@ type Href = Parameters<typeof getPathname>[0]['href'];
 
 /**
  * Metadatos de idioma de una página de la tienda. Nunca activa la indexación:
- * mientras la web sea privada, el layout mantiene noindex para todo.
+ * el layout decide según SEO_INDEXING, entorno y Draft Mode.
  */
 export function alternatesMetadata(
   href: Href,

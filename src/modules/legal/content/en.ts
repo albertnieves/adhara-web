@@ -152,6 +152,7 @@ export const en: LegalCopy = {
             'Prices are in euros and include VAT. Shipping costs are not included: they are shown before you pay and explained in [shipping and returns](doc:shipping).',
             'The price shown when you place the order applies. When we announce a sale, the previous price we show is the lowest of the preceding 30 days.',
             'If, due to an obvious error, a price does not match the real one (for example, €0 or a ridiculously low price), we will let you know before shipping and you can confirm the order at the correct price or cancel it free of charge.',
+            'Discount codes: the codes from our campaigns are entered at checkout. Each code states its discount and conditions (dates, minimum spend, whether it can be used once per email address or a limited number of times, and whether it applies to reduced items). It applies to the items, not to shipping costs, and only one code can be used per order. The discount is shown in the summary before you pay. If you return an item from a discounted order, we refund what you paid for it: its price less its proportional share of the discount.',
           ],
         },
         {
