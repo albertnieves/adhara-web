@@ -639,6 +639,18 @@ Plan en [PLAN_CUENTA_CLIENTE.md](PLAN_CUENTA_CLIENTE.md).
      - **En local sí:** lint, tipos, unitarias, build y una prueba de humo con el servidor (redirecciones, 404 con el interruptor apagado y capturas a 390 y 1440 px, que encontraron la cabecera desbordada en el móvil con «Cuenta» y «Cistella»: en el móvil la cuenta va en el menú).
      - **Sin aplicar en `adhara-dev`:** la migración `20261016120000_customer_accounts.sql` (antes `20261013120000`; renumerada el 16/10 para ir detrás de los códigos de descuento, §152) se aplicará cuando el usuario lo decida, como las anteriores (§141).
 
+## Páginas de casa — 15/10/2026
+
+Primera parte de «Marcas y colecciones» (H4 de [ROADMAP.md](ROADMAP.md)), sin bloqueos de datos ni del usuario. El §147 queda para la PR #39, aún abierta.
+
+148. **Una página por casa y un índice de casas.**
+     - **Qué:** `/casas` y `/casas/[slug]` (ca `/cases`, en `/houses`) con los perfumes de cada casa en el orden de la colección. Se llega desde el pie, desde la portada («Ver todas las casas», bajo las casas en bucle), desde el antetítulo de la ficha y desde «Ver todo de…» junto a «También de…».
+     - **Datos:** salen de la colección que ya lee la tienda (`listStorefrontProducts`): RLS solo devuelve publicados y la vista previa del personal añade los borradores. Sin consultas nuevas ni migración. Una casa sin perfumes a la vista no sale en el índice ni en el sitemap y su página es 404.
+     - **Sin textos sobre las casas:** `brands` solo tiene nombre y slug y no se inventan descripciones (AGENTS.md). Si se quieren, con su fuente, son una columna nueva por idioma y su editor en el panel.
+     - **Idiomas y SEO:** la página de cada casa cuenta como publicada en los tres idiomas, porque solo lleva textos de la interfaz y nombres comunes. El sitemap añade el índice y una entrada por casa con algún perfume publicado; sigue vacío mientras la indexación no se active.
+     - **Cabecera y menú móvil sin cambios:** la PR #37 (cuenta de cliente, fusionada el 17/10) también los cambia; si se quiere el enlace allí, va en otra entrega.
+     - **Fuera:** colecciones editoriales (esperan la revisión de los tonos de colección, D3, en el criterio 13 de la Fase 2) y búsqueda global.
+
 ## Códigos de descuento — 15/10/2026
 
 A petición del usuario: poder dar descuentos exclusivos con códigos válidos en las campañas del club de Sender. Respuestas del usuario el 15/10: rama y PR aparte, código de campaña (no únicos por persona), «excluir rebajados» a elegir en cada código y envío gratis calculado después del descuento. Los números §142–147 siguen reservados para las PR #37 y #39 y el §148 para la #40.

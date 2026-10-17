@@ -9,6 +9,7 @@ export {
   CONCENTRATION_NAMES,
   MEDIA_ORIGINS,
   PRODUCT_STATUSES,
+  groupByBrand,
   heroMedia,
   isAudience,
   isConcentration,
@@ -24,6 +25,7 @@ export type {
   ProductMedia,
   ProductStatus,
   ProductVariant,
+  StorefrontBrand,
   StorefrontProduct,
 } from './domain/product';
 export {

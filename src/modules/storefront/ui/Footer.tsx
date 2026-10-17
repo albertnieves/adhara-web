@@ -41,6 +41,11 @@ export async function Footer() {
               </Link>
             </li>
             <li>
+              <Link href="/casas" className="link-underline">
+                {nav('houses')}
+              </Link>
+            </li>
+            <li>
               <Link
                 href={{ pathname: '/', hash: 'experiencia' }}
                 className="link-underline"

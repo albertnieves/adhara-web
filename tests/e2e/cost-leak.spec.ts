@@ -15,6 +15,7 @@ const PUBLIC_PATHS = [
   '/es/catalogo',
   '/ca/cataleg',
   '/en/catalog',
+  '/es/casas',
   '/es/perfume/no-existe',
 ];
 
@@ -67,6 +68,7 @@ test.describe('coste centinela', () => {
     '/es/perfume/perfume-centinela',
     '/ca/perfum/perfume-centinela',
     '/en/fragrance/perfume-centinela',
+    '/es/casas/marca-centinela',
     '/api/health',
     '/robots.txt',
   ];

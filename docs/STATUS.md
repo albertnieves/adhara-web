@@ -1,8 +1,21 @@
-# Estado real — 16/10/2026
+# Estado real — 17/10/2026
 
-## En esta rama: códigos de descuento para las campañas de Sender (15/10)
+## En esta rama: páginas de casa (15/10)
 
-`claude/codigos-descuento`, sobre `main` ab70b29. A petición del usuario; decisiones §149–152 y guía en [ADMIN_OPERATIONS.md](ADMIN_OPERATIONS.md#códigos-de-descuento).
+`claude/kind-bardeen-hkgu3e`, sobre `main` ab70b29. Primera parte de «Marcas y colecciones» (H4); decisión §148.
+
+- **`/es/casas`, `/ca/cases` y `/en/houses`:** índice con las casas que tienen algún perfume publicado, su número de perfumes y, desde 768 px, hasta tres fotos de muestra.
+- **Página de cada casa** (`/es/casas/lattafa`…) con sus perfumes en el orden de la colección; 404 si la casa no existe o no tiene publicados. En la vista previa del personal salen también los borradores.
+- **Enlaces:** antetítulo de la ficha, «Ver todo de…» junto a «También de…», «Ver todas las casas» en la portada y «Casas» en el pie.
+- **Sitemap:** el índice y una entrada por casa con publicados, en los tres idiomas; sigue vacío mientras la indexación esté apagada.
+- **Sin migraciones ni textos inventados:** las casas solo tienen nombre; una descripción por casa, con fuente, sería una columna nueva y su editor en el panel.
+- **Fuera:** colecciones editoriales (esperan la revisión de los tonos D3) y búsqueda global. La cabecera y el menú móvil no cambian (la PR #37 también los toca).
+- **Comprobado en local** (Supabase local con Docker, base nueva con el perfume centinela, como `e2e.yml`, y `WEB_CHECKOUT=1` con el TPV simulado): `pnpm check` correcto (580 unitarias y build); `format:check` y `scan:secrets` correctos; tienda pública 261 correctas y 29 omitidas, con `houses.spec.ts` (pie, tres idiomas, 404, ficha → casa → índice y casa centinela), la auditoría de diseño y axe del índice en los tres idiomas, del 404 y de la casa del perfume publicado, y sin costes ni centinela en `/es/casas` ni en la casa centinela; panel con sesión 37/37. Con casas ficticias añadidas solo a esa base local (una de nombre largo con cuatro perfumes y fotos), auditoría y axe sin fallos a 390, 768, 1280 y 1440 px. Sin migraciones; nada aplicado en `adhara-dev`.
+- **Visto de paso, sin tocar:** con el checkout encendido, a 768 px el logotipo de la cabecera queda pegado al selector de idioma (la cabecera no cambia en esta rama; la auditoría no lo marca).
+
+## Códigos de descuento para las campañas de Sender (PR #41, fusionada el 17/10)
+
+A petición del usuario; decisiones §149–152 y guía en [ADMIN_OPERATIONS.md](ADMIN_OPERATIONS.md#códigos-de-descuento).
 
 - **Panel → Web → Códigos de descuento** (`promotions.manage` con MFA): alta y cambio de códigos de campaña en porcentaje (1–90 %) o en euros, con compra mínima, fechas, usos máximos, un uso por email y «no aplicar a rebajados»; lista con usos, pedidos cobrados y lo descontado; auditoría de cada cambio.
 - **Tienda:** campo «Código de descuento» en el resumen de «Finalizar compra» (Intro aplica, no compra). La base calcula el descuento sobre los artículos (nunca el envío); el envío gratis se calcula ya descontado; el banco cobra el total con descuento. Página del pedido, correo de confirmación y ficha del panel con la línea del descuento.
@@ -19,7 +32,7 @@ Consulta de solo lectura: 50 formatos publicados, 33 con céntimos. Informe de r
 
 Validación: `pnpm check` correcto (579 unitarias y build), formato correcto. La evidencia de navegador y límites de la entrega se registran en el informe enlazado.
 
-## En esta rama: cuenta de cliente (F14, 13–14/10/2026, apagada)
+## Cuenta de cliente (F14, PR #37, fusionada el 17/10; apagada)
 
 A petición del usuario: que los clientes puedan crear una cuenta (email y contraseña o Google; Apple más adelante) para ver sus pedidos. Plan en [PLAN_CUENTA_CLIENTE.md](PLAN_CUENTA_CLIENTE.md); decisiones §142–146.
 

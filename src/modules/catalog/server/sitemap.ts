@@ -10,7 +10,7 @@ export async function listSitemapProducts() {
     supabase
       .from('products')
       .select(
-        'slug, translations:product_translations(locale, tagline, description)',
+        'slug, brand:brands!inner(slug), translations:product_translations(locale, tagline, description)',
       )
       .eq('status', 'published')
       .order('id')

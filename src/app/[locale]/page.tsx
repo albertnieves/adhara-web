@@ -160,6 +160,14 @@ export default async function Home({
             <Eyebrow>{t('brandsEyebrow')}</Eyebrow>
           </Reveal>
           <BrandMarquee brands={brands} />
+          <div className="mt-10 px-5 text-center sm:px-10">
+            <Link
+              href="/casas"
+              className="link-underline text-2xs tracking-caps-lg uppercase"
+            >
+              {t('brandsCta')}
+            </Link>
+          </div>
         </section>
       )}
 

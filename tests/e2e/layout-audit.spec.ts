@@ -54,6 +54,10 @@ const ROUTES: Route[] = [
   ['/ca/cataleg-olfactiu', 'catalogo-olfativo-ca'],
   ['/en/scent-catalogue', 'catalogo-olfativo-en'],
   ['/es/catalogo-olfativo/no-existe', 'catalogo-olfativo-404', 404],
+  ['/es/casas', 'casas-es'],
+  ['/ca/cases', 'casas-ca'],
+  ['/en/houses', 'casas-en'],
+  ['/es/casas/no-existe', 'casa-404', 404],
   ['/es/perfume/no-existe', 'ficha-404', 404],
   ['/es/aviso-legal', 'aviso-legal-es'],
   ['/es/condiciones-de-venta', 'condiciones-de-venta-es'],
@@ -100,6 +104,11 @@ test('diseño sin solapes ni desbordes en una ficha publicada', async ({
   await check(page, `/ca/perfum/${slug}`, 'ficha-ca');
   await check(page, `/en/fragrance/${slug}`, 'ficha-en');
   await check(page, `/es/catalogo-olfativo/${slug}`, 'ficha-olfativa-es');
+  const product = await (await request.get(`/es/perfume/${slug}`)).text();
+  const brand = product.match(/href="\/es\/casas\/([a-z0-9-]+)"/)?.[1];
+  expect(brand, 'la ficha enlaza su casa').toBeTruthy();
+  await check(page, `/es/casas/${brand}`, 'casa-es');
+  await check(page, `/en/houses/${brand}`, 'casa-en');
 });
 
 test('la auditoría detecta solapes, desbordes, letra y controles pequeños', async ({
