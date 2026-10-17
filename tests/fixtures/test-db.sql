@@ -11,10 +11,14 @@ insert into public.brands (id, slug, name) values
   ('00000000-0000-4000-8000-00000000ce01', 'marca-centinela',
    'Marca centinela (prueba)');
 
-insert into public.products (id, brand_id, slug, name, source_ref) values
+insert into public.products (id, brand_id, slug, name) values
   ('00000000-0000-4000-8000-00000000ce02', '00000000-0000-4000-8000-00000000ce01',
-   'perfume-centinela', 'Perfume centinela (prueba)',
-   'tests/fixtures/test-db.sql');
+   'perfume-centinela', 'Perfume centinela (prueba)');
+-- Procedencia con el centinela: solo la lee el personal (DECISIONS §158) y
+-- cost-leak.spec.ts comprueba que la API pública no la da.
+insert into public.product_sources (product_id, source_ref) values
+  ('00000000-0000-4000-8000-00000000ce02',
+   'Compra al Proveedor centinela 987654 (tests/fixtures/test-db.sql)');
 
 insert into public.product_translations (product_id, locale, tagline) values
   ('00000000-0000-4000-8000-00000000ce02', 'es', 'Ficha ficticia de pruebas'),

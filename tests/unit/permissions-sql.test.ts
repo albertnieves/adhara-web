@@ -31,11 +31,23 @@ const guards = readFileSync(
   ),
   'utf8',
 );
-const allowedAal1 = [
-  ...(guards.match(/where code not in \(([^)]+)\)/)?.[1] ?? '').matchAll(
-    /'([^']+)'/g,
+// Revisión de seguridad (DECISIONS §159): desde ahí todo permiso exige aal2.
+const review = readFileSync(
+  new URL(
+    '../../supabase/migrations/20261017120000_security_review.sql',
+    import.meta.url,
   ),
-].map((match) => match[1]);
+  'utf8',
+);
+const allowedAal1 = review.includes(
+  'update public.permissions set requires_aal2 = true where not requires_aal2;',
+)
+  ? []
+  : [
+      ...(guards.match(/where code not in \(([^)]+)\)/)?.[1] ?? '').matchAll(
+        /'([^']+)'/g,
+      ),
+    ].map((match) => match[1]);
 
 function valuesIn(source: string, table: string): string[][] {
   const block = source.split(`insert into public.${table}`)[1]?.split(';')[0];

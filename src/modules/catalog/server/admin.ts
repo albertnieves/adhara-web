@@ -117,14 +117,17 @@ export async function getAdminProduct(supabase: Supabase, id: string) {
   const { data, error } = await supabase
     .from('products')
     .select(
-      '*, brand:brands!inner(id, name, slug), variants:product_variants(*), media:product_media(*), translations:product_translations(*)',
+      '*, brand:brands!inner(id, name, slug), variants:product_variants(*), media:product_media(*), translations:product_translations(*), source:product_sources(source_ref)',
     )
     .eq('id', id)
     .maybeSingle();
   if (error) throw new Error(error.message);
   if (!data) return null;
+  const { source, ...product } = data;
   return {
-    ...data,
+    ...product,
+    // Procedencia: tabla aparte que solo lee el personal (DECISIONS §158).
+    sourceRef: source?.source_ref ?? null,
     variants: [...data.variants].sort((a, b) => a.position - b.position),
     media: [...data.media].sort((a, b) => a.position - b.position),
   };

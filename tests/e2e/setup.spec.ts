@@ -62,6 +62,10 @@ for (const path of ['/es', '/es/catalogo', '/admin/acceso']) {
     const headers = (await request.get(path)).headers();
     expect(headers['x-content-type-options']).toBe('nosniff');
     expect(headers['x-frame-options']).toBe('DENY');
+    expect(headers['content-security-policy']).toContain(
+      "frame-ancestors 'none'",
+    );
+    expect(headers['strict-transport-security']).toContain('max-age=');
     expect(headers['referrer-policy']).toBe('strict-origin-when-cross-origin');
     expect(headers['permissions-policy']).toContain('camera=()');
     expect(headers['x-robots-tag']).toBe('noindex, nofollow');

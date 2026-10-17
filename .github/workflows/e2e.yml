@@ -17,9 +17,12 @@ jobs:
     # las pruebas (page.route) y la clave se genera en cada ejecución.
     # Cuenta de cliente encendida (PLAN_CUENTA_CLIENTE): en producción sigue
     # apagada hasta configurar el correo de Auth y Google.
+    # Las pruebas crean muchos pedidos desde la misma IP: el freno de las
+    # acciones públicas se apaga (nunca en producción; DECISIONS §160).
     env:
       WEB_CHECKOUT: '1'
       CUSTOMER_ACCOUNTS: '1'
+      RATE_LIMITS: 'off'
       REDSYS_MERCHANT_CODE: '999008881'
       REDSYS_TERMINAL: '1'
       REDSYS_ENVIRONMENT: test

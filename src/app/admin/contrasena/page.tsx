@@ -1,9 +1,5 @@
-import { redirect } from 'next/navigation';
 import { AuthError, AuthScreen } from '@/modules/admin';
-import {
-  requireStaffSessionAnyLevel,
-  setPassword,
-} from '@/modules/auth/server';
+import { requireStaffPasswordStep, setPassword } from '@/modules/auth/server';
 import { buttonClass, Field, Input } from '@/components/ui';
 
 export default async function AdminPassword({
@@ -11,11 +7,7 @@ export default async function AdminPassword({
 }: {
   searchParams: Promise<{ error?: string }>;
 }) {
-  const { email, supabase } = await requireStaffSessionAnyLevel();
-  const { data: assurance } =
-    await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
-  if (assurance?.nextLevel === 'aal2' && assurance.currentLevel !== 'aal2')
-    redirect('/admin/mfa?next=contrasena');
+  const { email } = await requireStaffPasswordStep();
   const { error } = await searchParams;
   return (
     <AuthScreen title="Elige tu contraseña">

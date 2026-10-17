@@ -6,6 +6,7 @@ export {
   requireMfaStep,
   requirePermission,
   requireStaff,
+  requireStaffPasswordStep,
   requireStaffSessionAnyLevel,
 } from './server/session';
 export type { StaffContext } from './server/session';

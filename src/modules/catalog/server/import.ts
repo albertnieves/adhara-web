@@ -65,7 +65,7 @@ async function loadCatalog(
     const { data, error } = await supabase
       .from('products')
       .select(
-        'id, brand_id, slug, name, concentration, audience, source_ref, variants:product_variants(id, size_ml, label, sku, retail_price_cents, position)',
+        'id, brand_id, slug, name, concentration, audience, source:product_sources(source_ref), variants:product_variants(id, size_ml, label, sku, retail_price_cents, position)',
       )
       .order('id')
       .range(from, from + PAGE - 1);
@@ -78,7 +78,7 @@ async function loadCatalog(
         name: p.name,
         concentration: p.concentration,
         audience: p.audience,
-        sourceRef: p.source_ref,
+        sourceRef: p.source?.source_ref ?? null,
         variants: p.variants.map((v) => ({
           id: v.id,
           sizeMl: v.size_ml,
@@ -188,14 +188,22 @@ async function apply(
           name: row.row.name,
           concentration: row.row.concentration,
           audience: row.row.audience,
-          source_ref: row.row.source,
         })),
       )
       .select('id, slug');
     if (error) return { done, error: describeDbError(error) };
+    // La procedencia, aparte: solo la lee el personal (DECISIONS §158).
+    const sources: { product_id: string; source_ref: string }[] = [];
     for (const product of data) {
-      const key = batch.find(([, r]) => r.product.slug === product.slug)?.[0];
-      if (key) productIds.set(key, product.id);
+      const entry = batch.find(([, r]) => r.product.slug === product.slug);
+      if (!entry) continue;
+      productIds.set(entry[0], product.id);
+      const source = entry[1].row.source?.trim();
+      if (source) sources.push({ product_id: product.id, source_ref: source });
+    }
+    if (sources.length) {
+      const saved = await supabase.from('product_sources').insert(sources);
+      if (saved.error) return { done, error: describeDbError(saved.error) };
     }
     done.products += data.length;
   }
@@ -207,11 +215,20 @@ async function apply(
     if (!row.product.existingId || Object.keys(row.product.fill).length === 0) {
       continue;
     }
-    const { error } = await supabase
-      .from('products')
-      .update(row.product.fill)
-      .eq('id', row.product.existingId);
-    if (error) return { done, error: describeDbError(error) };
+    const { source_ref: source, ...fill } = row.product.fill;
+    if (Object.keys(fill).length) {
+      const { error } = await supabase
+        .from('products')
+        .update(fill)
+        .eq('id', row.product.existingId);
+      if (error) return { done, error: describeDbError(error) };
+    }
+    if (source) {
+      const { error } = await supabase
+        .from('product_sources')
+        .upsert({ product_id: row.product.existingId, source_ref: source });
+      if (error) return { done, error: describeDbError(error) };
+    }
     done.filled += 1;
   }
 

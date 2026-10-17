@@ -300,6 +300,7 @@
         "minimumAmount": "Aquest codi és per a compres de {amount} o més en articles.",
         "notApplicable": "Aquest codi no s’aplica als perfums rebaixats de la teva cistella.",
         "used": "Ja has fet servir aquest codi amb aquest correu.",
+        "busy": "Massa intents seguits. Espera uns minuts i torna a provar el codi.",
         "generic": "No hem pogut comprovar el codi. Torna-ho a provar d’aquí a uns minuts."
       }
     },
@@ -337,6 +338,7 @@
       "unavailable": "Un perfum de la teva cistella ja no està a la venda. Revisa la cistella.",
       "discount": "El codi de descompte ja no és vàlid per a aquesta comanda. Revisa’l al resum.",
       "disabled": "La compra en línia encara no està disponible.",
+      "busy": "Massa intents seguits des d’aquesta connexió. Espera uns minuts i torna-ho a provar.",
       "generic": "No hem pogut registrar la comanda. Torna-ho a provar d’aquí a uns minuts.",
       "review": "Revisa les dades marcades."
     },

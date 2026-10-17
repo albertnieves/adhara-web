@@ -40,20 +40,12 @@ export type Permission = (typeof PERMISSIONS)[number];
 
 export type AuthenticatorLevel = 'aal1' | 'aal2';
 
-/** Permisos que exigen sesión con MFA verificada (aal2) además del rol. */
-export const AAL2_PERMISSIONS: ReadonlySet<Permission> = new Set(
-  PERMISSIONS.filter(
-    (permission) =>
-      ![
-        'inventory.view',
-        'orders.view',
-        'messages.view',
-        'agent.use',
-        'reports.view',
-        'customers.view',
-      ].includes(permission),
-  ),
-);
+/**
+ * Permisos que exigen sesión con MFA verificada (aal2) además del rol: todos,
+ * también los de lectura (DECISIONS §159). El panel ya pedía aal2 en cada
+ * página; así la API directa tampoco da nada con solo la contraseña.
+ */
+export const AAL2_PERMISSIONS: ReadonlySet<Permission> = new Set(PERMISSIONS);
 
 /**
  * Administrador de la tienda: toda la operación diaria, sin personal,

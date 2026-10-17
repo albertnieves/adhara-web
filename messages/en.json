@@ -300,6 +300,7 @@
         "minimumAmount": "This code is for orders of {amount} or more in items.",
         "notApplicable": "This code doesn’t apply to the reduced fragrances in your basket.",
         "used": "You’ve already used this code with this email.",
+        "busy": "Too many attempts in a row. Wait a few minutes and try the code again.",
         "generic": "We couldn’t check the code. Please try again in a few minutes."
       }
     },
@@ -337,6 +338,7 @@
       "unavailable": "A fragrance in your basket is no longer for sale. Please review your basket.",
       "discount": "The discount code is no longer valid for this order. Check it in the summary.",
       "disabled": "Online shopping is not available yet.",
+      "busy": "Too many attempts in a row from this connection. Wait a few minutes and try again.",
       "generic": "We could not place your order. Please try again in a few minutes.",
       "review": "Please check the highlighted fields."
     },

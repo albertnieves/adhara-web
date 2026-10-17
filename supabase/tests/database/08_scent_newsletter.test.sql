@@ -6,7 +6,7 @@ begin;
 create extension if not exists pgtap with schema extensions;
 set search_path = public, extensions;
 
-select plan(30);
+select plan(31);
 
 insert into auth.users (id, email) values
   ('00000000-0000-4000-8000-000000000081', 'sistema@test.invalid'),
@@ -161,12 +161,14 @@ select pg_temp.act_as('00000000-0000-4000-8000-000000000083', 'aal2');
 select is_empty($$select 1 from public.newsletter_subscribers$$,
   'el encargado no lee suscriptores');
 select pg_temp.act_as('00000000-0000-4000-8000-000000000082', 'aal1');
-select isnt_empty($$select 1 from public.newsletter_subscribers$$,
-  'la tienda lee suscriptores (customers.view)');
+select is_empty($$select 1 from public.newsletter_subscribers$$,
+  'sin MFA no lee suscriptores, ni por la API directa (§159)');
 select is_empty(
   $$update public.newsletter_subscribers set unsubscribed_at = now() returning 1$$,
   'sin MFA no da de baja');
 select pg_temp.act_as('00000000-0000-4000-8000-000000000082', 'aal2');
+select isnt_empty($$select 1 from public.newsletter_subscribers$$,
+  'con MFA la tienda lee suscriptores (customers.view)');
 select isnt_empty(
   $$update public.newsletter_subscribers set unsubscribed_at = now(),
     sender_synced_at = now() returning 1$$,

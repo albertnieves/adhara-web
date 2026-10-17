@@ -122,3 +122,18 @@ export async function requireStaffSessionAnyLevel() {
   if (state.access.kind === 'not_found') notFound();
   return { supabase: state.supabase, email: state.email };
 }
+
+/**
+ * Elegir contraseña: con un segundo factor ya configurado, solo tras
+ * verificarlo en esta sesión (si no, al paso de MFA). La página y la acción lo
+ * comprueban por separado: una Server Action se puede llamar sin la página
+ * (DECISIONS §162).
+ */
+export async function requireStaffPasswordStep() {
+  const session = await requireStaffSessionAnyLevel();
+  const { data: assurance } =
+    await session.supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+  if (assurance?.nextLevel === 'aal2' && assurance.currentLevel !== 'aal2')
+    redirect('/admin/mfa?next=contrasena');
+  return session;
+}

@@ -361,6 +361,26 @@ describe('reglas del protocolo', () => {
     expect(redsysConfig({ ...env, REDSYS_MERCHANT_CODE: '12' })).toBeNull();
     expect(redsysConfig({})).toBeNull();
   });
+
+  it('el entorno de pruebas del banco no se acepta en producción (§161)', () => {
+    const env = {
+      REDSYS_MERCHANT_CODE: '999008881',
+      REDSYS_TERMINAL: '1',
+      REDSYS_SECRET_KEY: SANDBOX_KEY,
+      REDSYS_ENVIRONMENT: 'test',
+    };
+    expect(redsysConfig({ ...env, VERCEL_ENV: 'production' })).toBeNull();
+    expect(redsysConfig({ ...env, VERCEL_ENV: 'preview' })).toMatchObject({
+      environment: 'test',
+    });
+    expect(
+      redsysConfig({
+        ...env,
+        REDSYS_ENVIRONMENT: 'live',
+        VERCEL_ENV: 'production',
+      }),
+    ).toMatchObject({ environment: 'live' });
+  });
 });
 
 describe('devoluciones por la API REST', async () => {
