@@ -110,8 +110,8 @@ select is(
   (select count(*)::int from pg_proc p join pg_namespace n on n.oid = p.pronamespace
    where n.nspname = 'public' and p.proname like 'web\_order\_%'),
   -- create, new_attempt, record_payment y release_expired; status (P04);
-  -- emails_claim, email_result y refund_result (P06).
-  8, 'hay ocho funciones del servidor');
+  -- emails_claim, email_result y refund_result (P06); discount_quote (§149).
+  9, 'hay nueve funciones del servidor');
 select is_empty(
   $$select p.proname from pg_proc p
     join pg_namespace n on n.oid = p.pronamespace

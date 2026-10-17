@@ -1,8 +1,13 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import type { FormEvent } from 'react';
-import { startTransition, useActionState, useState } from 'react';
+import type { FormEvent, KeyboardEvent } from 'react';
+import {
+  startTransition,
+  useActionState,
+  useState,
+  useTransition,
+} from 'react';
 import {
   Button,
   Checkbox,
@@ -13,15 +18,70 @@ import {
   Input,
   Radio,
 } from '@/components/ui';
+import type { FieldControlProps } from '@/components/ui';
 import { formatEuros } from '@/lib/money';
 import { Link } from '@/modules/i18n';
+import type { AppliedDiscount, DiscountError } from '@/modules/promotions';
 import type { CheckoutField, CheckoutState } from '../domain/input';
 import type { ShippingRate } from '../domain/shipping';
 import { isPostalCode, shippingCost, shippingZone } from '../domain/shipping';
-import { placeOrder } from '../server/actions';
+import { applyDiscountCode, placeOrder } from '../server/actions';
 import { PaymentRedirectForm } from './PaymentRedirectForm';
 
 const IDLE: CheckoutState = { status: 'idle' };
+
+type DiscountProblem = { error: DiscountError; minimumCents?: number };
+
+/** Campo del código con su botón: `Field` le pone id, ayuda y error. */
+function DiscountControl({
+  id,
+  'aria-describedby': describedBy,
+  'aria-invalid': invalid,
+  value,
+  onChange,
+  onApply,
+  applying,
+  labels,
+}: FieldControlProps & {
+  value: string;
+  onChange: (value: string) => void;
+  onApply: () => void;
+  applying: boolean;
+  labels: { apply: string; applying: string };
+}) {
+  return (
+    <div className="flex gap-2">
+      <Input
+        id={id}
+        aria-describedby={describedBy}
+        aria-invalid={invalid}
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+        // Intro aplica el código: nunca envía el pedido.
+        onKeyDown={(event: KeyboardEvent<HTMLInputElement>) => {
+          if (event.key !== 'Enter') return;
+          event.preventDefault();
+          onApply();
+        }}
+        autoComplete="off"
+        autoCapitalize="characters"
+        spellCheck={false}
+        maxLength={30}
+        className="min-w-0 flex-1 uppercase"
+      />
+      <Button
+        type="button"
+        variant="outline"
+        onClick={onApply}
+        loading={applying}
+        loadingLabel={labels.applying}
+        disabled={!value.trim()}
+      >
+        {labels.apply}
+      </Button>
+    </div>
+  );
+}
 
 export type CheckoutLine = {
   variantId: string;
@@ -53,7 +113,27 @@ export function CheckoutForm({
   store: { address: string; city: string };
 }) {
   const t = useTranslations('checkout');
-  const [state, dispatch, pending] = useActionState(placeOrder, IDLE);
+  // Código aplicado en el resumen (DECISIONS §150): lo calcula la base y se
+  // vuelve a comprobar al crear el pedido.
+  const [discount, setDiscount] = useState<AppliedDiscount | null>(null);
+  const [codeInput, setCodeInput] = useState('');
+  const [problem, setProblem] = useState<DiscountProblem | null>(null);
+  const [applying, startApplying] = useTransition();
+  const [state, dispatch, pending] = useActionState(
+    async (previous: CheckoutState, form: FormData) => {
+      const result = await placeOrder(previous, form);
+      // El código dejó de valer entre «Aplicar» y el pedido: se quita.
+      if (result.status === 'error' && result.error === 'discount') {
+        setDiscount(null);
+        setProblem({
+          error: result.discount ?? 'invalid',
+          minimumCents: result.minimumCents,
+        });
+      }
+      return result;
+    },
+    IDLE,
+  );
   // Una clave por visita al formulario: repetir el envío no duplica el pedido.
   const [requestId] = useState(() => crypto.randomUUID());
   const [fulfillment, setFulfillment] = useState<'click_collect' | 'shipping'>(
@@ -61,6 +141,25 @@ export function CheckoutForm({
   );
   const [postalCode, setPostalCode] = useState('');
   const euros = (cents: number) => formatEuros(cents, locale);
+
+  function applyCode() {
+    if (!codeInput.trim() || applying) return;
+    startApplying(async () => {
+      const result = await applyDiscountCode(codeInput);
+      if (result.status === 'applied') {
+        setDiscount(result);
+        setProblem(null);
+      } else {
+        setProblem({ error: result.error, minimumCents: result.minimumCents });
+      }
+    });
+  }
+
+  function removeCode() {
+    setDiscount(null);
+    setProblem(null);
+    setCodeInput('');
+  }
 
   function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -118,12 +217,21 @@ export function CheckoutForm({
     errors[field] ? t(`errors.${errors[field]}`) : undefined;
   const zone = shippingZone(postalCode);
   const rate = zone ? rates.find((r) => r.zone === zone) : undefined;
+  const discountCents = discount?.discountCents ?? 0;
+  // Envío gratis según lo que se paga por los artículos (con el descuento).
   const shippingCents =
     fulfillment === 'click_collect'
       ? 0
       : rate
-        ? shippingCost(itemsCents, rate)
+        ? shippingCost(itemsCents - discountCents, rate)
         : null;
+  const problemMessage = problem
+    ? problem.error === 'minimum' && problem.minimumCents
+      ? t('discount.errors.minimumAmount', {
+          amount: euros(problem.minimumCents),
+        })
+      : t(`discount.errors.${problem.error}`)
+    : fieldError('discountCode') && t('discount.errors.invalid');
   const shippingOffered = rates.length > 0;
   const zoneProblem =
     fulfillment === 'shipping' && isPostalCode(postalCode) && !rate;
@@ -137,6 +245,7 @@ export function CheckoutForm({
     >
       <input type="hidden" name="requestId" value={requestId} />
       <input type="hidden" name="locale" value={locale} />
+      <input type="hidden" name="discountCode" value={discount?.code ?? ''} />
       <div
         aria-hidden
         className="absolute -left-[9999px] h-px w-px overflow-hidden"
@@ -278,9 +387,57 @@ export function CheckoutForm({
             </li>
           ))}
         </ul>
+        {discount ? (
+          <div className="space-y-1">
+            <div className="flex items-center justify-between gap-4 text-sm">
+              <p role="status">
+                {t('discount.applied', { code: discount.code })}
+              </p>
+              <Button
+                type="button"
+                variant="subtle"
+                size="sm"
+                onClick={removeCode}
+              >
+                {t('discount.remove')}
+              </Button>
+            </div>
+            {discount.excludesSaleItems && (
+              <p className="text-fg-muted text-xs">
+                {t('discount.excludesSale')}
+              </p>
+            )}
+          </div>
+        ) : (
+          <Field label={t('discount.label')} error={problemMessage}>
+            <DiscountControl
+              value={codeInput}
+              onChange={(value) => {
+                setCodeInput(value);
+                setProblem(null);
+              }}
+              onApply={applyCode}
+              applying={applying}
+              labels={{
+                apply: t('discount.apply'),
+                applying: t('discount.applying'),
+              }}
+            />
+          </Field>
+        )}
         <dl className="grid grid-cols-[1fr_auto] gap-x-6 gap-y-2 text-sm">
           <dt className="text-fg-muted">{t('items')}</dt>
           <dd className="text-right tabular-nums">{euros(itemsCents)}</dd>
+          {discount && (
+            <>
+              <dt className="text-fg-muted">
+                {t('discount.line', { code: discount.code })}
+              </dt>
+              <dd className="text-right tabular-nums">
+                −{euros(discount.discountCents)}
+              </dd>
+            </>
+          )}
           <dt className="text-fg-muted">{t('shippingCost')}</dt>
           <dd className="text-right tabular-nums">
             {shippingCents === null
@@ -293,7 +450,7 @@ export function CheckoutForm({
           </dd>
           <dt className="font-display text-xl">{t('total')}</dt>
           <dd className="font-display text-right text-xl tabular-nums">
-            {euros(itemsCents + (shippingCents ?? 0))}
+            {euros(itemsCents - discountCents + (shippingCents ?? 0))}
           </dd>
         </dl>
         <p className="text-fg-muted text-xs">
@@ -334,13 +491,15 @@ export function CheckoutForm({
 
         {state.status === 'error' && (
           <p role="alert" className="text-danger text-sm">
-            {Object.keys(errors).length > 0
-              ? t('errors.review')
-              : state.error === 'outOfStock'
-                ? state.product
-                  ? t('errors.outOfStock', { product: state.product })
-                  : t('errors.outOfStockAny')
-                : t(`errors.${state.error}`)}
+            {state.error === 'discount'
+              ? t('errors.discount')
+              : Object.keys(errors).length > 0
+                ? t('errors.review')
+                : state.error === 'outOfStock'
+                  ? state.product
+                    ? t('errors.outOfStock', { product: state.product })
+                    : t('errors.outOfStockAny')
+                  : t(`errors.${state.error}`)}
             {['cartChanged', 'outOfStock', 'unavailable'].includes(
               state.error,
             ) && (

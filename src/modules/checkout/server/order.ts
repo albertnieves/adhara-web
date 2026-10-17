@@ -46,6 +46,8 @@ export async function getOrderStatus(
     fulfillment: 'click_collect' | 'shipping';
     locale: 'es' | 'ca' | 'en';
     items_cents: number;
+    discount_cents: number;
+    discount_code: string | null;
     shipping_cents: number;
     total_cents: number;
     reserved_until: string;
@@ -59,6 +61,8 @@ export async function getOrderStatus(
     fulfillment: row.fulfillment,
     locale: row.locale,
     itemsCents: row.items_cents,
+    discountCents: row.discount_cents,
+    discountCode: row.discount_code,
     shippingCents: row.shipping_cents,
     totalCents: row.total_cents,
     reservedUntil: row.reserved_until,

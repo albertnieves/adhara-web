@@ -243,7 +243,8 @@
     "checkout": "Checkout",
     "blocked": "Please review your basket: some fragrances are sold out or no longer for sale.",
     "continue": "Continue shopping",
-    "maxNote": "Up to {max} units per size."
+    "maxNote": "Up to {max} units per size.",
+    "discountNote": "Have a discount code? You can apply it at checkout."
   },
   "checkout": {
     "title": "Checkout",
@@ -267,6 +268,26 @@
     "province": "Province (optional)",
     "zoneUnavailableNote": "We do not deliver to this area yet. You can collect in store instead.",
     "summary": "Summary",
+    "discount": {
+      "label": "Discount code",
+      "apply": "Apply",
+      "applying": "Checking…",
+      "applied": "Code {code} applied",
+      "remove": "Remove",
+      "line": "Discount ({code})",
+      "excludesSale": "Not valid on reduced fragrances.",
+      "errors": {
+        "invalid": "This code doesn’t exist or is no longer active.",
+        "notStarted": "This code isn’t active yet.",
+        "expired": "This code has expired.",
+        "exhausted": "This code has reached its usage limit.",
+        "minimum": "Your order doesn’t reach this code’s minimum.",
+        "minimumAmount": "This code is for orders of {amount} or more in items.",
+        "notApplicable": "This code doesn’t apply to the reduced fragrances in your basket.",
+        "used": "You’ve already used this code with this email.",
+        "generic": "We couldn’t check the code. Please try again in a few minutes."
+      }
+    },
     "items": "Items",
     "shippingCost": "Shipping",
     "free": "Free",
@@ -299,6 +320,7 @@
       "outOfStockAny": "There are not enough units left of one fragrance. Please review your basket.",
       "shippingUnavailable": "We do not deliver to this area yet. You can collect in store instead.",
       "unavailable": "A fragrance in your basket is no longer for sale. Please review your basket.",
+      "discount": "The discount code is no longer valid for this order. Check it in the summary.",
       "disabled": "Online shopping is not available yet.",
       "generic": "We could not place your order. Please try again in a few minutes.",
       "review": "Please check the highlighted fields."
@@ -352,6 +374,7 @@
     "tracking": "Tracking number: {tracking}.",
     "summary": "Your order",
     "items": "Items",
+    "discount": "Discount ({code})",
     "shipping": "Delivery",
     "pickup": "Collection in store",
     "free": "Free",

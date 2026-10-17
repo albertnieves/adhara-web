@@ -269,6 +269,48 @@ assert.equal(
   await level(lateUnit),
   lateState === 'paid/committed' ? '1/1' : '1/0',
 );
+// 4. Códigos de descuento (§149): la fila del código se bloquea al crear el
+// pedido. Un código de un solo uso y 10 pedidos a la vez: uno lo usa. Un
+// código de un uso por email y el mismo email 6 veces a la vez: uno lo usa.
+const plenty = randomUUID();
+const codes =
+  await query(`insert into public.product_variants(id,product_id,size_ml,retail_price_cents) values('${plenty}','${shopProduct}',30,4000);
+insert into public.inventory_levels(variant_id,location_id,on_hand) values('${plenty}','${location}',100);
+insert into public.discount_codes(code,kind,percent_bp,max_uses,once_per_email) values('CONC-UNO','percent',1000,1,false),('CONC-EMAIL','percent',1000,null,true);`);
+assert.equal(codes.code, 0, codes.text);
+const withCode = (code: string, email: string) =>
+  server(
+    `select public.web_order_create('${randomUUID()}','es','click_collect','${location}','[{"variant_id":"${plenty}","quantity":1}]'::jsonb,'{"full_name":"Prueba","email":"${email}"}'::jsonb,'redsys',30,'${code}'); select pg_sleep(0.2)`,
+  );
+const single = await Promise.all(
+  Array.from({ length: 10 }, (_, i) =>
+    query(withCode('CONC-UNO', `uno-${i}@test.invalid`)),
+  ),
+);
+assert.equal(
+  single.filter((x) => x.code === 0).length,
+  1,
+  JSON.stringify(single),
+);
+assert.equal(
+  single.filter((x) => x.text.includes('discount_exhausted')).length,
+  9,
+);
+const sameEmail = await Promise.all(
+  Array.from({ length: 6 }, () =>
+    query(withCode('CONC-EMAIL', 'misma@test.invalid')),
+  ),
+);
+assert.equal(
+  sameEmail.filter((x) => x.code === 0).length,
+  1,
+  JSON.stringify(sameEmail),
+);
+assert.equal(
+  sameEmail.filter((x) => x.text.includes('discount_used')).length,
+  5,
+);
+assert.equal(await level(plenty), '100/2');
 console.log(
-  'Concurrencia real correcta: precio, imagen, recepción, último administrador y pedidos web. Fixtures permanecen solo en el contenedor local hasta db reset.',
+  'Concurrencia real correcta: precio, imagen, recepción, último administrador, pedidos web y códigos de descuento. Fixtures permanecen solo en el contenedor local hasta db reset.',
 );
