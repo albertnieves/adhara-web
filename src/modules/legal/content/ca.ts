@@ -311,6 +311,21 @@ export const ca: LegalCopy = {
           ],
         },
         {
+          id: 'cuenta',
+          title: 'Compte de client',
+          blocks: [
+            {
+              list: [
+                'Dades: nom, correu electrònic i contrasenya (la desem xifrada i ningú no la pot llegir) i, si les deses, telèfon i adreça d’enviament. Si entres amb Google, Google ens dona el teu nom i el teu correu.',
+                'Finalitat: donar-te accés al teu compte, mostrar-te les teves comandes (també les que vas fer sense compte amb el mateix correu, un cop verificat) i omplir les teves dades quan compres.',
+                'Base jurídica: l’execució del contracte que acceptes en crear el compte (art. 6.1.b del RGPD).',
+                'Conservació: fins que esborris el compte, cosa que pots fer quan vulguis des de «Les meves dades». Les comandes es conserven, ja sense vincle amb el compte, durant els terminis de l’apartat anterior.',
+              ],
+            },
+            'Crear un compte és opcional: pots comprar sense compte.',
+          ],
+        },
+        {
           id: 'seguridad-web',
           title: 'Funcionament i seguretat del web',
           blocks: [
@@ -336,6 +351,7 @@ export const ca: LegalCopy = {
                 'L’entitat bancària que processa els pagaments, l’empresa de transport i el proveïdor dels correus de les comandes.',
               ],
             },
+            'Si tries entrar amb Google, Google comprova la teva identitat com a responsable independent, segons la seva pròpia [política de privacitat](https://policies.google.com/privacy).',
             'També hi poden accedir la nostra assessoria, per a la comptabilitat i els impostos, i les administracions públiques quan una llei ho exigeixi.',
           ],
         },
@@ -436,6 +452,18 @@ export const ca: LegalCopy = {
                     'Pròpia',
                     'Recordar la comanda que acabes de fer per mostrar-te’n l’estat quan tornes del banc. Només es crea en fer una comanda.',
                     '30 dies',
+                  ],
+                  [
+                    'Sessió del compte',
+                    'Pròpia',
+                    'Mantenir iniciada la sessió del teu compte de client. Només es creen si entres al teu compte i s’esborren en tancar la sessió.',
+                    'Fins que tanques la sessió (com a màxim, 400 dies)',
+                  ],
+                  [
+                    'Accés amb Google',
+                    'Pròpia',
+                    'Completar de manera segura l’accés amb Google. Només es crea en prémer «Continua amb Google».',
+                    'S’esborra en acabar l’accés',
                   ],
                 ],
               },

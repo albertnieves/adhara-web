@@ -15,8 +15,11 @@ jobs:
     # producción siguen apagados hasta conectar el TPV (DECISIONS §136–137).
     # 999008881 es el comercio de pruebas público de Redsys; el banco lo hacen
     # las pruebas (page.route) y la clave se genera en cada ejecución.
+    # Cuenta de cliente encendida (PLAN_CUENTA_CLIENTE): en producción sigue
+    # apagada hasta configurar el correo de Auth y Google.
     env:
       WEB_CHECKOUT: '1'
+      CUSTOMER_ACCOUNTS: '1'
       REDSYS_MERCHANT_CODE: '999008881'
       REDSYS_TERMINAL: '1'
       REDSYS_ENVIRONMENT: test

@@ -1,6 +1,13 @@
+<!-- Personal (sin next: vuelve al panel) y clientes (next con la página de
+     nueva contraseña de su idioma). /auth/confirm decide con next. -->
 <p>
   <a
-    href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&amp;type=recovery"
-    >Continuar al panel</a
+    href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&amp;type=recovery&amp;next={{ .RedirectTo }}"
+    >Elegir una contraseña nueva · Tria una contrasenya nova · Choose a new
+    password</a
   >
+</p>
+<p>
+  Si no lo has pedido tú, ignora este correo. · Si no ho has demanat tu, ignora
+  aquest correu. · If you didn't ask for this, ignore this email.
 </p>

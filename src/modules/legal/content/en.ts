@@ -309,6 +309,21 @@ export const en: LegalCopy = {
           ],
         },
         {
+          id: 'cuenta',
+          title: 'Customer account',
+          blocks: [
+            {
+              list: [
+                'Data: name, email and password (stored encrypted, so nobody can read it) and, if you save them, phone number and delivery address. If you sign in with Google, Google gives us your name and email.',
+                'Purpose: giving you access to your account, showing you your orders (including those you placed without an account with the same email, once verified) and filling in your details when you buy.',
+                'Legal basis: performance of the contract you accept when creating the account (Art. 6(1)(b) GDPR).',
+                'Retention: until you delete the account, which you can do at any time from “My details”. Orders are kept, no longer linked to the account, for the periods set out in the previous section.',
+              ],
+            },
+            'Creating an account is optional: you can buy without one.',
+          ],
+        },
+        {
           id: 'seguridad-web',
           title: 'Website operation and security',
           blocks: [
@@ -334,6 +349,7 @@ export const en: LegalCopy = {
                 'The bank that processes payments, the carrier and the provider of order emails.',
               ],
             },
+            'If you choose to sign in with Google, Google verifies your identity as an independent controller, under its own [privacy policy](https://policies.google.com/privacy).',
             'Our accounting and tax advisers, and public authorities where required by law, may also have access.',
           ],
         },
@@ -433,6 +449,18 @@ export const en: LegalCopy = {
                     'Ours',
                     'Remember the order you have just placed so we can show you its status when you return from the bank. It is only created when you place an order.',
                     '30 days',
+                  ],
+                  [
+                    'Account session',
+                    'Ours',
+                    'Keep you signed in to your customer account. They are only created if you sign in and are deleted when you sign out.',
+                    'Until you sign out (400 days at most)',
+                  ],
+                  [
+                    'Sign-in with Google',
+                    'Ours',
+                    'Complete signing in with Google securely. It is only created when you press “Continue with Google”.',
+                    'Deleted once you are signed in',
                   ],
                 ],
               },

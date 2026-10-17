@@ -51,5 +51,39 @@ export const routing = defineRouting({
       en: '/checkout',
     },
     '/pedido': { es: '/pedido', ca: '/comanda', en: '/order' },
+    // Cuenta de cliente (F14): 404 mientras CUSTOMER_ACCOUNTS no esté
+    // encendido. El prefijo de cada idioma lo usa también el proxy
+    // (account/domain/paths.ts).
+    '/cuenta': { es: '/cuenta', ca: '/compte', en: '/account' },
+    '/cuenta/pedidos/[number]': {
+      es: '/cuenta/pedidos/[number]',
+      ca: '/compte/comandes/[number]',
+      en: '/account/orders/[number]',
+    },
+    '/cuenta/datos': {
+      es: '/cuenta/datos',
+      ca: '/compte/dades',
+      en: '/account/details',
+    },
+    '/cuenta/acceso': {
+      es: '/cuenta/acceso',
+      ca: '/compte/acces',
+      en: '/account/sign-in',
+    },
+    '/cuenta/registro': {
+      es: '/cuenta/registro',
+      ca: '/compte/registre',
+      en: '/account/register',
+    },
+    '/cuenta/recuperar': {
+      es: '/cuenta/recuperar',
+      ca: '/compte/recuperar',
+      en: '/account/forgot-password',
+    },
+    '/cuenta/nueva-contrasena': {
+      es: '/cuenta/nueva-contrasena',
+      ca: '/compte/nova-contrasenya',
+      en: '/account/new-password',
+    },
   },
 });

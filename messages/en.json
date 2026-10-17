@@ -12,7 +12,9 @@
     "skip": "Skip to content",
     "home": "Home",
     "scentCatalog": "Scent catalogue",
-    "cart": "Basket"
+    "cart": "Basket",
+    "account": "Account",
+    "accountLabel": "Your account"
   },
   "home": {
     "heroEyebrow": "Arabian perfumery · Castelldefels",
@@ -324,7 +326,9 @@
       "disabled": "Online shopping is not available yet.",
       "generic": "We could not place your order. Please try again in a few minutes.",
       "review": "Please check the highlighted fields."
-    }
+    },
+    "accountSignedIn": "You're buying with your account ({email}). The order will appear in “My orders”.",
+    "accountSignIn": "Have an account? <link>Sign in</link> to use your saved details and see the order in your account later."
   },
   "order": {
     "title": "Your order",
@@ -384,5 +388,158 @@
     "contact": "Any questions? Reply to this email or write to {email}.",
     "attachment": "terms-of-sale.txt",
     "signature": "L’Atelier du Désert · Arabian perfumery in Castelldefels"
+  },
+  "account": {
+    "eyebrow": "Your account",
+    "metaTitle": "My account",
+    "orDivider": "or with your email",
+    "google": "Continue with Google",
+    "googleNote": "With Google, your account uses your Google email and needs no password.",
+    "email": "Email",
+    "password": "Password",
+    "passwordHint": "At least {min} characters. A phrase only you would remember works best.",
+    "fullName": "Full name",
+    "signIn": {
+      "title": "Sign in",
+      "lead": "Check your orders and save your details to buy faster. You don't need an account to buy.",
+      "submit": "Sign in",
+      "submitting": "Signing in…",
+      "forgot": "I've forgotten my password",
+      "noAccount": "Don't have an account yet?",
+      "register": "Create an account",
+      "deleted": "We've deleted your account."
+    },
+    "register": {
+      "title": "Create an account",
+      "lead": "To see your orders and have your details at hand next time.",
+      "submit": "Create account",
+      "submitting": "Creating account…",
+      "privacy": "We'll use your details to manage your account and your orders, as explained in our <link>privacy policy</link>.",
+      "haveAccount": "Already have an account?",
+      "signIn": "Sign in",
+      "sentTitle": "Check your email",
+      "sentText": "If the email is correct, we've sent you a link to confirm your account. You can open it on any device; it expires in one hour."
+    },
+    "recover": {
+      "title": "Reset your password",
+      "lead": "We'll send you a link to choose a new one.",
+      "submit": "Send link",
+      "submitting": "Sending…",
+      "sentTitle": "Check your email",
+      "sentText": "If there's an account with that email, we've sent you a link to choose a new password. It expires in one hour.",
+      "back": "Back to sign in"
+    },
+    "newPassword": {
+      "title": "Choose a new password",
+      "password": "New password",
+      "confirmation": "Repeat the password",
+      "submit": "Save password",
+      "submitting": "Saving…",
+      "expired": "The link has expired or has already been used. Ask for a new one.",
+      "requestNew": "Ask for another link"
+    },
+    "nav": {
+      "label": "Your account",
+      "orders": "My orders",
+      "details": "My details",
+      "signOut": "Sign out"
+    },
+    "orders": {
+      "title": "My orders",
+      "greeting": "Hello, {name}",
+      "welcome": "Your account is ready.",
+      "passwordChanged": "We've saved your new password.",
+      "unverified": "Confirm your email to also see here the orders you placed without an account.",
+      "empty": "You have no orders yet",
+      "emptyLead": "Here you'll see the orders you place with your account and those you placed without one using this same email.",
+      "browse": "See the collection",
+      "loadError": "We couldn't load your orders. Please try again in a few minutes.",
+      "number": "Order No. {number}",
+      "units": "{count, plural, one {# item} other {# items}}",
+      "pickup": "Collect in store",
+      "shipping": "Home delivery",
+      "view": "See order No. {number}"
+    },
+    "order": {
+      "back": "My orders",
+      "title": "Order No. {number}",
+      "placedOn": "Placed on {date}",
+      "status": "Status",
+      "delivery": "Delivery",
+      "tracking": "Shipment tracking: {reference}",
+      "contact": "Contact",
+      "address": "Delivery address",
+      "items": "Items",
+      "quantity": "{count} × {price}",
+      "subtotal": "Items",
+      "shippingCost": "Delivery",
+      "free": "Free",
+      "total": "Total",
+      "refunded": "Refunded",
+      "vat": "VAT included",
+      "help": "Questions about this order? Write to us at {email} with the order number."
+    },
+    "status": {
+      "awaitingPayment": "Awaiting payment",
+      "preparing": "Being prepared",
+      "readyForPickup": "Ready to collect",
+      "shipped": "Shipped",
+      "completed": "Delivered",
+      "cancelled": "Cancelled",
+      "refunded": "Refunded",
+      "partiallyRefunded": "Partly refunded",
+      "review": "Under review"
+    },
+    "details": {
+      "title": "My details",
+      "access": "Sign-in",
+      "methods": "You sign in with {methods}.",
+      "methodGoogle": "Google",
+      "methodPassword": "email and password",
+      "emailNote": "To change your account email, write to us.",
+      "changePassword": "Change password",
+      "setPassword": "Create a password",
+      "contact": "Contact details",
+      "phone": "Phone",
+      "phoneHint": "To let you know about your order. Required for deliveries.",
+      "address": "Delivery address",
+      "addressHint": "Fills in the delivery when you buy. We deliver to mainland Spain and the Balearic Islands; leave it empty if you'd rather not save it.",
+      "addressLine1": "Address",
+      "addressLine2": "Floor, door… (optional)",
+      "postalCode": "Postcode",
+      "city": "Town or city",
+      "province": "Province (optional)",
+      "save": "Save",
+      "saving": "Saving…",
+      "saved": "Details saved."
+    },
+    "delete": {
+      "title": "Delete account",
+      "text": "Your account and saved details are deleted. Orders are kept for as long as the law requires, no longer linked to the account. Your club subscription, if you have one, is managed separately.",
+      "confirm": "I understand this can't be undone.",
+      "submit": "Delete my account",
+      "submitting": "Deleting…"
+    },
+    "errors": {
+      "nameRequired": "Enter your name.",
+      "emailInvalid": "Enter a valid email.",
+      "passwordShort": "The password must have at least {min} characters.",
+      "passwordMismatch": "The passwords don't match.",
+      "passwordWeak": "Choose another password: longer or less common.",
+      "credentials": "Incorrect email or password.",
+      "notConfirmed": "Before signing in, confirm your email with the link we sent you. If you can't find it, register again with the same email.",
+      "signupDisabled": "Accounts can't be created right now. You can buy without an account.",
+      "rateLimited": "Too many attempts in a row. Wait a few minutes and try again.",
+      "phoneInvalid": "Enter a valid phone number.",
+      "addressIncomplete": "Complete the address, postcode and town, or leave the address empty.",
+      "postalCodeInvalid": "The postcode has five digits.",
+      "confirmRequired": "Tick the box to confirm.",
+      "staff": "This account belongs to the shop staff: it's managed from the admin panel.",
+      "google": "We couldn't sign you in with Google. Try again or sign in with your email.",
+      "link": "The link has expired or has already been used. Ask for a new one.",
+      "disabled": "Customer accounts aren't available.",
+      "generic": "Something went wrong. Please try again in a few minutes.",
+      "review": "Check the highlighted fields."
+    }
   }
 }

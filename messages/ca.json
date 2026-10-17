@@ -12,7 +12,9 @@
     "skip": "Salta al contingut",
     "home": "Inici",
     "scentCatalog": "Catàleg olfactiu",
-    "cart": "Cistella"
+    "cart": "Cistella",
+    "account": "Compte",
+    "accountLabel": "El teu compte"
   },
   "home": {
     "heroEyebrow": "Perfumeria àrab · Castelldefels",
@@ -324,7 +326,9 @@
       "disabled": "La compra en línia encara no està disponible.",
       "generic": "No hem pogut registrar la comanda. Torna-ho a provar d’aquí a uns minuts.",
       "review": "Revisa les dades marcades."
-    }
+    },
+    "accountSignedIn": "Compres amb el teu compte ({email}). La comanda quedarà a «Les meves comandes».",
+    "accountSignIn": "Tens compte? <link>Entra</link> per fer servir les teves dades desades i veure després la comanda al teu compte."
   },
   "order": {
     "title": "La teva comanda",
@@ -384,5 +388,158 @@
     "contact": "Dubtes? Respon aquest correu o escriu-nos a {email}.",
     "attachment": "condicions-de-venda.txt",
     "signature": "L’Atelier du Désert · Perfumeria àrab a Castelldefels"
+  },
+  "account": {
+    "eyebrow": "El teu compte",
+    "metaTitle": "El meu compte",
+    "orDivider": "o amb el teu correu",
+    "google": "Continua amb Google",
+    "googleNote": "Amb Google, el compte fa servir el correu de Google i no necessita contrasenya.",
+    "email": "Correu electrònic",
+    "password": "Contrasenya",
+    "passwordHint": "Mínim {min} caràcters. Millor una frase que només recordis tu.",
+    "fullName": "Nom i cognoms",
+    "signIn": {
+      "title": "Entra",
+      "lead": "Consulta les teves comandes i desa les teves dades per comprar més de pressa. No cal compte per comprar.",
+      "submit": "Entra",
+      "submitting": "Entrant…",
+      "forgot": "He oblidat la contrasenya",
+      "noAccount": "Encara no tens compte?",
+      "register": "Crea un compte",
+      "deleted": "Hem esborrat el teu compte."
+    },
+    "register": {
+      "title": "Crea un compte",
+      "lead": "Per veure les teves comandes i tenir les teves dades a mà la propera vegada.",
+      "submit": "Crea el compte",
+      "submitting": "Creant el compte…",
+      "privacy": "Farem servir les teves dades per gestionar el teu compte i les teves comandes, com explica la <link>política de privacitat</link>.",
+      "haveAccount": "Ja tens compte?",
+      "signIn": "Entra",
+      "sentTitle": "Revisa el teu correu",
+      "sentText": "Si el correu és correcte, t'hem enviat un enllaç per confirmar el compte. El pots obrir des de qualsevol dispositiu; caduca d'aquí a una hora."
+    },
+    "recover": {
+      "title": "Recupera la contrasenya",
+      "lead": "T'enviarem un enllaç per triar-ne una de nova.",
+      "submit": "Envia l'enllaç",
+      "submitting": "Enviant…",
+      "sentTitle": "Revisa el teu correu",
+      "sentText": "Si hi ha un compte amb aquest correu, t'hem enviat un enllaç per triar una contrasenya nova. Caduca d'aquí a una hora.",
+      "back": "Torna a entrar"
+    },
+    "newPassword": {
+      "title": "Tria una contrasenya nova",
+      "password": "Contrasenya nova",
+      "confirmation": "Repeteix la contrasenya",
+      "submit": "Desa la contrasenya",
+      "submitting": "Desant…",
+      "expired": "L'enllaç ha caducat o ja s'ha fet servir. Demana'n un de nou.",
+      "requestNew": "Demana un altre enllaç"
+    },
+    "nav": {
+      "label": "El teu compte",
+      "orders": "Les meves comandes",
+      "details": "Les meves dades",
+      "signOut": "Tanca la sessió"
+    },
+    "orders": {
+      "title": "Les meves comandes",
+      "greeting": "Hola, {name}",
+      "welcome": "El teu compte ja està a punt.",
+      "passwordChanged": "Hem desat la teva contrasenya nova.",
+      "unverified": "Confirma el teu correu per veure aquí també les comandes que vas fer sense compte.",
+      "empty": "Encara no tens comandes",
+      "emptyLead": "Aquí veuràs les comandes que facis amb el compte i les que vas fer sense compte amb aquest mateix correu.",
+      "browse": "Veure la col·lecció",
+      "loadError": "No hem pogut carregar les teves comandes. Torna-ho a provar d'aquí a uns minuts.",
+      "number": "Comanda núm. {number}",
+      "units": "{count, plural, one {# article} other {# articles}}",
+      "pickup": "Recollida a la botiga",
+      "shipping": "Enviament a domicili",
+      "view": "Veure la comanda núm. {number}"
+    },
+    "order": {
+      "back": "Les meves comandes",
+      "title": "Comanda núm. {number}",
+      "placedOn": "Feta el {date}",
+      "status": "Estat",
+      "delivery": "Lliurament",
+      "tracking": "Seguiment de l'enviament: {reference}",
+      "contact": "Contacte",
+      "address": "Adreça d'enviament",
+      "items": "Articles",
+      "quantity": "{count} × {price}",
+      "subtotal": "Articles",
+      "shippingCost": "Enviament",
+      "free": "Gratuït",
+      "total": "Total",
+      "refunded": "Retornat",
+      "vat": "IVA inclòs",
+      "help": "Dubtes amb aquesta comanda? Escriu-nos a {email} amb el número de comanda."
+    },
+    "status": {
+      "awaitingPayment": "Pendent de pagament",
+      "preparing": "En preparació",
+      "readyForPickup": "A punt per recollir",
+      "shipped": "Enviada",
+      "completed": "Lliurada",
+      "cancelled": "Cancel·lada",
+      "refunded": "Retornada",
+      "partiallyRefunded": "Retornada en part",
+      "review": "En revisió"
+    },
+    "details": {
+      "title": "Les meves dades",
+      "access": "Accés",
+      "methods": "Entres amb {methods}.",
+      "methodGoogle": "Google",
+      "methodPassword": "correu i contrasenya",
+      "emailNote": "Per canviar el correu del compte, escriu-nos.",
+      "changePassword": "Canvia la contrasenya",
+      "setPassword": "Crea una contrasenya",
+      "contact": "Dades de contacte",
+      "phone": "Telèfon",
+      "phoneHint": "Per avisar-te de la teva comanda. Obligatori en els enviaments.",
+      "address": "Adreça d'enviament",
+      "addressHint": "Omple l'enviament quan compres. Enviem a la península i les Balears; deixa-la buida si prefereixes no desar-la.",
+      "addressLine1": "Adreça",
+      "addressLine2": "Pis, porta… (opcional)",
+      "postalCode": "Codi postal",
+      "city": "Població",
+      "province": "Província (opcional)",
+      "save": "Desa",
+      "saving": "Desant…",
+      "saved": "Dades desades."
+    },
+    "delete": {
+      "title": "Esborra el compte",
+      "text": "S'esborren el compte i les dades desades. Les comandes es conserven el temps que exigeix la llei, sense vincle amb el compte. La teva subscripció al club, si en tens, es gestiona a part.",
+      "confirm": "Entenc que no es pot desfer.",
+      "submit": "Esborra el meu compte",
+      "submitting": "Esborrant…"
+    },
+    "errors": {
+      "nameRequired": "Escriu el teu nom.",
+      "emailInvalid": "Escriu un correu vàlid.",
+      "passwordShort": "La contrasenya ha de tenir com a mínim {min} caràcters.",
+      "passwordMismatch": "Les contrasenyes no coincideixen.",
+      "passwordWeak": "Tria una altra contrasenya: més llarga o menys habitual.",
+      "credentials": "Correu o contrasenya incorrectes.",
+      "notConfirmed": "Abans d'entrar, confirma el teu correu amb l'enllaç que et vam enviar. Si no el trobes, torna't a registrar amb el mateix correu.",
+      "signupDisabled": "Ara mateix no es poden crear comptes. Pots comprar sense compte.",
+      "rateLimited": "Massa intents seguits. Espera uns minuts i torna-ho a provar.",
+      "phoneInvalid": "Escriu un telèfon vàlid.",
+      "addressIncomplete": "Completa l'adreça, el codi postal i la població, o deixa l'adreça buida.",
+      "postalCodeInvalid": "El codi postal té cinc xifres.",
+      "confirmRequired": "Marca la casella per confirmar.",
+      "staff": "Aquest compte és del personal de la botiga: es gestiona des del tauler.",
+      "google": "No hem pogut entrar amb Google. Torna-ho a provar o entra amb el teu correu.",
+      "link": "L'enllaç ha caducat o ja s'ha fet servir. Demana'n un de nou.",
+      "disabled": "El compte de client no està disponible.",
+      "generic": "Alguna cosa ha fallat. Torna-ho a provar d'aquí a uns minuts.",
+      "review": "Revisa els camps marcats."
+    }
   }
 }

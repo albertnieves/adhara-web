@@ -105,6 +105,48 @@ export type Database = {
         };
         Relationships: [];
       };
+      customer_accounts: {
+        Row: {
+          address_line1: string | null;
+          address_line2: string | null;
+          city: string | null;
+          created_at: string;
+          full_name: string | null;
+          locale: string;
+          phone: string | null;
+          postal_code: string | null;
+          province: string | null;
+          updated_at: string;
+          user_id: string;
+        };
+        Insert: {
+          address_line1?: string | null;
+          address_line2?: string | null;
+          city?: string | null;
+          created_at?: string;
+          full_name?: string | null;
+          locale?: string;
+          phone?: string | null;
+          postal_code?: string | null;
+          province?: string | null;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          address_line1?: string | null;
+          address_line2?: string | null;
+          city?: string | null;
+          created_at?: string;
+          full_name?: string | null;
+          locale?: string;
+          phone?: string | null;
+          postal_code?: string | null;
+          province?: string | null;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
       daily_reports: {
         Row: {
           facts: NonNullable<Json>;
@@ -714,6 +756,7 @@ export type Database = {
           channel: string;
           created_at: string;
           currency: string;
+          customer_id: string | null;
           discount_cents: number;
           discount_code: string | null;
           discount_code_id: string | null;
@@ -739,6 +782,7 @@ export type Database = {
           channel?: string;
           created_at?: string;
           currency?: string;
+          customer_id?: string | null;
           discount_cents?: number;
           discount_code?: string | null;
           discount_code_id?: string | null;
@@ -764,6 +808,7 @@ export type Database = {
           channel?: string;
           created_at?: string;
           currency?: string;
+          customer_id?: string | null;
           discount_cents?: number;
           discount_code?: string | null;
           discount_code_id?: string | null;
@@ -2038,6 +2083,7 @@ export type Database = {
           channel: string;
           created_at: string;
           currency: string;
+          customer_id: string | null;
           discount_cents: number;
           discount_code: string | null;
           discount_code_id: string | null;
@@ -2098,6 +2144,27 @@ export type Database = {
         }[];
       };
       control_access: { Args: Record<PropertyKey, never>; Returns: boolean };
+      customer_order: { Args: { p_number: number }; Returns: Json };
+      customer_orders: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          created_at: string;
+          fulfillment: string;
+          number: number;
+          status: string;
+          total_cents: number;
+          units: number;
+        }[];
+      };
+      customer_save_account: {
+        Args: {
+          p_address?: Json;
+          p_full_name: string;
+          p_locale: string;
+          p_phone: string;
+        };
+        Returns: undefined;
+      };
       newsletter_subscribe: {
         Args: {
           p_consent_version: string;
@@ -2131,6 +2198,7 @@ export type Database = {
       web_order_create: {
         Args: {
           p_contact: Json;
+          p_customer_id?: string;
           p_discount_code?: string;
           p_fulfillment: string;
           p_hold_minutes?: number;

@@ -19,7 +19,20 @@ Consulta de solo lectura: 50 formatos publicados, 33 con céntimos. Informe de r
 
 Validación: `pnpm check` correcto (579 unitarias y build), formato correcto. La evidencia de navegador y límites de la entrega se registran en el informe enlazado.
 
-## En esta rama: pedidos web (PR #31, 10–12/10/2026)
+## En esta rama: cuenta de cliente (F14, 13–14/10/2026, apagada)
+
+A petición del usuario: que los clientes puedan crear una cuenta (email y contraseña o Google; Apple más adelante) para ver sus pedidos. Plan en [PLAN_CUENTA_CLIENTE.md](PLAN_CUENTA_CLIENTE.md); decisiones §142–146.
+
+- **Apagada** tras `CUSTOMER_ACCOUNTS`: sin el interruptor, `/cuenta…` y `/auth/callback` responden 404 y nada cambia en la tienda. Comprar sin cuenta sigue igual.
+- **Encaja con los códigos de descuento (16/10, §152):** la rama incorpora la PR #41 y se fusiona después de ella. La migración pasa a `20261016120000`, `web_order_create` admite el código y la cuenta a la vez y «Mis pedidos» enseña el descuento. Comprobado en local con Docker (base reiniciada, `WEB_CHECKOUT=1`, `CUSTOMER_ACCOUNTS=1` y TPV simulado): pgTAP 783/783 en 20 archivos (4 nuevas en `18`), tipos generados iguales, `db lint` y concurrencia correctos; `pnpm check` correcto (603 unitarias y build); tienda pública 247 correctas y 29 omitidas; con sesión 48/48, con la compra de una cuenta con código y la línea del descuento en su pedido.
+- **Base de datos** (`20261016120000_customer_accounts.sql`, sin aplicar en `adhara-dev`): ficha `customer_accounts`, `orders.customer_id` y funciones `customer_*`. Los pedidos de la cuenta son los hechos con la sesión y los de invitado con el mismo email verificado.
+- **Tienda (es/ca/en):** entrar, crear la cuenta con confirmación del email, Google, recuperar la contraseña, «Mis pedidos» con la ficha de cada uno, «Mis datos» (teléfono y dirección de envío) y borrar la cuenta. El checkout rellena los datos y deja el pedido en la cuenta; sin sesión, invita a entrar y vuelve. «Cuenta» en la cabecera (en el móvil, en el menú).
+- **Seguridad:** pgTAP `18` comprueba que una cuenta de cliente no ve nada del panel ni más que un visitante; el personal no borra su cuenta ni cambia la contraseña sin MFA desde la tienda.
+- **Textos legales (borrador):** privacidad y cookies con la cuenta y Google.
+- **Comprobado en local sin Docker** (§146): lint, tipos, format, unitarias (585 en 53 archivos), build y prueba de humo con capturas; pgTAP en Postgres 16 con emulación de Supabase: `18` 50/50 y el resto sin regresiones (en la CI, 730/730 en 19 archivos); tipos generados con postgres-meta contra la base emulada. **Pendiente de la CI de la PR:** `db lint`, concurrencia, E2E de la cuenta (`account.spec.ts`) y auditoría de diseño de sus páginas.
+- **Para encenderla** (usuario): correo de Auth con Resend, alta pública y plantillas en Supabase, cliente OAuth de Google, captcha, migración, revisión legal y `CUSTOMER_ACCOUNTS=1` (lista en el plan).
+
+## Pedidos web (PR #31, fusionada; 10–12/10/2026)
 
 Plan en [PLAN_PEDIDOS_WEB.md](PLAN_PEDIDOS_WEB.md); decisiones §131–140.
 

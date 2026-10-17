@@ -30,6 +30,20 @@ import { PaymentRedirectForm } from './PaymentRedirectForm';
 
 const IDLE: CheckoutState = { status: 'idle' };
 
+/** Datos de la cuenta con la sesión iniciada (CUSTOMER_ACCOUNTS). */
+export type CheckoutAccount = {
+  email: string;
+  fullName: string;
+  phone: string;
+  address: {
+    addressLine1: string;
+    addressLine2: string;
+    postalCode: string;
+    city: string;
+    province: string;
+  } | null;
+};
+
 type DiscountProblem = { error: DiscountError; minimumCents?: number };
 
 /** Campo del código con su botón: `Field` le pone id, ayuda y error. */
@@ -96,6 +110,9 @@ export type CheckoutLine = {
  * son orientativos; los que cuentan los calcula la base al crear el pedido.
  * Se mantiene montado tras el pedido (la cesta queda vacía): con el TPV
  * configurado lleva al banco a pagar (P04); sin él, enseña la confirmación.
+ * Con la cuenta de cliente encendida, `account` rellena los datos guardados
+ * (y el pedido queda en la cuenta) o, sin sesión, invita a entrar y volver a
+ * `signInNext` (esta página con su idioma).
  */
 export function CheckoutForm({
   locale,
@@ -104,6 +121,8 @@ export function CheckoutForm({
   purchasable,
   rates,
   store,
+  account = null,
+  signInNext = null,
 }: {
   locale: 'es' | 'ca' | 'en';
   lines: CheckoutLine[];
@@ -111,6 +130,8 @@ export function CheckoutForm({
   purchasable: boolean;
   rates: ShippingRate[];
   store: { address: string; city: string };
+  account?: CheckoutAccount | null;
+  signInNext?: string | null;
 }) {
   const t = useTranslations('checkout');
   // Código aplicado en el resumen (DECISIONS §150): lo calcula la base y se
@@ -139,7 +160,8 @@ export function CheckoutForm({
   const [fulfillment, setFulfillment] = useState<'click_collect' | 'shipping'>(
     'click_collect',
   );
-  const [postalCode, setPostalCode] = useState('');
+  const saved = account?.address;
+  const [postalCode, setPostalCode] = useState(saved?.postalCode ?? '');
   const euros = (cents: number) => formatEuros(cents, locale);
 
   function applyCode() {
@@ -259,12 +281,36 @@ export function CheckoutForm({
       <div className="space-y-10">
         <section className="space-y-4">
           <Eyebrow as="h2">{t('contact')}</Eyebrow>
+          {account ? (
+            <p className="text-fg-muted text-sm leading-relaxed">
+              {t('accountSignedIn', { email: account.email })}
+            </p>
+          ) : (
+            signInNext && (
+              <p className="text-fg-muted text-sm leading-relaxed">
+                {t.rich('accountSignIn', {
+                  link: (chunks) => (
+                    <Link
+                      href={{
+                        pathname: '/cuenta/acceso',
+                        query: { next: signInNext },
+                      }}
+                      className="link-underline font-semibold"
+                    >
+                      {chunks}
+                    </Link>
+                  ),
+                })}
+              </p>
+            )
+          )}
           <Field label={t('fullName')} error={fieldError('fullName')}>
             <Input
               name="fullName"
               required
               autoComplete="name"
               maxLength={120}
+              defaultValue={account?.fullName}
             />
           </Field>
           <Field label={t('email')} error={fieldError('email')}>
@@ -275,6 +321,7 @@ export function CheckoutForm({
               autoComplete="email"
               inputMode="email"
               maxLength={254}
+              defaultValue={account?.email}
             />
           </Field>
           <Field
@@ -288,6 +335,7 @@ export function CheckoutForm({
               autoComplete="tel"
               inputMode="tel"
               maxLength={30}
+              defaultValue={account?.phone}
             />
           </Field>
         </section>
@@ -321,6 +369,7 @@ export function CheckoutForm({
                 required
                 autoComplete="address-line1"
                 maxLength={200}
+                defaultValue={saved?.addressLine1}
               />
             </Field>
             <Field label={t('addressLine2')}>
@@ -328,6 +377,7 @@ export function CheckoutForm({
                 name="addressLine2"
                 autoComplete="address-line2"
                 maxLength={200}
+                defaultValue={saved?.addressLine2}
               />
             </Field>
             <div className="grid gap-4 sm:grid-cols-[10rem_1fr]">
@@ -354,6 +404,7 @@ export function CheckoutForm({
                   required
                   autoComplete="address-level2"
                   maxLength={120}
+                  defaultValue={saved?.city}
                 />
               </Field>
             </div>
@@ -362,6 +413,7 @@ export function CheckoutForm({
                 name="province"
                 autoComplete="address-level1"
                 maxLength={120}
+                defaultValue={saved?.province}
               />
             </Field>
           </section>

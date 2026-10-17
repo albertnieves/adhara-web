@@ -30,6 +30,19 @@ const CHECKOUT_OFF: Route[] = [
   ['/es/pedido', 'pedido-apagada', 404],
 ];
 
+// Cuenta de cliente: solo existe con CUSTOMER_ACCOUNTS=1 (e2e.yml). Las
+// páginas con sesión se auditan en tests/integration/account.spec.ts.
+const ACCOUNT_ON: Route[] = [
+  ['/es/cuenta/acceso', 'cuenta-acceso-es'],
+  ['/ca/compte/registre', 'cuenta-registro-ca'],
+  ['/en/account/forgot-password', 'cuenta-recuperar-en'],
+  ['/es/cuenta/nueva-contrasena', 'cuenta-nueva-contrasena-es'],
+];
+const ACCOUNT_OFF: Route[] = [
+  ['/es/cuenta/acceso', 'cuenta-apagada', 404],
+  ['/en/account', 'cuenta-en-apagada', 404],
+];
+
 const ROUTES: Route[] = [
   ['/es', 'inicio-es'],
   ['/ca', 'inicio-ca'],
@@ -50,6 +63,7 @@ const ROUTES: Route[] = [
   ['/admin/acceso', 'panel-acceso'],
   ['/admin/recuperar', 'panel-recuperar'],
   ...(process.env.WEB_CHECKOUT === '1' ? CHECKOUT_ON : CHECKOUT_OFF),
+  ...(process.env.CUSTOMER_ACCOUNTS === '1' ? ACCOUNT_ON : ACCOUNT_OFF),
 ];
 
 test.beforeEach(({}, testInfo) => {
