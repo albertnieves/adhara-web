@@ -263,6 +263,14 @@ export default async function WebOrderPage({
         <dl className="mt-4 ml-auto grid max-w-xs grid-cols-[1fr_auto] gap-x-6 gap-y-1 text-sm">
           <dt className="text-fg-muted">Artículos</dt>
           <dd className="text-right tabular-nums">{euros(order.itemsCents)}</dd>
+          {order.discountCode && (
+            <>
+              <dt className="text-fg-muted">Código {order.discountCode}</dt>
+              <dd className="text-right tabular-nums">
+                −{euros(order.discountCents)}
+              </dd>
+            </>
+          )}
           <dt className="text-fg-muted">
             {order.fulfillment === 'click_collect' ? 'Recogida' : 'Envío'}
           </dt>

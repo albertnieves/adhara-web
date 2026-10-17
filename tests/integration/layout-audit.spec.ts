@@ -40,6 +40,8 @@ const ROUTES = [
   '/admin/informes/auditoria',
   '/admin/contenido',
   '/admin/suscriptores',
+  '/admin/descuentos',
+  '/admin/descuentos/nuevo',
   '/admin/configuracion',
   '/admin/equipo',
   '/admin/asistente',
@@ -88,6 +90,16 @@ async function anyOrderId() {
   return order ? String(order.id) : undefined;
 }
 
+/** Un código de descuento, si hay (los crea discounts.spec.ts, que corre antes). */
+async function anyDiscountCodeId() {
+  const { data: code } = await admin
+    .from('discount_codes')
+    .select('id')
+    .limit(1)
+    .maybeSingle();
+  return code ? String(code.id) : undefined;
+}
+
 /**
  * Audita rutas a unas anchuras y devuelve los informes y lo que dice axe.
  * `after` comprueba algo más en la última anchura de cada ruta.
@@ -129,11 +141,16 @@ test('panel: diseño sin solapes ni desbordes en todas sus pantallas', async ({
   makeControlOwner(email);
   await login(page, email);
 
-  const [product, order] = await Promise.all([anyProductId(), anyOrderId()]);
+  const [product, order, discount] = await Promise.all([
+    anyProductId(),
+    anyOrderId(),
+    anyDiscountCodeId(),
+  ]);
   const routes = [
     ...ROUTES,
     ...(product ? [`/admin/catalogo/${product}`] : []),
     ...(order ? [`/admin/pedidos/${order}`] : []),
+    ...(discount ? [`/admin/descuentos/${discount}`] : []),
   ];
   const { reports, violations } = await auditAll(page, routes, AUDIT_WIDTHS);
   expect(reports.join('\n'), reports.join('\n')).toBe('');

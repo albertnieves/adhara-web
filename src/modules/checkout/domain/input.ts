@@ -1,4 +1,6 @@
 import { z } from 'zod';
+import type { DiscountError } from '@/modules/promotions/domain';
+import { normalizeDiscountCode } from '@/modules/promotions/domain';
 import { isPostalCode, shippingZone } from './shipping';
 
 /*
@@ -22,6 +24,7 @@ export const CHECKOUT_ERRORS = [
   'outOfStock',
   'shippingUnavailable',
   'unavailable',
+  'discount',
   'disabled',
   'generic',
 ] as const;
@@ -50,6 +53,21 @@ export const checkoutInput = z
     city: text(120),
     province: text(120),
     acceptTerms: z.literal('on', { message: 'termsRequired' }),
+    // Código ya aplicado en el resumen; la base lo vuelve a comprobar todo.
+    discountCode: z
+      .string()
+      .trim()
+      .max(60)
+      .optional()
+      .transform((value, ctx) => {
+        if (!value) return null;
+        const code = normalizeDiscountCode(value);
+        if (!code) {
+          ctx.addIssue({ code: 'custom', message: 'discount' });
+          return z.NEVER;
+        }
+        return code;
+      }),
   })
   .superRefine((input, ctx) => {
     if (input.fulfillment !== 'shipping') return;
@@ -81,6 +99,10 @@ export type CheckoutState =
       fields?: Partial<Record<CheckoutField, CheckoutError>>;
       /** Perfume que falta en outOfStock, si se sabe. */
       product?: string;
+      /** Motivo en `discount`: el código ya no vale (usado, agotado…). */
+      discount?: DiscountError;
+      /** Compra mínima del código en `discount` → minimum. */
+      minimumCents?: number;
     }
   /** Pedido creado: el navegador va al banco a pagarlo. */
   | { status: 'redirect'; number: number; form: PaymentRedirect }
@@ -90,6 +112,7 @@ export type CheckoutState =
       number: number;
       fulfillment: 'click_collect' | 'shipping';
       itemsCents: number;
+      discountCents: number;
       shippingCents: number;
       totalCents: number;
       reservedUntil: string;

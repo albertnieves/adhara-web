@@ -71,6 +71,7 @@ flowchart LR
 | `payments`   | Redsys por redirección: firma, formulario de pago, notificación y devoluciones (P04, P06) |
 | `mail`       | Correos de los pedidos: plantillas es/ca/en, cola y envío con Resend (P06)                |
 | `messaging`  | Reglas puras preparadas para los mensajes (fase A6), sin pantallas                        |
+| `account`    | Cuenta de cliente (F14): acceso con email o Google, pedidos, datos y baja; apagada        |
 
 Reglas de importación: los componentes de cliente solo importan `index.ts`; los secretos y el acceso privilegiado solo existen en módulos `server-only`; `@typescript-eslint/no-explicit-any` y `consistent-type-imports` son errores.
 
@@ -80,15 +81,16 @@ Reglas de importación: los componentes de cliente solo importan `index.ts`; los
 - **Vista previa del personal:** Draft Mode de Next, que se activa solo desde el panel con `catalog.edit` y MFA; en ese modo la tienda lee con la sesión y la RLS decide (DECISIONS §47).
 - **Panel:** dinámico, `private, no-store`, con la sesión del usuario (`createSupabaseServerClient`). Escrituras sensibles mediante funciones `admin_*`.
 - **Cesta y checkout (P03, tras `WEB_CHECKOUT=1`):** la cesta vive en la cookie técnica `atelier_cesta` (solo formatos y cantidades); `/cesta` y `/finalizar-compra` son dinámicas y leen precio y stock en cada visita con el cliente anónimo. El contador de la cabecera lee la cookie en el navegador, así que el resto de la tienda sigue siendo estática. El pedido lo crea `web_order_create`, que vuelve a calcular precio, envío y stock (DECISIONS §136). Con el TPV configurado, el navegador va al banco con un formulario firmado en el servidor y el pago lo confirma solo la notificación del banco (`/api/pagos/redsys`, §137); la vuelta lleva a `/pedido`.
+- **Cuenta de cliente (F14, tras `CUSTOMER_ACCOUNTS=1`):** `/cuenta…` es dinámica y lee la sesión validada (`getUser()`); el proxy refresca las cookies de la sesión solo en esas rutas y en el checkout, que rellena los datos de la cuenta y vincula el pedido. El enlace «Cuenta» de la cabecera no lee la sesión, así que el resto de la tienda sigue estático. Google vuelve por `/auth/callback` (PKCE) y los correos de Auth por `/auth/confirm` ([PLAN_CUENTA_CLIENTE.md](PLAN_CUENTA_CLIENTE.md)).
 - **Dinero:** céntimos enteros; IVA y porcentajes en puntos básicos ([PRICING.md](PRICING.md)).
 
-| Cliente de Supabase          | Clave                          | Uso                                            |
-| ---------------------------- | ------------------------------ | ---------------------------------------------- |
-| `createSupabaseServerClient` | Publicable + cookies de sesión | Panel y vista previa                           |
-| `createSupabasePublicClient` | Publicable, sin cookies        | Tienda estática                                |
-| `createAuthAdminClient`      | Secreta                        | Solo invitaciones de Auth, tras `staff.manage` |
-| `createJobClient`            | Secreta                        | Informe diario y copia diaria (§128)           |
-| `createOrdersClient`         | Secreta                        | Solo funciones `web_order_*` (§131, §136)      |
+| Cliente de Supabase          | Clave                          | Uso                                                                                  |
+| ---------------------------- | ------------------------------ | ------------------------------------------------------------------------------------ |
+| `createSupabaseServerClient` | Publicable + cookies de sesión | Panel y vista previa                                                                 |
+| `createSupabasePublicClient` | Publicable, sin cookies        | Tienda estática                                                                      |
+| `createAuthAdminClient`      | Secreta                        | Invitaciones de Auth, tras `staff.manage`; borrar la cuenta de cliente propia (§145) |
+| `createJobClient`            | Secreta                        | Informe diario y copia diaria (§128)                                                 |
+| `createOrdersClient`         | Secreta                        | Solo funciones `web_order_*` (§131, §136)                                            |
 
 ## Tareas programadas y asistente
 

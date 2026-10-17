@@ -1,4 +1,4 @@
-# Estado real — 15/10/2026
+# Estado real — 17/10/2026
 
 ## En esta rama: páginas de casa (15/10)
 
@@ -9,9 +9,20 @@
 - **Enlaces:** antetítulo de la ficha, «Ver todo de…» junto a «También de…», «Ver todas las casas» en la portada y «Casas» en el pie.
 - **Sitemap:** el índice y una entrada por casa con publicados, en los tres idiomas; sigue vacío mientras la indexación esté apagada.
 - **Sin migraciones ni textos inventados:** las casas solo tienen nombre; una descripción por casa, con fuente, sería una columna nueva y su editor en el panel.
-- **Fuera:** colecciones editoriales (esperan la revisión de los tonos D3) y búsqueda global. La cabecera y el menú móvil no cambian porque los toca la PR #37.
+- **Fuera:** colecciones editoriales (esperan la revisión de los tonos D3) y búsqueda global. La cabecera y el menú móvil no cambian (la PR #37 también los toca).
 - **Comprobado en local** (Supabase local con Docker, base nueva con el perfume centinela, como `e2e.yml`, y `WEB_CHECKOUT=1` con el TPV simulado): `pnpm check` correcto (580 unitarias y build); `format:check` y `scan:secrets` correctos; tienda pública 261 correctas y 29 omitidas, con `houses.spec.ts` (pie, tres idiomas, 404, ficha → casa → índice y casa centinela), la auditoría de diseño y axe del índice en los tres idiomas, del 404 y de la casa del perfume publicado, y sin costes ni centinela en `/es/casas` ni en la casa centinela; panel con sesión 37/37. Con casas ficticias añadidas solo a esa base local (una de nombre largo con cuatro perfumes y fotos), auditoría y axe sin fallos a 390, 768, 1280 y 1440 px. Sin migraciones; nada aplicado en `adhara-dev`.
 - **Visto de paso, sin tocar:** con el checkout encendido, a 768 px el logotipo de la cabecera queda pegado al selector de idioma (la cabecera no cambia en esta rama; la auditoría no lo marca).
+
+## Códigos de descuento para las campañas de Sender (PR #41, fusionada el 17/10)
+
+A petición del usuario; decisiones §149–152 y guía en [ADMIN_OPERATIONS.md](ADMIN_OPERATIONS.md#códigos-de-descuento).
+
+- **Panel → Web → Códigos de descuento** (`promotions.manage` con MFA): alta y cambio de códigos de campaña en porcentaje (1–90 %) o en euros, con compra mínima, fechas, usos máximos, un uso por email y «no aplicar a rebajados»; lista con usos, pedidos cobrados y lo descontado; auditoría de cada cambio.
+- **Tienda:** campo «Código de descuento» en el resumen de «Finalizar compra» (Intro aplica, no compra). La base calcula el descuento sobre los artículos (nunca el envío); el envío gratis se calcula ya descontado; el banco cobra el total con descuento. Página del pedido, correo de confirmación y ficha del panel con la línea del descuento.
+- **Base:** migración `20261015120000_discount_codes.sql` (tabla con RLS, columnas en `orders`, `web_order_create` con `p_discount_code`, `web_order_discount_quote` solo para el servidor y copia diaria). **Aplicada en `adhara-dev` el 16/10** desde el editor SQL (el conector no admite el `drop`, §141) y comprobada: versión registrada con el mismo md5 que el archivo, 79 objetos (funciones con permisos, columnas, restricciones, índices, política, disparador) iguales a una base local hecha desde el repositorio y asesor de seguridad sin avisos nuevos; ningún dato tocado. Coordinación con la PR #37 en §152.
+- **Textos legales (borrador):** párrafo de códigos en las condiciones de venta (es/ca/en) y `LEGAL_UPDATED_AT` al 15/10; queda la revisión de la asesoría (Ómnibus y devolución proporcional).
+- **Comprobado en local** (Supabase local con Docker, base reiniciada, `WEB_CHECKOUT=1` y TPV simulado): pgTAP 729/729 en 19 archivos (49 nuevas en `19_discount_codes`), tipos generados iguales, `db lint` sin errores y concurrencia correcta (un código de un uso con 10 pedidos a la vez y un uso por email con 6); `pnpm check` correcto (591 unitarias, 12 nuevas, y build); `format:check` y `scan:secrets` correctos; tienda pública 243 correctas y 25 omitidas; panel con sesión 40/40, con `discounts.spec.ts` (código con Intro, pago por el total con descuento, rechazos y alta y cambio en el panel) y la auditoría de diseño y axe de las pantallas nuevas.
+- **Fuera:** enlaces que apliquen el código solos, códigos únicos por suscriptor y promociones automáticas.
 
 ## En esta rama: preparación SEO y revisión de precios
 
@@ -21,7 +32,20 @@ Consulta de solo lectura: 50 formatos publicados, 33 con céntimos. Informe de r
 
 Validación: `pnpm check` correcto (579 unitarias y build), formato correcto. La evidencia de navegador y límites de la entrega se registran en el informe enlazado.
 
-## En esta rama: pedidos web (PR #31, 10–12/10/2026)
+## Cuenta de cliente (F14, PR #37, fusionada el 17/10; apagada)
+
+A petición del usuario: que los clientes puedan crear una cuenta (email y contraseña o Google; Apple más adelante) para ver sus pedidos. Plan en [PLAN_CUENTA_CLIENTE.md](PLAN_CUENTA_CLIENTE.md); decisiones §142–146.
+
+- **Apagada** tras `CUSTOMER_ACCOUNTS`: sin el interruptor, `/cuenta…` y `/auth/callback` responden 404 y nada cambia en la tienda. Comprar sin cuenta sigue igual.
+- **Encaja con los códigos de descuento (16/10, §152):** la rama incorpora la PR #41 y se fusiona después de ella. La migración pasa a `20261016120000`, `web_order_create` admite el código y la cuenta a la vez y «Mis pedidos» enseña el descuento. Comprobado en local con Docker (base reiniciada, `WEB_CHECKOUT=1`, `CUSTOMER_ACCOUNTS=1` y TPV simulado): pgTAP 783/783 en 20 archivos (4 nuevas en `18`), tipos generados iguales, `db lint` y concurrencia correctos; `pnpm check` correcto (603 unitarias y build); tienda pública 247 correctas y 29 omitidas; con sesión 48/48, con la compra de una cuenta con código y la línea del descuento en su pedido.
+- **Base de datos** (`20261016120000_customer_accounts.sql`, sin aplicar en `adhara-dev`): ficha `customer_accounts`, `orders.customer_id` y funciones `customer_*`. Los pedidos de la cuenta son los hechos con la sesión y los de invitado con el mismo email verificado.
+- **Tienda (es/ca/en):** entrar, crear la cuenta con confirmación del email, Google, recuperar la contraseña, «Mis pedidos» con la ficha de cada uno, «Mis datos» (teléfono y dirección de envío) y borrar la cuenta. El checkout rellena los datos y deja el pedido en la cuenta; sin sesión, invita a entrar y vuelve. «Cuenta» en la cabecera (en el móvil, en el menú).
+- **Seguridad:** pgTAP `18` comprueba que una cuenta de cliente no ve nada del panel ni más que un visitante; el personal no borra su cuenta ni cambia la contraseña sin MFA desde la tienda.
+- **Textos legales (borrador):** privacidad y cookies con la cuenta y Google.
+- **Comprobado en local sin Docker** (§146): lint, tipos, format, unitarias (585 en 53 archivos), build y prueba de humo con capturas; pgTAP en Postgres 16 con emulación de Supabase: `18` 50/50 y el resto sin regresiones (en la CI, 730/730 en 19 archivos); tipos generados con postgres-meta contra la base emulada. **Pendiente de la CI de la PR:** `db lint`, concurrencia, E2E de la cuenta (`account.spec.ts`) y auditoría de diseño de sus páginas.
+- **Para encenderla** (usuario): correo de Auth con Resend, alta pública y plantillas en Supabase, cliente OAuth de Google, captcha, migración, revisión legal y `CUSTOMER_ACCOUNTS=1` (lista en el plan).
+
+## Pedidos web (PR #31, fusionada; 10–12/10/2026)
 
 Plan en [PLAN_PEDIDOS_WEB.md](PLAN_PEDIDOS_WEB.md); decisiones §131–140.
 

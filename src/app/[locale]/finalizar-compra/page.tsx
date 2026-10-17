@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { Heading } from '@/components/ui';
+import { accountsEnabled, getCheckoutPrefill } from '@/modules/account/server';
 import {
   checkoutEnabled,
   quoteCart,
@@ -10,7 +11,7 @@ import {
 import { CheckoutForm } from '@/modules/checkout/ui';
 import { STORE_DEFAULTS, storeContent } from '@/modules/content';
 import { readStoreContent } from '@/modules/content/server';
-import { Link } from '@/modules/i18n';
+import { Link, routing } from '@/modules/i18n';
 import { requireLocale } from '@/modules/i18n/server';
 
 /**
@@ -39,11 +40,17 @@ export default async function CheckoutPage({ params }: { params: Params }) {
   const { locale } = await params;
   const lang = requireLocale(locale);
   if (!checkoutEnabled()) notFound();
-  const [t, lines, storeData] = await Promise.all([
+  const [t, lines, storeData, account] = await Promise.all([
     getTranslations('checkout'),
     readCart(),
     readStoreContent('store', 'es'),
+    getCheckoutPrefill(),
   ]);
+  // Sin sesión y con la cuenta encendida: entrar y volver aquí.
+  const signInNext =
+    !account && accountsEnabled()
+      ? `/${lang}${routing.pathnames['/finalizar-compra'][lang]}`
+      : null;
   const quote = await quoteCart(lines);
   const store = storeData
     ? storeContent.parse(storeData.payload)
@@ -79,6 +86,8 @@ export default async function CheckoutPage({ params }: { params: Params }) {
         purchasable={quote.purchasable}
         rates={quote.rates}
         store={{ address: store.address, city: store.city }}
+        account={account}
+        signInNext={signInNext}
       />
     </main>
   );

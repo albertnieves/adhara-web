@@ -54,7 +54,21 @@ Antes de encender la venta online (P04), poner aquí las tarifas reales y copiar
 
 Web → Suscriptores muestra las altas de la sección «Club L’Atelier» de la tienda (con `customers.view`), su idioma, fecha y estado: pendiente, en Sender o baja. «Exportar CSV» descarga la lista para importarla en Sender o abrirla en Excel. Con `customers.manage` (MFA) se puede dar de baja o borrar (derecho de supresión); si Sender está conectado, el cambio se hace también allí.
 
-Para conectar Sender: crear en Sender un token de API (Settings → API access tokens) y, si se quiere, un grupo «Web»; en Vercel, solo servidor, `SENDER_API_TOKEN` y `SENDER_GROUP_ID` (el id del grupo). Desde entonces cada alta se envía a Sender al momento; las que fallen quedan pendientes y se envían con «Enviar pendientes a Sender». Las campañas y los descuentos se preparan y envían en Sender. Las bajas que la gente haga desde el enlace de los correos quedan en Sender. No pegar el token en el chat.
+Para conectar Sender: crear en Sender un token de API (Settings → API access tokens) y, si se quiere, un grupo «Web»; en Vercel, solo servidor, `SENDER_API_TOKEN` y `SENDER_GROUP_ID` (el id del grupo). Desde entonces cada alta se envía a Sender al momento; las que fallen quedan pendientes y se envían con «Enviar pendientes a Sender». Las campañas se preparan y envían en Sender; los códigos de descuento que llevan se crean en [Códigos de descuento](#códigos-de-descuento). Las bajas que la gente haga desde el enlace de los correos quedan en Sender. No pegar el token en el chat.
+
+## Códigos de descuento
+
+Web → Códigos de descuento (administradores, `promotions.manage` con MFA). Sirven para dar descuentos exclusivos en las campañas del club de Sender:
+
+1. **Nuevo código:** el texto (letras, números y guiones; «Sugerir uno» propone uno difícil de adivinar, como `CLUB-7K3Q9M`), una nota interna, el descuento (porcentaje del 1 al 90 % o importe fijo de 1 € a 1.000 €) y, si se quieren, compra mínima, fechas (hora de Madrid), usos máximos, «Un uso por email» (marcado por defecto) y «No aplicar a perfumes rebajados».
+2. **En Sender:** escribe el código en la campaña con sus condiciones (descuento, hasta cuándo, compra mínima y si es de un uso por persona). Es lo que exigen las condiciones de venta.
+3. **En la tienda:** el cliente lo escribe en «Finalizar compra» → «Aplicar» y ve el descuento en el resumen antes de pagar. El banco cobra el total con descuento. La ficha del pedido enseña el código y lo descontado.
+
+Reglas: un código por pedido; el descuento es sobre los artículos, nunca sobre el envío; el envío gratis «desde» se calcula con el descuento ya aplicado; un importe fijo exige un pedido de más de ese importe. Cuentan como usos los pedidos pendientes de pago y los cobrados; un pedido que caduca sin pagar, se cancela o se devuelve entero devuelve su uso. La lista enseña los usos, los pedidos cobrados y lo descontado en ellos.
+
+El texto de un código no cambia una vez creado (los pedidos lo guardan): para otra campaña, crea otro. Para retirarlo, desmarca «Activo»; los pedidos ya hechos no cambian. Un código compartido vale para cualquiera que lo tenga: si no debe circular, limita los usos o las fechas.
+
+**Devolver un artículo de un pedido con código:** con «Devolver una parte», devuelve el precio del artículo menos la parte proporcional del descuento (por ejemplo, con un 10 %, de un perfume de 49,90 € se devuelven 44,91 €). Así lo dicen las condiciones de venta.
 
 ## Consola del titular (control del negocio y del proyecto)
 

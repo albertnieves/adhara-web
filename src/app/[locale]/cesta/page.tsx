@@ -202,7 +202,7 @@ export default async function CartPage({ params }: { params: Params }) {
               {t('vat')} · {t('maxNote', { max: MAX_LINE_QUANTITY })}
             </p>
             <p className="text-fg-muted text-sm leading-relaxed">
-              {t('shippingNext')}
+              {t('shippingNext')} {t('discountNote')}
             </p>
             {quote.purchasable ? (
               <Link

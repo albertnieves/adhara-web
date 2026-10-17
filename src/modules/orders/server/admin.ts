@@ -111,6 +111,9 @@ export type WebOrderDetail = {
     locale: string;
     locationName: string | null;
     itemsCents: number;
+    /** Código de descuento aplicado (§149); 0 y null sin código. */
+    discountCents: number;
+    discountCode: string | null;
     shippingCents: number;
     totalCents: number;
     currency: string;
@@ -320,6 +323,8 @@ export async function getWebOrder(
       locale: order.locale,
       locationName: order.stock_locations?.name ?? null,
       itemsCents: order.items_cents,
+      discountCents: order.discount_cents,
+      discountCode: order.discount_code,
       shippingCents: order.shipping_cents,
       totalCents: order.total_cents,
       currency: order.currency,
