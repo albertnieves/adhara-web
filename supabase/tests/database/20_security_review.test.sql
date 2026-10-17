@@ -79,7 +79,9 @@ select pg_temp.act_as('00000000-0000-4000-8000-000000000203', 'aal1');
 select is_empty('select 1 from public.product_sources',
   'el personal sin MFA tampoco');
 select pg_temp.act_as('00000000-0000-4000-8000-000000000203', 'aal2');
-select is((select source_ref from public.product_sources),
+select is(
+  (select source_ref from public.product_sources
+   where product_id = '00000000-0000-4000-8000-0000000020a1'),
   'Compra a Proveedor Centinela (20 uds)', 'el encargado con MFA sí la lee');
 select throws_ok(
   $$insert into public.product_sources (product_id, source_ref)
