@@ -21,6 +21,7 @@ import { readCart, writeCart } from './cart';
 import { checkoutEnabled } from './flag';
 import { paymentFormFor, rememberOrder, rememberedOrderId } from './order';
 import { quoteCart } from './quote';
+import { withinRateLimit } from './rate-limit';
 
 /*
  * Cesta y pedido de la tienda (P03). Todo se comprueba aquí y otra vez en la
@@ -89,6 +90,8 @@ export async function applyDiscountCode(input: string): Promise<DiscountQuote> {
   const supabase = createOrdersClient();
   if (lines.length === 0 || !supabase)
     return { status: 'error', error: 'generic' };
+  if (!(await withinRateLimit('checkout_discount')))
+    return { status: 'error', error: 'busy' };
   const { data, error } = await supabase.rpc('web_order_discount_quote', {
     p_code: code,
     p_items: orderItems(lines),
@@ -164,6 +167,9 @@ export async function placeOrder(
   const input = parsed.data;
   const lines = await readCart();
   if (lines.length === 0) return { status: 'error', error: 'emptyCart' };
+  // Cada pedido reserva stock hasta que caduca: freno por cliente (§160).
+  if (!(await withinRateLimit('checkout_order')))
+    return { status: 'error', error: 'busy' };
   // Lo que se va a comprar es lo que se ha visto: si algo cambió, se revisa.
   const quote = await quoteCart(lines);
   if (!quote.purchasable) return { status: 'error', error: 'cartChanged' };
@@ -282,6 +288,8 @@ export async function retryPayment(
     !supabase ||
     (locale !== 'es' && locale !== 'ca' && locale !== 'en')
   )
+    return { status: 'error', error: 'generic' };
+  if (!(await withinRateLimit('checkout_retry')))
     return { status: 'error', error: 'generic' };
   const { data, error } = await supabase.rpc('web_order_new_attempt', {
     p_order_id: orderId,

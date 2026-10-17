@@ -36,6 +36,7 @@ export const DISCOUNT_ERRORS = [
   'minimum',
   'notApplicable',
   'used',
+  'busy',
   'generic',
 ] as const;
 export type DiscountError = (typeof DISCOUNT_ERRORS)[number];
