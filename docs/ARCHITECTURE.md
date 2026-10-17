@@ -9,7 +9,7 @@ Monolito Next.js con módulos de dominio (ADR-001), desplegado en Vercel, con Su
 | Pieza          | Versión instalada (exacta)                                                        |
 | -------------- | --------------------------------------------------------------------------------- |
 | Node / pnpm    | 24.16.0 (`.nvmrc`) / 11.19.0                                                      |
-| Next.js        | 16.3.6, App Router, compilado con webpack (DECISIONS §11)                         |
+| Next.js        | 16.3.8, App Router, compilado con webpack (DECISIONS §11)                         |
 | React          | 19.3.0                                                                            |
 | TypeScript     | 6.0.3, estricto                                                                   |
 | Tailwind CSS   | 4.3.3                                                                             |

@@ -7,7 +7,7 @@ import {
   ADMIN_HOME,
   ADMIN_LOGIN,
   requireMfaStep,
-  requireStaffSessionAnyLevel,
+  requireStaffPasswordStep,
 } from './session';
 
 type Supabase = NonNullable<
@@ -123,7 +123,7 @@ const newPassword = z
   .refine((value) => value.password === value.confirmation);
 
 export async function setPassword(formData: FormData) {
-  const { supabase } = await requireStaffSessionAnyLevel();
+  const { supabase } = await requireStaffPasswordStep();
   const parsed = newPassword.safeParse({
     password: formData.get('password'),
     confirmation: formData.get('confirmation'),

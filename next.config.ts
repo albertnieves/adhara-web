@@ -32,6 +32,17 @@ const config: NextConfig = {
             value: 'camera=(), microphone=(), geolocation=()',
           },
           { key: 'X-Robots-Tag', value: 'noindex, nofollow' },
+          // HSTS explícito (Vercel ya lo pone en su dominio) y una CSP mínima
+          // que no obliga a renderizar cada página: sin marcos, sin plugins y
+          // sin <base> ajena (DECISIONS §162).
+          {
+            key: 'Strict-Transport-Security',
+            value: 'max-age=63072000; includeSubDomains',
+          },
+          {
+            key: 'Content-Security-Policy',
+            value: "frame-ancestors 'none'; object-src 'none'; base-uri 'self'",
+          },
         ],
       },
       {

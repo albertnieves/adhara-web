@@ -118,8 +118,8 @@ select throws_ok(
   $$select * from public.admin_report_purchases(now() - interval '1 day', now())$$,
   '42501', 'forbidden', 'el encargado no ve compras por proveedor');
 
--- Cuadre del periodo
-select pg_temp.act_as('00000000-0000-4000-8000-000000000032', 'aal1');
+-- Cuadre del periodo (con MFA, como toda lectura del personal, §159)
+select pg_temp.act_as('00000000-0000-4000-8000-000000000032', 'aal2');
 select is(
   pg_temp.october('00000000-0000-4000-8000-0000000003c1')::text,
   '(7,0,2,0,1,1,0,5)',
@@ -152,13 +152,12 @@ select throws_ok(
   $$select * from public.admin_report_inventory_period(pg_temp.location_id(), now(), now() - interval '1 day')$$,
   '22023', 'invalid_period', 'un periodo al revés no es válido');
 
--- Costes
-select is(
-  (select row(r.opening_cost_net_cents, r.closing_cost_net_cents)::text
-   from public.admin_report_inventory_period(pg_temp.location_id(),
-     '2026-10-01 00:00+02', '2026-11-01 00:00+01') r
-   where r.variant_id = '00000000-0000-4000-8000-0000000003c1'),
-  '(,)', 'sin MFA el informe no lleva costes');
+-- Costes. Sin MFA no hay informe (antes salía sin costes; §159).
+select pg_temp.act_as('00000000-0000-4000-8000-000000000032', 'aal1');
+select throws_ok(
+  $$select * from public.admin_report_inventory_period(pg_temp.location_id(),
+     '2026-10-01 00:00+02', '2026-11-01 00:00+01')$$,
+  '42501', 'forbidden', 'sin MFA no hay informe, ni con costes ni sin ellos');
 select pg_temp.act_as('00000000-0000-4000-8000-000000000032', 'aal2');
 select is(
   (select row(r.opening_cost_net_cents, r.opening_cost_is_later,

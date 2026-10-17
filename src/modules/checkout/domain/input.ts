@@ -26,6 +26,7 @@ export const CHECKOUT_ERRORS = [
   'unavailable',
   'discount',
   'disabled',
+  'busy',
   'generic',
 ] as const;
 export type CheckoutError = (typeof CHECKOUT_ERRORS)[number];

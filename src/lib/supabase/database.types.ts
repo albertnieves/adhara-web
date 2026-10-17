@@ -959,6 +959,32 @@ export type Database = {
           },
         ];
       };
+      product_sources: {
+        Row: {
+          product_id: string;
+          source_ref: string;
+          updated_at: string;
+        };
+        Insert: {
+          product_id: string;
+          source_ref: string;
+          updated_at?: string;
+        };
+        Update: {
+          product_id?: string;
+          source_ref?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'product_sources_product_id_fkey';
+            columns: ['product_id'];
+            isOneToOne: true;
+            referencedRelation: 'products';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       product_translations: {
         Row: {
           description: string | null;
@@ -1056,7 +1082,6 @@ export type Database = {
           position: number;
           published_at: string | null;
           slug: string;
-          source_ref: string | null;
           status: string;
           unboxing_scene: string | null;
           updated_at: string;
@@ -1072,7 +1097,6 @@ export type Database = {
           position?: number;
           published_at?: string | null;
           slug: string;
-          source_ref?: string | null;
           status?: string;
           unboxing_scene?: string | null;
           updated_at?: string;
@@ -1088,7 +1112,6 @@ export type Database = {
           position?: number;
           published_at?: string | null;
           slug?: string;
-          source_ref?: string | null;
           status?: string;
           unboxing_scene?: string | null;
           updated_at?: string;
@@ -2227,6 +2250,15 @@ export type Database = {
       web_order_new_attempt: {
         Args: { p_order_id: string; p_provider: string };
         Returns: Json;
+      };
+      web_order_rate_limit: {
+        Args: {
+          p_bucket: string;
+          p_client_key: string;
+          p_limit: number;
+          p_window_seconds: number;
+        };
+        Returns: boolean;
       };
       web_order_record_payment: {
         Args: {

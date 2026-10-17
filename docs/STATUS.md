@@ -1,8 +1,16 @@
 # Estado real — 17/10/2026
 
-## En esta rama: páginas de casa (15/10)
+## En esta rama: revisión de seguridad antes de cobrar (17/10)
 
-`claude/kind-bardeen-hkgu3e`, sobre `main` ab70b29. Primera parte de «Marcas y colecciones» (H4); decisión §148.
+`claude/kind-bardeen-hkgu3e`, sobre `main` 93f45f3. A petición del usuario, mientras llegan los datos del TPV. Informe en [SECURITY_REVIEW_2026-10.md](SECURITY_REVIEW_2026-10.md); decisiones §158–162.
+
+- **Arreglado:** la procedencia de los perfumes (nombraba al proveedor) deja la tabla pública y pasa a `product_sources`, solo para el personal; MFA en todos los permisos del personal, también los de lectura; freno por cliente al crear pedidos, aplicar códigos y volver a pagar, y caducidad de reservas hasta vaciar la cola; el entorno de pruebas del TPV no se acepta en producción; rol del personal solo para cuentas confirmadas; la contraseña del personal comprueba el segundo factor en la acción; HSTS y CSP mínima; Next.js 16.3.8 y `source-map-js` 1.2.2 (`pnpm audit --prod` sin avisos).
+- **Base:** migración `20261017120000_security_review.sql`, **sin aplicar en `adhara-dev`**. Va después de `20261016120000_customer_accounts.sql` (PR #37), que tampoco lo está: aplicarlas en orden justo al fusionar (entre medias, la ficha del perfume en el panel no carga).
+- **Pendiente antes de vender:** probar el TPV en una Preview, límite del Firewall para los `POST` con `Next-Action`, decisiones sobre las reservas (unidades por pedido, últimas unidades de la tienda, duración), cancelar a mano un pedido sin pagar y los detalles de las devoluciones; antes de la cuenta de cliente, comprobar «Confirm email» y el inicio de sesión forzado en `/auth/confirm` (lista completa en el informe).
+
+## Páginas de casa (PR #40, fusionada el 17/10)
+
+Primera parte de «Marcas y colecciones» (H4); decisión §148.
 
 - **`/es/casas`, `/ca/cases` y `/en/houses`:** índice con las casas que tienen algún perfume publicado, su número de perfumes y, desde 768 px, hasta tres fotos de muestra.
 - **Página de cada casa** (`/es/casas/lattafa`…) con sus perfumes en el orden de la colección; 404 si la casa no existe o no tiene publicados. En la vista previa del personal salen también los borradores.

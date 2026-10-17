@@ -53,7 +53,11 @@ describe('matriz de permisos del personal', () => {
     expect(
       isAllowed({ role: 'store_admin', aal: 'aal2' }, 'pricing.view_cost'),
     ).toBe(true);
+    // También la lectura (§159): con solo la contraseña, nada.
     expect(isAllowed({ role: 'viewer', aal: 'aal1' }, 'orders.view')).toBe(
+      false,
+    );
+    expect(isAllowed({ role: 'viewer', aal: 'aal2' }, 'orders.view')).toBe(
       true,
     );
   });

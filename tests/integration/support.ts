@@ -136,9 +136,12 @@ export async function sellableProduct(units: number): Promise<TestProduct> {
        insert into public.brands (slug, name)
        values ('marca-pedidos-' || :'id', 'Marca pedidos ' || :'id') returning id
      ), p as (
-       insert into public.products (brand_id, slug, name, source_ref)
-       select b.id, :'slug', :'name', 'tests/integration/support.ts'
+       insert into public.products (brand_id, slug, name)
+       select b.id, :'slug', :'name'
        from b returning id
+     ), s as (
+       insert into public.product_sources (product_id, source_ref)
+       select p.id, 'tests/integration/support.ts' from p
      )
      insert into public.product_variants (product_id, sku, size_ml, retail_price_cents)
      select p.id, 'PED-' || :'id', 100, 4990 from p;

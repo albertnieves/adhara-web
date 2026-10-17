@@ -32,6 +32,8 @@ const MESSAGES: Record<string, string> = {
   unknown_location: 'La ubicación no existe o está inactiva.',
   unknown_user:
     'No hay ninguna cuenta con ese email. Créala antes en Supabase (Authentication → Users).',
+  unconfirmed_user:
+    'Hay una cuenta con ese email sin confirmar, abierta desde la tienda. Por seguridad no recibe el rol: bórrala en Supabase (Authentication → Users) y envía la invitación.',
   cannot_change_self: 'No puedes cambiar tu propio rol ni desactivarte.',
   invalid_role: 'Rol no válido.',
 };

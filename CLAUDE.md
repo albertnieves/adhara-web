@@ -4,7 +4,7 @@ Ecommerce de perfumería árabe con tienda en es/ca/en y panel de administració
 
 ## Stack (versiones exactas en package.json)
 
-Node 24.16.0 (`.nvmrc`), pnpm 11.19.0, Next.js 16.3.6 (App Router, webpack), React 19.3.0, TypeScript 6.0.3 estricto, Tailwind 4.3.3, next-intl 4.14.7, Supabase (supabase-js 2.117.2, ssr 0.12.7, CLI 2.118.0, Postgres 17), zod 4.6.5, three 0.186.1 con React Three Fiber, motion 13.4.4, `@anthropic-ai/sdk` 0.130.0, Vitest 5.0.2 y Playwright 1.63.0. Versiones exactas y lockfile; no se instalan librerías por anticipación (pagos y email llegan en su fase).
+Node 24.16.0 (`.nvmrc`), pnpm 11.19.0, Next.js 16.3.8 (App Router, webpack), React 19.3.0, TypeScript 6.0.3 estricto, Tailwind 4.3.3, next-intl 4.14.7, Supabase (supabase-js 2.117.2, ssr 0.12.7, CLI 2.118.0, Postgres 17), zod 4.6.5, three 0.186.1 con React Three Fiber, motion 13.4.4, `@anthropic-ai/sdk` 0.130.0, Vitest 5.0.2 y Playwright 1.63.0. Versiones exactas y lockfile; no se instalan librerías por anticipación (pagos y email llegan en su fase).
 
 ## Arquitectura
 

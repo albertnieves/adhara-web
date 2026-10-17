@@ -19,12 +19,27 @@ export async function GET(request: Request) {
       { ok: false, message: 'Supabase no configurado' },
       { status: 503 },
     );
-  const { data, error } = await supabase.rpc('web_order_release_expired', {
-    p_limit: 200,
-  });
-  if (error) {
-    console.error('[pedidos] caducidad de reservas', error.code, error.message);
-    return Response.json({ ok: false }, { status: 500 });
+  // Tandas de 200 hasta vaciar la cola (con un tope): si alguien deja muchos
+  // pedidos sin pagar, sus reservas no se quedan esperando a la siguiente
+  // pasada (DECISIONS §160).
+  let released = 0;
+  for (let batch = 0; batch < MAX_BATCHES; batch += 1) {
+    const { data, error } = await supabase.rpc('web_order_release_expired', {
+      p_limit: BATCH,
+    });
+    if (error) {
+      console.error(
+        '[pedidos] caducidad de reservas',
+        error.code,
+        error.message,
+      );
+      return Response.json({ ok: false, released }, { status: 500 });
+    }
+    released += data ?? 0;
+    if ((data ?? 0) < BATCH) break;
   }
-  return Response.json({ ok: true, released: data });
+  return Response.json({ ok: true, released });
 }
+
+const BATCH = 200;
+const MAX_BATCHES = 25;

@@ -300,6 +300,7 @@
         "minimumAmount": "Este código es para compras de {amount} o más en artículos.",
         "notApplicable": "Este código no se aplica a los perfumes rebajados de tu cesta.",
         "used": "Ya has usado este código con este email.",
+        "busy": "Demasiados intentos seguidos. Espera unos minutos y vuelve a probar el código.",
         "generic": "No hemos podido comprobar el código. Inténtalo de nuevo en unos minutos."
       }
     },
@@ -337,6 +338,7 @@
       "unavailable": "Un perfume de tu cesta ya no está a la venta. Revisa la cesta.",
       "discount": "El código de descuento ya no vale para este pedido. Revísalo en el resumen.",
       "disabled": "La compra online aún no está disponible.",
+      "busy": "Demasiados intentos seguidos desde esta conexión. Espera unos minutos y vuelve a probar.",
       "generic": "No hemos podido registrar el pedido. Inténtalo de nuevo en unos minutos.",
       "review": "Revisa los datos marcados."
     },
