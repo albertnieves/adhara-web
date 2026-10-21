@@ -70,7 +70,7 @@ flowchart LR
 | `checkout`   | Cesta en cookie, zonas y tarifas de envío, checkout y caducidad (P03)                     |
 | `payments`   | Redsys por redirección: firma, formulario de pago, notificación y devoluciones (P04, P06) |
 | `mail`       | Correos de los pedidos: plantillas es/ca/en, cola y envío con Resend (P06)                |
-| `messaging`  | Reglas puras preparadas para los mensajes (fase A6), sin pantallas                        |
+| `messaging`  | Bandeja de mensajes (A6.1): formulario de contacto, panel, respuestas y correo entrante   |
 | `account`    | Cuenta de cliente (F14): acceso con email o Google, pedidos, datos y baja; apagada        |
 
 Reglas de importación: los componentes de cliente solo importan `index.ts`; los secretos y el acceso privilegiado solo existen en módulos `server-only`; `@typescript-eslint/no-explicit-any` y `consistent-type-imports` son errores.
@@ -91,10 +91,11 @@ Reglas de importación: los componentes de cliente solo importan `index.ts`; los
 | `createAuthAdminClient`      | Secreta                        | Invitaciones de Auth, tras `staff.manage`; borrar la cuenta de cliente propia (§145) |
 | `createJobClient`            | Secreta                        | Informe diario y copia diaria (§128)                                                 |
 | `createOrdersClient`         | Secreta                        | Solo funciones `web_order_*` (§131, §136)                                            |
+| `createMessagesClient`       | Secreta                        | Solo funciones de mensajes `web_*` (§154)                                            |
 
 ## Tareas programadas y asistente
 
-Vercel Cron (`vercel.json`) llama con `CRON_SECRET` a `/api/cron/informe-diario` (05:15 UTC; guarda el informe del día anterior y su resumen), `/api/cron/copia-diaria` (03:30 UTC) y, cada 5 minutos (plan Pro), `/api/cron/caducar-reservas`, que libera las reservas de pedidos web sin pagar (`web_order_release_expired`, DECISIONS §136), y `/api/cron/enviar-correos`, que envía los correos de los pedidos que sigan en la cola (§138). El chat del panel (`/admin/asistente/consulta`) usa el _tool runner_ del SDK de Anthropic con herramientas zod de solo lectura que leen con la sesión de quien pregunta (DECISIONS §77–81).
+Vercel Cron (`vercel.json`) llama con `CRON_SECRET` a `/api/cron/informe-diario` (05:15 UTC; guarda el informe del día anterior y su resumen), `/api/cron/copia-diaria` (03:30 UTC) y, cada 5 minutos (plan Pro), `/api/cron/caducar-reservas`, que libera las reservas de pedidos web sin pagar (`web_order_release_expired`, DECISIONS §136), y `/api/cron/enviar-correos`, que envía los correos de los pedidos (§138) y las respuestas de la bandeja de mensajes (§155) que sigan en la cola. El correo entrante llega por el webhook firmado de Resend Inbound (`/api/correo/entrante`, §155). El chat del panel (`/admin/asistente/consulta`) usa el _tool runner_ del SDK de Anthropic con herramientas zod de solo lectura que leen con la sesión de quien pregunta (DECISIONS §77–81).
 
 ## Despliegue y entornos
 

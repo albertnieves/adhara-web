@@ -1,7 +1,9 @@
 import 'server-only';
 import type { RenderedEmail } from '../domain/order-email';
 import type { MailConfig } from './config';
+import { resendApiBase } from './config';
 
+/** La de Resend; en las pruebas de extremo a extremo, la simulada (resendApiBase). */
 export const RESEND_EMAILS_URL = 'https://api.resend.com/emails';
 
 export type SendResult =
@@ -15,13 +17,16 @@ export type SendResult =
  */
 export async function sendWithResend(
   config: MailConfig,
-  email: RenderedEmail & { replyTo: string },
+  email: RenderedEmail & {
+    replyTo: string;
+    headers?: Readonly<Record<string, string>>;
+  },
   idempotencyKey: string,
   fetcher: typeof fetch = fetch,
 ): Promise<SendResult> {
   let response: Response;
   try {
-    response = await fetcher(RESEND_EMAILS_URL, {
+    response = await fetcher(`${resendApiBase()}/emails`, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${config.apiKey}`,
@@ -39,6 +44,8 @@ export async function sendWithResend(
           filename: file.filename,
           content: Buffer.from(file.content, 'utf8').toString('base64'),
         })),
+        ...(email.headers &&
+          Object.keys(email.headers).length > 0 && { headers: email.headers }),
       }),
       signal: AbortSignal.timeout(15_000),
     });
