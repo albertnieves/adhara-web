@@ -33,9 +33,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     for (const locale of published)
       entries.push({ url: languages[locale]!, alternates: { languages } });
   }
-  for (const href of ['/', '/catalogo', '/catalogo-olfativo'] as const)
+  for (const href of [
+    '/',
+    '/catalogo',
+    '/catalogo-olfativo',
+    '/casas',
+  ] as const)
     add(href, routing.locales);
   const products = await listSitemapProducts();
+  // Una página por casa con algún perfume publicado, en los tres idiomas.
+  const brands = new Set(products.map((product) => product.brand.slug));
+  for (const brand of [...brands].sort())
+    add('/casas/[slug]', routing.locales, brand);
   for (const product of products) {
     const locales = [
       'es',

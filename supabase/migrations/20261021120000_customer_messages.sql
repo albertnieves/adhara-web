@@ -10,7 +10,7 @@
 --
 -- Estados y transiciones: mismo cuadro que src/modules/messaging/domain/
 -- conversations.ts; tests/unit/messaging-sql.test.ts lo vigila y
--- supabase/tests/database/20_customer_messages.test.sql prueba los casos.
+-- supabase/tests/database/21_customer_messages.test.sql prueba los casos.
 
 -- ---------------------------------------------------------------------------
 -- Tablas
@@ -883,9 +883,8 @@ $$;
 
 -- ---------------------------------------------------------------------------
 -- Copia diaria: las conversaciones entran en la lista blanca (tras los
--- pedidos, que enlazan). discount_codes y customer_accounts son de las PR #41
--- y #37: to_regclass las salta mientras no existan, así que da igual el orden
--- en que se apliquen (§157).
+-- pedidos, que enlazan). Parte de la lista de 20261017120000_security_review,
+-- con product_sources (§157, §158).
 -- ---------------------------------------------------------------------------
 
 create or replace function private.control_export_tables()
@@ -905,6 +904,7 @@ as $f$
     'public.discount_codes',
     'public.brands',
     'public.products',
+    'public.product_sources',
     'public.product_translations',
     'public.product_variants',
     'public.product_media',

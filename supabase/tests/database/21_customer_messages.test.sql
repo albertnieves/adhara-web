@@ -7,7 +7,7 @@ begin;
 create extension if not exists pgtap with schema extensions;
 set search_path = public, extensions;
 
-select plan(87);
+select plan(89);
 
 insert into auth.users (id, email) values
   ('00000000-0000-4000-8000-000000000201', 'tienda@test.invalid'),
@@ -234,17 +234,21 @@ delete from public.conversations where request_id::text like '00000000-0000-4000
 -- ---------------------------------------------------------------------------
 
 set local role authenticated;
-select pg_temp.act_as('00000000-0000-4000-8000-000000000202', 'aal1');
+-- Sin MFA, nada: todo permiso del personal la exige, también leer (§159).
+select pg_temp.act_as('00000000-0000-4000-8000-000000000201', 'aal1');
+select is((select count(*)::int from public.conversations), 0,
+  'sin MFA, el personal no ve las conversaciones');
+select throws_ok(
+  $$select public.admin_reply_conversation(pg_temp.conv((select number from c1)), 'Hola', 1)$$,
+  '42501', null, 'responder exige MFA');
+select pg_temp.act_as('00000000-0000-4000-8000-000000000202', 'aal2');
 select is((select count(*)::int from public.conversations), 2, 'el encargado ve las conversaciones');
 select is((select count(*)::int from public.conversation_messages), 2, 'y sus mensajes');
 select is((select count(*)::int from public.conversation_contacts), 0,
   'pero no el nombre ni el email del cliente');
-select pg_temp.act_as('00000000-0000-4000-8000-000000000201', 'aal1');
+select pg_temp.act_as('00000000-0000-4000-8000-000000000201', 'aal2');
 select is((select count(*)::int from public.conversation_contacts), 2,
   'la tienda (con customers.view) ve el contacto');
-select throws_ok(
-  $$select public.admin_reply_conversation(pg_temp.conv((select number from c1)), 'Hola', 1)$$,
-  '42501', null, 'responder exige MFA');
 select pg_temp.act_as('00000000-0000-4000-8000-000000000202', 'aal2');
 select throws_ok(
   $$select public.admin_reply_conversation(pg_temp.conv((select number from c1)), 'Hola', 1)$$,
@@ -491,8 +495,9 @@ select throws_ok(
   $$select public.admin_save_message_template((select id from tpl), 'Envío', 'es', 'X', true, 1)$$,
   '55000', 'stale_revision', 'y no sobre una versión vieja');
 select pg_temp.act_as('00000000-0000-4000-8000-000000000202', 'aal1');
-select is((select count(*)::int from public.message_templates), 2, 'el encargado lee las plantillas');
+select is((select count(*)::int from public.message_templates), 0, 'sin MFA, ni las plantillas');
 select pg_temp.act_as('00000000-0000-4000-8000-000000000202', 'aal2');
+select is((select count(*)::int from public.message_templates), 2, 'el encargado lee las plantillas');
 select throws_ok(
   $$select public.admin_save_message_template(null, 'Mía', 'es', 'X', true)$$,
   '42501', null, 'pero no las cambia');

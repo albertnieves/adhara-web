@@ -24,6 +24,9 @@ export type OrderStatusView = {
   fulfillment: 'click_collect' | 'shipping';
   locale: 'es' | 'ca' | 'en';
   itemsCents: number;
+  /** Descuento del código del pedido; 0 sin código. */
+  discountCents: number;
+  discountCode: string | null;
   shippingCents: number;
   totalCents: number;
   reservedUntil: string;

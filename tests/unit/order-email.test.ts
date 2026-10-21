@@ -26,6 +26,8 @@ const job: OrderEmailJob = {
   locale: 'es',
   fulfillment: 'click_collect',
   items_cents: 9980,
+  discount_cents: 0,
+  discount_code: null,
   shipping_cents: 0,
   total_cents: 9980,
   tracking_reference: null,
@@ -101,6 +103,21 @@ describe('correo de confirmación del pago', () => {
     expect(email.html).not.toContain('<script>');
     expect(email.html).toContain('Ana &lt;script&gt;alert(1)&lt;/script&gt;');
     expect(email.html).toContain('lang="es"');
+  });
+
+  it('con código de descuento, la línea del descuento y el total cobrado', () => {
+    const text = renderOrderEmail(
+      {
+        ...job,
+        discount_cents: 998,
+        discount_code: 'CLUB10',
+        total_cents: 8982,
+      },
+      context,
+    ).text;
+    expect(text).toMatch(/Descuento \(CLUB10\): −9,98\s€/);
+    expect(text).toMatch(/Total \(IVA incluido\): 89,82\s€/);
+    expect(email.text).not.toContain('Descuento');
   });
 
   it('sin datos del vendedor, no inventa la línea', () => {

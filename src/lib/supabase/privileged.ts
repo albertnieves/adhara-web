@@ -3,7 +3,11 @@ import { createClient } from '@supabase/supabase-js';
 import { getSupabaseConfig } from './config';
 import type { Database } from './database.types';
 
-/** Solo Auth: después de requirePermission('staff.manage'). Nunca usar para CRUD ordinario. */
+/**
+ * Solo Auth: invitaciones después de requirePermission('staff.manage') y, con
+ * la cuenta de cliente, borrar la cuenta de la sesión validada que no es del
+ * personal (DECISIONS §145). Nunca usar para CRUD ordinario.
+ */
 export function createAuthAdminClient() {
   const config = getSupabaseConfig();
   const key = process.env.SUPABASE_SECRET_KEY;

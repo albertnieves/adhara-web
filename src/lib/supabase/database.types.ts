@@ -246,6 +246,48 @@ export type Database = {
           },
         ];
       };
+      customer_accounts: {
+        Row: {
+          address_line1: string | null;
+          address_line2: string | null;
+          city: string | null;
+          created_at: string;
+          full_name: string | null;
+          locale: string;
+          phone: string | null;
+          postal_code: string | null;
+          province: string | null;
+          updated_at: string;
+          user_id: string;
+        };
+        Insert: {
+          address_line1?: string | null;
+          address_line2?: string | null;
+          city?: string | null;
+          created_at?: string;
+          full_name?: string | null;
+          locale?: string;
+          phone?: string | null;
+          postal_code?: string | null;
+          province?: string | null;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          address_line1?: string | null;
+          address_line2?: string | null;
+          city?: string | null;
+          created_at?: string;
+          full_name?: string | null;
+          locale?: string;
+          phone?: string | null;
+          postal_code?: string | null;
+          province?: string | null;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
       daily_reports: {
         Row: {
           facts: NonNullable<Json>;
@@ -289,6 +331,66 @@ export type Database = {
             referencedColumns: ['id'];
           },
         ];
+      };
+      discount_codes: {
+        Row: {
+          active: boolean;
+          amount_cents: number | null;
+          code: string;
+          created_at: string;
+          created_by: string | null;
+          description: string | null;
+          ends_at: string | null;
+          exclude_sale_items: boolean;
+          id: string;
+          kind: string;
+          max_uses: number | null;
+          min_items_cents: number | null;
+          once_per_email: boolean;
+          percent_bp: number | null;
+          starts_at: string | null;
+          updated_at: string;
+          updated_by: string | null;
+        };
+        Insert: {
+          active?: boolean;
+          amount_cents?: number | null;
+          code: string;
+          created_at?: string;
+          created_by?: string | null;
+          description?: string | null;
+          ends_at?: string | null;
+          exclude_sale_items?: boolean;
+          id?: string;
+          kind: string;
+          max_uses?: number | null;
+          min_items_cents?: number | null;
+          once_per_email?: boolean;
+          percent_bp?: number | null;
+          starts_at?: string | null;
+          updated_at?: string;
+          updated_by?: string | null;
+        };
+        Update: {
+          active?: boolean;
+          amount_cents?: number | null;
+          code?: string;
+          created_at?: string;
+          created_by?: string | null;
+          description?: string | null;
+          ends_at?: string | null;
+          exclude_sale_items?: boolean;
+          id?: string;
+          kind?: string;
+          max_uses?: number | null;
+          min_items_cents?: number | null;
+          once_per_email?: boolean;
+          percent_bp?: number | null;
+          starts_at?: string | null;
+          updated_at?: string;
+          updated_by?: string | null;
+        };
+        Relationships: [];
       };
       inventory_levels: {
         Row: {
@@ -869,6 +971,10 @@ export type Database = {
           channel: string;
           created_at: string;
           currency: string;
+          customer_id: string | null;
+          discount_cents: number;
+          discount_code: string | null;
+          discount_code_id: string | null;
           fulfillment: string;
           id: string;
           items_cents: number;
@@ -891,6 +997,10 @@ export type Database = {
           channel?: string;
           created_at?: string;
           currency?: string;
+          customer_id?: string | null;
+          discount_cents?: number;
+          discount_code?: string | null;
+          discount_code_id?: string | null;
           fulfillment: string;
           id?: string;
           items_cents: number;
@@ -913,6 +1023,10 @@ export type Database = {
           channel?: string;
           created_at?: string;
           currency?: string;
+          customer_id?: string | null;
+          discount_cents?: number;
+          discount_code?: string | null;
+          discount_code_id?: string | null;
           fulfillment?: string;
           id?: string;
           items_cents?: number;
@@ -932,6 +1046,13 @@ export type Database = {
           updated_at?: string;
         };
         Relationships: [
+          {
+            foreignKeyName: 'orders_discount_code_id_fkey';
+            columns: ['discount_code_id'];
+            isOneToOne: false;
+            referencedRelation: 'discount_codes';
+            referencedColumns: ['id'];
+          },
           {
             foreignKeyName: 'orders_location_id_fkey';
             columns: ['location_id'];
@@ -1053,6 +1174,32 @@ export type Database = {
           },
         ];
       };
+      product_sources: {
+        Row: {
+          product_id: string;
+          source_ref: string;
+          updated_at: string;
+        };
+        Insert: {
+          product_id: string;
+          source_ref: string;
+          updated_at?: string;
+        };
+        Update: {
+          product_id?: string;
+          source_ref?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'product_sources_product_id_fkey';
+            columns: ['product_id'];
+            isOneToOne: true;
+            referencedRelation: 'products';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       product_translations: {
         Row: {
           description: string | null;
@@ -1150,7 +1297,6 @@ export type Database = {
           position: number;
           published_at: string | null;
           slug: string;
-          source_ref: string | null;
           status: string;
           unboxing_scene: string | null;
           updated_at: string;
@@ -1166,7 +1312,6 @@ export type Database = {
           position?: number;
           published_at?: string | null;
           slug: string;
-          source_ref?: string | null;
           status?: string;
           unboxing_scene?: string | null;
           updated_at?: string;
@@ -1182,7 +1327,6 @@ export type Database = {
           position?: number;
           published_at?: string | null;
           slug?: string;
-          source_ref?: string | null;
           status?: string;
           unboxing_scene?: string | null;
           updated_at?: string;
@@ -1779,6 +1923,28 @@ export type Database = {
           isSetofReturn: false;
         };
       };
+      admin_list_discount_codes: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          active: boolean;
+          amount_cents: number;
+          code: string;
+          created_at: string;
+          description: string;
+          ends_at: string;
+          exclude_sale_items: boolean;
+          id: string;
+          kind: string;
+          max_uses: number;
+          min_items_cents: number;
+          once_per_email: boolean;
+          paid_discount_cents: number;
+          paid_uses: number;
+          percent_bp: number;
+          starts_at: string;
+          uses: number;
+        }[];
+      };
       admin_list_purchase_orders: {
         Args: { p_order_id?: string; p_status?: string };
         Returns: {
@@ -2102,6 +2268,48 @@ export type Database = {
         };
         Returns: number;
       };
+      admin_save_discount_code: {
+        Args: {
+          p_active: boolean;
+          p_amount_cents: number;
+          p_code: string;
+          p_description: string;
+          p_ends_at: string;
+          p_exclude_sale_items: boolean;
+          p_id: string;
+          p_kind: string;
+          p_max_uses: number;
+          p_min_items_cents: number;
+          p_once_per_email: boolean;
+          p_percent_bp: number;
+          p_starts_at: string;
+        };
+        Returns: {
+          active: boolean;
+          amount_cents: number | null;
+          code: string;
+          created_at: string;
+          created_by: string | null;
+          description: string | null;
+          ends_at: string | null;
+          exclude_sale_items: boolean;
+          id: string;
+          kind: string;
+          max_uses: number | null;
+          min_items_cents: number | null;
+          once_per_email: boolean;
+          percent_bp: number | null;
+          starts_at: string | null;
+          updated_at: string;
+          updated_by: string | null;
+        };
+        SetofOptions: {
+          from: '*';
+          to: 'discount_codes';
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
       admin_save_message_template: {
         Args: {
           p_active: boolean;
@@ -2274,6 +2482,10 @@ export type Database = {
           channel: string;
           created_at: string;
           currency: string;
+          customer_id: string | null;
+          discount_cents: number;
+          discount_code: string | null;
+          discount_code_id: string | null;
           fulfillment: string;
           id: string;
           items_cents: number;
@@ -2331,6 +2543,27 @@ export type Database = {
         }[];
       };
       control_access: { Args: Record<PropertyKey, never>; Returns: boolean };
+      customer_order: { Args: { p_number: number }; Returns: Json };
+      customer_orders: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          created_at: string;
+          fulfillment: string;
+          number: number;
+          status: string;
+          total_cents: number;
+          units: number;
+        }[];
+      };
+      customer_save_account: {
+        Args: {
+          p_address?: Json;
+          p_full_name: string;
+          p_locale: string;
+          p_phone: string;
+        };
+        Returns: undefined;
+      };
       newsletter_subscribe: {
         Args: {
           p_consent_version: string;
@@ -2401,6 +2634,8 @@ export type Database = {
       web_order_create: {
         Args: {
           p_contact: Json;
+          p_customer_id?: string;
+          p_discount_code?: string;
           p_fulfillment: string;
           p_hold_minutes?: number;
           p_items: Json;
@@ -2409,6 +2644,10 @@ export type Database = {
           p_provider: string;
           p_request_id: string;
         };
+        Returns: Json;
+      };
+      web_order_discount_quote: {
+        Args: { p_code: string; p_items: Json };
         Returns: Json;
       };
       web_order_email_result: {
@@ -2424,6 +2663,15 @@ export type Database = {
       web_order_new_attempt: {
         Args: { p_order_id: string; p_provider: string };
         Returns: Json;
+      };
+      web_order_rate_limit: {
+        Args: {
+          p_bucket: string;
+          p_client_key: string;
+          p_limit: number;
+          p_window_seconds: number;
+        };
+        Returns: boolean;
       };
       web_order_record_payment: {
         Args: {

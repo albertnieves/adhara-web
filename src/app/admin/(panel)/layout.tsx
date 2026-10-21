@@ -73,6 +73,12 @@ const SECTIONS: (NavItem & { permission?: Permission })[] = [
     group: 'Web',
   },
   {
+    href: '/admin/descuentos',
+    label: 'Códigos de descuento',
+    permission: 'promotions.manage',
+    group: 'Web',
+  },
+  {
     href: '/admin/asistente',
     label: 'Asistente',
     permission: 'agent.use',

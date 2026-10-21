@@ -30,6 +30,18 @@ const CHECKOUT_OFF: Route[] = [
   ['/es/pedido', 'pedido-apagada', 404],
 ];
 
+// Cuenta de cliente: solo existe con CUSTOMER_ACCOUNTS=1 (e2e.yml). Las
+// páginas con sesión se auditan en tests/integration/account.spec.ts.
+const ACCOUNT_ON: Route[] = [
+  ['/es/cuenta/acceso', 'cuenta-acceso-es'],
+  ['/ca/compte/registre', 'cuenta-registro-ca'],
+  ['/en/account/forgot-password', 'cuenta-recuperar-en'],
+  ['/es/cuenta/nueva-contrasena', 'cuenta-nueva-contrasena-es'],
+];
+const ACCOUNT_OFF: Route[] = [
+  ['/es/cuenta/acceso', 'cuenta-apagada', 404],
+  ['/en/account', 'cuenta-en-apagada', 404],
+];
 // Contacto (A6.1): solo existe con CONTACT_FORM=1 (e2e.yml).
 const CONTACT_ON: Route[] = [
   ['/es/contacto', 'contacto-es'],
@@ -49,6 +61,10 @@ const ROUTES: Route[] = [
   ['/ca/cataleg-olfactiu', 'catalogo-olfativo-ca'],
   ['/en/scent-catalogue', 'catalogo-olfativo-en'],
   ['/es/catalogo-olfativo/no-existe', 'catalogo-olfativo-404', 404],
+  ['/es/casas', 'casas-es'],
+  ['/ca/cases', 'casas-ca'],
+  ['/en/houses', 'casas-en'],
+  ['/es/casas/no-existe', 'casa-404', 404],
   ['/es/perfume/no-existe', 'ficha-404', 404],
   ['/es/aviso-legal', 'aviso-legal-es'],
   ['/es/condiciones-de-venta', 'condiciones-de-venta-es'],
@@ -58,6 +74,7 @@ const ROUTES: Route[] = [
   ['/admin/acceso', 'panel-acceso'],
   ['/admin/recuperar', 'panel-recuperar'],
   ...(process.env.WEB_CHECKOUT === '1' ? CHECKOUT_ON : CHECKOUT_OFF),
+  ...(process.env.CUSTOMER_ACCOUNTS === '1' ? ACCOUNT_ON : ACCOUNT_OFF),
   ...(process.env.CONTACT_FORM === '1' ? CONTACT_ON : CONTACT_OFF),
 ];
 
@@ -95,6 +112,11 @@ test('diseño sin solapes ni desbordes en una ficha publicada', async ({
   await check(page, `/ca/perfum/${slug}`, 'ficha-ca');
   await check(page, `/en/fragrance/${slug}`, 'ficha-en');
   await check(page, `/es/catalogo-olfativo/${slug}`, 'ficha-olfativa-es');
+  const product = await (await request.get(`/es/perfume/${slug}`)).text();
+  const brand = product.match(/href="\/es\/casas\/([a-z0-9-]+)"/)?.[1];
+  expect(brand, 'la ficha enlaza su casa').toBeTruthy();
+  await check(page, `/es/casas/${brand}`, 'casa-es');
+  await check(page, `/en/houses/${brand}`, 'casa-en');
 });
 
 test('la auditoría detecta solapes, desbordes, letra y controles pequeños', async ({

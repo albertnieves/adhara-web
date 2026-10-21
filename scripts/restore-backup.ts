@@ -29,6 +29,8 @@ const USER_COLUMNS = [
   'created_by',
   'updated_by',
   'generated_by',
+  'requested_by',
+  'customer_id',
 ];
 const TABLE_KEY = /^(public|internal|private)\.[a-z_][a-z0-9_]*$/;
 

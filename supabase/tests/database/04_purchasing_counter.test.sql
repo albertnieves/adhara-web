@@ -149,7 +149,8 @@ select lives_ok(
   'Proveedor A vuelve a ser el preferente de c1');
 
 -- Vigilante: el encargado lee datos agregados, sin proveedores ni costes
-select pg_temp.act_as('00000000-0000-4000-8000-000000000023', 'aal1');
+-- (con MFA, como todo el personal desde la revisión de seguridad, §159)
+select pg_temp.act_as('00000000-0000-4000-8000-000000000023', 'aal2');
 select is(
   (select row(lead_time_days, pack_size, has_supplier, ledger_on_hand)::text
    from public.admin_stock_watch_facts(pg_temp.location_id())

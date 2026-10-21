@@ -23,7 +23,7 @@ Que una consulta de un cliente (formulario de la web o email) llegue al panel co
 | Panel                 | Web → Mensajes: lista con vistas (por responder, esperando al cliente, asignadas a mí, resueltas, spam, todas) y «fuera de plazo»; ficha con el hilo, respuesta con plantilla, nota interna, estado, asignación, pedido enlazado y borrado. Plantillas. Inicio.                                           |
 | Correo saliente       | La respuesta se encola en la misma transacción y sale con Resend (después de responder y cada 5 minutos con la tarea de correos), con «Responder a» `consulta-<clave>@<subdominio>` y el mensaje del cliente citado.                                                                                      |
 | Correo entrante       | `/api/correo/entrante`: evento `email.received` de Resend con firma Svix comprobada, lectura del correo por su API y alta en la conversación de la clave (o una nueva).                                                                                                                                   |
-| Pruebas               | pgTAP `20_customer_messages`, unitarias (reglas, firma, recorte de citas, plantillas del correo, paridad SQL/TS), E2E del formulario y del panel, webhook firmado con la API de Resend simulada y auditoría de diseño y axe.                                                                              |
+| Pruebas               | pgTAP `21_customer_messages`, unitarias (reglas, firma, recorte de citas, plantillas del correo, paridad SQL/TS), E2E del formulario y del panel, webhook firmado con la API de Resend simulada y auditoría de diseño y axe.                                                                              |
 
 **Fuera:** WhatsApp (A6.2), borradores del asistente (A6.3), adjuntos (se cuentan, no se guardan), acuse automático al cliente, avisos al personal por email y fichas de cliente (A7).
 
@@ -65,7 +65,7 @@ Nadie escribe en las tablas directamente: el servidor (clave privilegiada, solo 
 
 ## Para encenderlo
 
-1. Aplicar la migración `20261016120000_customer_messages.sql` en `adhara-dev`.
+1. Aplicar la migración `20261021120000_customer_messages.sql` en `adhara-dev` (detrás de `20261017120000_security_review`, ya aplicada).
 2. En Resend: verificar el dominio de envío, añadir el subdominio de recepción con su MX en Vercel y crear el webhook `email.received` hacia `https://latelierdudesert.com/api/correo/entrante`.
 3. En Vercel (solo servidor): `INBOUND_EMAIL_DOMAIN`, `RESEND_WEBHOOK_SECRET` y, si no están, `RESEND_API_KEY` y `EMAIL_FROM`.
 4. Revisión de la asesoría del texto informativo del formulario y de la privacidad; después, `CONTACT_FORM=1`.

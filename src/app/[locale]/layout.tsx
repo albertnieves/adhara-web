@@ -3,6 +3,7 @@ import type { ReactNode } from 'react';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, getTranslations } from 'next-intl/server';
 import { draftMode } from 'next/headers';
+import { accountsEnabled } from '@/modules/account/server';
 import { BRAND_NAME } from '@/modules/brand';
 import { checkoutEnabled } from '@/modules/checkout/server';
 import { routing } from '@/modules/i18n';
@@ -59,7 +60,7 @@ export default async function LocaleLayout({
           >
             {t('skip')}
           </a>
-          <Header cart={checkoutEnabled()} />
+          <Header cart={checkoutEnabled()} account={accountsEnabled()} />
           <div id="contenido">{children}</div>
           <NewsletterSection />
           <Footer />

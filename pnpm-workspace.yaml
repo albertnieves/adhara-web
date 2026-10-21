@@ -2,3 +2,7 @@ allowBuilds:
   '@parcel/watcher': true
   '@swc/core': true
   unrs-resolver: true
+# Corrección de GHSA-68fv-2mgg-jv7q (solo en el build, vía next > postcss);
+# quitar cuando next traiga source-map-js >= 1.2.2.
+overrides:
+  source-map-js: 1.2.2

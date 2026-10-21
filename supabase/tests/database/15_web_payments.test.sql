@@ -50,9 +50,9 @@ select is(
   (select array(select jsonb_object_keys(
      public.web_order_status((summary ->> 'order_id')::uuid)) order by 1)
    from pago),
-  array['currency', 'fulfillment', 'items_cents', 'locale', 'number', 'order_id',
-        'paid_at', 'payable', 'reservation', 'reserved_until', 'shipping_cents',
-        'status', 'total_cents'],
+  array['currency', 'discount_cents', 'discount_code', 'fulfillment', 'items_cents',
+        'locale', 'number', 'order_id', 'paid_at', 'payable', 'reservation',
+        'reserved_until', 'shipping_cents', 'status', 'total_cents'],
   'solo estado e importes: sin nombre, email, teléfono ni dirección');
 
 select is(
@@ -61,6 +61,7 @@ select is(
   jsonb_build_object(
     'status', 'pending_payment', 'fulfillment', 'click_collect', 'locale', 'ca',
     'items_cents', 13000, 'shipping_cents', 0, 'total_cents', 13000,
+    'discount_code', null, 'discount_cents', 0,
     'currency', 'EUR', 'reservation', 'active', 'paid_at', null, 'payable', true),
   'recién creado: pendiente, con la reserva y pagable');
 

@@ -15,7 +15,7 @@ import {
 /*
  * Textos del panel para la bandeja de mensajes (español; el panel no se
  * traduce) y vistas de la lista. Los códigos de error repiten los de la
- * migración 20261016120000_customer_messages.
+ * migración 20261021120000_customer_messages.
  */
 
 export const CONVERSATION_STATUS_LABELS: Readonly<

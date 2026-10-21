@@ -15,11 +15,16 @@ jobs:
     # producción siguen apagados hasta conectar el TPV (DECISIONS §136–137).
     # 999008881 es el comercio de pruebas público de Redsys; el banco lo hacen
     # las pruebas (page.route) y la clave se genera en cada ejecución.
-    # Formulario de contacto (A6.1) encendido; en producción, apagado hasta
-    # revisar la privacidad y configurar Resend (DECISIONS §153).
+    # Cuenta de cliente (PLAN_CUENTA_CLIENTE) y formulario de contacto (A6.1)
+    # encendidos; en producción siguen apagados hasta configurar el correo
+    # (Auth, Google y Resend) y revisar la privacidad (DECISIONS §153).
+    # Las pruebas crean muchos pedidos desde la misma IP: el freno de las
+    # acciones públicas se apaga (nunca en producción; DECISIONS §160).
     env:
       WEB_CHECKOUT: '1'
+      CUSTOMER_ACCOUNTS: '1'
       CONTACT_FORM: '1'
+      RATE_LIMITS: 'off'
       REDSYS_MERCHANT_CODE: '999008881'
       REDSYS_TERMINAL: '1'
       REDSYS_ENVIRONMENT: test

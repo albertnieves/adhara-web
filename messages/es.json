@@ -12,7 +12,10 @@
     "skip": "Saltar al contenido",
     "home": "Inicio",
     "scentCatalog": "Catálogo olfativo",
-    "cart": "Cesta"
+    "houses": "Casas",
+    "cart": "Cesta",
+    "account": "Cuenta",
+    "accountLabel": "Tu cuenta"
   },
   "home": {
     "heroEyebrow": "Perfumería árabe · Castelldefels",
@@ -29,6 +32,7 @@
     "experienceBody": "Cada fragancia se presenta como en la tienda: la caja se abre, el frasco se eleva y gira ante ti. Después, es tuyo para mirarlo desde cualquier ángulo.",
     "experienceCta": "Vivirlo con {name}",
     "brandsEyebrow": "Casas",
+    "brandsCta": "Ver todas las casas",
     "storeEyebrow": "La tienda",
     "storeTitle": "Castelldefels",
     "storeBody": "Ven a descubrir las fragancias en persona. La compra online llegará muy pronto."
@@ -53,6 +57,17 @@
     "empty": "La colección se está preparando con datos verificados. Vuelve pronto.",
     "emptyFiltered": "Ningún perfume coincide con tu búsqueda.",
     "clear": "Limpiar filtros"
+  },
+  "houses": {
+    "eyebrow": "Casas",
+    "title": "Las casas",
+    "lead": "Las casas de perfumería de nuestra colección.",
+    "metaDescription": "Las casas de perfumería árabe de la colección de L’Atelier du Désert, en Castelldefels.",
+    "brandEyebrow": "Casa",
+    "brandMetaDescription": "Perfumes de {brand} en L’Atelier du Désert, perfumería árabe en Castelldefels.",
+    "back": "Todas las casas",
+    "viewBrand": "Ver todo de {brand}",
+    "empty": "Las casas aparecerán aquí en cuanto la colección esté publicada."
   },
   "audience": {
     "women": "Mujer",
@@ -244,7 +259,8 @@
     "checkout": "Finalizar compra",
     "blocked": "Revisa la cesta: hay perfumes agotados o que ya no están a la venta.",
     "continue": "Seguir comprando",
-    "maxNote": "Máximo {max} unidades por formato."
+    "maxNote": "Máximo {max} unidades por formato.",
+    "discountNote": "¿Tienes un código de descuento? Lo aplicas al finalizar la compra."
   },
   "checkout": {
     "title": "Finalizar compra",
@@ -268,6 +284,27 @@
     "province": "Provincia (opcional)",
     "zoneUnavailableNote": "Aún no enviamos a esta zona. Puedes elegir la recogida en la tienda.",
     "summary": "Resumen",
+    "discount": {
+      "label": "Código de descuento",
+      "apply": "Aplicar",
+      "applying": "Comprobando…",
+      "applied": "Código {code} aplicado",
+      "remove": "Quitar",
+      "line": "Descuento ({code})",
+      "excludesSale": "No se aplica a los perfumes rebajados.",
+      "errors": {
+        "invalid": "Este código no existe o ya no está activo.",
+        "notStarted": "Este código aún no está activo.",
+        "expired": "Este código ha caducado.",
+        "exhausted": "Este código ya se ha usado todas las veces previstas.",
+        "minimum": "Tu compra no llega al mínimo de este código.",
+        "minimumAmount": "Este código es para compras de {amount} o más en artículos.",
+        "notApplicable": "Este código no se aplica a los perfumes rebajados de tu cesta.",
+        "used": "Ya has usado este código con este email.",
+        "busy": "Demasiados intentos seguidos. Espera unos minutos y vuelve a probar el código.",
+        "generic": "No hemos podido comprobar el código. Inténtalo de nuevo en unos minutos."
+      }
+    },
     "items": "Artículos",
     "shippingCost": "Envío",
     "free": "Gratis",
@@ -300,10 +337,14 @@
       "outOfStockAny": "Ya no quedan unidades suficientes de un perfume. Revisa la cesta.",
       "shippingUnavailable": "Aún no enviamos a esta zona. Puedes elegir la recogida en la tienda.",
       "unavailable": "Un perfume de tu cesta ya no está a la venta. Revisa la cesta.",
+      "discount": "El código de descuento ya no vale para este pedido. Revísalo en el resumen.",
       "disabled": "La compra online aún no está disponible.",
+      "busy": "Demasiados intentos seguidos desde esta conexión. Espera unos minutos y vuelve a probar.",
       "generic": "No hemos podido registrar el pedido. Inténtalo de nuevo en unos minutos.",
       "review": "Revisa los datos marcados."
-    }
+    },
+    "accountSignedIn": "Compras con tu cuenta ({email}). El pedido quedará en «Mis pedidos».",
+    "accountSignIn": "¿Tienes cuenta? <link>Entra</link> para usar tus datos guardados y ver luego el pedido en tu cuenta."
   },
   "order": {
     "title": "Tu pedido",
@@ -353,6 +394,7 @@
     "tracking": "Número de seguimiento: {tracking}.",
     "summary": "Tu pedido",
     "items": "Artículos",
+    "discount": "Descuento ({code})",
     "shipping": "Envío",
     "pickup": "Recogida en la tienda",
     "free": "Gratis",
@@ -411,5 +453,158 @@
     "signature": "L’Atelier du Désert · Perfumería árabe en Castelldefels",
     "replyHint": "Para seguir la conversación, responde a este correo.",
     "quoteIntro": "Tu mensaje:"
+  },
+  "account": {
+    "eyebrow": "Tu cuenta",
+    "metaTitle": "Mi cuenta",
+    "orDivider": "o con tu email",
+    "google": "Continuar con Google",
+    "googleNote": "Con Google, la cuenta usa el email de Google y no necesita contraseña.",
+    "email": "Email",
+    "password": "Contraseña",
+    "passwordHint": "Mínimo {min} caracteres. Mejor una frase que solo recuerdes tú.",
+    "fullName": "Nombre y apellidos",
+    "signIn": {
+      "title": "Entrar",
+      "lead": "Consulta tus pedidos y guarda tus datos para comprar más rápido. No hace falta cuenta para comprar.",
+      "submit": "Entrar",
+      "submitting": "Entrando…",
+      "forgot": "He olvidado mi contraseña",
+      "noAccount": "¿Aún no tienes cuenta?",
+      "register": "Crear una cuenta",
+      "deleted": "Hemos borrado tu cuenta."
+    },
+    "register": {
+      "title": "Crear una cuenta",
+      "lead": "Para ver tus pedidos y tener tus datos a mano la próxima vez.",
+      "submit": "Crear la cuenta",
+      "submitting": "Creando la cuenta…",
+      "privacy": "Usaremos tus datos para gestionar tu cuenta y tus pedidos, como explica la <link>política de privacidad</link>.",
+      "haveAccount": "¿Ya tienes cuenta?",
+      "signIn": "Entrar",
+      "sentTitle": "Revisa tu correo",
+      "sentText": "Si el email es correcto, te hemos enviado un enlace para confirmar la cuenta. Puedes abrirlo en cualquier dispositivo; caduca en una hora."
+    },
+    "recover": {
+      "title": "Recuperar la contraseña",
+      "lead": "Te enviaremos un enlace para elegir una nueva.",
+      "submit": "Enviar el enlace",
+      "submitting": "Enviando…",
+      "sentTitle": "Revisa tu correo",
+      "sentText": "Si hay una cuenta con ese email, te hemos enviado un enlace para elegir una contraseña nueva. Caduca en una hora.",
+      "back": "Volver a entrar"
+    },
+    "newPassword": {
+      "title": "Elige una contraseña nueva",
+      "password": "Contraseña nueva",
+      "confirmation": "Repite la contraseña",
+      "submit": "Guardar la contraseña",
+      "submitting": "Guardando…",
+      "expired": "El enlace ha caducado o ya se usó. Pide uno nuevo.",
+      "requestNew": "Pedir otro enlace"
+    },
+    "nav": {
+      "label": "Tu cuenta",
+      "orders": "Mis pedidos",
+      "details": "Mis datos",
+      "signOut": "Cerrar sesión"
+    },
+    "orders": {
+      "title": "Mis pedidos",
+      "greeting": "Hola, {name}",
+      "welcome": "Tu cuenta está lista.",
+      "passwordChanged": "Hemos guardado tu nueva contraseña.",
+      "unverified": "Confirma tu email para ver aquí también los pedidos que hiciste sin cuenta.",
+      "empty": "Aún no tienes pedidos",
+      "emptyLead": "Aquí verás los pedidos que hagas con la cuenta y los que hiciste sin ella con este mismo email.",
+      "browse": "Ver la colección",
+      "loadError": "No hemos podido cargar tus pedidos. Inténtalo de nuevo en unos minutos.",
+      "number": "Pedido Nº {number}",
+      "units": "{count, plural, one {# artículo} other {# artículos}}",
+      "pickup": "Recogida en la tienda",
+      "shipping": "Envío a domicilio",
+      "view": "Ver el pedido Nº {number}"
+    },
+    "order": {
+      "back": "Mis pedidos",
+      "title": "Pedido Nº {number}",
+      "placedOn": "Hecho el {date}",
+      "status": "Estado",
+      "delivery": "Entrega",
+      "tracking": "Seguimiento del envío: {reference}",
+      "contact": "Contacto",
+      "address": "Dirección de envío",
+      "items": "Artículos",
+      "quantity": "{count} × {price}",
+      "subtotal": "Artículos",
+      "shippingCost": "Envío",
+      "free": "Gratis",
+      "total": "Total",
+      "refunded": "Devuelto",
+      "vat": "IVA incluido",
+      "help": "¿Dudas con este pedido? Escríbenos a {email} con el número de pedido."
+    },
+    "status": {
+      "awaitingPayment": "Pendiente de pago",
+      "preparing": "En preparación",
+      "readyForPickup": "Listo para recoger",
+      "shipped": "Enviado",
+      "completed": "Entregado",
+      "cancelled": "Cancelado",
+      "refunded": "Devuelto",
+      "partiallyRefunded": "Devuelto en parte",
+      "review": "En revisión"
+    },
+    "details": {
+      "title": "Mis datos",
+      "access": "Acceso",
+      "methods": "Entras con {methods}.",
+      "methodGoogle": "Google",
+      "methodPassword": "email y contraseña",
+      "emailNote": "Para cambiar el email de la cuenta, escríbenos.",
+      "changePassword": "Cambiar la contraseña",
+      "setPassword": "Crear una contraseña",
+      "contact": "Datos de contacto",
+      "phone": "Teléfono",
+      "phoneHint": "Para avisarte de tu pedido. Obligatorio en los envíos.",
+      "address": "Dirección de envío",
+      "addressHint": "Rellena el envío al comprar. Enviamos a la península y Baleares; déjala vacía si prefieres no guardarla.",
+      "addressLine1": "Dirección",
+      "addressLine2": "Piso, puerta… (opcional)",
+      "postalCode": "Código postal",
+      "city": "Ciudad",
+      "province": "Provincia (opcional)",
+      "save": "Guardar",
+      "saving": "Guardando…",
+      "saved": "Datos guardados."
+    },
+    "delete": {
+      "title": "Borrar la cuenta",
+      "text": "Se borran la cuenta y los datos guardados. Los pedidos se conservan el tiempo que exige la ley, sin vínculo con la cuenta. Tu suscripción al club, si la tienes, se gestiona aparte.",
+      "confirm": "Entiendo que no se puede deshacer.",
+      "submit": "Borrar mi cuenta",
+      "submitting": "Borrando…"
+    },
+    "errors": {
+      "nameRequired": "Escribe tu nombre.",
+      "emailInvalid": "Escribe un email válido.",
+      "passwordShort": "La contraseña debe tener al menos {min} caracteres.",
+      "passwordMismatch": "Las contraseñas no coinciden.",
+      "passwordWeak": "Elige otra contraseña: más larga o menos habitual.",
+      "credentials": "Email o contraseña incorrectos.",
+      "notConfirmed": "Antes de entrar, confirma tu email con el enlace que te enviamos. Si no lo encuentras, regístrate otra vez con el mismo email.",
+      "signupDisabled": "Ahora mismo no se pueden crear cuentas. Puedes comprar sin cuenta.",
+      "rateLimited": "Demasiados intentos seguidos. Espera unos minutos y vuelve a probar.",
+      "phoneInvalid": "Escribe un teléfono válido.",
+      "addressIncomplete": "Completa dirección, código postal y ciudad, o deja la dirección vacía.",
+      "postalCodeInvalid": "El código postal tiene cinco cifras.",
+      "confirmRequired": "Marca la casilla para confirmar.",
+      "staff": "Esta cuenta es del personal de la tienda: se gestiona desde el panel.",
+      "google": "No hemos podido entrar con Google. Inténtalo de nuevo o entra con tu email.",
+      "link": "El enlace ha caducado o ya se usó. Pide uno nuevo.",
+      "disabled": "La cuenta de cliente no está disponible.",
+      "generic": "Algo ha fallado. Inténtalo de nuevo en unos minutos.",
+      "review": "Revisa los campos marcados."
+    }
   }
 }

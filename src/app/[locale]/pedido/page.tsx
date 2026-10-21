@@ -90,6 +90,16 @@ export default async function OrderPage({
     <dl className="border-border grid max-w-md grid-cols-[1fr_auto] gap-x-6 gap-y-2 border-t pt-6 text-sm">
       <dt className="text-fg-muted">{tc('items')}</dt>
       <dd className="text-right tabular-nums">{euros(order.itemsCents)}</dd>
+      {order.discountCents > 0 && (
+        <>
+          <dt className="text-fg-muted">
+            {tc('discount.line', { code: order.discountCode ?? '' })}
+          </dt>
+          <dd className="text-right tabular-nums">
+            −{euros(order.discountCents)}
+          </dd>
+        </>
+      )}
       <dt className="text-fg-muted">
         {order.fulfillment === 'shipping' ? tc('shippingCost') : tc('pickup')}
       </dt>

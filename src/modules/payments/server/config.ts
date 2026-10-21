@@ -32,6 +32,10 @@ export function redsysConfig(
     !validSecretKey(secretKey)
   )
     return null;
+  // El entorno de pruebas del banco acepta tarjetas de prueba públicas y su
+  // notificación va firmada: en producción daría pedidos «pagados» sin cobrar
+  // nada. Las pruebas, en una Preview (DECISIONS §161).
+  if (environment === 'test' && env.VERCEL_ENV === 'production') return null;
   return {
     merchantCode,
     terminal,

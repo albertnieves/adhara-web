@@ -175,7 +175,8 @@ select is_empty(
     where n.nspname in ('public', 'internal', 'private') and c.relkind in ('r', 'p')
       and n.nspname || '.' || c.relname not in (
         'private.pending_staff_grants', 'private.inventory_requests',
-        'private.price_reviews', 'internal.attention_rate')
+        'private.price_reviews', 'internal.attention_rate',
+        'private.web_rate_limits')
       and not exists (
         select 1 from public.admin_control_export_catalog() w
         where w.schema_name = n.nspname and w.table_name = c.relname)$$,
@@ -425,16 +426,20 @@ reset role;
 -- manda sobre la primera por posición).
 -- Z: borrador con existencias; uno de sus formatos, descuadrado.
 -- W: archivado: no cuenta aunque le falte el coste o esté por revisar.
-insert into public.products (id, brand_id, slug, name, status, source_ref) values
+insert into public.products (id, brand_id, slug, name, status) values
   ('00000000-0000-4000-8000-0000000012a1', '00000000-0000-4000-8000-0000000012b1',
-   'perfume-calidad', 'Perfume de calidad', 'draft',
-   'CATALOGO 2026, p. 9 · marca deducida, por revisar'),
+   'perfume-calidad', 'Perfume de calidad', 'draft'),
   ('00000000-0000-4000-8000-0000000012a2', '00000000-0000-4000-8000-0000000012b1',
-   'perfume-completo', 'Perfume completo', 'draft', 'Ficha oficial'),
+   'perfume-completo', 'Perfume completo', 'draft'),
   ('00000000-0000-4000-8000-0000000012a3', '00000000-0000-4000-8000-0000000012b1',
-   'borrador-con-stock', 'Borrador con stock', 'draft', null),
+   'borrador-con-stock', 'Borrador con stock', 'draft'),
   ('00000000-0000-4000-8000-0000000012a4', '00000000-0000-4000-8000-0000000012b1',
-   'archivado-calidad', 'Archivado de calidad', 'archived', 'Por revisar');
+   'archivado-calidad', 'Archivado de calidad', 'archived');
+-- La procedencia vive aparte, solo para el personal (§158).
+insert into public.product_sources (product_id, source_ref) values
+  ('00000000-0000-4000-8000-0000000012a1', 'CATALOGO 2026, p. 9 · marca deducida, por revisar'),
+  ('00000000-0000-4000-8000-0000000012a2', 'Ficha oficial'),
+  ('00000000-0000-4000-8000-0000000012a4', 'Por revisar');
 insert into public.product_variants (id, product_id, size_ml, retail_price_cents, sku, ean) values
   ('00000000-0000-4000-8000-0000000012c1', '00000000-0000-4000-8000-0000000012a1', 100, 4995,
    'CAL-100', '8400000012001'),

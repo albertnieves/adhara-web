@@ -15,6 +15,7 @@ const PUBLIC_PATHS = [
   '/es/catalogo',
   '/ca/cataleg',
   '/en/catalog',
+  '/es/casas',
   '/es/perfume/no-existe',
 ];
 
@@ -67,6 +68,7 @@ test.describe('coste centinela', () => {
     '/es/perfume/perfume-centinela',
     '/ca/perfum/perfume-centinela',
     '/en/fragrance/perfume-centinela',
+    '/es/casas/marca-centinela',
     '/api/health',
     '/robots.txt',
   ];
@@ -77,6 +79,32 @@ test.describe('coste centinela', () => {
     expect(await page.text()).toContain('Perfume centinela (prueba)');
     const catalog = await (await request.get('/es/catalogo')).text();
     expect(catalog).toContain('/es/perfume/perfume-centinela');
+  });
+
+  // La procedencia del centinela nombra al proveedor (987654): vive en
+  // product_sources, que la API pública no da (DECISIONS §158).
+  test('la API pública de Supabase no da la procedencia', async ({
+    request,
+  }) => {
+    const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+    test.skip(!url || !key, 'Sin Supabase configurado');
+    const headers = { apikey: key! };
+    const products = await request.get(
+      `${url}/rest/v1/products?select=*&slug=eq.perfume-centinela`,
+      { headers },
+    );
+    expect(products.status()).toBe(200);
+    const body = await products.text();
+    expect(body).toContain('perfume-centinela');
+    expect(body).not.toContain('source_ref');
+    expect(SENTINEL.test(body)).toBe(false);
+    const sources = await request.get(
+      `${url}/rest/v1/product_sources?select=*`,
+      { headers },
+    );
+    expect([401, 403]).toContain(sources.status());
+    expect(SENTINEL.test(await sources.text())).toBe(false);
   });
 
   for (const path of SENTINEL_PATHS) {

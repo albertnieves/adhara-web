@@ -21,7 +21,7 @@ export const TOPICS = ['order', 'product', 'other'] as const;
 export type Topic = (typeof TOPICS)[number];
 
 /**
- * Mensajes guardados (migración 20261016120000_customer_messages): del
+ * Mensajes guardados (migración 20261021120000_customer_messages): del
  * cliente, respuesta del personal (sale por email) y nota interna.
  */
 export const MESSAGE_KINDS = ['customer', 'reply', 'note'] as const;

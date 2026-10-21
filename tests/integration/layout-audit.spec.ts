@@ -43,6 +43,8 @@ const ROUTES = [
   '/admin/informes/auditoria',
   '/admin/contenido',
   '/admin/suscriptores',
+  '/admin/descuentos',
+  '/admin/descuentos/nuevo',
   '/admin/configuracion',
   '/admin/equipo',
   '/admin/asistente',
@@ -89,6 +91,16 @@ async function anyOrderId() {
     .limit(1)
     .maybeSingle();
   return order ? String(order.id) : undefined;
+}
+
+/** Un código de descuento, si hay (los crea discounts.spec.ts, que corre antes). */
+async function anyDiscountCodeId() {
+  const { data: code } = await admin
+    .from('discount_codes')
+    .select('id')
+    .limit(1)
+    .maybeSingle();
+  return code ? String(code.id) : undefined;
 }
 
 /**
@@ -176,15 +188,17 @@ test('panel: diseño sin solapes ni desbordes en todas sus pantallas', async ({
   makeControlOwner(email);
   await login(page, email);
 
-  const [product, order, conversation] = await Promise.all([
+  const [product, order, discount, conversation] = await Promise.all([
     anyProductId(),
     anyOrderId(),
+    anyDiscountCodeId(),
     auditConversation(),
   ]);
   const routes = [
     ...ROUTES,
     ...(product ? [`/admin/catalogo/${product}`] : []),
     ...(order ? [`/admin/pedidos/${order}`] : []),
+    ...(discount ? [`/admin/descuentos/${discount}`] : []),
     `/admin/mensajes/${conversation.id}`,
     `/admin/mensajes/plantillas/${conversation.templateId}`,
   ];

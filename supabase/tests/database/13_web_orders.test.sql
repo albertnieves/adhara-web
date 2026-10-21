@@ -7,7 +7,7 @@ begin;
 create extension if not exists pgtap with schema extensions;
 set search_path = public, extensions;
 
-select plan(79);
+select plan(81);
 
 insert into auth.users (id, email) values
   ('00000000-0000-4000-8000-000000000131', 'sistema@test.invalid'),
@@ -110,8 +110,9 @@ select is(
   (select count(*)::int from pg_proc p join pg_namespace n on n.oid = p.pronamespace
    where n.nspname = 'public' and p.proname like 'web\_order\_%'),
   -- create, new_attempt, record_payment y release_expired; status (P04);
-  -- emails_claim, email_result y refund_result (P06).
-  8, 'hay ocho funciones del servidor');
+  -- emails_claim, email_result y refund_result (P06); discount_quote (§149);
+  -- rate_limit (freno de las acciones públicas, §160).
+  10, 'hay diez funciones del servidor');
 select is_empty(
   $$select p.proname from pg_proc p
     join pg_namespace n on n.oid = p.pronamespace
@@ -258,6 +259,9 @@ select ok(
 
 set local role authenticated;
 select pg_temp.act_as('00000000-0000-4000-8000-000000000133', 'aal1');
+select is_empty('select 1 from public.orders',
+  'sin MFA el encargado no ve pedidos, ni por la API directa (§159)');
+select pg_temp.act_as('00000000-0000-4000-8000-000000000133', 'aal2');
 select is((select count(*)::int from public.orders), 4, 'el encargado ve los pedidos');
 select is((select count(*)::int from public.order_lines), 5, 'y sus líneas');
 select is_empty('select 1 from public.order_contacts',
@@ -268,6 +272,9 @@ select throws_ok(
     values (gen_random_uuid(), 'es', 'click_collect', pg_temp.location_id(), 1, 1, now())$$,
   '42501', null, 'nadie inserta pedidos directamente');
 select pg_temp.act_as('00000000-0000-4000-8000-000000000132', 'aal1');
+select is_empty('select 1 from public.order_contacts',
+  'sin MFA el administrador de la tienda no ve el contacto (§159)');
+select pg_temp.act_as('00000000-0000-4000-8000-000000000132', 'aal2');
 select is((select count(*)::int from public.order_contacts), 4,
   'el administrador de la tienda ve el contacto');
 select throws_ok(

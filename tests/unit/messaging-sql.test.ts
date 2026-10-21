@@ -11,7 +11,7 @@ import {
 
 const sql = readFileSync(
   new URL(
-    '../../supabase/migrations/20261016120000_customer_messages.sql',
+    '../../supabase/migrations/20261021120000_customer_messages.sql',
     import.meta.url,
   ),
   'utf8',

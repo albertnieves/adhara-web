@@ -87,6 +87,35 @@ function readProduct(formData: FormData) {
 type Supabase = Awaited<ReturnType<typeof requirePermission>>['supabase'];
 
 /** Marca existente o nueva (se crea con su slug). */
+/**
+ * La procedencia vive en product_sources, que solo lee el personal (DECISIONS
+ * §158): products la lee cualquiera y nombraba al proveedor. Solo se escribe
+ * si cambia, para que la auditoría no se llene de guardados sin cambios.
+ */
+async function saveProductSource(
+  supabase: Supabase,
+  productId: string,
+  sourceRef: string | null,
+): Promise<{ error: string } | null> {
+  const next = sourceRef?.trim() || null;
+  const { data: current, error: readError } = await supabase
+    .from('product_sources')
+    .select('source_ref')
+    .eq('product_id', productId)
+    .maybeSingle();
+  if (readError) return { error: describeDbError(readError) };
+  if ((current?.source_ref ?? null) === next) return null;
+  const { error } = next
+    ? await supabase
+        .from('product_sources')
+        .upsert({ product_id: productId, source_ref: next })
+    : await supabase
+        .from('product_sources')
+        .delete()
+        .eq('product_id', productId);
+  return error ? { error: describeDbError(error) } : null;
+}
+
 async function resolveBrand(
   supabase: Supabase,
   brandId: string,
@@ -148,13 +177,14 @@ export async function createProduct(
       concentration: input.concentration,
       audience: input.audience,
       unboxing_scene: input.unboxingScene,
-      source_ref: input.sourceRef,
       featured: input.featured,
       position: input.position,
     })
     .select('id')
     .single();
   if (error) return fail(describeDbError(error));
+  const source = await saveProductSource(supabase, data.id, input.sourceRef);
+  if (source) return fail(source.error);
   await supabase.rpc('record_audit_event', {
     action: 'catalog.product_created',
     entity: 'product',
@@ -192,7 +222,6 @@ export async function updateProduct(
       concentration: input.concentration,
       audience: input.audience,
       unboxing_scene: input.unboxingScene,
-      source_ref: input.sourceRef,
       featured: input.featured,
       position: input.position,
     })
@@ -202,6 +231,8 @@ export async function updateProduct(
   if (error) return fail(describeDbError(error));
   if (!saved?.length)
     return fail(describeDbError({ message: 'edit_conflict' }));
+  const source = await saveProductSource(supabase, id.data, input.sourceRef);
+  if (source) return fail(source.error);
   refreshStorefront(id.data);
   return ok('Cambios guardados.');
 }
