@@ -65,7 +65,7 @@ Nadie escribe en las tablas directamente: el servidor (clave privilegiada, solo 
 
 ## Para encenderlo
 
-1. Aplicar la migración `20261021120000_customer_messages.sql` en `adhara-dev` (detrás de `20261017120000_security_review`, ya aplicada).
+1. ~~Aplicar la migración `20261021120000_customer_messages.sql` en `adhara-dev`~~: hecho el 21/10 (DECISIONS §157).
 2. En Resend: verificar el dominio de envío, añadir el subdominio de recepción con su MX en Vercel y crear el webhook `email.received` hacia `https://latelierdudesert.com/api/correo/entrante`.
 3. En Vercel (solo servidor): `INBOUND_EMAIL_DOMAIN`, `RESEND_WEBHOOK_SECRET` y, si no están, `RESEND_API_KEY` y `EMAIL_FROM`.
 4. Revisión de la asesoría del texto informativo del formulario y de la privacidad; después, `CONTACT_FORM=1`.
