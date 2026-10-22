@@ -311,6 +311,81 @@ assert.equal(
   5,
 );
 assert.equal(await level(plenty), '100/2');
+// 5. Mensajes (A6.1): el límite de 3 consultas por email y hora es exacto
+// con envíos a la vez, el mismo formulario repetido crea una sola consulta y
+// dos respuestas con la misma revisión guardan una.
+const contactEmail = `concurrency-${randomUUID().slice(0, 8)}@test.invalid`;
+const submits = await Promise.all(
+  Array.from({ length: 8 }, () =>
+    query(
+      server(
+        `select public.web_contact_submit('${randomUUID()}','es','other','Prueba','${contactEmail}','Asunto','Mensaje'); select pg_sleep(0.1)`,
+      ),
+    ),
+  ),
+);
+assert.equal(
+  submits.filter((x) => x.code === 0).length,
+  3,
+  JSON.stringify(submits),
+);
+assert.ok(
+  submits
+    .filter((x) => x.code !== 0)
+    .every((x) => x.text.includes('rate_limited')),
+  JSON.stringify(submits),
+);
+const sameForm = randomUUID();
+const repeated = await Promise.all(
+  Array.from({ length: 6 }, () =>
+    query(
+      server(
+        `select public.web_contact_submit('${sameForm}','es','order','Prueba','otra-${contactEmail}','Asunto','Mensaje'); select pg_sleep(0.1)`,
+      ),
+    ),
+  ),
+);
+assert.ok(
+  repeated.every((x) => x.code === 0),
+  JSON.stringify(repeated),
+);
+const conversation = (
+  await query(
+    `select id || '/' || revision from public.conversations where request_id='${sameForm}'`,
+  )
+).text.trim();
+assert.match(conversation, /^[a-f0-9-]{36}\/\d+$/, conversation);
+const [conversationId, revision] = conversation.split('/');
+// Cuenta propia: la prueba del último administrador deja a `owner` o a
+// `other` sin acceso.
+const replier = randomUUID();
+const replierSetup = await query(
+  `insert into auth.users(id,email) values('${replier}','concurrency-replier@test.invalid'); insert into public.staff_members(user_id,role) values('${replier}','store_admin');`,
+);
+assert.equal(replierSetup.code, 0, replierSetup.text);
+const replies = await Promise.all(
+  [0, 1].map(() =>
+    query(
+      as(
+        replier,
+        `select public.admin_reply_conversation('${conversationId}','Hola',${revision}); select pg_sleep(0.2)`,
+      ),
+    ),
+  ),
+);
+assert.equal(
+  replies.filter((x) => x.code === 0).length,
+  1,
+  JSON.stringify(replies),
+);
+assert.equal(
+  (
+    await query(
+      `select count(*) from public.conversation_messages m join public.message_emails e on e.message_id=m.id where m.conversation_id='${conversationId}'`,
+    )
+  ).text.trim(),
+  '1',
+);
 console.log(
-  'Concurrencia real correcta: precio, imagen, recepción, último administrador, pedidos web y códigos de descuento. Fixtures permanecen solo en el contenedor local hasta db reset.',
+  'Concurrencia real correcta: precio, imagen, recepción, último administrador, pedidos web, códigos de descuento y mensajes. Fixtures permanecen solo en el contenedor local hasta db reset.',
 );

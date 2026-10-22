@@ -105,6 +105,147 @@ export type Database = {
         };
         Relationships: [];
       };
+      conversation_contacts: {
+        Row: {
+          conversation_id: string;
+          created_at: string;
+          email: string;
+          full_name: string | null;
+        };
+        Insert: {
+          conversation_id: string;
+          created_at?: string;
+          email: string;
+          full_name?: string | null;
+        };
+        Update: {
+          conversation_id?: string;
+          created_at?: string;
+          email?: string;
+          full_name?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'conversation_contacts_conversation_id_fkey';
+            columns: ['conversation_id'];
+            isOneToOne: true;
+            referencedRelation: 'conversations';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      conversation_messages: {
+        Row: {
+          attachments: number;
+          author_id: string | null;
+          body: string;
+          conversation_id: string;
+          created_at: string;
+          email_message_id: string | null;
+          id: number;
+          inbound_email_id: string | null;
+          kind: string;
+          source: string;
+        };
+        Insert: {
+          attachments?: number;
+          author_id?: string | null;
+          body: string;
+          conversation_id: string;
+          created_at?: string;
+          email_message_id?: string | null;
+          id?: never;
+          inbound_email_id?: string | null;
+          kind: string;
+          source: string;
+        };
+        Update: {
+          attachments?: number;
+          author_id?: string | null;
+          body?: string;
+          conversation_id?: string;
+          created_at?: string;
+          email_message_id?: string | null;
+          id?: never;
+          inbound_email_id?: string | null;
+          kind?: string;
+          source?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'conversation_messages_conversation_id_fkey';
+            columns: ['conversation_id'];
+            isOneToOne: false;
+            referencedRelation: 'conversations';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      conversations: {
+        Row: {
+          assigned_to: string | null;
+          channel: string;
+          created_at: string;
+          id: string;
+          last_customer_message_at: string | null;
+          last_message_at: string;
+          last_staff_message_at: string | null;
+          locale: string;
+          number: number;
+          order_id: string | null;
+          request_id: string | null;
+          revision: number;
+          status: string;
+          subject: string;
+          topic: string;
+          updated_at: string;
+        };
+        Insert: {
+          assigned_to?: string | null;
+          channel: string;
+          created_at?: string;
+          id?: string;
+          last_customer_message_at?: string | null;
+          last_message_at?: string;
+          last_staff_message_at?: string | null;
+          locale: string;
+          number?: never;
+          order_id?: string | null;
+          request_id?: string | null;
+          revision?: number;
+          status?: string;
+          subject: string;
+          topic?: string;
+          updated_at?: string;
+        };
+        Update: {
+          assigned_to?: string | null;
+          channel?: string;
+          created_at?: string;
+          id?: string;
+          last_customer_message_at?: string | null;
+          last_message_at?: string;
+          last_staff_message_at?: string | null;
+          locale?: string;
+          number?: never;
+          order_id?: string | null;
+          request_id?: string | null;
+          revision?: number;
+          status?: string;
+          subject?: string;
+          topic?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'conversations_order_id_fkey';
+            columns: ['order_id'];
+            isOneToOne: false;
+            referencedRelation: 'orders';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       customer_accounts: {
         Row: {
           address_line1: string | null;
@@ -355,6 +496,80 @@ export type Database = {
             referencedColumns: ['id'];
           },
         ];
+      };
+      message_emails: {
+        Row: {
+          attempts: number;
+          created_at: string;
+          last_error: string | null;
+          locked_until: string | null;
+          message_id: number;
+          provider_id: string | null;
+          sent_at: string | null;
+          status: string;
+        };
+        Insert: {
+          attempts?: number;
+          created_at?: string;
+          last_error?: string | null;
+          locked_until?: string | null;
+          message_id: number;
+          provider_id?: string | null;
+          sent_at?: string | null;
+          status?: string;
+        };
+        Update: {
+          attempts?: number;
+          created_at?: string;
+          last_error?: string | null;
+          locked_until?: string | null;
+          message_id?: number;
+          provider_id?: string | null;
+          sent_at?: string | null;
+          status?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'message_emails_message_id_fkey';
+            columns: ['message_id'];
+            isOneToOne: true;
+            referencedRelation: 'conversation_messages';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      message_templates: {
+        Row: {
+          active: boolean;
+          body: string;
+          created_at: string;
+          id: string;
+          locale: string;
+          revision: number;
+          title: string;
+          updated_at: string;
+        };
+        Insert: {
+          active?: boolean;
+          body: string;
+          created_at?: string;
+          id?: string;
+          locale: string;
+          revision?: number;
+          title: string;
+          updated_at?: string;
+        };
+        Update: {
+          active?: boolean;
+          body?: string;
+          created_at?: string;
+          id?: string;
+          locale?: string;
+          revision?: number;
+          title?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
       };
       newsletter_subscribers: {
         Row: {
@@ -1382,9 +1597,44 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
+      admin_add_conversation_note: {
+        Args: { p_body: string; p_conversation_id: string };
+        Returns: number;
+      };
       admin_apply_price_review: {
         Args: { p_confirmed: string[]; p_review_id: string };
         Returns: string;
+      };
+      admin_assign_conversation: {
+        Args: {
+          p_assignee: string;
+          p_conversation_id: string;
+          p_revision: number;
+        };
+        Returns: {
+          assigned_to: string | null;
+          channel: string;
+          created_at: string;
+          id: string;
+          last_customer_message_at: string | null;
+          last_message_at: string;
+          last_staff_message_at: string | null;
+          locale: string;
+          number: number;
+          order_id: string | null;
+          request_id: string | null;
+          revision: number;
+          status: string;
+          subject: string;
+          topic: string;
+          updated_at: string;
+        };
+        SetofOptions: {
+          from: '*';
+          to: 'conversations';
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
       };
       admin_assign_supplier_brand: {
         Args: {
@@ -1622,6 +1872,10 @@ export type Database = {
         };
         Returns: string;
       };
+      admin_delete_conversation: {
+        Args: { p_conversation_id: string; p_revision: number };
+        Returns: undefined;
+      };
       admin_delete_purchase_order: {
         Args: { p_order_id: string; p_revision: number };
         Returns: undefined;
@@ -1637,6 +1891,37 @@ export type Database = {
       admin_inventory_once: {
         Args: { p_input: Json; p_request_id: string };
         Returns: Json;
+      };
+      admin_link_conversation_order: {
+        Args: {
+          p_conversation_id: string;
+          p_order_number: number;
+          p_revision: number;
+        };
+        Returns: {
+          assigned_to: string | null;
+          channel: string;
+          created_at: string;
+          id: string;
+          last_customer_message_at: string | null;
+          last_message_at: string;
+          last_staff_message_at: string | null;
+          locale: string;
+          number: number;
+          order_id: string | null;
+          request_id: string | null;
+          revision: number;
+          status: string;
+          subject: string;
+          topic: string;
+          updated_at: string;
+        };
+        SetofOptions: {
+          from: '*';
+          to: 'conversations';
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
       };
       admin_list_discount_codes: {
         Args: Record<PropertyKey, never>;
@@ -1709,6 +1994,13 @@ export type Database = {
           open_orders: number;
           phone: string;
           variant_count: number;
+        }[];
+      };
+      admin_message_assignees: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          name: string;
+          user_id: string;
         }[];
       };
       admin_open_purchase_orders: {
@@ -1871,6 +2163,33 @@ export type Database = {
         Args: { p_supplier_id: string; p_variant_id: string };
         Returns: undefined;
       };
+      admin_reply_conversation: {
+        Args: { p_body: string; p_conversation_id: string; p_revision: number };
+        Returns: {
+          assigned_to: string | null;
+          channel: string;
+          created_at: string;
+          id: string;
+          last_customer_message_at: string | null;
+          last_message_at: string;
+          last_staff_message_at: string | null;
+          locale: string;
+          number: number;
+          order_id: string | null;
+          request_id: string | null;
+          revision: number;
+          status: string;
+          subject: string;
+          topic: string;
+          updated_at: string;
+        };
+        SetofOptions: {
+          from: '*';
+          to: 'conversations';
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
       admin_report_inventory_period: {
         Args: { p_from: string; p_location_id: string; p_to: string };
         Returns: {
@@ -1991,6 +2310,32 @@ export type Database = {
           isSetofReturn: false;
         };
       };
+      admin_save_message_template: {
+        Args: {
+          p_active: boolean;
+          p_body: string;
+          p_id: string;
+          p_locale: string;
+          p_revision?: number;
+          p_title: string;
+        };
+        Returns: {
+          active: boolean;
+          body: string;
+          created_at: string;
+          id: string;
+          locale: string;
+          revision: number;
+          title: string;
+          updated_at: string;
+        };
+        SetofOptions: {
+          from: '*';
+          to: 'message_templates';
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
       admin_save_shipping_rate: {
         Args: {
           p_active: boolean;
@@ -2036,6 +2381,37 @@ export type Database = {
           p_variant_id: string;
         };
         Returns: undefined;
+      };
+      admin_set_conversation_status: {
+        Args: {
+          p_conversation_id: string;
+          p_revision: number;
+          p_status: string;
+        };
+        Returns: {
+          assigned_to: string | null;
+          channel: string;
+          created_at: string;
+          id: string;
+          last_customer_message_at: string | null;
+          last_message_at: string;
+          last_staff_message_at: string | null;
+          locale: string;
+          number: number;
+          order_id: string | null;
+          request_id: string | null;
+          revision: number;
+          status: string;
+          subject: string;
+          topic: string;
+          updated_at: string;
+        };
+        SetofOptions: {
+          from: '*';
+          to: 'conversations';
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
       };
       admin_set_primary_media: {
         Args: { p_media_id: string; p_product_id: string };
@@ -2218,6 +2594,43 @@ export type Database = {
         Args: { p_kind: string; p_slug: string };
         Returns: boolean;
       };
+      web_contact_submit: {
+        Args: {
+          p_body: string;
+          p_email: string;
+          p_full_name: string;
+          p_locale: string;
+          p_order_number?: number;
+          p_request_id: string;
+          p_subject: string;
+          p_topic: string;
+        };
+        Returns: Json;
+      };
+      web_inbound_email_record: {
+        Args: {
+          p_attachments?: number;
+          p_body: string;
+          p_from_email: string;
+          p_from_name: string;
+          p_inbound_id: string;
+          p_message_id?: string;
+          p_subject: string;
+          p_token: string;
+          p_trusted?: boolean;
+        };
+        Returns: Json;
+      };
+      web_message_email_result: {
+        Args: {
+          p_error?: string;
+          p_message_id: number;
+          p_ok: boolean;
+          p_provider_id?: string;
+        };
+        Returns: undefined;
+      };
+      web_message_emails_claim: { Args: { p_limit?: number }; Returns: Json };
       web_order_create: {
         Args: {
           p_contact: Json;

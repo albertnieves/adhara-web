@@ -91,5 +91,7 @@ export const routing = defineRouting({
       ca: '/compte/nova-contrasenya',
       en: '/account/new-password',
     },
+    // Formulario de contacto (A6.1): 404 mientras CONTACT_FORM no esté encendido.
+    '/contacto': { es: '/contacto', ca: '/contacte', en: '/contact' },
   },
 });

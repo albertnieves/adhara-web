@@ -47,3 +47,19 @@ export function createOrdersClient() {
     auth: { persistSession: false, autoRefreshToken: false },
   });
 }
+
+/**
+ * Mensajes con clientes (DECISIONS §154): solo para las funciones
+ * web_contact_submit (formulario ya validado, tras CONTACT_FORM),
+ * web_inbound_email_record (correo con la firma del proveedor comprobada) y
+ * la cola de respuestas web_message_emails_* (tras CRON_SECRET o justo
+ * después de una respuesta del panel). Nunca para leer o escribir tablas.
+ */
+export function createMessagesClient() {
+  const config = getSupabaseConfig();
+  const key = process.env.SUPABASE_SECRET_KEY;
+  if (!config || !key) return null;
+  return createClient<Database>(config.url, key, {
+    auth: { persistSession: false, autoRefreshToken: false },
+  });
+}

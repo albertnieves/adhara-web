@@ -286,7 +286,7 @@ export const en: LegalCopy = {
           blocks: [
             {
               list: [
-                'Data: what you give us when you write or call (name, email, phone and your message).',
+                'Data: what you give us when you write to us (through the contact form or by email) or call: name, email, phone, your message and, if you give it, the order number.',
                 'Purpose: to reply and deal with your enquiry or complaint.',
                 'Legal basis: our legitimate interest in assisting you or, if you ask for information before buying, taking pre-contractual steps.',
                 'Retention: as long as needed to resolve it and then blocked for the limitation periods of any possible liability.',
@@ -346,7 +346,7 @@ export const en: LegalCopy = {
               list: [
                 'Web hosting and database providers, with servers in the European Union.',
                 'The provider that sends Club L’Atelier emails.',
-                'The bank that processes payments, the carrier and the provider of order emails.',
+                'The bank that processes payments, the carrier and the provider of order emails and of the replies to your enquiries.',
               ],
             },
             'If you choose to sign in with Google, Google verifies your identity as an independent controller, under its own [privacy policy](https://policies.google.com/privacy).',
