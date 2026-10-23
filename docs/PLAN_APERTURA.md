@@ -51,9 +51,9 @@ El código del checkout, el pago con Redsys, los correos y las devoluciones est�
 ## 4. Día de la apertura
 
 1. Migraciones del repositorio aplicadas en `adhara-dev` (hoy falta `20261023120000_order_release_reservation`).
-2. Variables de Production completas y redesplegado.
-3. Una compra real de poco importe con una tarjeta propia, el correo de confirmación recibido y su devolución desde el panel.
-4. Encender la venta (`WEB_CHECKOUT=1`) y anunciarla.
+2. Variables de Production completas, con `WEB_CHECKOUT=1`, y redesplegado.
+3. Antes de anunciarlo: una compra real de poco importe con una tarjeta propia, el correo de confirmación recibido y su devolución desde el panel. Si algo falla, quitar `WEB_CHECKOUT` y redesplegar apaga la venta.
+4. Anunciar la venta.
 
 ## Decisiones del 23/10
 
