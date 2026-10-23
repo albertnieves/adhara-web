@@ -730,3 +730,22 @@ A petición del usuario, antes de conectar el TPV. Tres revisiones en paralelo (
      - **Cabeceras:** HSTS explícito y una CSP mínima (`frame-ancestors 'none'; object-src 'none'; base-uri 'self'`). Una CSP con nonce obligaría a renderizar cada página en cada visita: queda para cuando se mida el coste.
      - **Dependencias:** Next.js 16.3.8 (16.3.6 tenía, entre otros, SSRF en la optimización de imágenes y fuga de contenido de draft mode) y `source-map-js` 1.2.2 por `overrides`; `pnpm audit --prod` sin avisos.
      - **Datos:** la migración no está aplicada en `adhara-dev`. Va después de `20261016120000_customer_accounts.sql` (PR #37), que tampoco lo está. Aplicarlas en orden justo al fusionar: entre el despliegue y la migración, la ficha del perfume en el panel no carga (lee la tabla nueva).
+
+## Liberar la reserva y decisiones para abrir la venta — 23/10/2026
+
+A petición del usuario, con el TPV virtual ya concedido por el banco y la apertura prevista para la semana del 26/10. Lista completa en [PLAN_APERTURA.md](PLAN_APERTURA.md).
+
+164. **«Liberar la reserva» de un pedido sin pagar, desde la ficha.**
+     - **Qué faltaba:** solo la caducidad (30 minutos, tarea cada 5) devolvía al stock las unidades de un pedido sin pagar; el personal no podía hacerlo antes (revisión de seguridad, «Liberar a mano»).
+     - **Cambio (migración `20261023120000_order_release_reservation.sql`):** `admin_release_order_reservation(p_order_id, p_revision)`, con `orders.fulfill`, MFA y la revisión optimista. Hace lo mismo que la caducidad: movimiento `RESERVATION_RELEASE` con la persona, reserva `released`, evento `reservation_released` con `reason: staff` y quién, y `orders.release_reservation` en la auditoría. Rechaza (`not_releasable`) un pedido pagado, en incidencias o ya liberado.
+     - **Por qué no pasa a «Cancelado»:** un cobro que llegue después (el cliente seguía en la página del banco) en un pedido cancelado quedaría sin salida desde el panel: no hay transición desde `cancelled` y «Devolver este cobro» solo vale para un segundo cobro. Con el pedido «Sin pagar», ese cobro entra como pago tardío (`reservation_unavailable`, «Incidencia») por el camino ya probado de `web_order_record_payment`, que no cambia; desde ahí, «Dar por pagado» (vuelve a reservar si hay stock) o «Cancelar y devolver el dinero».
+     - **Panel:** botón «Liberar la reserva», con confirmación, bajo el aviso de «Esperando la confirmación del banco»; el aviso de «Sin pagar» distingue si la reserva caducó o se liberó desde el panel; la cronología dice «Reserva liberada» con el motivo, y el pago tardío, «la reserva ya se había liberado». El encargado no ve el botón.
+     - **Cliente:** su página del pedido es la de una reserva caducada («Puedes hacer el pedido otra vez»); no cambia.
+     - **Datos:** una función nueva, sin tocar tablas ni otras funciones, compatible con el código de `main`. **Sin aplicar en `adhara-dev`:** se aplica al fusionar, como en §141.
+     - **Concurrencia:** liberar y cobrar a la vez da una de dos salidas, las dos correctas: pagado con la reserva (la liberación falla por la revisión) o liberado con el cobro en incidencias. `scripts/test-concurrency.ts` lo comprueba.
+165. **Decisiones para abrir la venta online (23/10).**
+     - **Entrega:** envío a la península e Illes Balears y recogida en la tienda desde el primer día. Hacen falta las tarifas en el panel, y el plazo y el transportista para los textos legales.
+     - **Reservas:** como están: hasta 10 unidades del mismo formato por pedido y 30 minutos para pagar.
+     - **Código antes de abrir:** solo «Liberar la reserva» (§164). Para después: límite del Firewall de Vercel, los tres arreglos de las devoluciones de la revisión de seguridad y quitar el nombre del comprador del saludo del correo.
+     - **Comprobado (solo lectura):** en Production faltan `CRON_SECRET` (sin ella la caducidad no corre), el correo y el TPV; Supabase está en el plan gratuito (sin copias de la plataforma); no hay tarifas de envío ni email ni teléfono de la tienda; la administradora de la tienda no tiene MFA; no hay ningún pedido en la base (la prueba de la rama `claude/exciting-brown-j08p6y`, que allí numeró §153, no se llegó a hacer); el aviso del banco llega a `latelierdudesert.com/api/pagos/redsys` sin redirección.
+     - **Datos del TPV:** el número de comercio, el terminal y los métodos pueden ir por el chat; la clave de firma y la contraseña del portal, nunca: las pone el usuario en Vercel.

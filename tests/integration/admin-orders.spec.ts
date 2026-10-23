@@ -37,11 +37,10 @@ async function level(product: Product) {
 
 type Created = { order_id: string; number: number; payment_reference: string };
 
-/** Pedido de recogida de una unidad, pagado con `paidCents`. */
-async function paidOrder(
+/** Pedido de recogida de una unidad, sin pagar (reserva activa). */
+async function unpaidOrder(
   product: Product,
   customer: { name: string; email: string },
-  paidCents: number,
 ) {
   const { data: location } = await admin
     .from('stock_locations')
@@ -58,7 +57,11 @@ async function paidOrder(
     p_provider: 'redsys',
   });
   if (created.error) throw created.error;
-  const order = created.data as Created;
+  return created.data as Created;
+}
+
+/** Cobro del banco para el último intento del pedido; devuelve la decisión. */
+async function pay(order: Created, paidCents: number) {
   const paid = await admin.rpc('web_order_record_payment', {
     p_provider: 'redsys',
     p_reference: order.payment_reference,
@@ -68,6 +71,17 @@ async function paidOrder(
     p_currency: 'EUR',
   });
   if (paid.error) throw paid.error;
+  return (paid.data as { action: string }).action;
+}
+
+/** Pedido de recogida de una unidad, pagado con `paidCents`. */
+async function paidOrder(
+  product: Product,
+  customer: { name: string; email: string },
+  paidCents: number,
+) {
+  const order = await unpaidOrder(product, customer);
+  await pay(order, paidCents);
   return order;
 }
 
@@ -163,10 +177,54 @@ test('administrador de la tienda: prepara y entrega un pedido y resuelve una inc
   ).toBe(true);
 });
 
+test('administrador de la tienda: libera la reserva de un pedido sin pagar', async ({
+  page,
+}) => {
+  const product = await makeProduct(2);
+  const order = await unpaidOrder(product, customer());
+  const reserved = await level(product);
+
+  await login(page, await user('store_admin'));
+  await page.goto(`/admin/pedidos/${order.order_id}`);
+  await expect(
+    page.getByText('Esperando la confirmación del banco', { exact: false }),
+  ).toBeVisible();
+  await page.getByRole('button', { name: 'Liberar la reserva' }).click();
+  const dialog = page.getByRole('dialog');
+  await expect(dialog).toContainText('el cliente ya no podrá pagar');
+  await dialog.getByRole('button', { name: 'Liberar la reserva' }).click();
+
+  await expect(page.getByText('Sin pagar', { exact: true })).toBeVisible();
+  await expect(
+    page.getByText('La reserva se liberó desde el panel', { exact: false }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole('button', { name: 'Liberar la reserva' }),
+  ).toHaveCount(0);
+  expect(await level(product)).toEqual({
+    onHand: reserved.onHand,
+    reserved: reserved.reserved - 1,
+  });
+  await expect(
+    page.getByText('Reserva liberada: unidades devueltas al stock'),
+  ).toBeVisible();
+  await expect(page.getByText('Liberada a mano desde el panel')).toBeVisible();
+
+  // El cliente estaba en la página del banco y el cobro llega después.
+  expect(await pay(order, 4990)).toBe('review');
+  await page.reload();
+  await expect(page.getByRole('note')).toContainText(
+    'Pago tardío: la reserva ya se había liberado',
+  );
+  await expect(
+    page.getByRole('button', { name: 'Dar por pagado' }),
+  ).toBeVisible();
+});
+
 test('encargado: ve los pedidos sin datos del cliente ni pasos', async ({
   page,
 }) => {
-  const product = await makeProduct(1);
+  const product = await makeProduct(2);
   const buyer = customer();
   const order = await paidOrder(product, buyer, 4990);
 
@@ -192,4 +250,13 @@ test('encargado: ve los pedidos sin datos del cliente ni pasos', async ({
   const html = await page.content();
   expect(html).not.toContain(buyer.email);
   expect(html).not.toContain(buyer.name);
+
+  const pending = await unpaidOrder(product, customer());
+  await page.goto(`/admin/pedidos/${pending.order_id}`);
+  await expect(
+    page.getByText('Esperando la confirmación del banco', { exact: false }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole('button', { name: 'Liberar la reserva' }),
+  ).toHaveCount(0);
 });

@@ -249,6 +249,8 @@ las tarifas reales en el panel y encender `WEB_CHECKOUT`.
 
 ## Pendientes para activar ventas
 
+Desde el 23/10, la lista vigente, con lo comprobado ese día, está en [PLAN_APERTURA.md](PLAN_APERTURA.md). Esta queda como referencia.
+
 1. **TPV:** variables `REDSYS_*` de pruebas en Vercel (nunca por chat), un pago y una
    devolución de prueba en el entorno de pruebas de Redsys, y después las de producción con
    `REDSYS_ENVIRONMENT=live`.

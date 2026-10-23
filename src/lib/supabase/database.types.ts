@@ -2159,6 +2159,41 @@ export type Database = {
         Returns: string;
       };
       admin_record_variant_costs: { Args: { p_items: Json }; Returns: number };
+      admin_release_order_reservation: {
+        Args: { p_order_id: string; p_revision: number };
+        Returns: {
+          channel: string;
+          created_at: string;
+          currency: string;
+          customer_id: string | null;
+          discount_cents: number;
+          discount_code: string | null;
+          discount_code_id: string | null;
+          fulfillment: string;
+          id: string;
+          items_cents: number;
+          locale: string;
+          location_id: string;
+          number: number;
+          paid_at: string | null;
+          received_transaction_id: string | null;
+          request_id: string;
+          reservation: string;
+          reserved_until: string;
+          revision: number;
+          shipping_cents: number;
+          status: string;
+          total_cents: number;
+          tracking_reference: string | null;
+          updated_at: string;
+        };
+        SetofOptions: {
+          from: '*';
+          to: 'orders';
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
       admin_remove_supplier_variant: {
         Args: { p_supplier_id: string; p_variant_id: string };
         Returns: undefined;
