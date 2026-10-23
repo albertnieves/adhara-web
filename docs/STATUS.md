@@ -1,6 +1,14 @@
 # Estado real — 21/10/2026
 
-## En esta rama: bandeja de mensajes con clientes (A6.1, 16/10; al día con `main` el 21/10)
+## Migraciones de la cuenta de cliente y de la revisión de seguridad aplicadas (21/10)
+
+A petición del usuario: `20261016120000_customer_accounts` y `20261017120000_security_review` están aplicadas en `adhara-dev` desde el 21/10, con las versiones del repositorio (DECISIONS §163). Producción ya estaba en `main` con la PR #43, así que desde ese día la ficha del perfume en el panel vuelve a cargar.
+
+- **Cómo:** un bloque todo o nada que comprueba el estado de la base y el md5 de cada archivo antes de ejecutar; lo ejecutó el usuario en el SQL Editor porque el conector caduca con el `drop` (§141).
+- **Ensayado en local** sin Docker (Postgres 16 con la emulación de Supabase y los datos de `supabase/data`): segunda ejecución rechazada, procedencias idénticas, base igual a la creada desde el repositorio y pgTAP 813/813.
+- **Comprobado en `adhara-dev`:** versiones con el md5 de sus archivos, las 458 procedencias con la misma huella que antes, ningún permiso sin MFA, objetos iguales a la base local y asesor de seguridad sin tipos de aviso nuevos.
+
+## Bandeja de mensajes con clientes (A6.1, PR #42, fusionada el 21/10)
 
 `claude/bandeja-mensajes` (PR #42), con `main` c58d31d fusionado el 21/10. A petición del usuario, siguiente fase del roadmap (H3). Plan en [PLAN_BANDEJA_MENSAJES.md](PLAN_BANDEJA_MENSAJES.md); decisiones §153–157; guía en [ADMIN_OPERATIONS.md](ADMIN_OPERATIONS.md#mensajes).
 
@@ -17,7 +25,7 @@
 `claude/kind-bardeen-hkgu3e`, sobre `main` 93f45f3. A petición del usuario, mientras llegan los datos del TPV. Informe en [SECURITY_REVIEW_2026-10.md](SECURITY_REVIEW_2026-10.md); decisiones §158–162.
 
 - **Arreglado:** la procedencia de los perfumes (nombraba al proveedor) deja la tabla pública y pasa a `product_sources`, solo para el personal; MFA en todos los permisos del personal, también los de lectura; freno por cliente al crear pedidos, aplicar códigos y volver a pagar, y caducidad de reservas hasta vaciar la cola; el entorno de pruebas del TPV no se acepta en producción; rol del personal solo para cuentas confirmadas; la contraseña del personal comprueba el segundo factor en la acción; HSTS y CSP mínima; Next.js 16.3.8 y `source-map-js` 1.2.2 (`pnpm audit --prod` sin avisos).
-- **Base:** migración `20261017120000_security_review.sql`, **sin aplicar en `adhara-dev`**. Va después de `20261016120000_customer_accounts.sql` (PR #37), que tampoco lo está: aplicarlas en orden justo al fusionar (entre medias, la ficha del perfume en el panel no carga).
+- **Base:** migración `20261017120000_security_review.sql`, detrás de `20261016120000_customer_accounts.sql` (PR #37); las dos aplicadas en `adhara-dev` el 21/10 (§163).
 - **Pendiente antes de vender:** probar el TPV en una Preview, límite del Firewall para los `POST` con `Next-Action`, decisiones sobre las reservas (unidades por pedido, últimas unidades de la tienda, duración), cancelar a mano un pedido sin pagar y los detalles de las devoluciones; antes de la cuenta de cliente, comprobar «Confirm email» y el inicio de sesión forzado en `/auth/confirm` (lista completa en el informe).
 
 ## Páginas de casa (PR #40, fusionada el 17/10)
@@ -63,7 +71,7 @@ A petición del usuario: que los clientes puedan crear una cuenta (email y contr
 - **Seguridad:** pgTAP `18` comprueba que una cuenta de cliente no ve nada del panel ni más que un visitante; el personal no borra su cuenta ni cambia la contraseña sin MFA desde la tienda.
 - **Textos legales (borrador):** privacidad y cookies con la cuenta y Google.
 - **Comprobado en local sin Docker** (§146): lint, tipos, format, unitarias (585 en 53 archivos), build y prueba de humo con capturas; pgTAP en Postgres 16 con emulación de Supabase: `18` 50/50 y el resto sin regresiones (en la CI, 730/730 en 19 archivos); tipos generados con postgres-meta contra la base emulada. **Pendiente de la CI de la PR:** `db lint`, concurrencia, E2E de la cuenta (`account.spec.ts`) y auditoría de diseño de sus páginas.
-- **Para encenderla** (usuario): correo de Auth con Resend, alta pública y plantillas en Supabase, cliente OAuth de Google, captcha, migración, revisión legal y `CUSTOMER_ACCOUNTS=1` (lista en el plan).
+- **Para encenderla** (usuario): correo de Auth con Resend, alta pública y plantillas en Supabase, cliente OAuth de Google, captcha, revisión legal y `CUSTOMER_ACCOUNTS=1` (lista en el plan; la migración ya está aplicada).
 
 ## Pedidos web (PR #31, fusionada; 10–12/10/2026)
 
