@@ -19,27 +19,37 @@ El código del checkout, el pago con Redsys, los correos y las devoluciones est�
 | Protección de despliegues         | Sin Vercel Authentication ni contraseña                                                                                                                                               | El banco puede avisar a una Preview                                                                                                                        |
 | Firewall de Vercel                | Sin reglas                                                                                                                                                                            | Solo frenan los límites de la aplicación (§160)                                                                                                            |
 
-**Hecho después, el 23/10:** `CRON_SECRET` en Production (las tareas programadas ya responden 401 sin la clave, no 503) y Supabase en el plan Pro. Falta activar en Auth la protección de contraseñas filtradas: el asesor de seguridad aún la marca.
+**Hecho después, el 23/10:** `CRON_SECRET` en Production (las tareas programadas ya responden 401 sin la clave, no 503) y Supabase en el plan Pro. Más tarde, `RESEND_API_KEY` y `EMAIL_FROM` en Production (visto solo el nombre, §167). Falta activar en Auth la protección de contraseñas filtradas: el asesor de seguridad aún la marca.
 
-## Datos del TPV
+## Datos del TPV (correo de BBVA del 23/10, §167)
 
-- **Por el chat, sí:** número de comercio (FUC, 9 cifras), número de terminal, métodos activados (tarjeta, Bizum, Google Pay, Apple Pay), si el banco activó la notificación online por HTTP y las devoluciones, y el nombre que debe salir en la página del banco.
-- **Nunca por el chat ni en el repositorio:** la clave de firma SHA-256 (la de pruebas y la real) y la contraseña del portal de Redsys (Canales). El usuario las pone en Vercel → `atelier-web` → Settings → Environment Variables, como «Sensitive».
-- La clave es de 32 caracteres en base64. La de pruebas va solo en Preview (`REDSYS_ENVIRONMENT=test`); la real, solo en Production (`live`). Production rechaza `test` (§161).
+- **Comercio:** L'ATELIER DU DESERT, número de comercio (FUC) `370787319`, terminal `001`. Integración por redirección, la que tiene la web (P04). BBVA pide probar cobros con **tarjeta y con Bizum** antes del pase a producción.
+- **Portal de pruebas:** https://sis-t.redsys.es:25443/portalBBVA (usuario: el FUC; la contraseña inicial del correo se cambia al entrar). **Portal real:** https://canales.redsys.es/admincanales-web/index.jsp#/login, con los datos del correo que llega tras el pase.
+- **Clave de pruebas:** es la genérica y pública del entorno de pruebas de Redsys (la misma de su documentación y de `tests/unit/redsys.test.ts`), no una propia del comercio. La real llega con el pase a producción y es distinta.
+- **Moneda:** el correo dice «null» para el terminal de pruebas. La web siempre manda 978 (euro); si la página del banco da un error de moneda, ticket al soporte para que pongan EUR.
+- **Bizum sin código nuevo:** la web no manda `DS_MERCHANT_PAYMETHODS`, así que la página del banco debe ofrecer los métodos activados en el terminal. Bizum estándar usa el mismo tipo de operación (0), la misma notificación firmada y la misma devolución REST (tipo 3) que la tarjeta (manual de Bizum de BBVA, v1.6). No se usan el doble flujo ni la API REST de Bizum. Si Bizum no aparece en la página del banco, es que el terminal no lo tiene activado: ticket al soporte.
+- **Soporte del TPV:** tickets desde el portal (icono «Soporte»; categoría «Paso a producción» para el pase) o teléfono 912 983 609, 24 h.
+- **Por el chat, sí:** número de comercio, terminal, métodos activados y el nombre que debe salir en la página del banco. **Nunca por el chat ni en el repositorio:** la clave real y la contraseña del portal. El usuario pone la clave en Vercel → `atelier-web` → Settings → Environment Variables, como «Sensitive»: la de pruebas solo en Preview (`REDSYS_ENVIRONMENT=test`); la real, solo en Production (`live`). Production rechaza `test` (§161).
 
 ## 1. Prueba en una Preview (datos de pruebas del banco)
 
-- **Rama propia** para la prueba y variables de Preview limitadas a esa rama: `WEB_CHECKOUT=1`, `REDSYS_MERCHANT_CODE`, `REDSYS_TERMINAL`, `REDSYS_ENVIRONMENT=test` y `REDSYS_SECRET_KEY` (la pone el usuario). También `SUPABASE_SECRET_KEY` para esa rama, que hoy solo está en Production: sin ella la Preview no crea pedidos. Las variables de la prueba del 17/10 se borran.
-- **Datos reales:** la Preview usa `atelier-dev`, la misma base que la tienda. Los pedidos de prueba quedan en ella (cancelados y devueltos) con el contacto del usuario; el primer pedido real tendrá un número posterior.
-- **Recorrido** (el usuario paga en su navegador; aquí se comprueban la base y los registros de Vercel): recogida de una unidad; un primer intento que no se completa (el pedido sigue esperando pago y se puede volver a intentar); un segundo intento aceptado (pasa a «Por preparar» sin recargar a mano); en el panel de la Preview, «Cancelar y devolver el dinero» (tiene que volver la respuesta 0900 firmada). Con otro pedido, «Liberar la reserva» (§164).
-- **Al terminar:** borrar las variables de Preview de la rama y revocar en Supabase la clave secreta creada para la prueba.
+- **Rama:** `claude/vigilant-mendel-p4mv93` (la de los textos de Bizum, §167). Variables de Preview limitadas a esa rama: `WEB_CHECKOUT=1`, `REDSYS_MERCHANT_CODE=370787319`, `REDSYS_TERMINAL=001`, `REDSYS_ENVIRONMENT=test`, `REDSYS_SECRET_KEY` (la de pruebas del correo, Sensitive) y `SUPABASE_SECRET_KEY` (una clave nueva solo para la prueba; sin ella la Preview no crea pedidos). Con todas puestas, **volver a desplegar** la Preview: `WEB_CHECKOUT` se lee al generar las páginas.
+- **Antes de pagar:** en el portal de pruebas, comprobar en el terminal 001 la notificación online por HTTP, Bizum, las devoluciones y la moneda.
+- **Datos reales:** la Preview usa `atelier-dev`, la misma base que la tienda. Los pedidos de prueba quedan en ella (cancelados y devueltos) con el contacto del usuario; el primer pedido real tendrá un número posterior. La Preview no tiene el correo: la confirmación queda en la cola de la base y la manda la tarea programada de Production, así que también se prueba el correo.
+- **Recorrido** (el usuario paga en su navegador; aquí se comprueban la base y los registros de Vercel):
+  - **Tarjeta** (4548 8100 0000 0003, la de pruebas de Redsys): recogida de una unidad; un primer intento que no se completa (el pedido sigue esperando pago y se puede volver a intentar); un segundo intento aceptado (pasa a «Por preparar» sin recargar a mano); en el panel de la Preview, «Cancelar y devolver el dinero» (tiene que volver la respuesta 0900 firmada).
+  - **Bizum** (datos del manual de BBVA), con otro pedido: primero `ko@ko.ko`, rechazado (el pedido sigue esperando pago); al volver a intentarlo, el móvil 700000000, aceptado. Después, la devolución de ese cobro desde el panel.
+  - Con otro pedido, «Liberar la reserva» (§164).
+  - En el portal de pruebas, que se ven los cobros y las devoluciones.
+- **Al terminar:** borrar las variables de Preview de esta rama (y las que quedan de la prueba del 17/10, rama `claude/exciting-brown-j08p6y`) y revocar en Supabase la clave secreta creada para la prueba.
+- **Pase a producción:** con la prueba bien, botón **«Pasar a producción»** en el portal de pruebas. BBVA manda otro correo con los datos del entorno real (portal y clave real). Hacerlo cuanto antes: no se sabe cuánto tarda.
 
 ## 2. Configuración de Production (usuario)
 
 1. ~~`CRON_SECRET` (valor aleatorio largo, Sensitive): caducidad de reservas, correos, copia diaria e informe.~~ Hecho el 23/10.
 2. ~~Supabase Pro para `atelier-dev`, que es la base de la tienda.~~ Hecho el 23/10. Falta activar la protección de contraseñas filtradas: Authentication → Sign In / Providers → Email → «Prevent use of leaked passwords».
-3. Resend: dominio de envío verificado (SPF y DKIM en el DNS de Vercel), `RESEND_API_KEY` y `EMAIL_FROM` (p. ej. `L’Atelier du Désert <pedidos@latelierdudesert.com>`).
-4. TPV real: `REDSYS_MERCHANT_CODE`, `REDSYS_TERMINAL`, `REDSYS_SECRET_KEY` (la real) y `REDSYS_ENVIRONMENT=live`; opcional `REDSYS_MERCHANT_NAME`.
+3. Resend: dominio de envío verificado (SPF y DKIM en el DNS de Vercel), `RESEND_API_KEY` y `EMAIL_FROM` (p. ej. `L’Atelier du Désert <pedidos@latelierdudesert.com>`). Las dos variables ya están en Production (23/10, visto solo el nombre); falta confirmar que el dominio está verificado en Resend.
+4. TPV real, cuando llegue el correo del pase a producción: `REDSYS_MERCHANT_CODE=370787319`, `REDSYS_TERMINAL=001` (o el que diga ese correo), `REDSYS_SECRET_KEY` (la real) y `REDSYS_ENVIRONMENT=live`; opcional `REDSYS_MERCHANT_NAME`.
 5. Panel → Configuración → Tarifas de envío: península e Illes Balears, con precio, envío gratis desde y «Ofrecer el envío».
 6. Panel → Configuración: email y teléfono de la tienda.
 7. Verificación en dos pasos de la administradora de la tienda (la pide su primer acceso).
@@ -47,7 +57,7 @@ El código del checkout, el pago con Redsys, los correos y las devoluciones est�
 
 ## 3. Textos legales
 
-- **Faltan** (LEGAL.md): teléfono, tarifa de envío y desde cuánto es gratis, plazo de entrega y transportista, medios de pago y si hay adhesión al arbitraje de consumo. Con esos datos se rellenan `LEGAL_ENTITY` (también `shippingCost` y `freeShippingFrom`, copiados de las tarifas) y se cambia `LEGAL_UPDATED_AT`.
+- **Faltan** (LEGAL.md): teléfono, tarifa de envío y desde cuánto es gratis, plazo de entrega y transportista y si hay adhesión al arbitraje de consumo. Con esos datos se rellenan `LEGAL_ENTITY` (también `shippingCost` y `freeShippingFrom`, copiados de las tarifas) y se cambia `LEGAL_UPDATED_AT`. Los medios de pago ya están: tarjeta bancaria y Bizum (§167).
 - **Revisión de la asesoría** antes de abrir: condiciones, envíos, privacidad y el adjunto del correo de confirmación. Que confirme también si la web debe emitir factura o ticket por pedido.
 
 ## 4. Día de la apertura

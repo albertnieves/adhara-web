@@ -44,8 +44,15 @@ export const LEGAL_ENTITY: Record<
   deliveryTime: null,
   /** Empresa de transporte. */
   carrier: null,
-  /** Medios de pago aceptados. */
-  paymentMethods: null,
+  /**
+   * Medios de pago aceptados: los del TPV virtual de BBVA según su correo del
+   * 23/10/2026 (DECISIONS §167). Se confirman en la prueba con el banco.
+   */
+  paymentMethods: {
+    es: 'tarjeta bancaria y Bizum',
+    ca: 'targeta bancària i Bizum',
+    en: 'bank card and Bizum',
+  },
   /** Si se adhiere a la Junta Arbitral de Consum de Catalunya (u otra entidad). */
   arbitration: null,
 };

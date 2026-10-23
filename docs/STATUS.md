@@ -1,5 +1,14 @@
 # Estado real — 23/10/2026
 
+## Datos de pruebas del TPV de BBVA y Bizum (23/10)
+
+`claude/vigilant-mendel-p4mv93`, sobre `main` a346fb1. BBVA mandó los datos del entorno de pruebas: comercio `370787319`, terminal `001`, portal de pruebas y la clave genérica de pruebas de Redsys. Pide probar tarjeta y Bizum y después pulsar «Pasar a producción»; la clave real llega con ese pase. Decisión §167; pasos en [PLAN_APERTURA.md](PLAN_APERTURA.md).
+
+- **Bizum sin código nuevo:** la página del banco ofrece los métodos activados en el terminal, y la notificación y la devolución de Bizum son las mismas que las de la tarjeta. Se confirma en la prueba.
+- **Textos:** «pagar con tarjeta o Bizum» al ir al banco (es/ca/en); medios de pago en las condiciones (tarjeta bancaria y Bizum) y su párrafo de pago; privacidad y aviso de devolución del panel con Bizum. `LEGAL_UPDATED_AT` no cambia todavía.
+- **Comprobado en local** (con Node 22: el contenedor no tiene la 24): `pnpm check` correcto (lint, tipos, 647 unitarias y build); `format:check` y `scan:secrets` correctos. Sin migraciones ni cambios de rutas; las E2E, en la CI de la PR.
+- **Siguiente (usuario):** variables de la Preview de esta rama, con las dos claves, y volver a desplegarla; comprobar el terminal en el portal de pruebas; la prueba de tarjeta y Bizum; «Pasar a producción».
+
 ## «Liberar la reserva» y lista para abrir la venta (PR #45, 23/10)
 
 `claude/cancelar-pedido-sin-pagar`, con `main` d87c1c4 (PR #44) fusionado. El banco ya ha dado el TPV virtual y la venta online se quiere abrir la semana del 26/10. Lista de lo que falta, con lo comprobado hoy, en [PLAN_APERTURA.md](PLAN_APERTURA.md); decisiones §164–165.
@@ -404,7 +413,7 @@ La revisión visual con perfumes se hizo en local con un Supabase simulado que d
 3. ~~Abrir la web a Agustín~~: hecho el 10/10, la web es pública (DECISIONS §118). Queda decidir cuándo quitar el `noindex` para que la indexen los buscadores.
 4. Asistente: configurar en Vercel, solo servidor y para Production y Preview, `ANTHROPIC_API_KEY` (de la cuenta de Anthropic del negocio), `CRON_SECRET` (valor aleatorio largo) y `SUPABASE_SECRET_KEY`; opcional `ASSISTANT_DAILY_LIMIT`. No pegar ninguna clave en el chat. La migración ya está aplicada.
 5. Dar de alta los proveedores reales (Compras → Proveedores) para que Reposición proponga cantidades.
-6. **Pago con tarjeta (Visa) en la web.** TPV virtual concedido por el banco el 23/10: los pasos para probarlo y abrir están en [PLAN_APERTURA.md](PLAN_APERTURA.md). El datáfono de la tienda no sirve para cobrar online: hace falta un **TPV virtual** de comercio electrónico del banco (en España casi todos usan Redsys). Pedir al banco y guardar, sin pegarlo en el chat:
+6. **Pago con tarjeta (Visa) en la web.** TPV virtual concedido por el banco el 23/10, con tarjeta y Bizum; datos del entorno de pruebas recibidos el mismo día (§167). Los pasos para probarlo, pedir el pase a producción y abrir están en [PLAN_APERTURA.md](PLAN_APERTURA.md). El datáfono de la tienda no sirve para cobrar online: hace falta un **TPV virtual** de comercio electrónico del banco (en España casi todos usan Redsys). Pedir al banco y guardar, sin pegarlo en el chat:
    - número de comercio (FUC, 9 dígitos) y número de terminal;
    - clave de firma SHA-256 de pruebas y la real (se ponen como variables de servidor en Vercel);
    - integración **por redirección** (la tarjeta se teclea en la página del banco, nunca en la nuestra), con EMV 3DS, moneda EUR, Visa y Mastercard, notificación online por HTTP y devoluciones activadas; Bizum, Apple Pay o Google Pay si se quieren;

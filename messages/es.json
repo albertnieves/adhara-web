@@ -319,7 +319,7 @@
     "submitting": "Registrando el pedido…",
     "placedTitle": "Pedido Nº {number} registrado",
     "placedLead": "Te guardamos los perfumes hasta las {time}. Total: {amount}.",
-    "placedPayment": "El pago con tarjeta aún no está conectado: esta compra es una prueba y la reserva caducará sola.",
+    "placedPayment": "El pago aún no está conectado: esta compra es una prueba y la reserva caducará sola.",
     "continue": "Seguir comprando",
     "errors": {
       "nameRequired": "Escribe tu nombre y apellidos.",
@@ -350,7 +350,7 @@
     "title": "Tu pedido",
     "number": "Pedido Nº {number}",
     "bankDescription": "Pedido Nº {number}",
-    "redirecting": "Te llevamos a la página segura del banco para pagar con tarjeta…",
+    "redirecting": "Te llevamos a la página segura del banco para pagar con tarjeta o Bizum…",
     "goToBank": "Ir al pago seguro",
     "connecting": "Conectando con el banco…",
     "paidTitle": "Pago confirmado",

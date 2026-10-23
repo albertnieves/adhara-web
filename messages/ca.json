@@ -319,7 +319,7 @@
     "submitting": "Registrant la comanda…",
     "placedTitle": "Comanda núm. {number} registrada",
     "placedLead": "Et guardem els perfums fins a les {time}. Total: {amount}.",
-    "placedPayment": "El pagament amb targeta encara no està connectat: aquesta compra és una prova i la reserva caducarà sola.",
+    "placedPayment": "El pagament encara no està connectat: aquesta compra és una prova i la reserva caducarà sola.",
     "continue": "Continua comprant",
     "errors": {
       "nameRequired": "Escriu el teu nom i cognoms.",
@@ -350,7 +350,7 @@
     "title": "La teva comanda",
     "number": "Comanda núm. {number}",
     "bankDescription": "Comanda núm. {number}",
-    "redirecting": "T’enviem a la pàgina segura del banc per pagar amb targeta…",
+    "redirecting": "T’enviem a la pàgina segura del banc per pagar amb targeta o Bizum…",
     "goToBank": "Anar al pagament segur",
     "connecting": "Connectant amb el banc…",
     "paidTitle": "Pagament confirmat",

@@ -44,7 +44,7 @@ export function RefundActions({
       option.amountCents ?? parseEuros(String(formData.get('amount') ?? ''));
     const description =
       amount && amount > 0
-        ? `Se pedirá al banco que devuelva ${euros(amount)} a la tarjeta con la que se pagó. ${
+        ? `Se pedirá al banco que devuelva ${euros(amount)} por el mismo medio con el que se pagó (tarjeta o Bizum). ${
             option.to === 'cancelled'
               ? 'Si la acepta, el pedido queda cancelado y sus unidades vuelven a la tienda.'
               : option.to === null
