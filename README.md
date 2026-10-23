@@ -1,6 +1,6 @@
 # L’Atelier du Désert · adhara-web
 
-Ecommerce de perfumería árabe **L’Atelier du Désert** («Haute Parfumerie Orientale»). El repositorio y el proyecto de Supabase conservan el nombre de trabajo `adhara`; el proyecto de Vercel es `altier-web`, con el dominio `latelierdudesert.com` (público desde el 10/10/2026, sin indexar todavía). **En desarrollo; Fase 1 cerrada el 02/10/2026 con excepciones escritas ([informe](docs/phases/FASE_1_REPORT.md)); Fase 2 (sistema de diseño) terminada el 04/10 a falta de la revisión visual ([informe](docs/phases/FASE_2_REPORT.md)).** Tienda visual en es/ca/en con escena 3D de unboxing y panel de administración con catálogo, precios, inventario y equipo sobre Supabase (`adhara-dev`). El entorno de desarrollo tiene 50 perfumes publicados y el resto pendiente de completar; sin checkout todavía (docs/STATUS.md).
+Ecommerce de perfumería árabe **L’Atelier du Désert** («Haute Parfumerie Orientale»). El repositorio conserva el nombre de trabajo `adhara`; los proyectos se llaman `atelier-web` en Vercel y `atelier-dev` en Supabase (renombrados el 23/10/2026; antes `altier-web` y `adhara-dev`), con el dominio `latelierdudesert.com` (público desde el 10/10/2026, sin indexar todavía). **En desarrollo; Fase 1 cerrada el 02/10/2026 con excepciones escritas ([informe](docs/phases/FASE_1_REPORT.md)); Fase 2 (sistema de diseño) terminada el 04/10 a falta de la revisión visual ([informe](docs/phases/FASE_2_REPORT.md)).** Tienda visual en es/ca/en con escena 3D de unboxing y panel de administración con catálogo, precios, inventario y equipo sobre Supabase (`atelier-dev`). El entorno de desarrollo tiene 50 perfumes publicados y el resto pendiente de completar; sin checkout todavía (docs/STATUS.md).
 
 ## Arranque
 
@@ -12,7 +12,7 @@ pnpm install --frozen-lockfile
 pnpm dev
 ```
 
-Abrir http://localhost:3000. Sin variables de Supabase la tienda muestra la colección vacía y el panel queda cerrado. Para conectar `adhara-dev`, copiar `.env.example` a `.env.local` y rellenar las dos variables públicas de Supabase (no subir `.env.local` a Git).
+Abrir http://localhost:3000. Sin variables de Supabase la tienda muestra la colección vacía y el panel queda cerrado. Para conectar `atelier-dev`, copiar `.env.example` a `.env.local` y rellenar las dos variables públicas de Supabase (no subir `.env.local` a Git).
 
 ## Comprobaciones
 

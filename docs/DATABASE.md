@@ -1,6 +1,6 @@
 # Base de datos
 
-Supabase (Postgres 17) con tres esquemas. Estado al 02/10/2026: 17 migraciones, las mismas en local, en CI y en `adhara-dev` (Frankfurt, `eu-central-1`). Este documento describe lo implementado; el diseño original de la Fase 1 está en `docs/source/FASE_1_PLAN.md` §7–§9 y las diferencias, en [DECISIONS.md](DECISIONS.md).
+Supabase (Postgres 17) con tres esquemas. Estado al 02/10/2026: 17 migraciones, las mismas en local, en CI y en `atelier-dev` (Frankfurt, `eu-central-1`). Este documento describe lo implementado; el diseño original de la Fase 1 está en `docs/source/FASE_1_PLAN.md` §7–§9 y las diferencias, en [DECISIONS.md](DECISIONS.md).
 
 ## Esquemas
 
@@ -10,11 +10,11 @@ Supabase (Postgres 17) con tres esquemas. Estado al 02/10/2026: 17 migraciones, 
 | `internal` | No                  | Costes, historial de PVP, proveedores, pedidos de compra, recepciones, control (tareas, costes, entregas, titulares y registro de copias) y visitas agregadas | Sin privilegios para `anon` ni `authenticated`; solo funciones `SECURITY DEFINER` con permiso y MFA      |
 | `private`  | No                  | Funciones auxiliares (`has_permission`, `current_aal`, triggers), revisiones de PVP y de contenido, preasignación                                             | `authenticated` puede usar el esquema para que las políticas llamen a sus funciones; sin acceso a tablas |
 
-`supabase/config.toml` expone solo `public` y `graphql_public`. En `adhara-dev`, una petición REST a `internal` o `private` con la clave publicable responde `PGRST106` («Only the following schemas are exposed: public, graphql_public»), comprobado el 02/10.
+`supabase/config.toml` expone solo `public` y `graphql_public`. En `atelier-dev`, una petición REST a `internal` o `private` con la clave publicable responde `PGRST106` («Only the following schemas are exposed: public, graphql_public»), comprobado el 02/10.
 
 ## Migraciones
 
-Una migración por tema, aplicadas en `adhara-dev` con el conector de Supabase y guardadas con la misma versión en `supabase/migrations/` (DECISIONS §19).
+Una migración por tema, aplicadas en `atelier-dev` con el conector de Supabase y guardadas con la misma versión en `supabase/migrations/` (DECISIONS §19).
 
 | Versión          | Tema                                                                                                                                                                           |
 | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -52,7 +52,7 @@ Una migración por tema, aplicadas en `adhara-dev` con el conector de Supabase y
 | `20261017120000` | Revisión de seguridad: `product_sources` (procedencia solo para el personal), MFA en todos los permisos, rol solo para cuentas confirmadas y `web_order_rate_limit` (§158–162) |
 | `20261021120000` | Bandeja de mensajes (A6.1): conversaciones, contacto, mensajes, cola de respuestas, plantillas y clave de respuesta                                                            |
 
-No hay `seed.sql`: los datos de referencia (permisos, matriz de roles, ubicación de la tienda, parámetros del vigilante) viven en las migraciones. Las cargas de datos reales están en `supabase/data/` y se aplicaron una vez en `adhara-dev`; no forman parte de `db reset`.
+No hay `seed.sql`: los datos de referencia (permisos, matriz de roles, ubicación de la tienda, parámetros del vigilante) viven en las migraciones. Las cargas de datos reales están en `supabase/data/` y se aplicaron una vez en `atelier-dev`; no forman parte de `db reset`.
 
 ## Tablas y RLS
 
@@ -174,4 +174,4 @@ erDiagram
 
 Archivos pgTAP: `01` personal y permisos, `02` catálogo e inventario, `03` costes, `04` entregas de administración y compras/mostrador, `05` informes, `06` asistente `07` garantías de la Fase 1 (RLS en todas las tablas, `anon` sin funciones `admin_*`, PVP sin permiso, publicación y solo inserción) `08` perfil olfativo y suscriptores (lectura pública solo de publicados, restricciones del perfil, alta pública normalizada que no revela si el email existía, lectura y baja solo con `customers.*`) `09` control del negocio (solo el titular con MFA, otro `system_admin` sin acceso, `internal` inalcanzable, auditoría sin importes, precio cobrado en el mostrador sin superar el PVP y hechos del mes), `10` métricas por producto (series, existencias y días con stock, historial de PVP y coste), `11` visitas (solo publicados, sin revelar nada, freno por minuto, lectura solo del titular) `12` copias y estado (lista blanca, rol de servicio, bucket privado, registro de solo inserción, estado del sistema, uso del asistente y calidad de datos) y `13` pedidos web (solo el servidor crea y cobra, precio del catálogo, reserva todo o nada e idempotente, decisión ante cada notificación, caducidad y pago tardío, lectura por permiso con el contacto aparte y transiciones con su efecto de inventario) y `14` checkout (zonas por código postal, tarifas solo con `settings.manage` y MFA y auditadas, la tienda solo ve las activas, envío calculado en la base con envío gratis, teléfono y dirección obligatorios y guardados solo si hay envío, y tienda por defecto), `15` pago (estado del pedido solo para el servidor y sin datos personales, reintento con otra referencia), `16` correos (encolado con el paso que lo motiva y una vez por pedido, lectura con `orders.view`, envío y reintentos solo del servidor), `17` devoluciones (solo `orders.refund` con MFA pide, solo el servidor resuelve, importes acotados a lo cobrado, idempotencia, una abierta por pedido, parcial y resto, cobro de más y reenvío sin respuesta), `18` cuenta de cliente (una cuenta de cliente, con o sin aal2, no ve en ninguna tabla pública más que un visitante ni pasa funciones del panel; toda función de sesión tiene guarda o es pública por diseño; pedidos propios por vínculo o por email verificado, sin los caducados; ficha validada; al borrar la cuenta se borra la ficha y el pedido se conserva sin vínculo) `19` códigos de descuento (solo `promotions.manage` con MFA crea y ve códigos, auditados; la tienda los comprueba en el servidor; porcentaje o importe, compra mínima, fechas, usos máximos y uso por email; rebajados fuera si el código lo pide; envío gratis con el descuento ya aplicado; el uso de un pedido caducado vuelve; cobro por el total con descuento) y `20` revisión de seguridad (la procedencia solo la lee el personal con MFA, ningún permiso sin MFA, rol solo para cuentas confirmadas y freno de peticiones solo del servidor).
 
-`db reset` solo se ejecuta en local y en CI. En `adhara-dev` borraría datos reales (catálogo, stock, fotos y cuentas): allí se comprueba la paridad de versiones con la lista de migraciones (DECISIONS §85).
+`db reset` solo se ejecuta en local y en CI. En `atelier-dev` borraría datos reales (catálogo, stock, fotos y cuentas): allí se comprueba la paridad de versiones con la lista de migraciones (DECISIONS §85).

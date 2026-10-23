@@ -23,7 +23,7 @@ El proyecto local `adhara-admin-delivery` usa API 54321, PostgreSQL 54322, Studi
 
 `check` incluye lint, tipos, unitarios y build. `test:e2e` comprueba la navegación sobre el build sin Supabase. `build:local` y `test:e2e:local` comprueban el panel y la publicación contra servicios locales. El puerto 3000 debe estar libre.
 
-pgTAP revierte sus fixtures. La prueba de concurrencia requiere personal vacío y usa conexiones independientes al contenedor con nombre fijo. Los recorridos de navegador crean usuarios, completan TOTP y usan Mailpit; conservan fixtures hasta reset. No ejecutar contra `adhara-dev` ni cargar `supabase/data` como seed. No guardar trazas de pantallas de MFA. Para desarrollo conectado: `node scripts/local-env.ts pnpm dev`.
+pgTAP revierte sus fixtures. La prueba de concurrencia requiere personal vacío y usa conexiones independientes al contenedor con nombre fijo. Los recorridos de navegador crean usuarios, completan TOTP y usan Mailpit; conservan fixtures hasta reset. No ejecutar contra `atelier-dev` ni cargar `supabase/data` como seed. No guardar trazas de pantallas de MFA. Para desarrollo conectado: `node scripts/local-env.ts pnpm dev`.
 
 Crear migraciones con `pnpm exec supabase migration new <nombre>`; reaplicarlas desde cero, comprobar RLS y regenerar tipos:
 

@@ -36,7 +36,7 @@ Español por defecto, catalán e inglés, todas las URL con prefijo y rutas trad
 3. **VERIFY:** `pnpm check` (lint, tipos, unitarias y build) tras cambios funcionales; `pnpm test:e2e` tras cambios de rutas o navegación (requiere build); con Supabase local, `pnpm test:db`, `node scripts/check-db-types.ts` y `pnpm test:e2e:local`. La CI repite todo en `ci.yml`, `db.yml` y `e2e.yml`.
 4. **REPORT:** qué se hizo, comprobaciones con su resultado, decisiones (en [docs/DECISIONS.md](docs/DECISIONS.md)), límites y siguiente paso, en español. No declarar hecho lo que no se ha verificado.
 
-No desplegar a producción por defecto ni ejecutar `supabase db reset` contra `adhara-dev` (tiene datos reales). Las migraciones remotas se aplican con el conector de Supabase y se guardan con la misma versión en `supabase/migrations/`.
+No desplegar a producción por defecto ni ejecutar `supabase db reset` contra `atelier-dev` (tiene datos reales). Las migraciones remotas se aplican con el conector de Supabase y se guardan con la misma versión en `supabase/migrations/`.
 
 ## Entorno
 

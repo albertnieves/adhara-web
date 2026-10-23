@@ -23,13 +23,13 @@ Estados: **hecha**, **cerrada con excepciones** (criterios cumplidos salvo excep
 | 14  | Cuenta de cliente        | Hecha en una rama, apagada            | Email y contraseña o Google (Apple después), pedidos de la cuenta, datos y dirección, baja y checkout que rellena y vincula; tras `CUSTOMER_ACCOUNTS` (PLAN_CUENTA_CLIENTE, DECISIONS §142–146). Falta la configuración del usuario para encenderla.                                                                                                                                                                  |
 | 15  | SEO y analítica          | En parte                              | Canonical y hreflang por idioma con el dominio propio. Todo `noindex` hasta que se decida abrir a buscadores; sin sitemap ni analítica.                                                                                                                                                                                                                                                                               |
 | 16  | QA y seguridad           | Pendiente                             | Ya hay pgTAP, E2E, auditoría de maquetación y axe, prueba de fuga de costes y escaneo de secretos en CI.                                                                                                                                                                                                                                                                                                              |
-| 17  | Producción               | En parte                              | Dominio `latelierdudesert.com` y web pública desde el 10/10 (§117–118); textos legales en borrador (§113–116). Plan Pro de Vercel contratado el 11/10 (§134). Faltan `adhara-prod`, pagos reales, copias de seguridad y monitorización.                                                                                                                                                                               |
+| 17  | Producción               | En parte                              | Dominio `latelierdudesert.com` y web pública desde el 10/10 (§117–118); textos legales en borrador (§113–116). Plan Pro de Vercel contratado el 11/10 (§134). Faltan `atelier-prod`, pagos reales, copias de seguridad y monitorización.                                                                                                                                                                              |
 
 ## Dónde estamos (10/10/2026)
 
 La web es un **escaparate completo y público**: colección con PVP, fichas (4 con escena 3D), catálogo olfativo, club de promociones y textos legales, en tres idiomas y en `latelierdudesert.com`, todavía sin indexar. El **panel cubre la operación de la tienda física**: catálogo, precios con Ómnibus, costes y márgenes, inventario, mostrador, compras, reposición, informes y asistente. **No se puede comprar online**: es lo siguiente y depende sobre todo de datos del banco.
 
-Lo que falta para cada paso depende más de decisiones y datos del negocio que de código: TPV virtual, correo transaccional, datos legales de envíos y pagos y `adhara-prod` (STATUS, «Pendiente del usuario»).
+Lo que falta para cada paso depende más de decisiones y datos del negocio que de código: TPV virtual, correo transaccional, datos legales de envíos y pagos y `atelier-prod` (STATUS, «Pendiente del usuario»).
 
 ## Siguientes fases y entregas
 
@@ -37,12 +37,12 @@ Seis hitos. Cada entrega es una PR revisable con su verificación (`pnpm check`,
 
 ### H0 — En curso
 
-| Entrega                       | Qué incluye                                                                                                                        | Tamaño | Bloquea                              |
-| ----------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- | ------ | ------------------------------------ |
-| Móvil: cuadrícula y menú      | Esta rama: cuadrícula de dos columnas con vista amplia, menú móvil que vuelve a navegar y galería de 44 px.                        | S      | Revisión                             |
-| Cierre de la Fase 2           | Revisión visual del usuario en la Preview (`/admin/diseno`, tonos de colección, tienda y panel).                                   | S      | Usuario                              |
-| Presentación al cliente (#32) | Documentación de la presentación y reparto de cuentas. Antes de fusionar, renumerar su §113 (ya existe en `main`).                 | S      | Revisión                             |
-| Consola del titular           | Control del negocio y consola solo para el titular: métricas por perfume, visitas, copias, estado, asistente y calidad (§122–130). | L      | Usuario: migraciones en `adhara-dev` |
+| Entrega                       | Qué incluye                                                                                                                        | Tamaño | Bloquea                               |
+| ----------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- | ------ | ------------------------------------- |
+| Móvil: cuadrícula y menú      | Esta rama: cuadrícula de dos columnas con vista amplia, menú móvil que vuelve a navegar y galería de 44 px.                        | S      | Revisión                              |
+| Cierre de la Fase 2           | Revisión visual del usuario en la Preview (`/admin/diseno`, tonos de colección, tienda y panel).                                   | S      | Usuario                               |
+| Presentación al cliente (#32) | Documentación de la presentación y reparto de cuentas. Antes de fusionar, renumerar su §113 (ya existe en `main`).                 | S      | Revisión                              |
+| Consola del titular           | Control del negocio y consola solo para el titular: métricas por perfume, visitas, copias, estado, asistente y calidad (§122–130). | L      | Usuario: migraciones en `atelier-dev` |
 
 ### H1 — Escaparate listo para abrir a buscadores
 
@@ -55,7 +55,7 @@ Objetivo: que la web pueda indexarse y enlazarse sin riesgo, aunque aún no vend
 | Legal definitivo          | Teléfono, envíos, pagos y arbitraje en los textos; revisión de la asesoría (§113–116).                                                                          | S      | Cliente y asesoría                  |
 | SEO base (F15)            | Sitemap por idioma, JSON-LD de producto, Open Graph y quitar `noindex` cuando lo legal esté cerrado.                                                            | M      | Legal definitivo                    |
 | Fotos y derechos (F7)     | Derechos de las fotos oficiales o fotos propias; los 6 publicados sin foto oficial.                                                                             | M      | Usuario                             |
-| Infraestructura comercial | Vercel Pro (hecho el 11/10), `adhara-prod` con copias diarias, URLs de Auth con el dominio, MFA del administrador de la tienda y `main` protegida.              | S      | Usuario (planes y cuentas, ver #32) |
+| Infraestructura comercial | Vercel Pro (hecho el 11/10), `atelier-prod` con copias diarias, URLs de Auth con el dominio, MFA del administrador de la tienda y `main` protegida.             | S      | Usuario (planes y cuentas, ver #32) |
 
 ### H2 — Venta online con recogida en tienda (F10, F12, A5)
 
@@ -95,8 +95,8 @@ Objetivo: primera venta real pagada con tarjeta, con recogida en Castelldefels y
 | Entrega               | Qué incluye                                                                                                                                            | Tamaño | Bloquea        |
 | --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ | ------ | -------------- |
 | Revisión de seguridad | **Hecha el 17/10** (§158–162, [informe](SECURITY_REVIEW_2026-10.md)); quedan el Firewall, el captcha y la protección de contraseñas filtradas en Auth. | M      | H2             |
-| Operación             | Monitorización de errores y disponibilidad, copias comprobadas con una restauración de prueba y guía de incidencias.                                   | M      | `adhara-prod`  |
-| Migraciones           | Despliegue automático de migraciones de `main` a `adhara-prod` con revisión.                                                                           | S      | `adhara-prod`  |
+| Operación             | Monitorización de errores y disponibilidad, copias comprobadas con una restauración de prueba y guía de incidencias.                                   | M      | `atelier-prod` |
+| Migraciones           | Despliegue automático de migraciones de `main` a `atelier-prod` con revisión.                                                                          | S      | `atelier-prod` |
 | Analítica             | Solo si se decide: sin cookies o con aviso de consentimiento que permita rechazar.                                                                     | S      | Decisión legal |
 
 ## Orden recomendado

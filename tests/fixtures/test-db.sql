@@ -1,4 +1,4 @@
--- Solo para la base local efímera de CI (e2e.yml). Nunca en adhara-dev ni en
+-- Solo para la base local efímera de CI (e2e.yml). Nunca en atelier-dev ni en
 -- producción: los datos son ficticios.
 --
 -- Un perfume publicado con un coste centinela de 987654 céntimos y un

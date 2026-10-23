@@ -99,12 +99,12 @@ Vercel Cron (`vercel.json`) llama con `CRON_SECRET` a `/api/cron/informe-diario`
 
 ## Despliegue y entornos
 
-| Entorno    | Dónde                                                                 | Base de datos                               |
-| ---------- | --------------------------------------------------------------------- | ------------------------------------------- |
-| Local      | `pnpm dev` (webpack, `localhost`); Supabase local con Docker opcional | Local o `adhara-dev`                        |
-| CI         | GitHub Actions: `ci.yml`, `db.yml`, `e2e.yml`                         | Supabase local efímero                      |
-| Preview    | Vercel, una por rama y PR                                             | `adhara-dev`                                |
-| Production | Vercel desde `main`, funciones en París (cdg1)                        | `adhara-dev` hasta que exista `adhara-prod` |
+| Entorno    | Dónde                                                                 | Base de datos                                 |
+| ---------- | --------------------------------------------------------------------- | --------------------------------------------- |
+| Local      | `pnpm dev` (webpack, `localhost`); Supabase local con Docker opcional | Local o `atelier-dev`                         |
+| CI         | GitHub Actions: `ci.yml`, `db.yml`, `e2e.yml`                         | Supabase local efímero                        |
+| Preview    | Vercel, una por rama y PR                                             | `atelier-dev`                                 |
+| Production | Vercel desde `main`, funciones en París (cdg1)                        | `atelier-dev` hasta que exista `atelier-prod` |
 
 Todos los despliegues de Vercel están protegidos con Vercel Authentication y responden `noindex`. No se despliega a producción por defecto (AGENTS.md).
 
