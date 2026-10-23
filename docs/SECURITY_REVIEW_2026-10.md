@@ -30,7 +30,7 @@ A petición del usuario, mientras llegan los datos del TPV. Decisiones en [DECIS
 - **Firewall de Vercel:** límite por IP a las peticiones `POST` con la cabecera `Next-Action` en cualquier ruta (no solo `/finalizar-compra`) y a `/api/pagos/redsys`. Complementa el freno de la aplicación ante muchas IP.
 - **Captcha (Turnstile) en el pedido**, si aparecen abusos: el freno por IP no para a quien tiene muchas IP.
 - **Decisiones del negocio sobre las reservas:** unidades máximas por formato en un pedido web (hoy 10), no reservar las últimas unidades de la tienda y si la reserva debe durar menos de 30 minutos.
-- **Liberar a mano:** que el personal pueda cancelar un pedido sin pagar y devolver su reserva (hoy solo lo hace la caducidad).
+- **Liberar a mano:** que el personal pueda cancelar un pedido sin pagar y devolver su reserva (hoy solo lo hace la caducidad). Hecho el 23/10: «Liberar la reserva» (DECISIONS §164).
 - **Devoluciones** (bajo, solo personal con MFA):
   - una petición repetida con la misma clave puede mandarse dos veces al banco mientras la primera sigue sin respuesta;
   - una devolución «sin respuesta clara» o que quedó a medias no se puede resolver desde el panel (hay que mirar el portal de Redsys) y bloquea otras en ese pedido;

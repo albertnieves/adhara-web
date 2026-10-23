@@ -1,4 +1,14 @@
-# Estado real — 21/10/2026
+# Estado real — 23/10/2026
+
+## «Liberar la reserva» y lista para abrir la venta (PR #45, 23/10)
+
+`claude/cancelar-pedido-sin-pagar`, con `main` d87c1c4 (PR #44) fusionado. El banco ya ha dado el TPV virtual y la venta online se quiere abrir la semana del 26/10. Lista de lo que falta, con lo comprobado hoy, en [PLAN_APERTURA.md](PLAN_APERTURA.md); decisiones §164–165.
+
+- **Liberar la reserva** (Web → Pedidos web, ficha de un pedido que espera el pago, con `orders.fulfill`): devuelve las unidades al stock antes de que caduque la reserva. El pedido queda «Sin pagar», como con la caducidad, y un cobro que llegue después entra en incidencias. Migración `20261023120000_order_release_reservation.sql`, aplicada en `adhara-dev` el 23/10 antes de fusionar (§164).
+- **Bloqueos para abrir, comprobados hoy:** en Production faltan `CRON_SECRET` (las reservas sin pagar no caducan), el correo y el TPV; Supabase en el plan gratuito, sin copias; sin tarifas de envío, email ni teléfono de la tienda; la administradora de la tienda sin MFA. La prueba de Redsys del 17/10 no se llegó a hacer.
+- **Decidido:** envío y recogida desde el primer día; reservas como están (10 unidades y 30 minutos). Firewall, devoluciones y el nombre del correo, para después de abrir.
+- **Comprobado en local** (Supabase local con Docker, base reiniciada como en la CI, `WEB_CHECKOUT=1` y el TPV simulado): pgTAP 927/927 en 23 archivos (25 nuevas en `22_order_release`); tipos generados iguales; `db lint` sin errores; concurrencia correcta 5 veces seguidas, con el caso nuevo de liberar y cobrar a la vez; `pnpm check` correcto (647 unitarias y build); `format:check` y `scan:secrets` correctos; panel con sesión 51/51. La tienda pública, en la CI de la PR.
+- **Siguiente:** con los datos de pruebas del banco, una prueba de pago, reintento y devolución en una Preview (PLAN_APERTURA, paso 1).
 
 ## Migraciones de la cuenta de cliente y de la revisión de seguridad aplicadas (21/10)
 
@@ -393,7 +403,7 @@ La revisión visual con perfumes se hizo en local con un Supabase simulado que d
 3. ~~Abrir la web a Agustín~~: hecho el 10/10, la web es pública (DECISIONS §118). Queda decidir cuándo quitar el `noindex` para que la indexen los buscadores.
 4. Asistente: configurar en Vercel, solo servidor y para Production y Preview, `ANTHROPIC_API_KEY` (de la cuenta de Anthropic del negocio), `CRON_SECRET` (valor aleatorio largo) y `SUPABASE_SECRET_KEY`; opcional `ASSISTANT_DAILY_LIMIT`. No pegar ninguna clave en el chat. La migración ya está aplicada.
 5. Dar de alta los proveedores reales (Compras → Proveedores) para que Reposición proponga cantidades.
-6. **Pago con tarjeta (Visa) en la web.** El datáfono de la tienda no sirve para cobrar online: hace falta un **TPV virtual** de comercio electrónico del banco (en España casi todos usan Redsys). Pedir al banco y guardar, sin pegarlo en el chat:
+6. **Pago con tarjeta (Visa) en la web.** TPV virtual concedido por el banco el 23/10: los pasos para probarlo y abrir están en [PLAN_APERTURA.md](PLAN_APERTURA.md). El datáfono de la tienda no sirve para cobrar online: hace falta un **TPV virtual** de comercio electrónico del banco (en España casi todos usan Redsys). Pedir al banco y guardar, sin pegarlo en el chat:
    - número de comercio (FUC, 9 dígitos) y número de terminal;
    - clave de firma SHA-256 de pruebas y la real (se ponen como variables de servidor en Vercel);
    - integración **por redirección** (la tarjeta se teclea en la página del banco, nunca en la nuestra), con EMV 3DS, moneda EUR, Visa y Mastercard, notificación online por HTTP y devoluciones activadas; Bizum, Apple Pay o Google Pay si se quieren;

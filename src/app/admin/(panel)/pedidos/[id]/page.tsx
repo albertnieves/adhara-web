@@ -18,6 +18,8 @@ import {
   PAYMENT_OUTCOME_LABELS,
   PAYMENT_REASON_LABELS,
   REFUND_STATUS_LABELS,
+  RELEASE_REASON_LABELS,
+  canReleaseReservation,
   orderEmailBadge,
   orderStatusBadge,
   panelTransitions,
@@ -25,7 +27,11 @@ import {
 } from '@/modules/orders';
 import type { WebOrderDetail } from '@/modules/orders/server';
 import { getWebOrder } from '@/modules/orders/server';
-import { OrderActions, RefundActions } from '@/modules/orders/ui';
+import {
+  OrderActions,
+  RefundActions,
+  ReleaseReservation,
+} from '@/modules/orders/ui';
 import { Badge, Eyebrow, Table } from '@/components/ui';
 
 export const metadata: Metadata = { title: 'Pedido web' };
@@ -70,10 +76,11 @@ function euros(cents: number) {
 function eventDetail(event: WebOrderDetail['events'][number]): string | null {
   const detail = event.detail ?? {};
   const reason =
-    typeof detail.reason === 'string'
-      ? (PAYMENT_REASON_LABELS[detail.reason] ??
-        (detail.reason === 'expired' ? null : detail.reason))
-      : null;
+    typeof detail.reason !== 'string'
+      ? null
+      : event.kind === 'reservation_released'
+        ? (RELEASE_REASON_LABELS[detail.reason] ?? null)
+        : (PAYMENT_REASON_LABELS[detail.reason] ?? detail.reason);
   const parts = [
     event.fromStatus && event.toStatus && event.fromStatus !== event.toStatus
       ? `${ORDER_STATUS_LABELS[event.fromStatus]} → ${ORDER_STATUS_LABELS[event.toStatus]}`
@@ -117,6 +124,11 @@ export default async function WebOrderPage({
   const badge = orderStatusBadge(order);
   const incidents = payments.filter((p) => p.incidentOpen);
   const actions = panelTransitions(order, session);
+  const canRelease = canReleaseReservation(order, session);
+  const releasedByStaff = events.some(
+    (event) =>
+      event.kind === 'reservation_released' && event.detail?.reason === 'staff',
+  );
   const units = lines.reduce((sum, line) => sum + line.quantity, 0);
 
   return (
@@ -176,11 +188,23 @@ export default async function WebOrderPage({
       </dl>
 
       {order.status === 'pending_payment' && (
-        <p className="text-fg-muted mb-8 max-w-2xl text-sm">
-          {order.reservation === 'active'
-            ? `Esperando la confirmación del banco. Las unidades quedan reservadas hasta las ${TIME.format(new Date(order.reservedUntil))}; si no llega el pago, vuelven al stock solas.`
-            : 'La reserva caducó sin pago y las unidades volvieron al stock. No hay nada que preparar. Si el banco confirmara el pago después, el pedido pasaría a incidencias.'}
-        </p>
+        <div className="mb-8 flex max-w-2xl flex-col gap-4">
+          <p className="text-fg-muted text-sm">
+            {order.reservation === 'active'
+              ? `Esperando la confirmación del banco. Las unidades quedan reservadas hasta las ${TIME.format(new Date(order.reservedUntil))}; si no llega el pago, vuelven al stock solas.`
+              : releasedByStaff
+                ? 'La reserva se liberó desde el panel y las unidades volvieron al stock. El cliente ya no puede pagar este pedido y no hay nada que preparar. Si el banco confirmara un pago después, el pedido pasaría a incidencias.'
+                : 'La reserva caducó sin pago y las unidades volvieron al stock. No hay nada que preparar. Si el banco confirmara el pago después, el pedido pasaría a incidencias.'}
+          </p>
+          {canRelease && (
+            <div className="print:hidden">
+              <ReleaseReservation
+                orderId={order.id}
+                revision={order.revision}
+              />
+            </div>
+          )}
+        </div>
       )}
 
       {(order.status === 'needs_attention' || incidents.length > 0) && (

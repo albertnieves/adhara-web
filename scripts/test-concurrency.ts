@@ -386,6 +386,54 @@ assert.equal(
   ).text.trim(),
   '1',
 );
+// 6. Liberar la reserva a mano y el cobro a la vez (§164): o pagado con la
+// reserva y la liberación rechazada por la revisión, o liberado y el cobro
+// como incidencia sin reserva.
+const releaseUnit = randomUUID();
+const releaseSetup = await query(
+  `insert into public.product_variants(id,product_id,size_ml,retail_price_cents) values('${releaseUnit}','${shopProduct}',10,2000); insert into public.inventory_levels(variant_id,location_id,on_hand) values('${releaseUnit}','${location}',1);`,
+);
+assert.equal(releaseSetup.code, 0, releaseSetup.text);
+const toRelease = await query(createOrder(releaseUnit));
+assert.equal(toRelease.code, 0, toRelease.text);
+const releaseRef = await reference(releaseUnit);
+const [releaseId, releaseRevision] = (
+  await query(
+    `select o.id || '/' || o.revision from public.orders o join public.order_lines l on l.order_id=o.id where l.variant_id='${releaseUnit}'`,
+  )
+).text
+  .trim()
+  .split('/');
+const releaseRace = await Promise.all([
+  query(
+    as(
+      replier,
+      `select public.admin_release_order_reservation('${releaseId}',${releaseRevision}); select pg_sleep(0.2)`,
+    ),
+  ),
+  query(
+    server(
+      `select public.web_order_record_payment('redsys','${releaseRef}','tx-release','succeeded',2000,'EUR'); select pg_sleep(0.2)`,
+    ),
+  ),
+]);
+assert.equal(releaseRace[1].code, 0, releaseRace[1].text);
+const releaseState = (
+  await query(
+    `select status || '/' || reservation from public.orders where id='${releaseId}'`,
+  )
+).text.trim();
+if (releaseState === 'paid/committed') {
+  assert.ok(
+    releaseRace[0].text.includes('stale_revision'),
+    releaseRace[0].text,
+  );
+  assert.equal(await level(releaseUnit), '1/1');
+} else {
+  assert.equal(releaseState, 'needs_attention/released');
+  assert.equal(releaseRace[0].code, 0, releaseRace[0].text);
+  assert.equal(await level(releaseUnit), '1/0');
+}
 console.log(
-  'Concurrencia real correcta: precio, imagen, recepción, último administrador, pedidos web, códigos de descuento y mensajes. Fixtures permanecen solo en el contenedor local hasta db reset.',
+  `Concurrencia real correcta: precio, imagen, recepción, último administrador, pedidos web, códigos de descuento, mensajes y liberación de reservas (${releaseState}). Fixtures permanecen solo en el contenedor local hasta db reset.`,
 );

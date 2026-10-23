@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { StaffRole } from '@/modules/auth';
 import {
@@ -7,6 +8,8 @@ import {
   ORDER_TRANSITIONS,
   ORDER_VIEWS,
   ORDER_VIEW_LABELS,
+  RELEASE_REASON_LABELS,
+  canReleaseReservation,
   incidentOpen,
   matchesOrderView,
   orderStatusBadge,
@@ -97,6 +100,58 @@ describe('estados y errores con texto', () => {
     ]) {
       expect(ORDER_ERRORS[code], code).toBeTruthy();
     }
+  });
+});
+
+describe('liberar la reserva de un pedido sin pagar (§164)', () => {
+  it('solo con la reserva activa de un pedido que espera el pago', () => {
+    const admin = session('store_admin');
+    expect(
+      canReleaseReservation(
+        { status: 'pending_payment', reservation: 'active' },
+        admin,
+      ),
+    ).toBe(true);
+    for (const order of [
+      { status: 'pending_payment', reservation: 'released' },
+      { status: 'paid', reservation: 'committed' },
+      { status: 'needs_attention', reservation: 'released' },
+      { status: 'ready_for_pickup', reservation: 'committed' },
+    ] as const) {
+      expect(canReleaseReservation(order, admin), order.status).toBe(false);
+    }
+  });
+
+  it('con orders.fulfill y MFA: el encargado no, y sin MFA nadie', () => {
+    const order = { status: 'pending_payment', reservation: 'active' } as const;
+    expect(canReleaseReservation(order, session('system_admin'))).toBe(true);
+    expect(canReleaseReservation(order, session('viewer'))).toBe(false);
+    expect(
+      canReleaseReservation(order, { role: 'store_admin', aal: 'aal1' }),
+    ).toBe(false);
+  });
+
+  it('su error y los motivos de la cronología tienen texto', () => {
+    expect(ORDER_ERRORS.not_releasable).toBeTruthy();
+    expect(Object.keys(RELEASE_REASON_LABELS).sort()).toEqual([
+      'expired',
+      'staff',
+    ]);
+  });
+
+  it('la migración comprueba el permiso, la MFA y la revisión', () => {
+    const sql = readFileSync(
+      new URL(
+        '../../supabase/migrations/20261023120000_order_release_reservation.sql',
+        import.meta.url,
+      ),
+      'utf8',
+    );
+    expect(sql).toContain("private.has_permission('orders.fulfill')");
+    expect(sql).toContain("private.current_aal() <> 'aal2'");
+    expect(sql).toContain("raise exception 'stale_revision'");
+    expect(sql).toContain("raise exception 'not_releasable'");
+    expect(sql).toContain("jsonb_build_object('reason', 'staff')");
   });
 });
 

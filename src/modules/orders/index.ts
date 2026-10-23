@@ -26,6 +26,8 @@ export {
   PAYMENT_DECISION_LABELS,
   PAYMENT_OUTCOME_LABELS,
   PAYMENT_REASON_LABELS,
+  RELEASE_REASON_LABELS,
+  canReleaseReservation,
   incidentOpen,
   orderNumberLabel,
   orderEmailBadge,

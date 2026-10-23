@@ -1,5 +1,6 @@
 import type { BadgeTone } from '@/components/ui';
 import type { StaffSession } from '@/modules/auth';
+import { isAllowed } from '@/modules/auth';
 import type { FulfillmentType, OrderStatus } from './status';
 import { ORDER_TRANSITIONS, planTransition } from './status';
 
@@ -36,7 +37,10 @@ const STATUS_TONES: Readonly<Record<OrderStatus, BadgeTone>> = {
   needs_attention: 'danger',
 };
 
-/** Estado visible: un pedido pendiente cuya reserva caducó no espera nada. */
+/**
+ * Estado visible: un pedido pendiente cuya reserva caducó o se liberó desde el
+ * panel no espera nada.
+ */
 export function orderStatusBadge(order: {
   status: OrderStatus;
   reservation: ReservationState;
@@ -67,7 +71,7 @@ export const PAYMENT_REASON_LABELS: Readonly<Record<string, string>> = {
   amount_mismatch: 'El importe cobrado no coincide con el del pedido',
   currency_mismatch: 'El cobro no está en euros',
   additional_payment: 'Segundo cobro del mismo pedido',
-  reservation_unavailable: 'Pago tardío: la reserva ya había caducado',
+  reservation_unavailable: 'Pago tardío: la reserva ya se había liberado',
   unexpected_status: 'Cobro en un pedido que no esperaba pago',
 };
 
@@ -83,12 +87,35 @@ export const ORDER_EVENT_LABELS: Readonly<Record<string, string>> = {
   payment_confirmed: 'Pago confirmado por el banco',
   payment_review: 'Incidencia de pago',
   payment_not_paid: 'Pago no completado',
-  reservation_released: 'Reserva caducada: unidades devueltas al stock',
+  reservation_released: 'Reserva liberada: unidades devueltas al stock',
   status_changed: 'Cambio de estado',
   refund_requested: 'Devolución pedida al banco',
   refund_succeeded: 'Devolución aceptada por el banco',
   refund_failed: 'Devolución rechazada por el banco',
 };
+
+/** Por qué se liberó la reserva de un pedido sin pagar (cronología). */
+export const RELEASE_REASON_LABELS: Readonly<Record<string, string>> = {
+  expired: 'Caducó sin pago',
+  staff: 'Liberada a mano desde el panel',
+};
+
+/**
+ * «Liberar la reserva» (admin_release_order_reservation, DECISIONS §164): lo
+ * mismo que la caducidad, antes de tiempo. Solo en un pedido que espera el
+ * pago con la reserva activa y con orders.fulfill; la base lo vuelve a
+ * comprobar con MFA y la revisión.
+ */
+export function canReleaseReservation(
+  order: { status: OrderStatus; reservation: ReservationState },
+  session: StaffSession,
+): boolean {
+  return (
+    order.status === 'pending_payment' &&
+    order.reservation === 'active' &&
+    isAllowed(session, 'orders.fulfill')
+  );
+}
 
 /** Correos al cliente (P06). */
 export const ORDER_EMAIL_LABELS: Readonly<Record<string, string>> = {
@@ -110,7 +137,10 @@ export function orderEmailBadge(email: { status: string; attempts: number }): {
   return { label: 'Pendiente de envío', tone: 'neutral' };
 }
 
-/** Errores de admin_transition_order (y los generales del panel si no). */
+/**
+ * Errores de admin_transition_order, de las devoluciones y de
+ * admin_release_order_reservation (y los generales del panel si no).
+ */
 export const ORDER_ERRORS: Readonly<Record<string, string>> = {
   stale_revision:
     'Otra persona ha cambiado este pedido mientras lo mirabas. Recarga la página para ver la versión actual.',
@@ -124,6 +154,8 @@ export const ORDER_ERRORS: Readonly<Record<string, string>> = {
   insufficient_stock:
     'No hay unidades disponibles para volver a reservar este pedido.',
   invalid_tracking: 'El número de seguimiento no es válido.',
+  not_releasable:
+    'El pedido ya no tiene unidades reservadas: está pagado, en incidencias o la reserva ya se liberó. Recarga la página.',
   unknown_order: 'El pedido no existe.',
   invalid_payment: 'Ese cobro no se puede devolver desde este pedido.',
   invalid_amount:
@@ -193,7 +225,7 @@ const TRANSITION_ACTIONS: Readonly<
     confirm: {
       title: '¿Dar el pedido por pagado?',
       description:
-        'Hazlo solo si en el TPV del banco el cobro es correcto. Si la reserva caducó, se vuelven a reservar las unidades si hay stock.',
+        'Hazlo solo si en el TPV del banco el cobro es correcto. Si la reserva se liberó, se vuelven a reservar las unidades si hay stock.',
       confirmLabel: 'Dar por pagado',
     },
   },

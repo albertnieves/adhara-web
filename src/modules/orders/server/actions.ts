@@ -73,3 +73,37 @@ export async function changeWebOrderStatus(
     ].toLowerCase()}.`,
   );
 }
+
+/*
+ * «Liberar la reserva» de un pedido sin pagar (DECISIONS §164): las unidades
+ * vuelven al stock antes de que caduque la reserva. Exige orders.fulfill; la
+ * función SQL lo vuelve a comprobar con MFA y la revisión, y deja el pedido
+ * «Sin pagar» como la caducidad. Un cobro posterior entra como incidencia.
+ */
+
+const releaseInput = z.object({
+  orderId: z.uuid(),
+  revision: z.coerce.number().int().min(1),
+});
+
+export async function releaseWebOrderReservation(
+  _: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  const staff = await requirePermission('orders.fulfill');
+  const parsed = releaseInput.safeParse({
+    orderId: formData.get('orderId'),
+    revision: formData.get('revision'),
+  });
+  if (!parsed.success) return fail('Acción no válida.');
+  const { data, error } = await staff.supabase.rpc(
+    'admin_release_order_reservation',
+    { p_order_id: parsed.data.orderId, p_revision: parsed.data.revision },
+  );
+  if (error) return fail(describeOrderError(error));
+  revalidatePath('/admin/pedidos', 'layout');
+  revalidatePath('/admin');
+  return ok(
+    `${orderNumberLabel(data.number)}: reserva liberada, las unidades vuelven al stock.`,
+  );
+}
