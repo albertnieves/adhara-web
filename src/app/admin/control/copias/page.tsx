@@ -306,7 +306,7 @@ export default async function BackupsPage() {
               contenido de esas tablas en la base local.
             </li>
             <li>
-              Restaurar en adhara-dev o en producción es una decisión tuya y se
+              Restaurar en atelier-dev o en producción es una decisión tuya y se
               hace a mano, nunca desde la consola ni desde un script del
               repositorio.
             </li>

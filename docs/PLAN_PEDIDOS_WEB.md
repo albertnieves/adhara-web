@@ -11,7 +11,7 @@ de datos de pedidos, cobros y reservas; P03, la cesta y el checkout; P04, el pag
 por redirección; P05, el panel; P06, los correos y las devoluciones, y P07, las pruebas de
 extremo a extremo con un banco simulado. **La tienda sigue sin vender**: el checkout está
 apagado (`WEB_CHECKOUT`) y sin las variables del TPV y del correo no hay cobro ni avisos.
-Las migraciones `20261011230000` a `20261012200000` están aplicadas en `adhara-dev` desde el
+Las migraciones `20261011230000` a `20261012200000` están aplicadas en `atelier-dev` desde el
 12/10, después de las de la consola, de las que dependen (DECISIONS §141). No se instalan SDK de pagos ni de correo. Las
 casillas solo se cierran con evidencia.
 
@@ -261,7 +261,7 @@ Desde el 23/10, la lista vigente, con lo comprobado ese día, está en [PLAN_APE
    `/api/pagos/redsys`.
 5. **Legal:** revisión de la asesoría con los datos reales (tarifas, plazo, transportista,
    medios de pago) y nueva fecha de los textos.
-6. Aplicar las migraciones en `adhara-dev` al fusionar y encender `WEB_CHECKOUT=1`.
+6. Aplicar las migraciones en `atelier-dev` al fusionar y encender `WEB_CHECKOUT=1`.
 7. Decisiones que siguen abiertas: facturación e IVA desglosado, y si un pago tardío se
    devuelve siempre o se intenta servir (hoy: revisión manual).
 

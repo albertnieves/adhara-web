@@ -1,6 +1,6 @@
 # Panel de administración — plan por fases
 
-Estado: **A0 y A1 implementadas; A2 (catálogo, PVP, cambios masivos, costes y margen por formato, etiquetas de precio e importación CSV) en versión base; A3 completa y A4.1 en la fase R (proveedores, pedidos de compra, mostrador y vigilante; [PLAN_TIENDA_REPOSICION.md](PLAN_TIENDA_REPOSICION.md)) con informe diario programado desde el 01/10; A4.2 (asistente) en primera versión de solo lectura; informes de A8 en la fase S ([PLAN_INFORMES.md](PLAN_INFORMES.md)). Todas las migraciones, también la del asistente, están aplicadas en `adhara-dev`** · 02/10/2026
+Estado: **A0 y A1 implementadas; A2 (catálogo, PVP, cambios masivos, costes y margen por formato, etiquetas de precio e importación CSV) en versión base; A3 completa y A4.1 en la fase R (proveedores, pedidos de compra, mostrador y vigilante; [PLAN_TIENDA_REPOSICION.md](PLAN_TIENDA_REPOSICION.md)) con informe diario programado desde el 01/10; A4.2 (asistente) en primera versión de solo lectura; informes de A8 en la fase S ([PLAN_INFORMES.md](PLAN_INFORMES.md)). Todas las migraciones, también la del asistente, están aplicadas en `atelier-dev`** · 02/10/2026
 
 Este documento concreta el back-office de ADHARA sobre la arquitectura de docs/source (Fase 0 §10–§11 y plan de Fase 1). No sustituye esos documentos. Cada fase A se corresponde con fases del roadmap original (F1…F17), indicadas entre paréntesis.
 
@@ -58,14 +58,14 @@ Criterio cumplido: `pnpm check` en verde con pruebas unitarias de cada regla (do
 
 ### A1 — Acceso seguro al panel (F1, bloques 3–4 de docs/DEVELOPMENT.md)
 
-- Supabase local con CLI versionada y proyecto `adhara-dev` en región UE.
+- Supabase local con CLI versionada y proyecto `atelier-dev` en región UE.
 - Migraciones 0001 (esquemas `internal`/`private`), 0002 (idiomas) y 0003 (`staff_members`, `role_permissions`, `audit_log`, `has_permission`, `is_staff`, `current_aal`), con el seed de permisos generado desde la matriz de A0.
 - Login por invitación, MFA TOTP obligatoria, `/admin/acceso`, `/admin/mfa`, guardas de servidor y shell del admin con navegación preparada para tablet.
 - Cabeceras `noindex` y `no-store` en `/admin`.
 
 Aceptación: criterios 14–16 de la Fase 1 (sin sesión → acceso; sin fila de personal → 404; sin MFA → alta de MFA; con aal2 → panel) en E2E, y pgTAP de la matriz de permisos.
 
-Necesito: organización de Supabase y permiso para crear `adhara-dev` en la UE; email del administrador del sistema (primer usuario) y de Agustín; Docker disponible para Supabase local.
+Necesito: organización de Supabase y permiso para crear `atelier-dev` en la UE; email del administrador del sistema (primer usuario) y de Agustín; Docker disponible para Supabase local.
 
 ### A2 — Catálogo y precios (F1 migraciones 0004–0009, parte de F3)
 
@@ -199,7 +199,7 @@ La bandeja básica de mensajes (A6.1) puede adelantarse a pedidos porque solo de
 
 | #   | Pregunta                                                                                                                         | Fase |
 | --- | -------------------------------------------------------------------------------------------------------------------------------- | ---- |
-| 1   | Permiso para crear `adhara-dev` en región UE dentro de «albertnieves's Org» (ya conectada)                                       | A1   |
+| 1   | Permiso para crear `atelier-dev` en región UE dentro de «albertnieves's Org» (ya conectada)                                      | A1   |
 | 2   | Email del administrador del sistema y de Agustín                                                                                 | A1   |
 | 3   | ¿Los precios del PDF son PVP con IVA, mayorista o coste?                                                                         | A2   |
 | 4   | Margen mínimo y umbral a partir del cual un cambio de PVP pide confirmación                                                      | A2   |

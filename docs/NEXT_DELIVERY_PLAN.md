@@ -201,7 +201,7 @@ Las credenciales se configuran en el entorno o en el proveedor, nunca en el chat
 
 ## 7. Salida y reversión
 
-La entrega queda lista cuando los dos administradores pueden usarla, las pruebas requeridas están en verde y la demostración reproduce cambios desde el panel hasta la tienda. La apertura pública y el paso a `adhara-prod` son hitos posteriores separados.
+La entrega queda lista cuando los dos administradores pueden usarla, las pruebas requeridas están en verde y la demostración reproduce cambios desde el panel hasta la tienda. La apertura pública y el paso a `atelier-prod` son hitos posteriores separados.
 
 Usar migraciones aditivas y compatibles con el código anterior cuando sea posible. Un rollback de código no revierte automáticamente la base: documentar el procedimiento por migración. Los precios se corrigen con nuevos cambios auditados; el inventario con movimientos compensatorios, nunca borrando el historial. El contenido vuelve a una revisión anterior mediante una nueva publicación. Preparar recuperación de datos antes de aplicar migraciones a entornos con datos reales.
 

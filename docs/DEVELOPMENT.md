@@ -14,9 +14,9 @@
 ## Servicios y acceso que faltan
 
 - GitHub: repositorio privado albertnieves/adhara-web conectado a Codex con lectura y escritura. Git local continúa sin autenticar; GitHub CLI no instalada. Las operaciones remotas se realizan mediante el conector.
-- Docker: no encontrado en la máquina de Codex; necesario para Supabase local y pgTAP en CI. Mientras tanto, pgTAP se ejecuta contra `adhara-dev` con `supabase/tests/tap_remote.py` (revierte todo). En las sesiones de Claude Code en la nube sí hay Docker: la fase R se validó con Supabase local (DECISIONS §64).
-- Supabase: proyecto `adhara-dev` (Frankfurt) accesible con el conector de Supabase de Claude Code. Faltan las cuentas del personal, la configuración de URLs y plantillas de Auth y el proyecto `adhara-prod`.
-- Vercel: proyecto `adhara-web` conectado a GitHub. Funciones en París (cdg1), todos los despliegues protegidos con Vercel Authentication y variables públicas de `adhara-dev` configuradas. Separar producción cuando exista `adhara-prod`.
+- Docker: no encontrado en la máquina de Codex; necesario para Supabase local y pgTAP en CI. Mientras tanto, pgTAP se ejecuta contra `atelier-dev` con `supabase/tests/tap_remote.py` (revierte todo). En las sesiones de Claude Code en la nube sí hay Docker: la fase R se validó con Supabase local (DECISIONS §64).
+- Supabase: proyecto `atelier-dev` (Frankfurt) accesible con el conector de Supabase de Claude Code. Faltan las cuentas del personal, la configuración de URLs y plantillas de Auth y el proyecto `atelier-prod`.
+- Vercel: proyecto `adhara-web` conectado a GitHub. Funciones en París (cdg1), todos los despliegues protegidos con Vercel Authentication y variables públicas de `atelier-dev` configuradas. Separar producción cuando exista `atelier-prod`.
 - Catálogo PDF: recibido por Drive y convertido en CSV fuera del repositorio (contiene costes). Identidad: L’Atelier du Désert, definitiva desde el 30/09 (DECISIONS §56).
 
 ## Flujo de trabajo

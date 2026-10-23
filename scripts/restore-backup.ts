@@ -1,7 +1,7 @@
 /**
  * Restaura una copia de la consola (latelier-copia-….json.gz o la de
  * system-backups) en Supabase LOCAL. Nunca contra un proyecto remoto:
- * restaurar en adhara-dev o en producción es una decisión del titular y se
+ * restaurar en atelier-dev o en producción es una decisión del titular y se
  * hace a mano (DECISIONS §128).
  *
  *   node scripts/local-env.ts node scripts/restore-backup.ts copia.json.gz --dry-run

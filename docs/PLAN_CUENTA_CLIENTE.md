@@ -83,7 +83,7 @@ Además, fuera del idioma: `/auth/callback` (vuelta de Google) y `/auth/confirm`
    aprobada, la «G» oficial en el botón.
 4. Captcha (Turnstile) en el alta y el acceso de la tienda y del panel.
 5. ~~Aplicar la migración `20261016120000_customer_accounts.sql` en el proyecto~~: hecho en
-   `adhara-dev` el 21/10 (DECISIONS §163).
+   `atelier-dev` el 21/10 (DECISIONS §163).
 6. Textos legales revisados con la asesoría (privacidad con la cuenta y Google, cookies
    de la sesión), nueva `LEGAL_UPDATED_AT` y `CUSTOMER_ACCOUNTS=1` en Vercel.
 7. Probar en el proyecto: alta con correo real, Google, recuperación y borrar la cuenta.

@@ -19,7 +19,7 @@ Sustituyen a `owner`, `manager`, `store_staff` y `content_editor` de la Fase 0 (
 - Todo el personal entra con TOTP. Sin factor, `/admin/mfa` obliga a darlo de alta; con factor sin verificar en la sesión, pide el código. El panel solo se abre con sesión `aal2` (`tests/unit/admin-access.test.ts` y recorridos de `tests/integration/admin.spec.ts`).
 - Todo permiso del personal exige `aal2` también en SQL (`private.current_aal()`), también los de lectura desde la revisión de seguridad del 17/10 (DECISIONS §159): con solo la contraseña, la API directa no da nada del panel (pgTAP `20`).
 - La recuperación de contraseña exige el segundo factor existente y rechaza enlaces reutilizados (recorrido autenticado).
-- `adhara-dev`: el administrador del sistema tiene TOTP verificado desde el 01/10; el administrador de la tienda aún no (comprobado el 02/10 con una lectura).
+- `atelier-dev`: el administrador del sistema tiene TOTP verificado desde el 01/10; el administrador de la tienda aún no (comprobado el 02/10 con una lectura).
 
 ## Autorización en cuatro capas
 
@@ -32,7 +32,7 @@ Una redirección nunca sustituye la autorización en servidor.
 
 ## Aislamiento de costes y proveedores
 
-- Costes, historial de PVP, proveedores y pedidos de compra viven en `internal`, que la API no expone (`PGRST106` en `adhara-dev`, criterio 10) y sobre el que `anon` y `authenticated` no tienen privilegios (pgTAP `03` y `07`).
+- Costes, historial de PVP, proveedores y pedidos de compra viven en `internal`, que la API no expone (`PGRST106` en `atelier-dev`, criterio 10) y sobre el que `anon` y `authenticated` no tienen privilegios (pgTAP `03` y `07`).
 - Solo se leen con funciones `admin_*` que exigen `pricing.view_cost` o `purchasing.manage` con MFA.
 - Las tareas, los costes del negocio y las entregas del control (`/admin/control`) también viven en `internal`, solo para el titular: `business.control` con MFA **y** estar en `internal.control_owners`, una lista que solo se cambia por SQL (DECISIONS §127). Otro administrador del sistema recibe 404. La auditoría no guarda sus importes (pgTAP `09`).
 - Ninguna tabla pública tiene columnas de coste (pgTAP `03`). La tienda solo recibe disponible, últimas unidades o agotado (`storefront_availability`).
@@ -96,7 +96,7 @@ Herramientas de solo lectura con la sesión y los permisos de quien pregunta; ni
 - **Visitas** (DECISIONS §129): `track_product_event` es la única función de escritura que puede llamar `anon`; solo suma contadores de perfumes publicados, no devuelve nada que revele si existen y tiene un freno global de 1200 eventos por minuto. No se guarda IP, agente de usuario, cookies ni identificadores; GPC y «No rastrear» se respetan.
 - **Copias de la plataforma:** el token se usa solo en servidor, con 5 s de espera, y nunca se registra ni se muestra.
 
-## Avisos del asesor de Supabase (`adhara-dev`, 02/10)
+## Avisos del asesor de Supabase (`atelier-dev`, 02/10)
 
 | Aviso                                                             | Estado                                                                                             |
 | ----------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
@@ -109,5 +109,5 @@ Herramientas de solo lectura con la sesión y los permisos de quien pregunta; ni
 
 - Protección de la rama `main` en GitHub: PR obligatoria y `CI`, `Database` y `E2E` en verde. Solo puede hacerlo el titular del repositorio.
 - MFA del administrador de la tienda (primer acceso).
-- Proyecto `adhara-prod` separado antes de abrir la web al público; hoy Production usa `adhara-dev` (DECISIONS §43).
+- Proyecto `atelier-prod` separado antes de abrir la web al público; hoy Production usa `atelier-dev` (DECISIONS §43).
 - URLs y plantillas de Auth para invitaciones y recuperación por email (supabase/README.md).

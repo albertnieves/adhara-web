@@ -1,6 +1,6 @@
 # Fase R — Tienda física y reposición
 
-Estado: **implementada en la rama `claude/wonderful-babbage-4ojhui`, pendiente de revisión y de aplicar la migración en `adhara-dev`** · 30/09/2026
+Estado: **implementada en la rama `claude/wonderful-babbage-4ojhui`, pendiente de revisión y de aplicar la migración en `atelier-dev`** · 30/09/2026
 
 Completa la fase A3 (inventario operativo) y abre la A4.1 (vigilante determinista) de [ADMIN_PLAN.md](ADMIN_PLAN.md). Se trabaja en paralelo al bloque E01–E07 de Codex (permisos con MFA, cuentas, ediciones fiables, editor de contenido, panel de pendientes y validación), así que evita tocar sus pantallas y su esquema.
 
@@ -16,7 +16,7 @@ Que el stock de la tienda de Castelldefels sea fiable y que reponer sea una deci
 
 | Bloque            | Entregable                                                                                                                                                                   |
 | ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| R01 — Base        | Rama desde el último `main`, Supabase local con la CLI para validar sin tocar `adhara-dev` ni la configuración de E01, plan y decisiones                                     |
+| R01 — Base        | Rama desde el último `main`, Supabase local con la CLI para validar sin tocar `atelier-dev` ni la configuración de E01, plan y decisiones                                    |
 | R02 — Proveedores | Ficha de proveedor y condiciones por formato (referencia, múltiplo de compra, plazo, preferente) en `internal`, con asignación por marca                                     |
 | R03 — Pedidos     | Borrador → pedido → recepción parcial o total → cerrado; la recepción suma stock con `PURCHASE_RECEIPT` en la misma transacción, sin recibir de más y sin duplicar           |
 | R04 — Mostrador   | Pantalla de tablet: buscar o escanear (lector que teclea), varias líneas, venta o devolución todo o nada con el nº de ticket del TPV; un doble toque registra una sola venta |
@@ -48,7 +48,7 @@ Que el stock de la tienda de Castelldefels sea fiable y que reponer sea una deci
 - Toda escritura nueva exige MFA en SQL, en línea con E02.
 - Los pedidos usan revisión optimista, la misma idea que E04 para precios e imágenes.
 - Solo se tocan archivos compartidos en puntos pequeños: navegación del panel, tipos generados y documentación.
-- La migración no se aplica a `adhara-dev` hasta fusionar, para no desordenar el historial de migraciones mientras Codex trabaja sobre él. Al aplicarla, el archivo se renombra con la versión real (como las anteriores) y se regeneran los tipos.
+- La migración no se aplica a `atelier-dev` hasta fusionar, para no desordenar el historial de migraciones mientras Codex trabaja sobre él. Al aplicarla, el archivo se renombra con la versión real (como las anteriores) y se regeneran los tipos.
 
 ## Decisiones que necesito de ti
 
@@ -58,4 +58,4 @@ Que el stock de la tienda de Castelldefels sea fiable y que reponer sea una deci
 | 2   | ¿Hay TPV en la tienda? ¿Cuál? Mientras tanto, el mostrador descuenta con el nº de ticket                              | R04    |
 | 3   | Parámetros del vigilante: días de ventas analizados, cobertura objetivo, colchón y días de inmovilizado               | R06    |
 | 4   | Al recibir un pedido, ¿el coste del pedido pasa a ser el coste vigente? (opción marcada por defecto)                  | R03    |
-| 5   | Aplicar la migración en `adhara-dev` cuando se fusione este PR (después de las de Codex si van antes)                 | R01    |
+| 5   | Aplicar la migración en `atelier-dev` cuando se fusione este PR (después de las de Codex si van antes)                | R01    |
