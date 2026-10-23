@@ -7,7 +7,9 @@
 - **Bizum sin código nuevo:** la página del banco ofrece los métodos activados en el terminal, y la notificación y la devolución de Bizum son las mismas que las de la tarjeta. Se confirma en la prueba.
 - **Textos:** «pagar con tarjeta o Bizum» al ir al banco (es/ca/en); medios de pago en las condiciones (tarjeta bancaria y Bizum) y su párrafo de pago; privacidad y aviso de devolución del panel con Bizum. `LEGAL_UPDATED_AT` no cambia todavía.
 - **Comprobado en local** (con Node 22: el contenedor no tiene la 24): `pnpm check` correcto (lint, tipos, 647 unitarias y build); `format:check` y `scan:secrets` correctos. Sin migraciones ni cambios de rutas; las E2E, en la CI de la PR.
-- **Siguiente (usuario):** variables de la Preview de esta rama, con las dos claves, y volver a desplegarla; comprobar el terminal en el portal de pruebas; la prueba de tarjeta y Bizum; «Pasar a producción».
+- **Prueba con el banco (23/10, Preview de esta rama):** tarjeta correcta de principio a fin (pago tras un reintento, pedido pagado solo, correo de confirmación enviado por Resend, devolución 0900 y pedido cancelado); denegada y «Liberar la reserva», correctos. Bizum aparece en la página del banco pero con 32,90 € se denegó: falta repetirlo por debajo de 5 €. Detalle en PLAN_APERTURA, paso 1.
+- **Configuración comprobada el 23/10:** correo de pedidos funcionando en Production; protección de contraseñas filtradas activada; email y teléfono de la tienda puestos; tarifas de envío guardadas pero sin ofrecer; las dos personas con rol de administración de la tienda, sin verificación en dos pasos.
+- **Siguiente:** Bizum por debajo de 5 €; comprobar las operaciones en el portal de pruebas; limpiar las variables de la prueba; «Pasar a producción»; fusionar esta rama antes de abrir.
 
 ## «Liberar la reserva» y lista para abrir la venta (PR #45, 23/10)
 

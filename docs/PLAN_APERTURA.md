@@ -41,18 +41,23 @@ El código del checkout, el pago con Redsys, los correos y las devoluciones est�
   - **Bizum** (datos del manual de BBVA), con otro pedido: primero `ko@ko.ko`, rechazado (el pedido sigue esperando pago); al volver a intentarlo, el móvil 700000000, aceptado. Después, la devolución de ese cobro desde el panel.
   - Con otro pedido, «Liberar la reserva» (§164).
   - En el portal de pruebas, que se ven los cobros y las devoluciones.
+- **Resultado del 23/10** (pedidos 1001–1003 en `atelier-dev`, recogida en tienda):
+  - **Tarjeta, correcto:** el 1001, con un primer intento sin completar y el reintento aceptado, pasó solo a «Pagado» 37 s después; la confirmación la mandó la tarea programada de Production (Resend funciona). «Cancelar y devolver el dinero» desde el panel de la Preview: 0900 firmado en menos de un segundo, pedido cancelado y unidad de vuelta al stock.
+  - **Tarjeta denegada, correcto:** el 1002 recibió la notificación firmada (`Ds_Response` 9673) y siguió esperando el pago, sin cobro.
+  - **Liberar la reserva, correcto:** en el 1002 y el 1003.
+  - **Bizum, pendiente:** aparece en la página del banco (activado en el terminal), pero con 32,90 € se denegó. El manual de BBVA solo da por buenos en pruebas los importes de menos de 5 € (tabla de la página 25, de la integración REST); falta repetirlo con un pedido de menos de 5 € (código de descuento del 90 % creado solo para la prueba). Si también se deniega, ticket al soporte de BBVA.
 - **Al terminar:** borrar las variables de Preview de esta rama (y las que quedan de la prueba del 17/10, rama `claude/exciting-brown-j08p6y`) y revocar en Supabase la clave secreta creada para la prueba.
 - **Pase a producción:** con la prueba bien, botón **«Pasar a producción»** en el portal de pruebas. BBVA manda otro correo con los datos del entorno real (portal y clave real). Hacerlo cuanto antes: no se sabe cuánto tarda.
 
 ## 2. Configuración de Production (usuario)
 
 1. ~~`CRON_SECRET` (valor aleatorio largo, Sensitive): caducidad de reservas, correos, copia diaria e informe.~~ Hecho el 23/10.
-2. ~~Supabase Pro para `atelier-dev`, que es la base de la tienda.~~ Hecho el 23/10. Falta activar la protección de contraseñas filtradas: Authentication → Sign In / Providers → Email → «Prevent use of leaked passwords».
-3. Resend: dominio de envío verificado (SPF y DKIM en el DNS de Vercel), `RESEND_API_KEY` y `EMAIL_FROM` (p. ej. `L’Atelier du Désert <pedidos@latelierdudesert.com>`). Las dos variables ya están en Production (23/10, visto solo el nombre); falta confirmar que el dominio está verificado en Resend.
+2. ~~Supabase Pro para `atelier-dev`, que es la base de la tienda.~~ Hecho el 23/10, también la protección de contraseñas filtradas (el asesor de seguridad ya no la marca).
+3. Resend: dominio de envío verificado (SPF y DKIM en el DNS de Vercel), `RESEND_API_KEY` y `EMAIL_FROM` (p. ej. `L’Atelier du Désert <pedidos@latelierdudesert.com>`). Hecho el 23/10: la confirmación del pedido de prueba 1001 salió por Resend desde Production.
 4. TPV real, cuando llegue el correo del pase a producción: `REDSYS_MERCHANT_CODE=370787319`, `REDSYS_TERMINAL=001` (o el que diga ese correo), `REDSYS_SECRET_KEY` (la real) y `REDSYS_ENVIRONMENT=live`; opcional `REDSYS_MERCHANT_NAME`.
-5. Panel → Configuración → Tarifas de envío: península e Illes Balears, con precio, envío gratis desde y «Ofrecer el envío».
-6. Panel → Configuración: email y teléfono de la tienda.
-7. Verificación en dos pasos de la administradora de la tienda (la pide su primer acceso).
+5. Panel → Configuración → Tarifas de envío: guardadas el 23/10 (península 4,00 €, gratis desde 60 €; Illes Balears 10,00 €, gratis desde 120 €), pero sin «Ofrecer el envío»: hoy solo se podría recoger en la tienda.
+6. ~~Panel → Configuración: email y teléfono de la tienda.~~ Puestos el 23/10.
+7. Verificación en dos pasos de las dos personas con rol de administración de la tienda: el 23/10 ninguna la tiene (la pide su primer acceso al panel).
 8. `WEB_CHECKOUT=1`, el último, el día de la apertura.
 
 ## 3. Textos legales
