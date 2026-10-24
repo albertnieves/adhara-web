@@ -68,7 +68,7 @@ describe('correo de confirmación del pago', () => {
   it('asunto, saludo, resumen y siguiente paso', () => {
     expect(email.to).toBe('ana@test.invalid');
     expect(email.subject).toBe('Pedido Nº 1014 confirmado');
-    expect(email.text).toContain('Hola, Ana <script>alert(1)</script>:');
+    expect(email.text.startsWith('Hola:\n\n')).toBe(true);
     expect(email.text).toContain(
       'Hemos recibido el pago de tu pedido Nº 1014.',
     );
@@ -99,10 +99,32 @@ describe('correo de confirmación del pago', () => {
     ]);
   });
 
+  it('sin el nombre que escribió el comprador (DECISIONS §168)', () => {
+    expect(email.text).not.toContain('Ana');
+    expect(email.html).not.toContain('Ana');
+  });
+
   it('el HTML escapa todo lo que viene del cliente', () => {
-    expect(email.html).not.toContain('<script>');
-    expect(email.html).toContain('Ana &lt;script&gt;alert(1)&lt;/script&gt;');
-    expect(email.html).toContain('lang="es"');
+    const shipped = renderOrderEmail(
+      {
+        ...job,
+        kind: 'shipped',
+        fulfillment: 'shipping',
+        address: {
+          line1: 'Calle <script>alert(1)</script> 1',
+          line2: null,
+          postal_code: '08860',
+          city: 'Castelldefels',
+          province: 'Barcelona',
+        },
+      },
+      context,
+    );
+    expect(shipped.html).not.toContain('<script>');
+    expect(shipped.html).toContain(
+      'Calle &lt;script&gt;alert(1)&lt;/script&gt; 1',
+    );
+    expect(shipped.html).toContain('lang="es"');
   });
 
   it('con código de descuento, la línea del descuento y el total cobrado', () => {

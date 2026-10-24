@@ -383,7 +383,7 @@
     "subjectPaid": "Comanda núm. {number} confirmada",
     "subjectReady": "La teva comanda núm. {number} està a punt per recollir",
     "subjectShipped": "La teva comanda núm. {number} és de camí",
-    "greeting": "Hola, {name}:",
+    "greeting": "Hola:",
     "paidLead": "Hem rebut el pagament de la teva comanda núm. {number}. Gràcies per la teva compra.",
     "pickupNext": "T’escriurem quan estigui a punt per recollir a la botiga: {address}.",
     "shippingNext": "T’escriurem quan surti cap a aquesta adreça: {address}.",

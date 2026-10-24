@@ -2,6 +2,7 @@
 
 import { getTranslations } from 'next-intl/server';
 import { createMessagesClient } from '@/lib/supabase/privileged';
+import { withinRateLimit } from '@/modules/checkout/server/rate-limit';
 import type { ContactState } from '../domain/contact';
 import { contactFieldErrors, contactInput } from '../domain/contact';
 import { contactEnabled } from './config';
@@ -9,7 +10,8 @@ import { contactEnabled } from './config';
 /*
  * Formulario de contacto de la tienda (A6.1). Todo se comprueba aquí y otra
  * vez en la base (web_contact_submit, solo con la clave privilegiada, §154),
- * que aplica los límites por email y globales. Sin CONTACT_FORM no responde.
+ * que aplica los límites por email y globales; antes, el freno por cliente de
+ * las acciones públicas (§160, §168). Sin CONTACT_FORM no responde.
  */
 export async function submitContact(
   _: ContactState,
@@ -39,6 +41,8 @@ export async function submitContact(
     };
   }
   const input = parsed.data;
+  if (!(await withinRateLimit('contact_message')))
+    return { status: 'error', error: 'busy' };
   const t = await getTranslations({
     locale: input.locale,
     namespace: 'contact',

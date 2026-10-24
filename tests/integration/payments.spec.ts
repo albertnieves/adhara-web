@@ -487,6 +487,18 @@ test('devolución desde el panel: la da por hecha el banco, no el botón', async
     ),
   ).toBeVisible();
   await expect(refundButton).toHaveCount(0);
+  // Con la devolución abierta el pedido no se mueve, y se puede resolver con
+  // lo que diga el portal del banco (DECISIONS §168).
+  await expect(
+    page.getByRole('button', { name: 'Empezar a preparar' }),
+  ).toHaveCount(0);
+  await expect(page.getByText('Hay una devolución sin terminar')).toBeVisible();
+  await expect(
+    page.getByRole('button', { name: 'Consta hecha en el portal' }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole('button', { name: 'No consta en el portal' }),
+  ).toBeVisible();
   expect((await order(email)).status).toBe('paid');
   await bankNext('aceptar');
   await page

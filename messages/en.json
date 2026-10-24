@@ -383,7 +383,7 @@
     "subjectPaid": "Order no. {number} confirmed",
     "subjectReady": "Your order no. {number} is ready to collect",
     "subjectShipped": "Your order no. {number} is on its way",
-    "greeting": "Hello {name},",
+    "greeting": "Hello,",
     "paidLead": "We have received the payment for your order no. {number}. Thank you for your purchase.",
     "pickupNext": "We will write to you when it is ready to collect at the shop: {address}.",
     "shippingNext": "We will write to you when it leaves for this address: {address}.",

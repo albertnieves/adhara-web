@@ -383,7 +383,7 @@
     "subjectPaid": "Pedido Nº {number} confirmado",
     "subjectReady": "Tu pedido Nº {number} está listo para recoger",
     "subjectShipped": "Tu pedido Nº {number} va de camino",
-    "greeting": "Hola, {name}:",
+    "greeting": "Hola:",
     "paidLead": "Hemos recibido el pago de tu pedido Nº {number}. Gracias por tu compra.",
     "pickupNext": "Te escribiremos cuando esté listo para recoger en la tienda: {address}.",
     "shippingNext": "Te escribiremos cuando salga hacia esta dirección: {address}.",

@@ -39,6 +39,12 @@ type Requested = {
   reference: string;
   amount_cents: number;
   status: string;
+  /**
+   * false si la base devolvió una solicitud que ya existía (la misma clave):
+   * no se vuelve a mandar al banco (DECISIONS §168). Una base sin la
+   * migración 20261024120000 no lo manda y se comporta como antes.
+   */
+  created?: boolean;
 };
 
 /** Manda una devolución ya pedida al banco y guarda lo que responde. */
@@ -118,17 +124,20 @@ export async function requestRefund(
   });
   if (error) return fail(describeOrderError(error));
   const requested = data as Requested;
-  // Un doble clic devuelve la misma solicitud: solo se manda si sigue abierta.
-  if (requested.status !== 'requested') {
+  // La misma petición repetida (el navegador la reenvía, un doble envío)
+  // devuelve la misma solicitud: solo la primera se manda al banco.
+  if (requested.created === false || requested.status !== 'requested') {
     revalidatePath('/admin/pedidos', 'layout');
     return ok(
-      `${orderNumberLabel(requested.number)}: esa devolución ya tenía respuesta.`,
+      requested.status === 'requested'
+        ? `${orderNumberLabel(requested.number)}: esa devolución ya se ha enviado al banco. Recarga la página en unos segundos para ver su respuesta.`
+        : `${orderNumberLabel(requested.number)}: esa devolución ya tenía respuesta.`,
     );
   }
   return sendToBank(requested);
 }
 
-/** Vuelve a enviar una devolución que quedó sin respuesta clara. */
+/** Vuelve a enviar una devolución sin respuesta clara o que quedó a medias. */
 export async function retryRefund(
   _: ActionState,
   formData: FormData,
@@ -145,4 +154,40 @@ export async function retryRefund(
   });
   if (error) return fail(describeOrderError(error));
   return sendToBank(data as Requested);
+}
+
+const resolveInput = z.object({
+  refundId: z.uuid(),
+  status: z.enum(['succeeded', 'failed']),
+});
+
+/**
+ * Resuelve una devolución atascada con lo que dice el portal de Redsys
+ * (admin_resolve_refund, DECISIONS §168): «consta hecha» cambia el pedido
+ * como la respuesta del banco; «no consta» la cierra sin cambiarlo. No manda
+ * nada al banco.
+ */
+export async function resolveRefund(
+  _: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  const staff = await requirePermission('orders.refund');
+  const parsed = resolveInput.safeParse({
+    refundId: formData.get('refundId'),
+    status: formData.get('status'),
+  });
+  if (!parsed.success) return fail('Devolución no válida. Recarga la página.');
+  const { data, error } = await staff.supabase.rpc('admin_resolve_refund', {
+    p_refund_id: parsed.data.refundId,
+    p_status: parsed.data.status,
+  });
+  revalidatePath('/admin/pedidos', 'layout');
+  revalidatePath('/admin');
+  if (error) return fail(describeOrderError(error));
+  const label = orderNumberLabel((data as { number: number }).number);
+  return ok(
+    parsed.data.status === 'succeeded'
+      ? `${label}: devolución dada por hecha, como consta en el portal del banco.`
+      : `${label}: devolución cerrada como no hecha. Si hace falta, pide otra.`,
+  );
 }

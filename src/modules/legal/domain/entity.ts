@@ -36,9 +36,12 @@ export const LEGAL_ENTITY: Record<
     ca: 'l’Espanya peninsular i les Illes Balears',
     en: 'mainland Spain and the Balearic Islands',
   },
-  /** Tarifa de envío. */
+  /**
+   * Tarifa de envío y desde cuánto es gratis: con `null` salen de las
+   * tarifas activas de Panel → Configuración → Tarifas de envío (DECISIONS
+   * §168), como en el checkout. Un texto aquí las sustituye.
+   */
   shippingCost: null,
-  /** Importe a partir del cual el envío es gratis. */
   freeShippingFrom: null,
   /** Plazo de entrega habitual. */
   deliveryTime: null,
