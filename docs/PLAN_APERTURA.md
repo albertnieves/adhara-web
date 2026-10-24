@@ -4,6 +4,8 @@ A petición del usuario (23/10): el banco ya ha dado el TPV virtual y la venta o
 
 El código del checkout, el pago con Redsys, los correos y las devoluciones está hecho y probado con un banco simulado (P03–P07). Falta sobre todo configuración y la prueba con el banco.
 
+**Actualizado el 24/10** (rama `claude/cierre-apertura`, §168): el código que quedaba para después de abrir está hecho (los tres arreglos de las devoluciones, el saludo del correo sin el nombre, el freno del formulario de contacto y los gastos de envío de los textos con las tarifas del panel). Lo que queda es del usuario o del banco: Bizum por debajo de 5 €, el pase a producción del TPV, «Ofrecer el envío», la MFA de la segunda administradora, plazo y transportista, la asesoría y `WEB_CHECKOUT=1`.
+
 ## Comprobado el 23/10 (solo lectura)
 
 | Qué                               | Estado                                                                                                                                                                                | Consecuencia                                                                                                                                               |
@@ -57,17 +59,17 @@ El código del checkout, el pago con Redsys, los correos y las devoluciones est�
 4. TPV real, cuando llegue el correo del pase a producción: `REDSYS_MERCHANT_CODE=370787319`, `REDSYS_TERMINAL=001` (o el que diga ese correo), `REDSYS_SECRET_KEY` (la real) y `REDSYS_ENVIRONMENT=live`; opcional `REDSYS_MERCHANT_NAME`.
 5. Panel → Configuración → Tarifas de envío: guardadas el 23/10 (península 4,00 €, gratis desde 60 €; Illes Balears 10,00 €, gratis desde 120 €), pero sin «Ofrecer el envío»: hoy solo se podría recoger en la tienda.
 6. ~~Panel → Configuración: email y teléfono de la tienda.~~ Puestos el 23/10.
-7. Verificación en dos pasos de las dos personas con rol de administración de la tienda: el 23/10 ninguna la tiene (la pide su primer acceso al panel).
+7. Verificación en dos pasos de las dos personas con rol de administración de la tienda. El 24/10: la cuenta dada de alta el 23/10 ya la tiene y ha entrado; la del 30/09 no ha entrado nunca y no la tiene (la pide su primer acceso al panel). Si esa cuenta ya no se usa, retirarle el acceso en Panel → Equipo.
 8. `WEB_CHECKOUT=1`, el último, el día de la apertura.
 
 ## 3. Textos legales
 
-- **Faltan** (LEGAL.md): teléfono, tarifa de envío y desde cuánto es gratis, plazo de entrega y transportista y si hay adhesión al arbitraje de consumo. Con esos datos se rellenan `LEGAL_ENTITY` (también `shippingCost` y `freeShippingFrom`, copiados de las tarifas) y se cambia `LEGAL_UPDATED_AT`. Los medios de pago ya están: tarjeta bancaria y Bizum (§167).
+- **Faltan** (LEGAL.md): plazo de entrega y transportista y si hay adhesión al arbitraje de consumo. Con esos datos se rellena `LEGAL_ENTITY` y se cambia `LEGAL_UPDATED_AT`. Ya están: el teléfono y el email (panel, 23/10), los medios de pago (tarjeta bancaria y Bizum, §167) y los gastos de envío, que desde el 24/10 salen solos de las tarifas activas del panel y aparecen al encender «Ofrecer el envío» (§168).
 - **Revisión de la asesoría** antes de abrir: condiciones, envíos, privacidad y el adjunto del correo de confirmación. Que confirme también si la web debe emitir factura o ticket por pedido.
 
 ## 4. Día de la apertura
 
-1. Migraciones del repositorio aplicadas en `atelier-dev` (al día desde el 23/10, con `20261023120000_order_release_reservation`).
+1. Fusionada la PR de `claude/cierre-apertura` (lleva dentro la de Bizum, `claude/vigilant-mendel-p4mv93`) y su migración `20261024120000_refund_safeguards` aplicada en `atelier-dev` (al día hasta `20261023120000_order_release_reservation`). La migración vale con el código de antes y con el nuevo, así que puede ir antes o después del despliegue.
 2. Variables de Production completas, con `WEB_CHECKOUT=1`, y redesplegado.
 3. Antes de anunciarlo: una compra real de poco importe con una tarjeta propia, el correo de confirmación recibido y su devolución desde el panel. Si algo falla, quitar `WEB_CHECKOUT` y redesplegar apaga la venta.
 4. Anunciar la venta.
@@ -76,6 +78,6 @@ El código del checkout, el pago con Redsys, los correos y las devoluciones est�
 
 - **Entrega:** envío (península e Illes Balears) y recogida en Castelldefels desde el primer día.
 - **Reservas:** como están: hasta 10 unidades del mismo formato por pedido y 30 minutos para pagar.
-- **Código antes de abrir:** solo «Liberar la reserva» (§164).
-- **Para después de abrir:** límite del Firewall de Vercel para los `POST` con `Next-Action` y `/api/pagos/redsys`, los tres arreglos de las devoluciones de la revisión de seguridad, quitar el nombre del comprador del saludo del correo, captcha en el pedido si hay abusos y la apertura a buscadores (`SEO_INDEXING`).
+- **Código antes de abrir:** solo «Liberar la reserva» (§164). El 24/10, a petición del usuario, también los tres arreglos de las devoluciones y el saludo del correo sin el nombre (§168).
+- **Para después de abrir:** límite del Firewall de Vercel para los `POST` con `Next-Action` y `/api/pagos/redsys`, captcha en el pedido si hay abusos y la apertura a buscadores (`SEO_INDEXING`).
 - **Siguen abiertas:** facturación (asesoría) y si un pago que llega sin stock se devuelve siempre (hoy, incidencia con revisión manual).

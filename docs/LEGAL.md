@@ -38,10 +38,10 @@ Enlazados en la barra inferior del pie de todas las páginas, en pequeño junto 
 
 | Dato                                                                          | Dónde aparece                      |
 | ----------------------------------------------------------------------------- | ---------------------------------- |
-| Teléfono de contacto (en el panel)                                            | Aviso legal, condiciones           |
-| Tarifa de envío e importe para envío gratis (se fijan en el panel, §136)      | Envíos                             |
 | Plazo de entrega y transportista                                              | Envíos, privacidad (destinatarios) |
 | Si se adhiere al arbitraje de consumo (Junta Arbitral de Consum de Catalunya) | Condiciones                        |
+
+Ya no faltan (24/10): el **teléfono y el email**, puestos en Panel → Configuración el 23/10; y los **gastos de envío y desde cuánto es gratis**, que salen solos de las tarifas activas de Panel → Configuración → Tarifas de envío (DECISIONS §168). Mientras «Ofrecer el envío» esté apagado, esas dos líneas no se publican; al encenderlo aparecen en los tres idiomas con los mismos importes que cobra el checkout (hoy guardadas: península 4 €, gratis desde 60 €; Illes Balears 10 €, gratis desde 120 €).
 
 ## Decisiones tomadas en el borrador (confirmar con el cliente)
 
@@ -68,4 +68,4 @@ Enlazados en la barra inferior del pie de todas las páginas, en pequeño junto 
 - Códigos de descuento de las campañas: si la devolución proporcional es correcta y si un código de campaña cuenta como anuncio de reducción de precio a efectos de Ómnibus (los precios de la tienda no cambian; el descuento solo aparece en el resumen al aplicarlo). Las condiciones de cada campaña van en el propio correo de Sender.
 - Al activar la compra online: repasar condiciones, envíos y privacidad con los datos reales del checkout. El correo de confirmación ya adjunta las condiciones de venta en texto (soporte duradero, DECISIONS §138) y resume el desistimiento y los datos del vendedor: revisar que la asesoría da por bueno ese adjunto.
 - **Formulario de contacto y bandeja de mensajes (A6.1, DECISIONS §153–155):** el formulario está apagado (`CONTACT_FORM`) hasta esta revisión. Lleva debajo la información básica (solo para responder, con enlace al apartado «Consultas y atención al cliente» de la privacidad) y no pide consentimiento, porque la base es el interés legítimo o las medidas precontractuales que ya dice ese apartado. La privacidad dice desde el 16/10 que las consultas llegan también por el formulario y que las respuestas salen por el proveedor de email (Resend), que guarda una copia de cada correo enviado y recibido según su configuración. Revisar: si basta la información básica sin casilla, el plazo de conservación de las conversaciones (hoy, hasta que se borran a mano) y el DPA con Resend.
-- Zonas de envío ya decididas (12/10, DECISIONS §136): España peninsular e Illes Balears; ni Canarias, ni Ceuta, ni Melilla (`LEGAL_ENTITY.shippingZones`). Las tarifas del panel se copian a `shippingCost` y `freeShippingFrom` al activar la venta, junto con `LEGAL_UPDATED_AT`.
+- Zonas de envío ya decididas (12/10, DECISIONS §136): España peninsular e Illes Balears; ni Canarias, ni Ceuta, ni Melilla (`LEGAL_ENTITY.shippingZones`). Las tarifas ya no se copian a mano: `shippingCost` y `freeShippingFrom` valen `null` y los textos leen las tarifas activas del panel (§168); un texto en `LEGAL_ENTITY` las sustituiría. `LEGAL_UPDATED_AT` se cambia al abrir la venta, con la revisión de la asesoría.

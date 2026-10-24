@@ -1,4 +1,16 @@
-# Estado real — 23/10/2026
+# Estado real — 24/10/2026
+
+## Cierre de la apertura (24/10)
+
+`claude/cierre-apertura`, sobre `claude/vigilant-mendel-p4mv93` (la de Bizum, §167, que entra con ella). A petición del usuario: dejar lista la apertura y hacer el código pendiente. Decisión §168; lista de lo que queda en [PLAN_APERTURA.md](PLAN_APERTURA.md).
+
+- **Devoluciones** (revisión de seguridad): una petición repetida ya no se manda dos veces al banco; una devolución sin respuesta clara, o enviada hace más de 10 minutos sin respuesta guardada, se reenvía o se resuelve en la ficha con «Consta hecha en el portal» / «No consta en el portal»; y con una devolución abierta el pedido no cambia de estado. Migración `20261024120000_refund_safeguards.sql`, **sin aplicar en `atelier-dev`**.
+- **Correo de confirmación** sin el nombre del comprador en el saludo.
+- **Formulario de contacto:** freno por cliente (5 cada 10 minutos), lo que faltaba en código para encenderlo.
+- **Textos legales:** los gastos de envío y el envío gratis salen de las tarifas activas del panel; aparecen al encender «Ofrecer el envío».
+- **Comprobado en producción (solo lectura, 24/10):** en Production están `CRON_SECRET`, `RESEND_API_KEY`, `EMAIL_FROM` y `SUPABASE_SECRET_KEY`; faltan `REDSYS_*` reales (llegan con el pase) y `WEB_CHECKOUT`. Supabase con las 34 migraciones del repositorio hasta `20261023120000` y sin avisos nuevos (ya no marca las contraseñas filtradas). Pedidos 1001–1003 de la prueba con BBVA (cancelado y dos sin pagar con la reserva liberada); ningún código de descuento. Tarifas guardadas sin ofrecer; email y teléfono de la tienda puestos. Una administradora de la tienda con MFA; la otra cuenta (del 30/09) no ha entrado nunca. Firewall de Vercel sin configuración.
+- **Comprobado en local sin Docker** (Postgres 16 con la emulación de §146 y pgTAP 1.3.2): pgTAP 961/961 en 24 archivos (34 nuevas); concurrencia correcta 3 veces con el caso nuevo; tipos generados iguales; `pnpm check` correcto (lint, tipos, 659 unitarias y build); `format:check` y `scan:secrets` correctos. `db lint` y E2E, en la CI de la PR.
+- **Siguiente:** aplicar la migración, fusionar, Bizum por debajo de 5 € y el pase a producción del TPV (PLAN_APERTURA).
 
 ## Datos de pruebas del TPV de BBVA y Bizum (23/10)
 
@@ -430,7 +442,7 @@ La revisión visual con perfumes se hizo en local con un Supabase simulado que d
 
 ## Pendiente técnico
 
-- Activar en Supabase Auth la protección de contraseñas filtradas (aviso del asesor de seguridad; puede requerir plan de pago).
+- ~~Activar en Supabase Auth la protección de contraseñas filtradas~~: activada el 23/10 (el asesor de seguridad ya no la marca).
 
 - Tras la importación: fijar PVP (con el cambio masivo o por ficha), revisar marcas y nombres marcados y publicar.
 - Compra a Orient Fragance: contenido y precio de los 4 lotes; fotos propias de los seis perfumes sin foto oficial.
