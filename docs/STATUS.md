@@ -1,4 +1,28 @@
-# Estado real — 23/10/2026
+# Estado real — 24/10/2026
+
+## Cierre de la apertura (24/10)
+
+`claude/cierre-apertura`, sobre `claude/vigilant-mendel-p4mv93` (la de Bizum, §167, que entra con ella). A petición del usuario: dejar lista la apertura y hacer el código pendiente. Decisión §168; lista de lo que queda en [PLAN_APERTURA.md](PLAN_APERTURA.md).
+
+- **Devoluciones** (revisión de seguridad): una petición repetida ya no se manda dos veces al banco; una devolución sin respuesta clara, o enviada hace más de 10 minutos sin respuesta guardada, se reenvía o se resuelve en la ficha con «Consta hecha en el portal» / «No consta en el portal»; y con una devolución abierta el pedido no cambia de estado. Migración `20261024120000_refund_safeguards.sql`, **aplicada en `atelier-dev` el 24/10** antes de fusionar, a petición del usuario y comprobada (§168).
+- **Correo de confirmación** sin el nombre del comprador en el saludo.
+- **Formulario de contacto:** freno por cliente (5 cada 10 minutos), lo que faltaba en código para encenderlo.
+- **Textos legales:** los gastos de envío y el envío gratis salen de las tarifas activas del panel; aparecen al encender «Ofrecer el envío».
+- **Comprobado en producción (solo lectura, 24/10):** en Production están `CRON_SECRET`, `RESEND_API_KEY`, `EMAIL_FROM` y `SUPABASE_SECRET_KEY`; faltan `REDSYS_*` reales (llegan con el pase) y `WEB_CHECKOUT`. Supabase con las 34 migraciones del repositorio hasta `20261023120000` y sin avisos nuevos (ya no marca las contraseñas filtradas). Pedidos 1001–1003 de la prueba con BBVA (cancelado y dos sin pagar con la reserva liberada); ningún código de descuento. Tarifas guardadas sin ofrecer; email y teléfono de la tienda puestos. Una administradora de la tienda con MFA; la otra cuenta (del 30/09) no ha entrado nunca. Firewall de Vercel sin configuración.
+- **Comprobado en local sin Docker** (Postgres 16 con la emulación de §146 y pgTAP 1.3.2): pgTAP 961/961 en 24 archivos (34 nuevas); concurrencia correcta 3 veces con el caso nuevo; tipos generados iguales; `pnpm check` correcto (lint, tipos, 659 unitarias y build); `format:check` y `scan:secrets` correctos. `db lint` y E2E, en la CI de la PR.
+- **Firewall de Vercel:** aprobadas dos reglas de 60 peticiones por minuto y por IP (acciones de la tienda fuera de `/admin` y aviso del banco), pero la API de Vercel responde que el proyecto no tiene configuración de Firewall: hay que crearlas en el panel de Vercel (PLAN_APERTURA, paso 2).
+- **Siguiente:** fusionar la PR #47 con la CI en verde, Bizum por debajo de 5 € y el pase a producción del TPV (PLAN_APERTURA).
+
+## Datos de pruebas del TPV de BBVA y Bizum (23/10)
+
+`claude/vigilant-mendel-p4mv93`, sobre `main` a346fb1. BBVA mandó los datos del entorno de pruebas: comercio `370787319`, terminal `001`, portal de pruebas y la clave genérica de pruebas de Redsys. Pide probar tarjeta y Bizum y después pulsar «Pasar a producción»; la clave real llega con ese pase. Decisión §167; pasos en [PLAN_APERTURA.md](PLAN_APERTURA.md).
+
+- **Bizum sin código nuevo:** la página del banco ofrece los métodos activados en el terminal, y la notificación y la devolución de Bizum son las mismas que las de la tarjeta. Se confirma en la prueba.
+- **Textos:** «pagar con tarjeta o Bizum» al ir al banco (es/ca/en); medios de pago en las condiciones (tarjeta bancaria y Bizum) y su párrafo de pago; privacidad y aviso de devolución del panel con Bizum. `LEGAL_UPDATED_AT` no cambia todavía.
+- **Comprobado en local** (con Node 22: el contenedor no tiene la 24): `pnpm check` correcto (lint, tipos, 647 unitarias y build); `format:check` y `scan:secrets` correctos. Sin migraciones ni cambios de rutas; las E2E, en la CI de la PR.
+- **Prueba con el banco (23/10, Preview de esta rama):** tarjeta correcta de principio a fin (pago tras un reintento, pedido pagado solo, correo de confirmación enviado por Resend, devolución 0900 y pedido cancelado); denegada y «Liberar la reserva», correctos. Bizum aparece en la página del banco pero con 32,90 € se denegó: falta repetirlo por debajo de 5 €. Detalle en PLAN_APERTURA, paso 1.
+- **Configuración comprobada el 23/10:** correo de pedidos funcionando en Production; protección de contraseñas filtradas activada; email y teléfono de la tienda puestos; tarifas de envío guardadas pero sin ofrecer; las dos personas con rol de administración de la tienda, sin verificación en dos pasos.
+- **Siguiente:** Bizum por debajo de 5 €; comprobar las operaciones en el portal de pruebas; limpiar las variables de la prueba; «Pasar a producción»; fusionar esta rama antes de abrir.
 
 ## «Liberar la reserva» y lista para abrir la venta (PR #45, 23/10)
 
@@ -404,7 +428,7 @@ La revisión visual con perfumes se hizo en local con un Supabase simulado que d
 3. ~~Abrir la web a Agustín~~: hecho el 10/10, la web es pública (DECISIONS §118). Queda decidir cuándo quitar el `noindex` para que la indexen los buscadores.
 4. Asistente: configurar en Vercel, solo servidor y para Production y Preview, `ANTHROPIC_API_KEY` (de la cuenta de Anthropic del negocio), `CRON_SECRET` (valor aleatorio largo) y `SUPABASE_SECRET_KEY`; opcional `ASSISTANT_DAILY_LIMIT`. No pegar ninguna clave en el chat. La migración ya está aplicada.
 5. Dar de alta los proveedores reales (Compras → Proveedores) para que Reposición proponga cantidades.
-6. **Pago con tarjeta (Visa) en la web.** TPV virtual concedido por el banco el 23/10: los pasos para probarlo y abrir están en [PLAN_APERTURA.md](PLAN_APERTURA.md). El datáfono de la tienda no sirve para cobrar online: hace falta un **TPV virtual** de comercio electrónico del banco (en España casi todos usan Redsys). Pedir al banco y guardar, sin pegarlo en el chat:
+6. **Pago con tarjeta (Visa) en la web.** TPV virtual concedido por el banco el 23/10, con tarjeta y Bizum; datos del entorno de pruebas recibidos el mismo día (§167). Los pasos para probarlo, pedir el pase a producción y abrir están en [PLAN_APERTURA.md](PLAN_APERTURA.md). El datáfono de la tienda no sirve para cobrar online: hace falta un **TPV virtual** de comercio electrónico del banco (en España casi todos usan Redsys). Pedir al banco y guardar, sin pegarlo en el chat:
    - número de comercio (FUC, 9 dígitos) y número de terminal;
    - clave de firma SHA-256 de pruebas y la real (se ponen como variables de servidor en Vercel);
    - integración **por redirección** (la tarjeta se teclea en la página del banco, nunca en la nuestra), con EMV 3DS, moneda EUR, Visa y Mastercard, notificación online por HTTP y devoluciones activadas; Bizum, Apple Pay o Google Pay si se quieren;
@@ -419,7 +443,7 @@ La revisión visual con perfumes se hizo en local con un Supabase simulado que d
 
 ## Pendiente técnico
 
-- Activar en Supabase Auth la protección de contraseñas filtradas (aviso del asesor de seguridad; puede requerir plan de pago).
+- ~~Activar en Supabase Auth la protección de contraseñas filtradas~~: activada el 23/10 (el asesor de seguridad ya no la marca).
 
 - Tras la importación: fijar PVP (con el cambio masivo o por ficha), revisar marcas y nombres marcados y publicar.
 - Compra a Orient Fragance: contenido y precio de los 4 lotes; fotos propias de los seis perfumes sin foto oficial.

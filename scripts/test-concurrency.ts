@@ -434,6 +434,83 @@ if (releaseState === 'paid/committed') {
   assert.equal(releaseRace[0].code, 0, releaseRace[0].text);
   assert.equal(await level(releaseUnit), '1/0');
 }
+// 7. Una devolución sin respuesta clara (§168): reenviarla y resolverla como
+// no hecha a la vez. Solo una de las dos sale; la otra ve el cambio y se para.
+const refundUnit = randomUUID();
+const refundSetup = await query(
+  `insert into public.product_variants(id,product_id,size_ml,retail_price_cents) values('${refundUnit}','${shopProduct}',15,2500); insert into public.inventory_levels(variant_id,location_id,on_hand) values('${refundUnit}','${location}',1);`,
+);
+assert.equal(refundSetup.code, 0, refundSetup.text);
+const toRefund = await query(createOrder(refundUnit));
+assert.equal(toRefund.code, 0, toRefund.text);
+const refundRef = await reference(refundUnit);
+const paidRefund = await query(
+  server(
+    `select public.web_order_record_payment('redsys','${refundRef}','tx-refund','succeeded',2500,'EUR')`,
+  ),
+);
+assert.equal(paidRefund.code, 0, paidRefund.text);
+const [refundOrder, refundRevision, refundPayment] = (
+  await query(
+    `select o.id || '/' || o.revision || '/' || p.id from public.orders o join public.order_lines l on l.order_id=o.id join public.order_payments p on p.order_id=o.id where l.variant_id='${refundUnit}'`,
+  )
+).text
+  .trim()
+  .split('/');
+const requested = await query(
+  as(
+    replier,
+    `select public.admin_request_refund('${refundOrder}',${refundPayment},'cancelled',2500,'${randomUUID()}',${refundRevision}) ->> 'refund_id'`,
+  ),
+);
+assert.equal(requested.code, 0, requested.text);
+const refundId = requested.text
+  .split('\n')
+  .find((line) => /^[a-f0-9-]{36}$/.test(line));
+assert.ok(refundId, requested.text);
+const unknown = await query(
+  server(
+    `select public.web_order_refund_result('${refundId}','unknown',null,'network')`,
+  ),
+);
+assert.equal(unknown.code, 0, unknown.text);
+const refundRace = await Promise.all([
+  query(
+    as(
+      replier,
+      `select public.admin_retry_refund('${refundId}'); select pg_sleep(0.2)`,
+    ),
+  ),
+  query(
+    as(
+      replier,
+      `select public.admin_resolve_refund('${refundId}','failed'); select pg_sleep(0.2)`,
+    ),
+  ),
+]);
+assert.equal(
+  refundRace.filter((x) => x.code === 0).length,
+  1,
+  JSON.stringify(refundRace),
+);
+const refundState = (
+  await query(
+    `select status || '/' || coalesce(response_code, '-') from public.order_refunds where id='${refundId}'`,
+  )
+).text.trim();
+if (refundState === 'requested/-') {
+  assert.ok(
+    refundRace[1].text.includes('refund_not_resolvable'),
+    refundRace[1].text,
+  );
+} else {
+  assert.equal(refundState, 'failed/portal');
+  assert.ok(
+    refundRace[0].text.includes('refund_not_retryable'),
+    refundRace[0].text,
+  );
+}
+assert.equal(await level(refundUnit), '1/1');
 console.log(
-  `Concurrencia real correcta: precio, imagen, recepción, último administrador, pedidos web, códigos de descuento, mensajes y liberación de reservas (${releaseState}). Fixtures permanecen solo en el contenedor local hasta db reset.`,
+  `Concurrencia real correcta: precio, imagen, recepción, último administrador, pedidos web, códigos de descuento, mensajes, liberación de reservas (${releaseState}) y devoluciones atascadas (${refundState}). Fixtures permanecen solo en el contenedor local hasta db reset.`,
 );

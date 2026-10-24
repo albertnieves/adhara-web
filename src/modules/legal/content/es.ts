@@ -186,7 +186,7 @@ export const es: LegalCopy = {
           title: 'Pago y factura',
           blocks: [
             'Medios de pago: {paymentMethods}.',
-            'El pago con tarjeta se hace en la página segura del banco, con autenticación reforzada (3D Secure). Nunca vemos ni guardamos los datos de tu tarjeta. El cargo se hace al confirmar el pedido.',
+            'El pago se hace en la página segura del banco: con tarjeta, con autenticación reforzada (3D Secure); con Bizum, con tu número de móvil y tu clave Bizum. Nunca vemos ni guardamos los datos de tu tarjeta ni tus claves. El cargo se hace al confirmar el pedido.',
             'Emitimos factura de cada pedido. Si la necesitas a nombre de una empresa, indícanos sus datos fiscales al hacer el pedido.',
           ],
         },
@@ -309,7 +309,7 @@ export const es: LegalCopy = {
           blocks: [
             {
               list: [
-                'Datos: nombre, email, teléfono, dirección de entrega y, si pides factura a nombre de una empresa, sus datos fiscales; productos, importes y estado del pago. Los datos de tu tarjeta los trata el banco: nosotros no los recibimos.',
+                'Datos: nombre, email, teléfono, dirección de entrega y, si pides factura a nombre de una empresa, sus datos fiscales; productos, importes y estado del pago. Los datos de tu tarjeta o de Bizum los trata el banco: nosotros no los recibimos.',
                 'Finalidad: gestionar el pedido, el pago, la entrega, las devoluciones y la garantía, y emitir la factura.',
                 'Base jurídica: la ejecución del contrato de compraventa (art. 6.1.b del RGPD) y el cumplimiento de obligaciones legales fiscales y contables (art. 6.1.c).',
                 'Conservación: mientras dure la relación y, después, 6 años por la normativa mercantil y los plazos que exija la normativa fiscal.',

@@ -92,12 +92,12 @@ Objetivo: primera venta real pagada con tarjeta, con recogida en Castelldefels y
 
 ### H5 — QA, seguridad y producción (F16, F17)
 
-| Entrega               | Qué incluye                                                                                                                                            | Tamaño | Bloquea        |
-| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ | ------ | -------------- |
-| Revisión de seguridad | **Hecha el 17/10** (§158–162, [informe](SECURITY_REVIEW_2026-10.md)); quedan el Firewall, el captcha y la protección de contraseñas filtradas en Auth. | M      | H2             |
-| Operación             | Monitorización de errores y disponibilidad, copias comprobadas con una restauración de prueba y guía de incidencias.                                   | M      | `atelier-prod` |
-| Migraciones           | Despliegue automático de migraciones de `main` a `atelier-prod` con revisión.                                                                          | S      | `atelier-prod` |
-| Analítica             | Solo si se decide: sin cookies o con aviso de consentimiento que permita rechazar.                                                                     | S      | Decisión legal |
+| Entrega               | Qué incluye                                                                                                                                                                                        | Tamaño | Bloquea        |
+| --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ | -------------- |
+| Revisión de seguridad | **Hecha el 17/10** (§158–162, [informe](SECURITY_REVIEW_2026-10.md)); quedan el Firewall y el captcha; contraseñas filtradas activadas el 23/10 y arreglos de devoluciones hechos el 24/10 (§168). | M      | H2             |
+| Operación             | Monitorización de errores y disponibilidad, copias comprobadas con una restauración de prueba y guía de incidencias.                                                                               | M      | `atelier-prod` |
+| Migraciones           | Despliegue automático de migraciones de `main` a `atelier-prod` con revisión.                                                                                                                      | S      | `atelier-prod` |
+| Analítica             | Solo si se decide: sin cookies o con aviso de consentimiento que permita rechazar.                                                                                                                 | S      | Decisión legal |
 
 ## Orden recomendado
 

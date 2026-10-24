@@ -38,11 +38,10 @@ Enlazados en la barra inferior del pie de todas las páginas, en pequeño junto 
 
 | Dato                                                                          | Dónde aparece                      |
 | ----------------------------------------------------------------------------- | ---------------------------------- |
-| Teléfono de contacto (en el panel)                                            | Aviso legal, condiciones           |
-| Tarifa de envío e importe para envío gratis (se fijan en el panel, §136)      | Envíos                             |
 | Plazo de entrega y transportista                                              | Envíos, privacidad (destinatarios) |
-| Medios de pago (tarjeta por TPV virtual, Bizum…)                              | Condiciones                        |
 | Si se adhiere al arbitraje de consumo (Junta Arbitral de Consum de Catalunya) | Condiciones                        |
+
+Ya no faltan (24/10): el **teléfono y el email**, puestos en Panel → Configuración el 23/10; y los **gastos de envío y desde cuánto es gratis**, que salen solos de las tarifas activas de Panel → Configuración → Tarifas de envío (DECISIONS §168). Mientras «Ofrecer el envío» esté apagado, esas dos líneas no se publican; al encenderlo aparecen en los tres idiomas con los mismos importes que cobra el checkout (hoy guardadas: península 4 €, gratis desde 60 €; Illes Balears 10 €, gratis desde 120 €).
 
 ## Decisiones tomadas en el borrador (confirmar con el cliente)
 
@@ -57,6 +56,7 @@ Enlazados en la barra inferior del pie de todas las páginas, en pequeño junto 
 9. Los textos están en los tres idiomas sin cláusula de prevalencia (el Código de consumo de Cataluña exige la información también en catalán).
 10. **Cuenta de cliente (borrador, 14/10, §142):** la privacidad tiene la sección «Cuenta de cliente» (datos, finalidad, base jurídica del contrato y conservación hasta borrar la cuenta) y cita a Google como responsable independiente al entrar con Google; las cookies, la sesión de la cuenta y la del acceso con Google, sin nombres internos. La cuenta está apagada: al encenderla, revisar con la asesoría y cambiar `LEGAL_UPDATED_AT`.
 11. **Códigos de descuento** (15/10, DECISIONS §149–152): las condiciones de venta, en «Precios», dicen que el código se escribe al finalizar la compra, que cada campaña indica sus condiciones (fechas, compra mínima, usos y rebajados), que se aplica a los artículos y no al envío, uno por pedido, y que al devolver un artículo de un pedido con código se devuelve su precio menos la parte proporcional del descuento. `LEGAL_UPDATED_AT` pasó al 15/10.
+12. **Medios de pago** (23/10, DECISIONS §167): tarjeta bancaria y Bizum, los del TPV virtual de BBVA según su correo; se confirman en la prueba con el banco. Las condiciones dicen que los dos se pagan en la página segura del banco (la tarjeta con 3D Secure; Bizum con el móvil y la clave Bizum) y la privacidad, que los datos de la tarjeta o de Bizum los trata el banco. `LEGAL_UPDATED_AT` no cambia todavía: se cambia con el resto de datos de la apertura y la revisión de la asesoría (PLAN_APERTURA, paso 3).
 
 ## Qué falta revisar con la asesoría
 
@@ -68,4 +68,4 @@ Enlazados en la barra inferior del pie de todas las páginas, en pequeño junto 
 - Códigos de descuento de las campañas: si la devolución proporcional es correcta y si un código de campaña cuenta como anuncio de reducción de precio a efectos de Ómnibus (los precios de la tienda no cambian; el descuento solo aparece en el resumen al aplicarlo). Las condiciones de cada campaña van en el propio correo de Sender.
 - Al activar la compra online: repasar condiciones, envíos y privacidad con los datos reales del checkout. El correo de confirmación ya adjunta las condiciones de venta en texto (soporte duradero, DECISIONS §138) y resume el desistimiento y los datos del vendedor: revisar que la asesoría da por bueno ese adjunto.
 - **Formulario de contacto y bandeja de mensajes (A6.1, DECISIONS §153–155):** el formulario está apagado (`CONTACT_FORM`) hasta esta revisión. Lleva debajo la información básica (solo para responder, con enlace al apartado «Consultas y atención al cliente» de la privacidad) y no pide consentimiento, porque la base es el interés legítimo o las medidas precontractuales que ya dice ese apartado. La privacidad dice desde el 16/10 que las consultas llegan también por el formulario y que las respuestas salen por el proveedor de email (Resend), que guarda una copia de cada correo enviado y recibido según su configuración. Revisar: si basta la información básica sin casilla, el plazo de conservación de las conversaciones (hoy, hasta que se borran a mano) y el DPA con Resend.
-- Zonas de envío ya decididas (12/10, DECISIONS §136): España peninsular e Illes Balears; ni Canarias, ni Ceuta, ni Melilla (`LEGAL_ENTITY.shippingZones`). Las tarifas del panel se copian a `shippingCost` y `freeShippingFrom` al activar la venta, junto con `LEGAL_UPDATED_AT`.
+- Zonas de envío ya decididas (12/10, DECISIONS §136): España peninsular e Illes Balears; ni Canarias, ni Ceuta, ni Melilla (`LEGAL_ENTITY.shippingZones`). Las tarifas ya no se copian a mano: `shippingCost` y `freeShippingFrom` valen `null` y los textos leen las tarifas activas del panel (§168); un texto en `LEGAL_ENTITY` las sustituiría. `LEGAL_UPDATED_AT` se cambia al abrir la venta, con la revisión de la asesoría.

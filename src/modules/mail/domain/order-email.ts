@@ -29,6 +29,7 @@ export type OrderEmailJob = {
   shipping_cents: number;
   total_cents: number;
   tracking_reference: string | null;
+  /** Lo da la cola, pero el correo no lo usa (DECISIONS §168). */
   full_name: string;
   email: string;
   address: {
@@ -166,7 +167,10 @@ export function renderOrderEmail(
       );
   }
   const contact = t('contact', { email: ctx.store.email });
-  const greeting = t('greeting', { name: job.full_name });
+  // Sin el nombre que escribió el comprador: el correo sale de la tienda y
+  // ese texto serviría para suplantarla ante otra persona (revisión de
+  // seguridad del 17/10, DECISIONS §168).
+  const greeting = t('greeting');
 
   const text = [
     greeting,

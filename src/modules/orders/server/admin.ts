@@ -174,6 +174,8 @@ export type WebOrderDetail = {
     error: string | null;
     actorName: string | null;
     createdAt: string;
+    /** Última vez que se mandó al banco (al pedirla o al reenviarla). */
+    sentAt: string;
     resolvedAt: string | null;
   }[];
   /** Correos al cliente (P06): qué salió y qué espera, sin su contenido. */
@@ -394,6 +396,8 @@ export async function getWebOrder(
         ? (names.get(r.requested_by) ?? 'Personal')
         : null,
       createdAt: r.created_at,
+      // Sin la migración 20261024120000 no hay sent_at: vale la de creación.
+      sentAt: r.sent_at ?? r.created_at,
       resolvedAt: r.resolved_at,
     })),
     emails: emails.map((e) => ({

@@ -177,7 +177,7 @@ export const en: LegalCopy = {
           title: 'Payment and invoice',
           blocks: [
             'Payment methods: {paymentMethods}.',
-            'Card payments are made on the bank’s secure page, with strong authentication (3D Secure). We never see or store your card details. The charge is made when the order is confirmed.',
+            'Payments are made on the bank’s secure page: by card, with strong authentication (3D Secure); with Bizum, with your mobile number and your Bizum PIN. We never see or store your card details or your PINs. The charge is made when the order is confirmed.',
             'We issue an invoice for every order. If you need it in a company’s name, give us its tax details when ordering.',
           ],
         },
@@ -300,7 +300,7 @@ export const en: LegalCopy = {
           blocks: [
             {
               list: [
-                'Data: name, email, phone, delivery address and, if you ask for an invoice in a company’s name, its tax details; products, amounts and payment status. Your card details are processed by the bank: we do not receive them.',
+                'Data: name, email, phone, delivery address and, if you ask for an invoice in a company’s name, its tax details; products, amounts and payment status. Your card or Bizum details are processed by the bank: we do not receive them.',
                 'Purpose: to manage the order, payment, delivery, returns and guarantee, and to issue the invoice.',
                 'Legal basis: performance of the sales contract (art. 6.1.b GDPR) and compliance with tax and accounting obligations (art. 6.1.c).',
                 'Retention: for the duration of the relationship and then 6 years under commercial law and for the periods required by tax law.',

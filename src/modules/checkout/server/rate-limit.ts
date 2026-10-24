@@ -4,7 +4,8 @@ import { headers } from 'next/headers';
 import { createOrdersClient } from '@/lib/supabase/privileged';
 
 /*
- * Freno de las acciones públicas del checkout (DECISIONS §160). Sin él, un
+ * Freno de las acciones públicas de la tienda: las del checkout (DECISIONS
+ * §160) y el formulario de contacto (§168). Sin él, un
  * script podía crear pedidos sin pagar que reservan el stock 30 minutos (la
  * tienda física también lo ve agotado) o probar códigos de descuento sin fin.
  * Cuenta por acción y cliente en la base (web_order_rate_limit, solo el
@@ -20,6 +21,10 @@ export const RATE_LIMITS = {
   checkout_discount: { limit: 20, windowSeconds: 600 },
   // «Volver a intentar el pago» crea un intento nuevo cada vez.
   checkout_retry: { limit: 10, windowSeconds: 600 },
+  // Formulario de contacto: la base ya limita por email (3 por hora) y el
+  // total (30 cada 10 minutos); esto frena a quien cambia de email para
+  // agotar el total y dejar sin formulario a los demás.
+  contact_message: { limit: 5, windowSeconds: 600 },
 } as const;
 export type RateLimitBucket = keyof typeof RATE_LIMITS;
 
