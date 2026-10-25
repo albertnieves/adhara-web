@@ -11,7 +11,8 @@
 - **Comprobado en producción (solo lectura, 24/10):** en Production están `CRON_SECRET`, `RESEND_API_KEY`, `EMAIL_FROM` y `SUPABASE_SECRET_KEY`; faltan `REDSYS_*` reales (llegan con el pase) y `WEB_CHECKOUT`. Supabase con las 34 migraciones del repositorio hasta `20261023120000` y sin avisos nuevos (ya no marca las contraseñas filtradas). Pedidos 1001–1003 de la prueba con BBVA (cancelado y dos sin pagar con la reserva liberada); ningún código de descuento. Tarifas guardadas sin ofrecer; email y teléfono de la tienda puestos. Una administradora de la tienda con MFA; la otra cuenta (del 30/09) no ha entrado nunca. Firewall de Vercel sin configuración.
 - **Comprobado en local sin Docker** (Postgres 16 con la emulación de §146 y pgTAP 1.3.2): pgTAP 961/961 en 24 archivos (34 nuevas); concurrencia correcta 3 veces con el caso nuevo; tipos generados iguales; `pnpm check` correcto (lint, tipos, 659 unitarias y build); `format:check` y `scan:secrets` correctos. `db lint` y E2E, en la CI de la PR.
 - **Firewall de Vercel:** aprobadas dos reglas de 60 peticiones por minuto y por IP (acciones de la tienda fuera de `/admin` y aviso del banco), pero la API de Vercel responde que el proyecto no tiene configuración de Firewall: hay que crearlas en el panel de Vercel (PLAN_APERTURA, paso 2).
-- **Siguiente:** fusionar la PR #47 con la CI en verde, Bizum por debajo de 5 € y el pase a producción del TPV (PLAN_APERTURA).
+- **Bizum probado el 25/10 en la Preview de BBVA** (pedidos 1004 y 1005, 3,29 € con el código `PRUEBATPV`): rechazo con aviso del banco, pago aceptado y confirmado solo en 14 s, devolución 0900 y unidad de vuelta al stock. La prueba del TPV está completa (PLAN_APERTURA, paso 1).
+- **Siguiente:** desactivar `PRUEBATPV`, comprobar las operaciones en el portal de pruebas, «Pasar a producción», fusionar la PR #47 y, con el correo del pase, las `REDSYS_*` reales (PLAN_APERTURA).
 
 ## Datos de pruebas del TPV de BBVA y Bizum (23/10)
 
