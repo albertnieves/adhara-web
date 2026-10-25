@@ -22,7 +22,7 @@ Comprobar Bizum y su devolución, pase y datos reales del TPV, tarifas ofrecidas
 
 ## 3. SEO base
 
-Ya existen `src/app/sitemap.ts`, robots, JSON-LD de producto, metadatos sociales y pruebas de `SEO_INDEXING`. El siguiente trabajo es cerrar su validación y activación: `next.config.ts` todavía envía `X-Robots-Tag: noindex, nofollow` de forma incondicional, incluso con la bandera encendida. Corregir esa coherencia con pruebas de las cabeceras y mantener la apertura apagada hasta aprobarla. Publicar solo productos con datos y media verificados.
+Ya existen `src/app/sitemap.ts`, robots, JSON-LD de producto, metadatos sociales y pruebas de `SEO_INDEXING`. La rama `codex/seo-indexacion-controlada`, sobre #48, corrige la cabecera global incondicional de `next.config.ts` usando la misma decisión de SEO y añade pruebas de la configuración real y rutas operativas. Pendiente de fusión, revisión de datos reales y activación aprobada; pasos en [SEO_RELEASE.md](SEO_RELEASE.md). Publicar solo productos con datos y media verificados.
 
 **Cierre:** pruebas ES/CA/EN, sitemap y datos estructurados correctos, sin indexar panel, borradores ni cuentas.
 
