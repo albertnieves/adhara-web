@@ -274,7 +274,7 @@
     "pickup": "Collect in store",
     "pickupHint": "Free, at {address}, {city}. We will let you know when it is ready.",
     "shipping": "Home delivery",
-    "shippingHint": "To mainland Spain and the Balearic Islands.",
+    "shippingHint": "To mainland Spain and the Balearic Islands, with the carrier you choose.",
     "shippingSoon": "Home delivery will be available soon.",
     "address": "Delivery address",
     "addressLine1": "Street and number",
@@ -341,10 +341,19 @@
       "disabled": "Online shopping is not available yet.",
       "busy": "Too many attempts in a row from this connection. Wait a few minutes and try again.",
       "generic": "We could not place your order. Please try again in a few minutes.",
-      "review": "Please check the highlighted fields."
+      "review": "Please check the highlighted fields.",
+      "shippingServiceRequired": "Choose a carrier for delivery.",
+      "shippingServiceUnavailable": "That carrier is no longer available for this order. Choose another one.",
+      "shippingWeightUnknown": "Some fragrances in your basket can’t be shipped yet. You can collect them in store."
     },
     "accountSignedIn": "You're buying with your account ({email}). The order will appear in “My orders”.",
-    "accountSignIn": "Have an account? <link>Sign in</link> to use your saved details and see the order in your account later."
+    "accountSignIn": "Have an account? <link>Sign in</link> to use your saved details and see the order in your account later.",
+    "carrier": "Carrier",
+    "carrierHint": "The price depends on the weight of your order and the carrier.",
+    "carrierPostalFirst": "Enter your postcode to see the carriers and their prices.",
+    "transitDays": "{days, plural, one {Delivery in # working day} other {Delivery in # working days}}",
+    "carrierFree": "Free with this order",
+    "shippingWeightMissing": "Some fragrances in your basket can’t be shipped yet. You can collect them in store."
   },
   "order": {
     "title": "Your order",
@@ -377,6 +386,20 @@
     "retryErrors": {
       "expired": "Your reservation has expired: please place the order again.",
       "generic": "We could not connect to the bank. Please try again in a few minutes."
+    },
+    "shipmentTitle": "Delivery tracking",
+    "shipmentCarrier": "Delivered by {carrier}.",
+    "shipmentTracking": "Tracking number: {tracking}",
+    "shipmentLink": "Track your parcel",
+    "shipmentStatus": {
+      "label_created": "Preparing your parcel",
+      "in_transit": "On its way",
+      "out_for_delivery": "Out for delivery",
+      "at_pickup_point": "Waiting for you at a pickup point",
+      "delivered": "Delivered",
+      "exception": "Delivery issue: the carrier will contact you",
+      "returned": "Returned to the shop",
+      "cancelled": "Preparing your parcel"
     }
   },
   "email": {
@@ -403,7 +426,9 @@
     "seller": "Seller: {holder}, tax ID {taxId}, {address}.",
     "contact": "Any questions? Reply to this email or write to {email}.",
     "attachment": "terms-of-sale.txt",
-    "signature": "L’Atelier du Désert · Arabian perfumery in Castelldefels"
+    "signature": "L’Atelier du Désert · Arabian perfumery in Castelldefels",
+    "carrier": "Delivered by {carrier}.",
+    "trackingLink": "Tracking: {url}"
   },
   "contact": {
     "title": "Contact",
@@ -542,7 +567,9 @@
       "total": "Total",
       "refunded": "Refunded",
       "vat": "VAT included",
-      "help": "Questions about this order? Write to us at {email} with the order number."
+      "help": "Questions about this order? Write to us at {email} with the order number.",
+      "carrier": "Carrier: {carrier}",
+      "trackingLink": "Track your parcel"
     },
     "status": {
       "awaitingPayment": "Awaiting payment",

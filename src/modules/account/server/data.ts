@@ -95,6 +95,11 @@ type OrderRow = {
   created_at: string;
   paid_at: string | null;
   tracking_reference: string | null;
+  shipment?: {
+    carrier_name: string;
+    tracking_number: string | null;
+    tracking_url: string | null;
+  } | null;
   contact: { full_name: string; email: string; phone: string | null };
   address: {
     address_line1: string | null;
@@ -140,7 +145,10 @@ export async function getAccountOrder(
     refundedCents: row.refunded_cents,
     createdAt: row.created_at,
     paidAt: row.paid_at,
-    trackingReference: row.tracking_reference,
+    trackingReference:
+      row.tracking_reference ?? row.shipment?.tracking_number ?? null,
+    carrierName: row.shipment?.carrier_name ?? null,
+    trackingUrl: row.shipment?.tracking_url ?? null,
     contact: {
       fullName: row.contact.full_name,
       email: row.contact.email,

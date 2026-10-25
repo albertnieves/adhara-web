@@ -61,15 +61,15 @@ Objetivo: que la web pueda indexarse y enlazarse sin riesgo, aunque aún no vend
 
 Objetivo: primera venta real pagada con tarjeta, con recogida en Castelldefels y envío a la península y Baleares (decisión del 12/10, DECISIONS §136). Sigue el plan de la PR #31.
 
-| Entrega                  | Qué incluye                                                                                                | Tamaño | Bloquea                             |
-| ------------------------ | ---------------------------------------------------------------------------------------------------------- | ------ | ----------------------------------- |
-| P02 Persistencia         | Pedidos, líneas, intentos de pago y reservas con RLS, pgTAP y tipos. **Hecha el 11/10 en la PR #31.**      | L      | —                                   |
-| P03 Carrito y checkout   | Cesta y checkout es/ca/en, recogida y envío con tarifas del panel, reserva. **Hecha (apagada) el 12/10.**  | L      | —                                   |
-| P04 TPV                  | Redsys por redirección. **Hecha el 12/10 con banco simulado**; falta un pago de prueba en su sandbox.      | M      | **Datos del TPV virtual del banco** |
-| P05 Panel de pedidos     | Listado, ficha, incidencias, preparar → listo para recoger → entregado. **Hecha el 12/10 en la PR #31.**   | M      | P02                                 |
-| P06 Correo y reembolsos  | Confirmación y avisos (Resend) y devoluciones con el TPV. **Hecha el 12/10**; falta configurar el correo.  | M      | **Proveedor de correo y DNS**       |
-| P07 Validación integrada | Pago correcto y rechazado, firma falsa, importe alterado, duplicados, última unidad, caducidad. **Hecha.** | M      | —                                   |
-| Transportista            | Contrato, etiquetas y seguimiento del envío; zonas y tarifas ya están en P03.                              | S      | Elegir transportista                |
+| Entrega                  | Qué incluye                                                                                                                                                                                    | Tamaño | Bloquea                             |
+| ------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ | ----------------------------------- |
+| P02 Persistencia         | Pedidos, líneas, intentos de pago y reservas con RLS, pgTAP y tipos. **Hecha el 11/10 en la PR #31.**                                                                                          | L      | —                                   |
+| P03 Carrito y checkout   | Cesta y checkout es/ca/en, recogida y envío con tarifas del panel, reserva. **Hecha (apagada) el 12/10.**                                                                                      | L      | —                                   |
+| P04 TPV                  | Redsys por redirección. **Hecha el 12/10 con banco simulado**; falta un pago de prueba en su sandbox.                                                                                          | M      | **Datos del TPV virtual del banco** |
+| P05 Panel de pedidos     | Listado, ficha, incidencias, preparar → listo para recoger → entregado. **Hecha el 12/10 en la PR #31.**                                                                                       | M      | P02                                 |
+| P06 Correo y reembolsos  | Confirmación y avisos (Resend) y devoluciones con el TPV. **Hecha el 12/10**; falta configurar el correo.                                                                                      | M      | **Proveedor de correo y DNS**       |
+| P07 Validación integrada | Pago correcto y rechazado, firma falsa, importe alterado, duplicados, última unidad, caducidad. **Hecha.**                                                                                     | M      | —                                   |
+| Transportista            | **Hecho el 25/10 en `claude/envios-multitransportista`** (§171–176): Sendcloud o contrato propio, precio por peso y transportista, etiquetas, recogida o punto y seguimiento. Falta la cuenta. | M      | Cuenta de Sendcloud y pesos         |
 
 ### H3 — Clientes y mensajes (A6.1, A7, F14)
 

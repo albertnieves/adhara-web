@@ -6,64 +6,60 @@ import {
 } from '../../src/modules/legal/domain/shipping';
 
 /*
- * Gastos de envío de los textos legales con las tarifas del panel
- * (DECISIONS §168): lo mismo que cobra el checkout, en cada idioma, y sin
- * línea mientras no se ofrezca el envío.
+ * Gastos de envío de los textos legales con las zonas del panel (DECISIONS
+ * §168, §172): el precio depende del peso y del transportista, en cada
+ * idioma, y sin línea mientras no se ofrezca el envío.
  */
 
-const nbsp = (text: string | null) => text?.replace(/ /g, ' ') ?? null;
-const rates = [
-  { zone: 'baleares', priceCents: 1000, freeFromCents: 12000 },
-  { zone: 'peninsula', priceCents: 400, freeFromCents: 6000 },
+const nbsp = (text: string | null) => text?.replace(/\u00a0/g, ' ') ?? null;
+const zones = [
+  { zone: 'baleares', freeFromCents: 12000 },
+  { zone: 'peninsula', freeFromCents: 6000 },
 ] as const;
 
 describe('gastos de envío en los textos legales', () => {
   it('las dos zonas, en orden y en los tres idiomas', () => {
-    expect(nbsp(shippingCostText(rates, 'es'))).toBe(
-      '4 € en la península y 10 € en las Illes Balears',
+    expect(shippingCostText(zones, 'es')).toBe(
+      'según el peso del pedido y el transportista que elijas, en la península y en las Illes Balears; el importe se muestra antes de pagar',
     );
-    expect(nbsp(freeShippingText(rates, 'es'))).toBe(
-      '60 € en la península y 120 € en las Illes Balears',
+    expect(nbsp(freeShippingText(zones, 'es'))).toBe(
+      '60 € en la península y 120 € en las Illes Balears, con las opciones de envío que lo indican al pagar',
     );
-    expect(nbsp(shippingCostText(rates, 'ca'))).toBe(
-      '4 € a la península i 10 € a les Illes Balears',
+    expect(shippingCostText(zones, 'ca')).toBe(
+      'segons el pes de la comanda i el transportista que triïs, a la península i a les Illes Balears; l’import es mostra abans de pagar',
     );
-    expect(nbsp(shippingCostText(rates, 'en'))).toBe(
-      '€4 to mainland Spain and €10 to the Balearic Islands',
+    expect(shippingCostText(zones, 'en')).toBe(
+      'based on the weight of your order and the carrier you choose, to mainland Spain and to the Balearic Islands; the amount is shown before you pay',
     );
   });
 
-  it('con céntimos y una sola zona', () => {
+  it('una sola zona', () => {
     expect(
-      nbsp(
-        shippingCostText(
-          [{ zone: 'peninsula', priceCents: 495, freeFromCents: null }],
-          'es',
-        ),
-      ),
-    ).toBe('4,95 € en la península');
+      shippingCostText([{ zone: 'peninsula', freeFromCents: null }], 'es'),
+    ).toBe(
+      'según el peso del pedido y el transportista que elijas, en la península; el importe se muestra antes de pagar',
+    );
   });
 
-  it('sin tarifas activas no hay línea; sin envío gratis, tampoco esa', () => {
+  it('sin zonas activas no hay línea; sin envío gratis, tampoco esa', () => {
     expect(shippingCostText([], 'es')).toBeNull();
     expect(freeShippingText([], 'es')).toBeNull();
     expect(
-      freeShippingText(
-        [{ zone: 'peninsula', priceCents: 400, freeFromCents: null }],
-        'es',
-      ),
+      freeShippingText([{ zone: 'peninsula', freeFromCents: null }], 'es'),
     ).toBeNull();
     expect(
       nbsp(
         freeShippingText(
           [
-            { zone: 'peninsula', priceCents: 400, freeFromCents: 6000 },
-            { zone: 'baleares', priceCents: 1000, freeFromCents: null },
+            { zone: 'peninsula', freeFromCents: 6000 },
+            { zone: 'baleares', freeFromCents: null },
           ],
           'es',
         ),
       ),
-    ).toBe('60 € en la península');
+    ).toBe(
+      '60 € en la península, con las opciones de envío que lo indican al pagar',
+    );
   });
 
   it('encaja en las frases de «Envíos y devoluciones»', () => {

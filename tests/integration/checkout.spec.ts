@@ -32,12 +32,40 @@ async function makeProduct(units: number) {
   return product;
 }
 
-/** Tarifas de prueba directas en la base (el panel exige MFA; lo prueba otro caso). */
-function setRates() {
-  psql(`insert into public.shipping_rates (zone, price_cents, free_from_cents, active)
-        values ('peninsula', 495, 10000, true), ('baleares', 995, null, false)
-        on conflict (zone) do update set price_cents = excluded.price_cents,
-          free_from_cents = excluded.free_from_cents, active = excluded.active;`);
+/**
+ * Envío de prueba directo en la base (el panel exige MFA; lo prueba
+ * shipping.spec.ts): península con un servicio manual cuyo tramo cuesta 4,09 €
+ * sin IVA (4,95 € al cliente con el 21 %), gratis desde 100 €; Baleares
+ * apagada. El perfume pesa 400 g y el embalaje 100 g.
+ */
+function setShipping(product: TestProduct) {
+  psql(
+    `begin;
+     update public.shipping_services set active = false;
+     insert into public.shipping_settings (sender_name, address_line1, postal_code,
+       city, phone, email, packaging_weight_g, shipping_vat_bps)
+     values ('L''Atelier du Désert', 'Carrer de Pompeu Fabra 1', '08860',
+       'Castelldefels', '600000000', 'tienda@test.invalid', 100, 2100)
+     on conflict (id) do update set packaging_weight_g = 100, shipping_vat_bps = 2100;
+     insert into public.shipping_services (provider, code, carrier_code, carrier_name,
+       name, zones, active, transit_days)
+     values ('manual', 'checkout-spec', 'correos', 'Correos', 'Paq Estándar',
+       '{peninsula}', true, 2)
+     on conflict (provider, code) do update set active = true, zones = '{peninsula}';
+     delete from internal.shipping_service_rates r using public.shipping_services s
+       where s.id = r.service_id and s.code = 'checkout-spec';
+     insert into internal.shipping_service_rates (service_id, zone, min_weight_g,
+       max_weight_g, cost_cents)
+     select id, 'peninsula', 1, 30000, 409 from public.shipping_services
+       where code = 'checkout-spec';
+     insert into public.shipping_rates (zone, price_cents, free_from_cents, active)
+     values ('peninsula', null, 10000, true), ('baleares', null, null, false)
+     on conflict (zone) do update set price_cents = null,
+       free_from_cents = excluded.free_from_cents, active = excluded.active;
+     update public.product_variants set shipping_weight_g = 400 where id = :'variant';
+     commit;`,
+    { variant: product.variantId },
+  );
 }
 
 async function addToBasket(page: Page, product: TestProduct) {
@@ -126,8 +154,8 @@ test('envío a domicilio: zona, tarifa del panel y dirección', async ({
   page,
 }) => {
   const visits = await fakeBank(page);
-  setRates();
   const product = await makeProduct(5);
+  setShipping(product);
   await addToBasket(page, product);
   await page.goto('/es/finalizar-compra');
   const email = `envio-${randomUUID().slice(0, 8)}@test.invalid`;
@@ -150,10 +178,14 @@ test('envío a domicilio: zona, tarifa del panel y dirección', async ({
   await expect(
     page.getByRole('button', { name: 'Confirmar pedido y pagar' }),
   ).toBeDisabled();
-  // Península: 4,95 € de envío.
+  // Península: el servicio por el peso del pedido, 4,95 € de envío.
   await page.getByLabel('Código postal').fill('08860');
   await page.getByLabel('Población').fill('Castelldefels');
-  await expect(page.getByText('4,95 €')).toBeVisible();
+  await expect(
+    page.getByRole('radio', { name: /Correos · Paq Estándar · 4,95 €/ }),
+  ).toBeChecked();
+  await expect(page.getByText('Entrega en 2 días laborables')).toBeVisible();
+  await expect(page.getByText('4,95 €', { exact: true })).toBeVisible();
   await expect(page.getByText('54,85 €')).toBeVisible();
 
   await page.getByText('He leído y acepto las').click();
@@ -192,14 +224,16 @@ test('la cesta y el checkout tienen sus rutas en catalán e inglés', async ({
   }
 });
 
-test('panel: el administrador del sistema fija la tarifa de Baleares', async ({
+test('panel: el administrador del sistema ofrece el envío a Baleares', async ({
   page,
 }) => {
   await page.setViewportSize({ width: 1280, height: 900 });
   await login(page, await user('system_admin'));
   await page.goto('/admin/configuracion/envios');
-  const baleares = page.locator('section').filter({ hasText: 'Illes Balears' });
-  await baleares.getByLabel('Precio (€, con IVA)').fill('9,95');
+  const baleares = page
+    .locator('section')
+    .filter({ hasText: 'Códigos postales que empiezan por 07.' });
+  await baleares.getByLabel('Gratis desde (€)').fill('120');
   await baleares.getByLabel('Ofrecer el envío').check();
   await baleares.getByRole('button', { name: 'Guardar' }).click();
   await expect(
@@ -207,10 +241,13 @@ test('panel: el administrador del sistema fija la tarifa de Baleares', async ({
   ).toBeVisible();
   const { data } = await admin
     .from('shipping_rates')
-    .select('price_cents, active')
+    .select('free_from_cents, active')
     .eq('zone', 'baleares')
     .single();
-  expect(data).toEqual({ price_cents: 995, active: true });
+  expect(data).toEqual({ free_from_cents: 12000, active: true });
+  psql(
+    `update public.shipping_rates set active = false where zone = 'baleares';`,
+  );
 });
 
 test('el administrador de la tienda no ve las tarifas', async ({ page }) => {

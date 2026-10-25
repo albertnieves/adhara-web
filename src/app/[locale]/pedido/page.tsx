@@ -19,6 +19,9 @@ import { readStoreContent } from '@/modules/content/server';
 import { Link } from '@/modules/i18n';
 import { requireLocale } from '@/modules/i18n/server';
 import { LEGAL_CONTACT_EMAIL } from '@/modules/legal';
+import { SHIPMENT_STATUSES } from '@/modules/shipping';
+
+const SHIPMENT_STATUS_KEYS: ReadonlySet<string> = new Set(SHIPMENT_STATUSES);
 
 /**
  * Vuelta del banco (P04): enseña el estado del pedido de este navegador
@@ -124,6 +127,42 @@ export default async function OrderPage({
                   address: `${store.address}, ${store.city}`,
                 })}
           </p>
+          {order.shipment && (
+            <section
+              aria-labelledby="seguimiento"
+              className="border-border space-y-2 border-t pt-6"
+            >
+              <h2 id="seguimiento" className="text-lg">
+                {t('shipmentTitle')}
+              </h2>
+              <p className="font-semibold">
+                {t(
+                  `shipmentStatus.${SHIPMENT_STATUS_KEYS.has(order.shipment.status) ? order.shipment.status : 'in_transit'}`,
+                )}
+              </p>
+              <p className="text-fg-muted text-sm leading-relaxed">
+                {t('shipmentCarrier', { carrier: order.shipment.carrierName })}
+                {order.shipment.trackingNumber && (
+                  <>
+                    {' '}
+                    {t('shipmentTracking', {
+                      tracking: order.shipment.trackingNumber,
+                    })}
+                  </>
+                )}
+              </p>
+              {order.shipment.trackingUrl && (
+                <a
+                  href={order.shipment.trackingUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={buttonClass('outline')}
+                >
+                  {t('shipmentLink')}
+                </a>
+              )}
+            </section>
+          )}
           {summary}
         </Shell>
       );

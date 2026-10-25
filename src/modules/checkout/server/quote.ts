@@ -1,16 +1,18 @@
 import 'server-only';
 import { createSupabasePublicClient } from '@/lib/supabase/public';
 import type { Availability, ProductMedia } from '@/modules/catalog';
+import type { ShippingQuote } from '@/modules/shipping';
+import { EMPTY_SHIPPING_QUOTE } from '@/modules/shipping';
+import { quoteCartShipping } from '@/modules/shipping/server/quote';
 import type { CartLine } from '../domain/cart';
-import type { ShippingRate, ShippingZone } from '../domain/shipping';
-import { SHIPPING_ZONES } from '../domain/shipping';
 
 /*
  * Presupuesto de la cesta con datos públicos (cliente anónimo, nunca la
  * vista previa del personal): solo formatos activos con PVP de perfumes
- * publicados, su disponibilidad (sin unidades exactas) y las tarifas de envío
- * activas. Es lo que se enseña antes de pagar; el importe que cuenta lo
- * calcula la base al crear el pedido.
+ * publicados, su disponibilidad (sin unidades exactas) y las opciones de envío
+ * de cada zona activa para el peso de la cesta (web_shipping_quote, §172). Es
+ * lo que se enseña antes de pagar; el importe que cuenta lo calcula la base al
+ * crear el pedido.
  */
 
 export type QuoteLine = {
@@ -34,7 +36,7 @@ export type CartQuote = {
   itemsCents: number;
   /** Todo lo de la cesta se puede comprar ahora mismo. */
   purchasable: boolean;
-  rates: ShippingRate[];
+  shipping: ShippingQuote;
 };
 
 const VARIANT_SELECT =
@@ -68,11 +70,11 @@ export async function quoteCart(
     lines: lines.map((line) => ({ ...line, product: null })),
     itemsCents: 0,
     purchasable: false,
-    rates: [],
+    shipping: EMPTY_SHIPPING_QUOTE,
   };
   if (!supabase) return empty;
 
-  const [variants, rates] = await Promise.all([
+  const [variants, shipping] = await Promise.all([
     lines.length > 0
       ? supabase
           .from('product_variants')
@@ -84,10 +86,7 @@ export async function quoteCart(
           .eq('active', true)
           .eq('product.status', 'published')
       : Promise.resolve({ data: [], error: null }),
-    supabase
-      .from('shipping_rates')
-      .select('zone, price_cents, free_from_cents')
-      .eq('active', true),
+    quoteCartShipping(lines),
   ]);
   if (variants.error) {
     console.error(
@@ -95,12 +94,6 @@ export async function quoteCart(
       variants.error.message,
     );
     return empty;
-  }
-  if (rates.error) {
-    console.error(
-      '[checkout] no se pudieron leer las tarifas',
-      rates.error.message,
-    );
   }
   const rows = (variants.data ?? []) as unknown as Row[];
   const productIds = [...new Set(rows.map((row) => row.product.id))];
@@ -151,14 +144,6 @@ export async function quoteCart(
       quoted.every(
         (line) => line.product && line.product.availability !== 'out_of_stock',
       ),
-    rates: (rates.data ?? [])
-      .filter((rate): rate is typeof rate & { zone: ShippingZone } =>
-        (SHIPPING_ZONES as readonly string[]).includes(rate.zone),
-      )
-      .map((rate) => ({
-        zone: rate.zone,
-        priceCents: rate.price_cents,
-        freeFromCents: rate.free_from_cents,
-      })),
+    shipping,
   };
 }

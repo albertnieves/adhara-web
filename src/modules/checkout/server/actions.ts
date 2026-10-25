@@ -129,6 +129,17 @@ const DB_ERRORS: Record<string, CheckoutState & { status: 'error' }> = {
     fields: { postalCode: 'zoneUnavailable' },
   },
   shipping_unavailable: { status: 'error', error: 'shippingUnavailable' },
+  shipping_service_required: {
+    status: 'error',
+    error: 'shippingServiceRequired',
+    fields: { shippingServiceId: 'shippingServiceRequired' },
+  },
+  shipping_service_unavailable: {
+    status: 'error',
+    error: 'shippingServiceUnavailable',
+    fields: { shippingServiceId: 'shippingServiceUnavailable' },
+  },
+  shipping_weight_unknown: { status: 'error', error: 'shippingWeightUnknown' },
   invalid_address: { status: 'error', error: 'addressRequired' },
 };
 
@@ -153,6 +164,7 @@ export async function placeOrder(
     postalCode: text('postalCode'),
     city: text('city'),
     province: text('province'),
+    shippingServiceId: text('shippingServiceId'),
     acceptTerms: form.get('acceptTerms') ?? undefined,
     discountCode: text('discountCode'),
   });
@@ -202,6 +214,10 @@ export async function placeOrder(
     p_provider: PAYMENT_PROVIDER,
     ...(input.discountCode && { p_discount_code: input.discountCode }),
     ...(customerId && { p_customer_id: customerId }),
+    ...(shipping &&
+      input.shippingServiceId && {
+        p_shipping_service_id: input.shippingServiceId,
+      }),
   });
   if (error) {
     const discount = discountErrorFromDb(error.message);
