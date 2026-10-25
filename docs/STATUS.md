@@ -1,4 +1,21 @@
-# Estado real — 24/10/2026
+# Estado real — 25/10/2026
+
+## Objetivo activo: entornos y operación (25/10)
+
+Rama `codex/entornos-operacion`, sobre la #47 aún abierta (`claude/cierre-apertura`). Esta sección es el estado vigente; las entradas fechadas de debajo conservan la evidencia de cada entrega. Pasos operativos en [OPERATIONS.md](OPERATIONS.md), banco y negocio en [PLAN_APERTURA.md](PLAN_APERTURA.md), orden de mejoras en [ROADMAP.md](ROADMAP.md).
+
+| Área                | Hecho o comprobado                                                                                  | Pendiente para cerrar                                                                         |
+| ------------------- | --------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
+| Código de apertura  | #47 con CI/Database/E2E correctas en `316ba9b`; migración aplicada                                  | Fusionar #47; aún no publicada                                                                |
+| Aislamiento         | `pnpm build` rechaza Preview con base real; ejemplo local desconectado                              | Cambiar destinos de variables, retirar pruebas antiguas y verificar una base ficticia aislada |
+| Disponibilidad      | Liveness conservada y readiness de lectura con plazo; script externo y workflow diario en esta rama | Publicar y verificar; el workflow programado comienza al llegar a `main`                      |
+| Revisiones de Codex | Dos automatizaciones diarias activas desde el 26/10, ventanas de mañana Europe/Madrid               | Comprobar sus primeras ejecuciones; no modifican producción                                   |
+| Datos remotos       | Único proyecto `atelier-dev`, saludable; 35 migraciones hasta `20261024120000`; copia correcta hoy  | Restauración de prueba en entorno aislado                                                     |
+| Venta               | Correo de prueba enviado; sin correos pendientes en la consulta de hoy                              | Bizum, TPV live, envíos, accesos, firewall y legal según PLAN_APERTURA                        |
+
+No se han movido datos, cambiado variables remotas ni creado recursos de pago. Con las variables compartidas actuales, la nueva Preview se bloqueará de forma intencionada. La protección no retira el acceso de despliegues antiguos. **Siguiente tarea concreta:** completar el aislamiento remoto descrito en OPERATIONS y ensayar restauración; después cerrar la apertura y la activación SEO. El sitemap y JSON-LD ya existen; queda revisar la cabecera global de `noindex`, que sigue siendo incondicional.
+
+Validación de esta rama con Node 24.16.0 y pnpm 11.19.0: `pnpm check` correcto (lint, tipos, 687 unitarias y build), formato y escaneo de secretos correctos. 16 E2E HTTP correctas (salud, idioma, seguridad, robots/sitemap); suite completa intentada y detenida por falta de Chromium tras fallar su descarga (33 correctas antes de detenerse). Bloqueo de `pnpm build` contra la base real comprobado. Sin SQL nuevo: pgTAP, tipos de base y recorridos autenticados quedan en la CI; no se han ejecutado aquí.
 
 ## Cierre de la apertura (24/10)
 
