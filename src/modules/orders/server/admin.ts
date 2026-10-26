@@ -119,6 +119,10 @@ export type WebOrderDetail = {
     currency: string;
     paidAt: string | null;
     trackingReference: string | null;
+    /** Servicio de envío elegido por el cliente y el peso calculado (§172). */
+    shippingServiceId: string | null;
+    shippingServiceLabel: string | null;
+    shippingWeightG: number | null;
     /** Transacción del cobro del pedido (también si fue incidencia). */
     receivedTransactionId: string | null;
     revision: number;
@@ -332,6 +336,9 @@ export async function getWebOrder(
       currency: order.currency,
       paidAt: order.paid_at,
       trackingReference: order.tracking_reference,
+      shippingServiceId: order.shipping_service_id ?? null,
+      shippingServiceLabel: order.shipping_service_label ?? null,
+      shippingWeightG: order.shipping_weight_g ?? null,
       receivedTransactionId: order.received_transaction_id,
       revision: order.revision,
       createdAt: order.created_at,

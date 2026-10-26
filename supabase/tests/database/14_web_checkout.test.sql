@@ -1,7 +1,10 @@
 -- Checkout (PLAN_PEDIDOS_WEB, P03): zona por código postal (península y
--- Baleares; Canarias, Ceuta y Melilla fuera), tarifas que solo cambia
+-- Baleares; Canarias, Ceuta y Melilla fuera), zonas que solo cambia
 -- settings.manage con MFA, lectura pública de las activas y envío calculado
--- en la base al crear el pedido. Datos ficticios; la transacción se revierte.
+-- en la base al crear el pedido. Desde 20261025120000 el precio sale del peso y
+-- del servicio elegido (24_shipping lo prueba a fondo); aquí, un servicio de
+-- tramo único sin IVA para conservar los importes. Datos ficticios; la
+-- transacción se revierte.
 begin;
 create extension if not exists pgtap with schema extensions;
 set search_path = public, extensions;
@@ -31,6 +34,21 @@ insert into public.inventory_levels (variant_id, location_id, on_hand)
 select '00000000-0000-4000-8000-0000000014c1', id, 20
 from public.stock_locations where code = 'castelldefels';
 
+-- Envío por peso: ajustes, un servicio con un tramo por zona y el peso del formato.
+insert into public.shipping_settings (sender_name, address_line1, postal_code, city,
+  phone, email, packaging_weight_g, shipping_vat_bps)
+values ('Tienda de envíos', 'Carrer de la Tenda 1', '08860', 'Castelldefels',
+  '600000000', 'tienda-envios@test.invalid', 0, 0);
+insert into public.shipping_services (id, provider, code, carrier_code, carrier_name,
+  name, zones, active)
+values ('00000000-0000-4000-8000-0000000014e1', 'manual', 'prueba-14', 'prueba',
+  'Transportista', 'Estándar', '{peninsula,baleares}', true);
+insert into internal.shipping_service_rates (service_id, zone, min_weight_g, max_weight_g, cost_cents)
+values ('00000000-0000-4000-8000-0000000014e1', 'peninsula', 1, 30000, 495),
+       ('00000000-0000-4000-8000-0000000014e1', 'baleares', 1, 30000, 995);
+update public.product_variants set shipping_weight_g = 400
+  where id = '00000000-0000-4000-8000-0000000014c1';
+
 create function pg_temp.act_as(user_id text, aal text) returns void
 language sql as $$
   select set_config(
@@ -51,7 +69,7 @@ language sql as $$
     jsonb_build_object('full_name', 'Cliente de envío', 'email', 'envio@test.invalid',
       'phone', phone, 'address_line1', ' Carrer de Prova 1 ', 'address_line2', '2º 1ª',
       'postal_code', cp, 'city', 'Ciutat', 'province', 'Província'),
-    'redsys', 30);
+    'redsys', 30, p_shipping_service_id => '00000000-0000-4000-8000-0000000014e1');
 $$;
 grant execute on function pg_temp.ship(uuid, integer, text, text) to service_role;
 
@@ -81,42 +99,42 @@ select ok(
   'la zona solo la calcula la base');
 
 -- ---------------------------------------------------------------------------
--- Tarifas: solo settings.manage con MFA
+-- Zonas: solo settings.manage con MFA
 -- ---------------------------------------------------------------------------
 
 set local role authenticated;
 select pg_temp.act_as('00000000-0000-4000-8000-000000000142', 'aal2');
 select throws_ok(
-  $$select public.admin_save_shipping_rate('peninsula', 495, 6000, true)$$,
-  '42501', 'forbidden', 'el administrador de la tienda no fija tarifas');
+  $$select public.admin_save_shipping_zone('peninsula', 6000, true)$$,
+  '42501', 'forbidden', 'el administrador de la tienda no cambia las zonas');
 select pg_temp.act_as('00000000-0000-4000-8000-000000000141', 'aal1');
 select throws_ok(
-  $$select public.admin_save_shipping_rate('peninsula', 495, 6000, true)$$,
+  $$select public.admin_save_shipping_zone('peninsula', 6000, true)$$,
   '42501', 'forbidden', 'sin MFA ni el administrador del sistema');
 select pg_temp.act_as('00000000-0000-4000-8000-000000000141', 'aal2');
 select throws_ok(
-  $$select public.admin_save_shipping_rate('canarias', 495, null, true)$$,
-  '22023', 'invalid_zone', 'Canarias no es una zona con tarifa');
+  $$select public.admin_save_shipping_zone('canarias', null, true)$$,
+  '22023', 'invalid_zone', 'Canarias no es una zona de envío');
 select throws_ok(
-  $$select public.admin_save_shipping_rate('peninsula', -1, null, true)$$,
-  '22023', 'invalid_amount', 'sin precios negativos');
+  $$select public.admin_save_shipping_zone('peninsula', -1, true)$$,
+  '22023', 'invalid_amount', 'sin importes negativos');
 select throws_ok(
-  $$select public.admin_save_shipping_rate('peninsula', 495, 0, true)$$,
+  $$select public.admin_save_shipping_zone('peninsula', 0, true)$$,
   '22023', 'invalid_amount', 'el envío gratis empieza en un importe positivo');
 select is(
-  (public.admin_save_shipping_rate('peninsula', 495, 6000, true)).price_cents,
-  495, 'el administrador del sistema con MFA fija la tarifa de la península');
+  (public.admin_save_shipping_zone('peninsula', 6000, true)).free_from_cents,
+  6000, 'el administrador del sistema con MFA ofrece la península, gratis desde 60 €');
 select is(
-  (public.admin_save_shipping_rate('baleares', 995, null, false)).active,
-  false, 'y deja la de Baleares apagada');
+  (public.admin_save_shipping_zone('baleares', null, false)).active,
+  false, 'y deja Baleares apagada');
 select throws_ok(
-  $$update public.shipping_rates set price_cents = 0$$,
-  '42501', null, 'nadie cambia las tarifas sin pasar por la función');
+  $$update public.shipping_rates set free_from_cents = 1$$,
+  '42501', null, 'nadie cambia las zonas sin pasar por la función');
 reset role;
 select is(
   (select array_agg(entity_id order by id) from public.audit_log
-   where action = 'settings.shipping_rate'),
-  array['peninsula', 'baleares'], 'cada cambio de tarifa queda en la auditoría');
+   where action = 'settings.shipping_zone'),
+  array['peninsula', 'baleares'], 'cada cambio de zona queda en la auditoría');
 
 -- Lectura: la tienda solo ve las activas; el personal, todas.
 set local role anon;
@@ -162,7 +180,7 @@ select is(
   (select array[(o ->> 'items_cents')::int, (o ->> 'shipping_cents')::int,
                 (o ->> 'total_cents')::int]
    from pg_temp.ship('00000000-0000-4000-8000-0000000014d1', 1, '08860') o),
-  array[4995, 495, 5490], 'un perfume a la península: 49,95 + 4,95 de envío');
+  array[4995, 495, 5490], 'un perfume a la península: 49,95 + 4,95 del servicio elegido');
 select is(
   (select array[(o ->> 'items_cents')::int, (o ->> 'shipping_cents')::int,
                 (o ->> 'total_cents')::int]
@@ -185,16 +203,16 @@ select ok(
   not exists (select 1 from public.order_events where detail::text ilike '%Prova%'),
   'la cronología no guarda la dirección');
 
--- Baleares activada: se envía con su tarifa, sin envío gratis.
+-- Baleares activada: se envía con el tramo de Baleares, sin envío gratis.
 set local role authenticated;
 select pg_temp.act_as('00000000-0000-4000-8000-000000000141', 'aal2');
-select public.admin_save_shipping_rate('baleares', 995, null, true);
+select public.admin_save_shipping_zone('baleares', null, true);
 reset role;
 set local role service_role;
 select set_config('request.jwt.claims', '{"role": "service_role"}', true);
 select is(
   (pg_temp.ship('00000000-0000-4000-8000-0000000014d3', 2, '07001') ->> 'shipping_cents')::int,
-  995, 'Baleares activada: su tarifa, sin envío gratis');
+  995, 'Baleares activada: su tramo, sin envío gratis');
 -- Recogida: sin envío y sin guardar una dirección aunque llegue.
 select is(
   (public.web_order_create(

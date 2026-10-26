@@ -13,6 +13,14 @@ const inboundDomain =
 process.env.RESEND_WEBHOOK_SECRET = webhookSecret;
 process.env.INBOUND_EMAIL_DOMAIN = inboundDomain;
 
+// Envíos (DECISIONS §171–176) contra la API de Sendcloud simulada: claves de
+// la integración de un solo uso; las pruebas firman los avisos con la secreta.
+const sendcloudPublic = process.env.SENDCLOUD_PUBLIC_KEY ?? 'sc_publica_local';
+const sendcloudSecret =
+  process.env.SENDCLOUD_SECRET_KEY ?? `sc_${randomBytes(24).toString('hex')}`;
+process.env.SENDCLOUD_PUBLIC_KEY = sendcloudPublic;
+process.env.SENDCLOUD_SECRET_KEY = sendcloudSecret;
+
 export default defineConfig({
   testDir: './tests/integration',
   workers: 1,
@@ -47,6 +55,9 @@ export default defineConfig({
         RESEND_API_KEY: 're_prueba_local',
         RESEND_WEBHOOK_SECRET: webhookSecret,
         INBOUND_EMAIL_DOMAIN: inboundDomain,
+        SENDCLOUD_TEST_API_URL: 'http://localhost:3997',
+        SENDCLOUD_PUBLIC_KEY: sendcloudPublic,
+        SENDCLOUD_SECRET_KEY: sendcloudSecret,
       },
     },
     {
@@ -58,6 +69,15 @@ export default defineConfig({
       command: 'node tests/integration/fake-resend.ts',
       url: 'http://localhost:3998/health',
       reuseExistingServer: false,
+    },
+    {
+      command: 'node tests/integration/fake-sendcloud.ts',
+      url: 'http://localhost:3997/health',
+      reuseExistingServer: false,
+      env: {
+        SENDCLOUD_PUBLIC_KEY: sendcloudPublic,
+        SENDCLOUD_SECRET_KEY: sendcloudSecret,
+      },
     },
   ],
 });

@@ -131,18 +131,18 @@ select is_empty(
       and p.prosrc !~ '(has_permission|is_staff|require_[a-z_]+|is_service_role|is_control_owner|current_aal|check_[a-z_]+_access)'
       and p.proname not in ('customer_order', 'customer_orders', 'customer_save_account',
                             'newsletter_subscribe', 'storefront_availability',
-                            'track_product_event')$$,
+                            'track_product_event', 'web_shipping_quote')$$,
   'ninguna función sin guarda de permiso fuera de las públicas por diseño');
 -- Detrás de los códigos de descuento (DECISIONS §152): una sola versión, con
--- los dos parámetros opcionales.
+-- los parámetros opcionales (también el servicio de envío, 20261025120000).
 select is(
   (select array_agg(pg_get_function_identity_arguments(p.oid)) from pg_proc p
    join pg_namespace n on n.oid = p.pronamespace
    where n.nspname = 'public' and p.proname = 'web_order_create'),
   array['p_request_id uuid, p_locale text, p_fulfillment text, p_location_id uuid, '
         'p_items jsonb, p_contact jsonb, p_provider text, p_hold_minutes integer, '
-        'p_discount_code text, p_customer_id uuid'],
-  'una sola web_order_create, con el código y la cuenta');
+        'p_discount_code text, p_customer_id uuid, p_shipping_service_id uuid'],
+  'una sola web_order_create, con el código, la cuenta y el servicio de envío');
 
 -- ---------------------------------------------------------------------------
 -- Pedidos de prueba (servidor)

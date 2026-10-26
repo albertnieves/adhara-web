@@ -16,10 +16,9 @@ export {
   SHIPPING_ZONES,
   SHIPPING_ZONE_LABELS,
   isPostalCode,
-  shippingCost,
   shippingZone,
 } from './domain/shipping';
-export type { ShippingRate, ShippingZone } from './domain/shipping';
+export type { ShippingZone } from './domain/shipping';
 export { CHECKOUT_ERRORS, checkoutInput, fieldErrors } from './domain/input';
 export type {
   CheckoutError,
@@ -35,4 +34,9 @@ export {
   orderPhase,
   readReturnResult,
 } from './domain/order';
-export type { OrderPhase, OrderStatusView, ReturnResult } from './domain/order';
+export type {
+  OrderPhase,
+  OrderShipmentView,
+  OrderStatusView,
+  ReturnResult,
+} from './domain/order';

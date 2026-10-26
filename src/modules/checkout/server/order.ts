@@ -53,6 +53,14 @@ export async function getOrderStatus(
     reserved_until: string;
     paid_at: string | null;
     payable: boolean;
+    shipping_service_label?: string | null;
+    shipment?: {
+      carrier_name: string;
+      tracking_number: string | null;
+      tracking_url: string | null;
+      status: string;
+      delivered_at: string | null;
+    } | null;
   };
   return {
     orderId: row.order_id,
@@ -68,6 +76,16 @@ export async function getOrderStatus(
     reservedUntil: row.reserved_until,
     paidAt: row.paid_at,
     payable: row.payable,
+    shippingServiceLabel: row.shipping_service_label ?? null,
+    shipment: row.shipment
+      ? {
+          carrierName: row.shipment.carrier_name,
+          trackingNumber: row.shipment.tracking_number,
+          trackingUrl: row.shipment.tracking_url,
+          status: row.shipment.status,
+          deliveredAt: row.shipment.delivered_at,
+        }
+      : null,
   };
 }
 

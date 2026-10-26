@@ -63,3 +63,18 @@ export function createMessagesClient() {
     auth: { persistSession: false, autoRefreshToken: false },
   });
 }
+
+/**
+ * Envíos (DECISIONS §175): solo para web_shipment_event, con el aviso de
+ * seguimiento de la plataforma ya verificado con su firma HMAC. La función
+ * solo apunta el estado de un paquete que ya es de la tienda. Nunca para leer
+ * o escribir tablas.
+ */
+export function createShippingClient() {
+  const config = getSupabaseConfig();
+  const key = process.env.SUPABASE_SECRET_KEY;
+  if (!config || !key) return null;
+  return createClient<Database>(config.url, key, {
+    auth: { persistSession: false, autoRefreshToken: false },
+  });
+}

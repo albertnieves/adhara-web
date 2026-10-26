@@ -92,6 +92,10 @@ export const ORDER_EVENT_LABELS: Readonly<Record<string, string>> = {
   refund_requested: 'Devolución pedida al banco',
   refund_succeeded: 'Devolución aceptada por el banco',
   refund_failed: 'Devolución rechazada por el banco',
+  shipment_label: 'Etiqueta de envío creada',
+  shipment_cancelled: 'Etiqueta de envío cancelada',
+  shipment_handover: 'Entrega al transportista',
+  shipment_status: 'Aviso del transportista',
 };
 
 /**

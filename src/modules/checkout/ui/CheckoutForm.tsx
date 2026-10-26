@@ -22,9 +22,10 @@ import type { FieldControlProps } from '@/components/ui';
 import { formatEuros } from '@/lib/money';
 import { Link } from '@/modules/i18n';
 import type { AppliedDiscount, DiscountError } from '@/modules/promotions';
+import type { ShippingQuote } from '@/modules/shipping';
+import { optionCost, zoneOptions } from '@/modules/shipping';
 import type { CheckoutField, CheckoutState } from '../domain/input';
-import type { ShippingRate } from '../domain/shipping';
-import { isPostalCode, shippingCost, shippingZone } from '../domain/shipping';
+import { isPostalCode, shippingZone } from '../domain/shipping';
 import { applyDiscountCode, placeOrder } from '../server/actions';
 import { PaymentRedirectForm } from './PaymentRedirectForm';
 
@@ -106,7 +107,8 @@ export type CheckoutLine = {
 
 /**
  * «Finalizar compra»: datos, entrega (recogida gratis o envío a la península
- * y Baleares con la tarifa del panel) y resumen. Los importes que se ven aquí
+ * y Baleares con el transportista que elija el cliente, al precio de su peso,
+ * DECISIONS §172) y resumen. Los importes que se ven aquí
  * son orientativos; los que cuentan los calcula la base al crear el pedido.
  * Se mantiene montado tras el pedido (la cesta queda vacía): con el TPV
  * configurado lleva al banco a pagar (P04); sin él, enseña la confirmación.
@@ -119,7 +121,7 @@ export function CheckoutForm({
   lines,
   itemsCents,
   purchasable,
-  rates,
+  shipping,
   store,
   account = null,
   signInNext = null,
@@ -128,7 +130,7 @@ export function CheckoutForm({
   lines: CheckoutLine[];
   itemsCents: number;
   purchasable: boolean;
-  rates: ShippingRate[];
+  shipping: ShippingQuote;
   store: { address: string; city: string };
   account?: CheckoutAccount | null;
   signInNext?: string | null;
@@ -162,6 +164,8 @@ export function CheckoutForm({
   );
   const saved = account?.address;
   const [postalCode, setPostalCode] = useState(saved?.postalCode ?? '');
+  // Servicio elegido; sin elegir, el más barato de la zona.
+  const [serviceId, setServiceId] = useState<string | null>(null);
   const euros = (cents: number) => formatEuros(cents, locale);
 
   function applyCode() {
@@ -238,15 +242,21 @@ export function CheckoutForm({
   const fieldError = (field: CheckoutField) =>
     errors[field] ? t(`errors.${errors[field]}`) : undefined;
   const zone = shippingZone(postalCode);
-  const rate = zone ? rates.find((r) => r.zone === zone) : undefined;
+  const zoneData = zoneOptions(shipping, zone);
+  const options = zoneData?.options ?? [];
+  const selected =
+    options.find((o) => o.serviceId === serviceId) ?? options[0] ?? null;
   const discountCents = discount?.discountCents ?? 0;
-  // Envío gratis según lo que se paga por los artículos (con el descuento).
+  // Envío gratis según lo que se paga por los artículos (con el descuento),
+  // en los servicios que cuentan para él.
+  const costOf = (option: (typeof options)[number]) =>
+    optionCost(
+      option,
+      itemsCents - discountCents,
+      zoneData?.freeFromCents ?? null,
+    );
   const shippingCents =
-    fulfillment === 'click_collect'
-      ? 0
-      : rate
-        ? shippingCost(itemsCents - discountCents, rate)
-        : null;
+    fulfillment === 'click_collect' ? 0 : selected ? costOf(selected) : null;
   const problemMessage = problem
     ? problem.error === 'minimum' && problem.minimumCents
       ? t('discount.errors.minimumAmount', {
@@ -254,9 +264,12 @@ export function CheckoutForm({
         })
       : t(`discount.errors.${problem.error}`)
     : fieldError('discountCode') && t('discount.errors.invalid');
-  const shippingOffered = rates.length > 0;
+  // Hay zonas con envío; sin peso de algún formato, ningún servicio lo lleva.
+  const weightMissing = shipping.zones.length > 0 && shipping.weightG === null;
+  const shippingOffered =
+    !weightMissing && shipping.zones.some((z) => z.options.length > 0);
   const zoneProblem =
-    fulfillment === 'shipping' && isPostalCode(postalCode) && !rate;
+    fulfillment === 'shipping' && isPostalCode(postalCode) && !selected;
 
   return (
     <form
@@ -268,6 +281,11 @@ export function CheckoutForm({
       <input type="hidden" name="requestId" value={requestId} />
       <input type="hidden" name="locale" value={locale} />
       <input type="hidden" name="discountCode" value={discount?.code ?? ''} />
+      <input
+        type="hidden"
+        name="shippingServiceId"
+        value={fulfillment === 'shipping' ? (selected?.serviceId ?? '') : ''}
+      />
       <div
         aria-hidden
         className="absolute -left-[9999px] h-px w-px overflow-hidden"
@@ -356,7 +374,13 @@ export function CheckoutForm({
             onChange={() => setFulfillment('shipping')}
             disabled={!shippingOffered}
             label={t('shipping')}
-            hint={shippingOffered ? t('shippingHint') : t('shippingSoon')}
+            hint={
+              shippingOffered
+                ? t('shippingHint')
+                : weightMissing
+                  ? t('shippingWeightMissing')
+                  : t('shippingSoon')
+            }
           />
         </Fieldset>
 
@@ -418,6 +442,47 @@ export function CheckoutForm({
             </Field>
           </section>
         )}
+
+        {fulfillment === 'shipping' &&
+          (options.length > 0 ? (
+            <Fieldset
+              legend={t('carrier')}
+              hint={t('carrierHint')}
+              error={fieldError('shippingServiceId')}
+            >
+              {options.map((option) => {
+                const cost = costOf(option);
+                return (
+                  <Radio
+                    key={option.serviceId}
+                    name="carrierChoice"
+                    value={option.serviceId}
+                    checked={selected?.serviceId === option.serviceId}
+                    onChange={() => setServiceId(option.serviceId)}
+                    label={`${option.label} · ${cost === 0 ? t('free') : euros(cost)}`}
+                    hint={
+                      [
+                        option.transitDays
+                          ? t('transitDays', { days: option.transitDays })
+                          : null,
+                        cost === 0 && option.priceCents > 0
+                          ? t('carrierFree')
+                          : null,
+                      ]
+                        .filter(Boolean)
+                        .join(' · ') || undefined
+                    }
+                  />
+                );
+              })}
+            </Fieldset>
+          ) : (
+            !isPostalCode(postalCode) && (
+              <p className="text-fg-muted text-sm leading-relaxed">
+                {t('carrierPostalFirst')}
+              </p>
+            )
+          ))}
       </div>
 
       <aside className="border-border space-y-6 border p-6 sm:p-8 lg:sticky lg:top-24">
@@ -507,8 +572,10 @@ export function CheckoutForm({
         </dl>
         <p className="text-fg-muted text-xs">
           {t('vat')}
-          {fulfillment === 'shipping' && rate?.freeFromCents
-            ? ` · ${t('freeFrom', { amount: euros(rate.freeFromCents) })}`
+          {fulfillment === 'shipping' &&
+          zoneData?.freeFromCents &&
+          selected?.freeEligible
+            ? ` · ${t('freeFrom', { amount: euros(zoneData.freeFromCents) })}`
             : ''}
         </p>
 

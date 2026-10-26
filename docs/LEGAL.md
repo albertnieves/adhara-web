@@ -43,6 +43,8 @@ Enlazados en la barra inferior del pie de todas las páginas, en pequeño junto 
 
 Ya no faltan (24/10): el **teléfono y el email**, puestos en Panel → Configuración el 23/10; y los **gastos de envío y desde cuánto es gratis**, que salen solos de las tarifas activas de Panel → Configuración → Tarifas de envío (DECISIONS §168). Mientras «Ofrecer el envío» esté apagado, esas dos líneas no se publican; al encenderlo aparecen en los tres idiomas con los mismos importes que cobra el checkout (hoy guardadas: península 4 €, gratis desde 60 €; Illes Balears 10 €, gratis desde 120 €).
 
+**Desde el 25/10 (DECISIONS §172):** el envío se cobra según el peso del pedido y el transportista que elige el cliente, así que la línea de gastos ya no lleva un importe: dice «según el peso del pedido y el transportista que elijas, en la península y en las Illes Balears; el importe se muestra antes de pagar» (ca y en equivalentes), y la del envío gratis añade «con las opciones de envío que lo indican al pagar». El plazo de cada opción se enseña al elegirla. Para la asesoría: confirmar que basta con enseñar el precio exacto antes de pagar y que los transportistas (Sendcloud y los que se activen) entran como destinatarios en la privacidad.
+
 ## Decisiones tomadas en el borrador (confirmar con el cliente)
 
 1. **Perfumes desprecintados sin desistimiento** (art. 103.e TRLGDCU): si se retira el precinto o el celofán, no hay devolución por desistimiento. No afecta a la garantía.

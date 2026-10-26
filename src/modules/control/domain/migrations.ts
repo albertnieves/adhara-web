@@ -43,6 +43,7 @@ export const REPO_MIGRATIONS: readonly (readonly [
   ['20261021120000', 'customer_messages'],
   ['20261023120000', 'order_release_reservation'],
   ['20261024120000', 'refund_safeguards'],
+  ['20261025120000', 'shipping_carriers'],
 ];
 
 /** Última migración que espera este código. */
