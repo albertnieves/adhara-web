@@ -164,20 +164,44 @@ test('el titular sincroniza las tarifas de Sendcloud, activa servicios y pesa el
   await expect(synced('SEUR 24')).toBeVisible();
   await expect(table.getByText('Correos en oficina')).toHaveCount(0);
 
-  for (const name of ['SEUR 24', 'Correos · Paq Estándar']) {
-    await page.goto('/admin/configuracion/envios');
-    await synced(name).click();
-    // Tramos con el coste real y el precio al cliente.
-    const peninsula = page.getByRole('table', {
-      name: 'Tramos de peso en Península',
-    });
-    await expect(
-      peninsula.getByText(name === 'SEUR 24' ? '7,26 €' : '4,84 €'),
-    ).toBeVisible();
-    await page.getByLabel('Ofrecer este servicio en la tienda').check();
-    await page.getByRole('button', { name: 'Guardar servicio' }).click();
-    await expect(page.getByText('Servicio guardado y activo.')).toBeVisible();
-  }
+  // El portal de Sendcloud, a mano, en otra pestaña.
+  await expect(
+    page.getByRole('link', { name: /Abrir el portal de Sendcloud/ }),
+  ).toHaveAttribute('href', 'https://app.sendcloud.com/');
+
+  // SEUR, desde su ficha, después de ver sus tramos.
+  await synced('SEUR 24').click();
+  const peninsula = page.getByRole('table', {
+    name: 'Tramos de peso en Península',
+  });
+  await expect(peninsula.getByText('7,26 €')).toBeVisible();
+  await page.getByLabel('Ofrecer este servicio en la tienda').check();
+  await page.getByRole('button', { name: 'Guardar servicio' }).click();
+  await expect(page.getByText('Servicio guardado y activo.')).toBeVisible();
+
+  // Correos, con el botón de su fila: se enciende, se apaga y se vuelve a
+  // encender sin entrar en la ficha.
+  await page.goto('/admin/configuracion/envios');
+  const correosRow = table
+    .getByRole('row')
+    .filter({ hasText: 'Sendcloud' })
+    .filter({ hasText: 'Correos · Paq Estándar' });
+  await correosRow
+    .getByRole('button', { name: 'Encender Correos · Paq Estándar' })
+    .click();
+  await expect(
+    page.getByText(/Correos · Paq Estándar: encendido/),
+  ).toBeVisible();
+  await expect(correosRow.getByText('Activo', { exact: true })).toBeVisible();
+  await correosRow
+    .getByRole('button', { name: 'Apagar Correos · Paq Estándar' })
+    .click();
+  await expect(page.getByText(/Correos · Paq Estándar: apagado/)).toBeVisible();
+  await expect(correosRow.getByText('Apagado', { exact: true })).toBeVisible();
+  await correosRow
+    .getByRole('button', { name: 'Encender Correos · Paq Estándar' })
+    .click();
+  await expect(correosRow.getByText('Activo', { exact: true })).toBeVisible();
   const { data: services } = await admin
     .from('shipping_services')
     .select('code, active, zones')

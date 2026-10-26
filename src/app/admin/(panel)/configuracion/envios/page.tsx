@@ -17,6 +17,7 @@ import {
 } from '@/modules/shipping/server';
 import {
   ServiceForm,
+  ServiceToggle,
   ShippingSettingsForm,
   ShippingZoneForm,
   SyncServicesButton,
@@ -32,6 +33,9 @@ const ZONE_NOTES = {
     'Códigos postales de la península: del 01 al 50, salvo 07 (Baleares) y 35 y 38 (Canarias).',
   baleares: 'Códigos postales que empiezan por 07.',
 } as const;
+
+/** Portal de Sendcloud (envíos a mano, etiquetas y facturas). */
+const SENDCLOUD_PORTAL = 'https://app.sendcloud.com/';
 
 const DATE_TIME = new Intl.DateTimeFormat('es-ES', {
   dateStyle: 'short',
@@ -118,7 +122,24 @@ export default async function ShippingSettingsPage() {
                 {lastSync &&
                   ` Última actualización: ${DATE_TIME.format(new Date(lastSync))}.`}
               </p>
-              <SyncServicesButton disabled={!settings} />
+              <div className="flex flex-wrap items-start gap-4">
+                <SyncServicesButton disabled={!settings} />
+                <a
+                  href={SENDCLOUD_PORTAL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="border-border hover:border-fg tracking-caps inline-flex min-h-11 items-center border px-5 text-xs font-semibold uppercase"
+                >
+                  Abrir el portal de Sendcloud
+                  <span className="sr-only"> (se abre en otra pestaña)</span>
+                </a>
+              </div>
+              <p className="text-fg-muted max-w-3xl leading-relaxed">
+                En el portal puedes crear a mano un envío que no viene de la web
+                (por ejemplo, un paquete de 1 kg para un cliente de la tienda),
+                ver todas las etiquetas y las facturas. Los pedidos web se
+                etiquetan desde su ficha en este panel.
+              </p>
               {!settings && (
                 <p className="text-warning">
                   Guarda antes el remitente: las tarifas se cotizan desde la
@@ -224,13 +245,24 @@ export default async function ShippingSettingsPage() {
           <Eyebrow as="h2" className="mb-4">
             Servicios
           </Eyebrow>
+          {services.length > 0 && (
+            <p className="text-fg-muted mb-4 max-w-3xl text-sm leading-relaxed">
+              «Encender» hace que el servicio salga al pagar en sus zonas (si la
+              zona tiene «Ofrecer el envío»); «Apagar» lo quita al momento. Para
+              cambiar el nombre, el plazo, el recargo o las zonas, entra en su
+              ficha pulsando el nombre. Enciende solo los transportistas que
+              aceptan perfumes.
+            </p>
+          )}
           {services.length === 0 ? (
             <p className="text-fg-muted mb-6 text-sm">
               Aún no hay servicios: actualiza las tarifas desde Sendcloud o
               añade uno manual.
             </p>
           ) : (
-            <div className="mb-8 overflow-x-auto">
+            // relative: el texto oculto de «Encender» / «Apagar» (sr-only, en
+            // posición absoluta) se queda dentro del desplazamiento de la tabla.
+            <div className="relative mb-8 overflow-x-auto">
               <Table caption="Servicios de envío" className="md:min-w-[52rem]">
                 <thead>
                   <tr>
@@ -298,9 +330,11 @@ export default async function ShippingSettingsPage() {
                           </td>
                         )}
                         <td data-label="Estado">
-                          <Badge tone={service.active ? 'success' : 'neutral'}>
-                            {service.active ? 'Activo' : 'Apagado'}
-                          </Badge>
+                          <ServiceToggle
+                            id={service.id}
+                            active={service.active}
+                            label={service.label}
+                          />
                         </td>
                       </tr>
                     );

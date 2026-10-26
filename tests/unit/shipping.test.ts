@@ -23,6 +23,8 @@ const { validSendcloudSignature } =
 const { sendcloudApiBase, sendcloudConfig } =
   await import('@/modules/shipping/server/sendcloud/config');
 const { collectServiceRates } = await import('@/modules/shipping/server/sync');
+const { errorMessage } =
+  await import('@/modules/shipping/server/sendcloud/client');
 
 /*
  * Envíos multitransportista (DECISIONS §171–176): precio por peso con las
@@ -441,5 +443,36 @@ describe('sincronización de tarifas', () => {
       '28001:1001',
       '28001:5001',
     ]);
+  });
+});
+
+describe('errores de la API de Sendcloud en el panel', () => {
+  it('un 401 de la puerta de la API v3 dice el código y su motivo', () => {
+    const message = errorMessage(401, {
+      error: {
+        code: 401,
+        status: 'Unauthorized',
+        message: 'The request could not be authorized',
+      },
+    });
+    expect(message).toContain('401');
+    expect(message).toContain('«The request could not be authorized»');
+    expect(message).toContain('SENDCLOUD_PUBLIC_KEY');
+  });
+
+  it('un 403 se distingue de unas claves que no valen', () => {
+    const message = errorMessage(403, {
+      errors: [{ status: '403', detail: 'Feature not available' }],
+    });
+    expect(message).toContain('403');
+    expect(message).toContain('«Feature not available»');
+    expect(message).not.toContain('no valen');
+  });
+
+  it('los demás errores llevan su detalle y el código', () => {
+    expect(
+      errorMessage(422, { errors: [{ detail: 'Invalid postal code' }] }),
+    ).toBe('Invalid postal code (422)');
+    expect(errorMessage(500, null)).toBe('respondió 500.');
   });
 });
