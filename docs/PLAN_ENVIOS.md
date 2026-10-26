@@ -1,6 +1,6 @@
 # Envíos multitransportista — 25/10/2026
 
-A petición del usuario (25/10): «Para empezar, plataforma multitransportista, en lo que contestan para poder tener contrato con ellos. El cliente paga el envío según el precio por kg soportado por el transportista elegido. Que aparezca en el panel con los costes reales y la opción de solicitar la recogida en nuestra tienda o la posibilidad de dejarlo en su punto de entrega.» Rama `claude/envios-multitransportista`, sobre `claude/cierre-apertura` (PR #47). Decisiones en [DECISIONS.md](DECISIONS.md) §171–176; guía de uso en [ADMIN_OPERATIONS.md](ADMIN_OPERATIONS.md#envíos-y-transportistas).
+A petición del usuario (25/10): «Para empezar, plataforma multitransportista, en lo que contestan para poder tener contrato con ellos. El cliente paga el envío según el precio por kg soportado por el transportista elegido. Que aparezca en el panel con los costes reales y la opción de solicitar la recogida en nuestra tienda o la posibilidad de dejarlo en su punto de entrega.» Rama `claude/envios-multitransportista` (PR #50, fusionada el 26/10 después de la #47). Decisiones en [DECISIONS.md](DECISIONS.md) §171–176; guía de uso en [ADMIN_OPERATIONS.md](ADMIN_OPERATIONS.md#envíos-y-transportistas).
 
 ## Qué hace
 
@@ -39,7 +39,7 @@ A petición del usuario (25/10): «Para empezar, plataforma multitransportista, 
 5. **Confirmar con cada transportista que acepta perfumes** (llevan alcohol: UN1266, clase 3, cantidades limitadas) y en qué servicios; a Baleares, por barco. Activar solo esos.
 6. **Zonas:** «Ofrecer el envío» en península (y Baleares) y el envío gratis si se quiere.
 7. **Comprobar la primera factura de la plataforma:** el precio al cliente suma el 21 % al coste que da la API; si la plataforma ya lo diera con IVA, poner 0 % en «IVA del envío».
-8. **Migración y despliegue, juntos:** aplicar la migración en `atelier-dev` (con autorización, como §164 y §168) y fusionar la PR enseguida. El código de esta rama necesita la migración. Con el código anterior y la migración ya aplicada, la recogida en la tienda sigue funcionando, pero un pedido con envío falla (falta el servicio elegido) y el formulario antiguo de tarifas planas no guarda: mejor sin la venta con envío encendida entre los dos pasos.
+8. **Migración y despliegue:** hechos el 26/10. La migración se aplicó en `atelier-dev` antes de fusionar la PR #50 y se comprobó (DECISIONS §176).
 
 ## Límites y siguiente paso
 
