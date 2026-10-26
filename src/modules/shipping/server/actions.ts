@@ -17,7 +17,11 @@ import { bracketFor, bracketsFromLimits } from '../domain/brackets';
 import { SHIPPING_ERRORS } from '../domain/labels';
 import { madridInstant } from '../domain/pickup';
 import { shippingPrice } from '../domain/price';
-import { getShippingSettings } from './admin';
+import {
+  getShippingSettings,
+  listShippingServices,
+  listShippingZones,
+} from './admin';
 import type { ServicePoint } from './sendcloud/api';
 import {
   announceShipment,
@@ -215,6 +219,66 @@ export async function saveShippingZone(
 }
 
 /** «Actualizar tarifas»: servicios y tramos de la plataforma con su coste real. */
+const toggleInput = z.object({
+  id: z.uuid(),
+  active: z.enum(['on', 'off']),
+});
+
+/**
+ * «Encender» o «Apagar» en la lista de servicios: lo guarda con los mismos
+ * valores que tiene y solo cambia si se ofrece. La base exige tramos en cada
+ * zona para encenderlo y lo deja en la auditoría (admin_save_shipping_service).
+ */
+export async function toggleShippingService(
+  _: ActionState,
+  form: FormData,
+): Promise<ActionState> {
+  const { supabase } = await requirePermission('settings.manage');
+  const parsed = toggleInput.safeParse({
+    id: form.get('id'),
+    active: form.get('active'),
+  });
+  if (!parsed.success) return fail('Ese servicio ya no existe.');
+  const active = parsed.data.active === 'on';
+  const service = (await listShippingServices(supabase)).find(
+    (s) => s.id === parsed.data.id,
+  );
+  if (!service) return fail('Ese servicio ya no existe.');
+  if (service.active !== active) {
+    const { error } = await supabase.rpc('admin_save_shipping_service', {
+      p_id: service.id,
+      p_service: {
+        carrier_name: service.carrierName,
+        name: service.name,
+        transit_days: service.transitDays,
+        surcharge_cents: service.surchargeCents,
+        free_eligible: service.freeEligible,
+        active,
+        zones: service.zones,
+        position: service.position,
+        tracking_url_template: service.trackingUrlTemplate,
+        pickup_phone: service.pickupPhone,
+      },
+    });
+    if (error) return fail(describe(error));
+  }
+  refresh();
+  if (!active)
+    return ok(`${service.label}: apagado. La tienda ya no lo ofrece.`);
+  // Encendido, pero la tienda solo lo enseña en las zonas con envío.
+  const zones = await listShippingZones(supabase);
+  const closed = service.zones.filter(
+    (zone) => !zones.find((z) => z.zone === zone)?.active,
+  );
+  return ok(
+    closed.length > 0
+      ? `${service.label}: encendido. Para que salga al pagar, marca «Ofrecer el envío» en ${closed
+          .map((zone) => SHIPPING_ZONE_LABELS[zone])
+          .join(' y ')}.`
+      : `${service.label}: encendido. Ya sale al pagar si los formatos de la cesta están pesados.`,
+  );
+}
+
 export async function syncSendcloudServices(): Promise<ActionState> {
   const { supabase } = await requirePermission('settings.manage');
   const config = sendcloudConfig();

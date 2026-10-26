@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { FormMessage, useAdminAction } from '@/modules/admin';
 import {
+  Badge,
   Button,
   Checkbox,
   Field,
@@ -16,7 +17,9 @@ import {
   saveShippingSettings,
   saveShippingZone,
   syncSendcloudServices,
+  toggleShippingService,
 } from '../server/actions';
+import { useShippingAction } from './useShippingAction';
 
 /* Panel → Configuración → Envíos (settings.manage). */
 
@@ -262,6 +265,42 @@ export function SyncServicesButton({ disabled }: { disabled: boolean }) {
       >
         Actualizar tarifas desde Sendcloud
       </SubmitButton>
+      <FormMessage state={state} />
+    </form>
+  );
+}
+
+/**
+ * «Encender» o «Apagar» un servicio desde su fila de la lista, sin entrar en
+ * la ficha. El aviso dice si aún falta «Ofrecer el envío» en su zona.
+ */
+export function ServiceToggle({
+  id,
+  active,
+  label,
+}: {
+  id: string;
+  active: boolean;
+  label: string;
+}) {
+  const { state, pending, onSubmit } = useShippingAction(toggleShippingService);
+  return (
+    <form onSubmit={onSubmit} className="flex flex-col items-start gap-2">
+      <input type="hidden" name="id" value={id} />
+      <input type="hidden" name="active" value={active ? 'off' : 'on'} />
+      <div className="flex flex-wrap items-center gap-3">
+        <Badge tone={active ? 'success' : 'neutral'}>
+          {active ? 'Activo' : 'Apagado'}
+        </Badge>
+        <SubmitButton
+          pending={pending}
+          pendingLabel={active ? 'Apagando…' : 'Encendiendo…'}
+          variant={active ? 'outline' : 'primary'}
+        >
+          {active ? 'Apagar' : 'Encender'}
+          <span className="sr-only"> {label}</span>
+        </SubmitButton>
+      </div>
       <FormMessage state={state} />
     </form>
   );

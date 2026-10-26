@@ -3,6 +3,7 @@ export { PickupForm } from './PickupForm';
 export {
   ServiceForm,
   ServiceRatesForm,
+  ServiceToggle,
   ShippingSettingsForm,
   ShippingZoneForm,
   SyncServicesButton,
