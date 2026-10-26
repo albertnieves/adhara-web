@@ -12,18 +12,20 @@ import { redsysConfig } from '@/modules/payments/server/config';
 import {
   FULFILLMENT_LABELS,
   ORDER_EMAIL_LABELS,
-  ORDER_EVENT_LABELS,
   ORDER_STATUS_LABELS,
   PAYMENT_DECISION_LABELS,
   PAYMENT_OUTCOME_LABELS,
   PAYMENT_REASON_LABELS,
-  REFUND_STATUS_LABELS,
+  REFUND_STALL_MINUTES,
   RELEASE_REASON_LABELS,
   canReleaseReservation,
   orderEmailBadge,
+  orderEventLabel,
   orderStatusBadge,
   panelTransitions,
   refundOptions,
+  refundStalled,
+  refundStatusBadge,
 } from '@/modules/orders';
 import type { WebOrderDetail } from '@/modules/orders/server';
 import { getWebOrder } from '@/modules/orders/server';
@@ -117,13 +119,18 @@ export default async function WebOrderPage({
   const openRefund = refunds.find(
     (r) => r.status === 'requested' || r.status === 'unknown',
   );
+  // Sin respuesta clara o a medias: se reenvía o se resuelve con el portal.
+  const stalledRefund =
+    openRefund && refundStalled(openRefund) ? openRefund : null;
   const refundChoices = tpvReady
     ? refundOptions(order, payments, session, { pending: Boolean(openRefund) })
     : [];
   const canRefund = isAllowed(session, 'orders.refund');
   const badge = orderStatusBadge(order);
   const incidents = payments.filter((p) => p.incidentOpen);
-  const actions = panelTransitions(order, session);
+  const actions = panelTransitions(order, session, {
+    refundOpen: Boolean(openRefund),
+  });
   const canRelease = canReleaseReservation(order, session);
   const releasedByStaff = events.some(
     (event) =>
@@ -231,6 +238,13 @@ export default async function WebOrderPage({
               : 'El pedido sigue su curso. Devuelve lo cobrado de más en «Devoluciones».'}
           </p>
         </div>
+      )}
+
+      {openRefund && (
+        <p role="note" className="text-fg-muted mb-4 max-w-2xl text-sm">
+          Hay una devolución sin terminar: hasta que el banco responda (o se
+          resuelva en «Devoluciones»), el pedido no cambia de estado.
+        </p>
       )}
 
       <div className="mb-10 print:hidden">
@@ -465,7 +479,7 @@ export default async function WebOrderPage({
           {refunds.length > 0 && (
             <ul className="divide-border border-border mb-6 divide-y border-y text-sm">
               {refunds.map((refund) => {
-                const status = REFUND_STATUS_LABELS[refund.status];
+                const status = refundStatusBadge(refund);
                 return (
                   <li
                     key={refund.id}
@@ -487,11 +501,9 @@ export default async function WebOrderPage({
                     </span>
                     <span className="flex flex-wrap items-center gap-2">
                       <Badge tone={status.tone}>{status.label}</Badge>
-                      {(refund.responseCode || refund.error) && (
+                      {status.detail && (
                         <span className="text-fg-muted text-xs">
-                          {refund.responseCode
-                            ? `Código ${refund.responseCode}`
-                            : refund.error}
+                          {status.detail}
                         </span>
                       )}
                     </span>
@@ -500,10 +512,15 @@ export default async function WebOrderPage({
               })}
             </ul>
           )}
-          {openRefund?.status === 'unknown' && (
-            <p className="text-warning mb-4 text-sm">
-              El banco no respondió con claridad a la última devolución.
-              Compruébala en el portal de Redsys antes de volver a enviarla.
+          {stalledRefund && (
+            <p className="text-warning mb-4 max-w-2xl text-sm">
+              {stalledRefund.status === 'unknown'
+                ? 'El banco no respondió con claridad a la última devolución.'
+                : `La última devolución se envió hace más de ${REFUND_STALL_MINUTES} minutos y no se guardó su respuesta.`}{' '}
+              Búscala en el portal de Redsys (Consultas, por el número de pedido
+              del banco): si consta hecha, «Consta hecha en el portal»; si no
+              aparece, vuelve a enviarla o ciérrala con «No consta en el
+              portal».
             </p>
           )}
           {canRefund && tpvReady ? (
@@ -511,9 +528,7 @@ export default async function WebOrderPage({
               orderId={order.id}
               revision={order.revision}
               options={refundChoices}
-              unknownRefundId={
-                openRefund?.status === 'unknown' ? openRefund.id : null
-              }
+              stalledRefundId={stalledRefund?.id ?? null}
             />
           ) : (
             canRefund && (
@@ -575,7 +590,7 @@ export default async function WebOrderPage({
                 {DATE_TIME.format(new Date(event.at))}
               </span>
               <span>
-                {ORDER_EVENT_LABELS[event.kind] ?? event.kind}
+                {orderEventLabel(event)}
                 {eventDetail(event) && (
                   <span className="text-fg-muted block text-xs">
                     {eventDetail(event)}

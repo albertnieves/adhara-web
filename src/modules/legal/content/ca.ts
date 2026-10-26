@@ -179,7 +179,7 @@ export const ca: LegalCopy = {
           title: 'Pagament i factura',
           blocks: [
             'Mitjans de pagament: {paymentMethods}.',
-            'El pagament amb targeta es fa a la pàgina segura del banc, amb autenticació reforçada (3D Secure). Mai no veiem ni desem les dades de la teva targeta. El càrrec es fa en confirmar la comanda.',
+            'El pagament es fa a la pàgina segura del banc: amb targeta, amb autenticació reforçada (3D Secure); amb Bizum, amb el teu número de mòbil i la teva clau Bizum. Mai no veiem ni desem les dades de la teva targeta ni les teves claus. El càrrec es fa en confirmar la comanda.',
             'Emetem factura de cada comanda. Si la necessites a nom d’una empresa, indica’ns-en les dades fiscals en fer la comanda.',
           ],
         },
@@ -302,7 +302,7 @@ export const ca: LegalCopy = {
           blocks: [
             {
               list: [
-                'Dades: nom, correu, telèfon, adreça de lliurament i, si demanes factura a nom d’una empresa, les seves dades fiscals; productes, imports i estat del pagament. Les dades de la teva targeta les tracta el banc: nosaltres no les rebem.',
+                'Dades: nom, correu, telèfon, adreça de lliurament i, si demanes factura a nom d’una empresa, les seves dades fiscals; productes, imports i estat del pagament. Les dades de la teva targeta o de Bizum les tracta el banc: nosaltres no les rebem.',
                 'Finalitat: gestionar la comanda, el pagament, el lliurament, les devolucions i la garantia, i emetre la factura.',
                 'Base jurídica: l’execució del contracte de compravenda (art. 6.1.b del RGPD) i el compliment d’obligacions legals fiscals i comptables (art. 6.1.c).',
                 'Conservació: mentre duri la relació i, després, 6 anys per la normativa mercantil i els terminis que exigeixi la normativa fiscal.',

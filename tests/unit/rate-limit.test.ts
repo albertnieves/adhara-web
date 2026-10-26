@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import { describe, expect, it, vi } from 'vitest';
 
 vi.mock('server-only', () => ({}));
@@ -63,5 +64,19 @@ describe('freno de peticiones del checkout', () => {
     }
     for (const bucket of Object.keys(RATE_LIMITS))
       expect(bucket).toMatch(/^[a-z_]{1,40}$/);
+  });
+
+  it('el formulario de contacto frena antes de llegar a la base (§168)', () => {
+    expect(RATE_LIMITS.contact_message).toEqual({
+      limit: 5,
+      windowSeconds: 600,
+    });
+    const source = readFileSync(
+      new URL('../../src/modules/messaging/server/contact.ts', import.meta.url),
+      'utf8',
+    );
+    const brake = source.indexOf("withinRateLimit('contact_message')");
+    expect(brake).toBeGreaterThan(0);
+    expect(brake).toBeLessThan(source.indexOf("'web_contact_submit'"));
   });
 });

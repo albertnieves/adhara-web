@@ -914,6 +914,7 @@ export type Database = {
           requested_by: string | null;
           resolved_at: string | null;
           response_code: string | null;
+          sent_at: string;
           status: string;
           to_status: string | null;
         };
@@ -930,6 +931,7 @@ export type Database = {
           requested_by?: string | null;
           resolved_at?: string | null;
           response_code?: string | null;
+          sent_at?: string;
           status?: string;
           to_status?: string | null;
         };
@@ -946,6 +948,7 @@ export type Database = {
           requested_by?: string | null;
           resolved_at?: string | null;
           response_code?: string | null;
+          sent_at?: string;
           status?: string;
           to_status?: string | null;
         };
@@ -2271,6 +2274,10 @@ export type Database = {
           p_revision: number;
           p_to: string;
         };
+        Returns: Json;
+      };
+      admin_resolve_refund: {
+        Args: { p_refund_id: string; p_status: string };
         Returns: Json;
       };
       admin_restore_content: {

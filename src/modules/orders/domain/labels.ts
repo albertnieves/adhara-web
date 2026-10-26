@@ -94,6 +94,24 @@ export const ORDER_EVENT_LABELS: Readonly<Record<string, string>> = {
   refund_failed: 'Devolución rechazada por el banco',
 };
 
+/**
+ * Texto de cada evento de la cronología. Una devolución resuelta a mano tras
+ * mirar el portal del banco (DECISIONS §168) lo dice, en vez de atribuirle
+ * al banco una respuesta que no llegó.
+ */
+export function orderEventLabel(event: {
+  kind: string;
+  detail: Record<string, unknown> | null;
+}): string {
+  if (event.detail?.source === 'portal') {
+    if (event.kind === 'refund_succeeded')
+      return 'Devolución hecha, comprobada en el portal del banco';
+    if (event.kind === 'refund_failed')
+      return 'Devolución no hecha, comprobada en el portal del banco';
+  }
+  return ORDER_EVENT_LABELS[event.kind] ?? event.kind;
+}
+
 /** Por qué se liberó la reserva de un pedido sin pagar (cronología). */
 export const RELEASE_REASON_LABELS: Readonly<Record<string, string>> = {
   expired: 'Caducó sin pago',
@@ -161,9 +179,13 @@ export const ORDER_ERRORS: Readonly<Record<string, string>> = {
   invalid_amount:
     'El importe no es válido: no puede superar lo cobrado menos lo ya devuelto.',
   refund_in_progress:
-    'Ya hay una devolución de este pedido esperando la respuesta del banco.',
+    'Hay una devolución de este pedido sin terminar: mientras espera al banco (o hasta resolverla en «Devoluciones»), el pedido no cambia. Recarga la página.',
   nothing_to_refund: 'Este cobro ya está devuelto entero.',
-  refund_not_retryable: 'Esa devolución ya tiene respuesta del banco.',
+  refund_not_retryable:
+    'Esa devolución ya tiene respuesta o se acaba de enviar al banco. Recarga la página.',
+  refund_not_resolvable:
+    'Esa devolución ya tiene respuesta o se acaba de enviar al banco: espera unos minutos y recarga la página.',
+  invalid_status: 'Elige si la devolución consta o no en el portal del banco.',
   unknown_refund: 'La devolución no existe.',
   invalid_request: 'La petición no es válida. Recarga la página.',
 };
@@ -246,7 +268,11 @@ export function transitionAction(
 export function panelTransitions(
   order: { status: OrderStatus; fulfillment: FulfillmentType },
   session: StaffSession,
+  { refundOpen = false }: { refundOpen?: boolean } = {},
 ): PanelTransition[] {
+  // Con una devolución abierta el pedido no se mueve (la base lo rechaza,
+  // DECISIONS §168): primero la responde el banco o se resuelve a mano.
+  if (refundOpen) return [];
   return ORDER_TRANSITIONS.filter((t) => t.from === order.status).flatMap(
     (t) => {
       const plan = planTransition(order, t.to, { kind: 'staff', ...session });

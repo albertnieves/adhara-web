@@ -36,16 +36,26 @@ export const LEGAL_ENTITY: Record<
     ca: 'l’Espanya peninsular i les Illes Balears',
     en: 'mainland Spain and the Balearic Islands',
   },
-  /** Tarifa de envío. */
+  /**
+   * Tarifa de envío y desde cuánto es gratis: con `null` salen de las
+   * tarifas activas de Panel → Configuración → Tarifas de envío (DECISIONS
+   * §168), como en el checkout. Un texto aquí las sustituye.
+   */
   shippingCost: null,
-  /** Importe a partir del cual el envío es gratis. */
   freeShippingFrom: null,
   /** Plazo de entrega habitual. */
   deliveryTime: null,
   /** Empresa de transporte. */
   carrier: null,
-  /** Medios de pago aceptados. */
-  paymentMethods: null,
+  /**
+   * Medios de pago aceptados: los del TPV virtual de BBVA según su correo del
+   * 23/10/2026 (DECISIONS §167). Se confirman en la prueba con el banco.
+   */
+  paymentMethods: {
+    es: 'tarjeta bancaria y Bizum',
+    ca: 'targeta bancària i Bizum',
+    en: 'bank card and Bizum',
+  },
   /** Si se adhiere a la Junta Arbitral de Consum de Catalunya (u otra entidad). */
   arbitration: null,
 };

@@ -29,6 +29,7 @@ export {
   RELEASE_REASON_LABELS,
   canReleaseReservation,
   incidentOpen,
+  orderEventLabel,
   orderNumberLabel,
   orderEmailBadge,
   orderStatusBadge,
@@ -49,5 +50,16 @@ export type {
   OrderViewFacts,
   ParsedOrderFilter,
 } from './domain/filters';
-export { REFUND_STATUS_LABELS, refundOptions } from './domain/refunds';
-export type { RefundOption, RefundablePayment } from './domain/refunds';
+export {
+  PORTAL_RESPONSE_CODE,
+  REFUND_STALL_MINUTES,
+  REFUND_STATUS_LABELS,
+  refundOptions,
+  refundStalled,
+  refundStatusBadge,
+} from './domain/refunds';
+export type {
+  OpenRefund,
+  RefundOption,
+  RefundablePayment,
+} from './domain/refunds';

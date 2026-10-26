@@ -25,8 +25,8 @@ A petición del usuario, mientras llegan los datos del TPV. Decisiones en [DECIS
 
 ## Pendiente antes de encender la venta online
 
-- **Aplicar las migraciones** `20261016120000_customer_accounts.sql` y `20261017120000_security_review.sql` en `adhara-dev`, en ese orden y justo al fusionar.
-- **Probar el TPV en una Preview** con las variables `test` solo en Preview; en producción, solo `live` (§161).
+- **Aplicar las migraciones** `20261016120000_customer_accounts.sql` y `20261017120000_security_review.sql` en `adhara-dev`, en ese orden y justo al fusionar. Hecho el 21/10 (DECISIONS §163).
+- **Probar el TPV en una Preview** con las variables `test` solo en Preview; en producción, solo `live` (§161). Tarjeta probada el 23/10 con el TPV de BBVA; falta Bizum por debajo de 5 € (§167).
 - **Firewall de Vercel:** límite por IP a las peticiones `POST` con la cabecera `Next-Action` en cualquier ruta (no solo `/finalizar-compra`) y a `/api/pagos/redsys`. Complementa el freno de la aplicación ante muchas IP.
 - **Captcha (Turnstile) en el pedido**, si aparecen abusos: el freno por IP no para a quien tiene muchas IP.
 - **Decisiones del negocio sobre las reservas:** unidades máximas por formato en un pedido web (hoy 10), no reservar las últimas unidades de la tienda y si la reserva debe durar menos de 30 minutos.
@@ -35,14 +35,18 @@ A petición del usuario, mientras llegan los datos del TPV. Decisiones en [DECIS
   - una petición repetida con la misma clave puede mandarse dos veces al banco mientras la primera sigue sin respuesta;
   - una devolución «sin respuesta clara» o que quedó a medias no se puede resolver desde el panel (hay que mirar el portal de Redsys) y bloquea otras en ese pedido;
   - se puede marcar «enviado» un pedido con una devolución en curso.
-- **Correo de confirmación:** el nombre que escribe el comprador sale en el saludo del correo de la tienda (texto escapado, sin inyección, pero sirve para suplantar). Valorar quitarlo del saludo.
+
+  Hecho el 24/10 (DECISIONS §168, migración `20261024120000_refund_safeguards.sql`): la petición repetida no se reenvía; la atascada se reenvía o se resuelve con lo que diga el portal; y con una devolución abierta el pedido no cambia de estado.
+
+- **Correo de confirmación:** el nombre que escribe el comprador sale en el saludo del correo de la tienda (texto escapado, sin inyección, pero sirve para suplantar). Valorar quitarlo del saludo. Hecho el 24/10: el saludo ya no lleva el nombre (§168).
+- **Formulario de contacto** (antes de `CONTACT_FORM=1`, STATUS): freno por cliente como el del checkout. Hecho el 24/10 (§168).
 
 ## Pendiente antes de encender la cuenta de cliente
 
 - **Comprobar en Supabase** que «Confirm email» y «Secure email change» están activos en el proyecto: los pedidos de invitado se enseñan por el email verificado de la cuenta.
 - **Inicio de sesión forzado (login CSRF) en `/auth/confirm`:** el enlace abre sesión con un GET; alguien podría hacer que otra persona entre en su cuenta. Arreglo: página intermedia con un botón que hace POST.
 - **Límites de Auth:** Supabase ve la IP de Vercel, no la del cliente, así que sus límites de acceso y alta son globales. Captcha en el alta y el acceso (ya previsto) y freno por IP en esas acciones.
-- **Protección de contraseñas filtradas** en Supabase Auth.
+- **Protección de contraseñas filtradas** en Supabase Auth. Activada el 23/10 (el asesor de seguridad ya no la marca).
 
 ## Otros, de menor prioridad
 
