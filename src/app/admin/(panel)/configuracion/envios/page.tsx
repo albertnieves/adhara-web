@@ -260,7 +260,9 @@ export default async function ShippingSettingsPage() {
               añade uno manual.
             </p>
           ) : (
-            <div className="mb-8 overflow-x-auto">
+            // relative: el texto oculto de «Encender» / «Apagar» (sr-only, en
+            // posición absoluta) se queda dentro del desplazamiento de la tabla.
+            <div className="relative mb-8 overflow-x-auto">
               <Table caption="Servicios de envío" className="md:min-w-[52rem]">
                 <thead>
                   <tr>
