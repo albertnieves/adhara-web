@@ -21,8 +21,12 @@ function authorization(config: SendcloudConfig): string {
   return `Basic ${Buffer.from(`${config.publicKey}:${config.secretKey}`).toString('base64')}`;
 }
 
-/** Primer detalle legible de un error de la API ({errors: [{detail}]}). */
-function errorDetail(body: unknown): string | null {
+/**
+ * Primer detalle legible de un error de la API: {errors: [{detail}]} en los
+ * recursos y {error: {message}} en la puerta de entrada de la API v3 (la que
+ * contesta 401 a unas claves que no valen).
+ */
+export function errorDetail(body: unknown): string | null {
   if (!body || typeof body !== 'object') return null;
   const errors = (body as { errors?: unknown }).errors;
   if (Array.isArray(errors)) {
@@ -31,8 +35,28 @@ function errorDetail(body: unknown): string | null {
     const text = first?.detail ?? first?.title;
     if (typeof text === 'string') return text.slice(0, 300);
   }
+  const error = (body as { error?: unknown }).error;
+  if (typeof error === 'string') return error.slice(0, 300);
+  if (error && typeof error === 'object') {
+    const text = (error as { message?: unknown }).message;
+    if (typeof text === 'string') return text.slice(0, 300);
+  }
   const message = (body as { message?: unknown }).message;
   return typeof message === 'string' ? message.slice(0, 300) : null;
+}
+
+/**
+ * Lo que ve el panel de un error de la API (detrás de «Sendcloud: »), con el
+ * código HTTP: un 401 son las claves y un 403, un permiso o el plan.
+ */
+export function errorMessage(status: number, body: unknown): string {
+  const detail = errorDetail(body);
+  const said = detail ? `: «${detail}»` : '';
+  if (status === 401)
+    return `las claves de la integración no valen (401${said}). Revisa SENDCLOUD_PUBLIC_KEY y SENDCLOUD_SECRET_KEY en Vercel y que la integración «Sendcloud API» no exija OAuth2.`;
+  if (status === 403)
+    return `estas claves no tienen permiso para esta operación (403${said}): puede ser un permiso de la integración o el plan de la cuenta.`;
+  return detail ? `${detail} (${status})` : `respondió ${status}.`;
 }
 
 export async function sendcloudJson<T = unknown>(
@@ -71,13 +95,10 @@ export async function sendcloudJson<T = unknown>(
     }
   }
   if (!response.ok) {
-    throw new SendcloudError(
-      response.status,
-      errorDetail(data) ??
-        (response.status === 401 || response.status === 403
-          ? 'Sendcloud rechazó las claves de la integración.'
-          : `Sendcloud respondió ${response.status}.`),
-    );
+    const message = errorMessage(response.status, data);
+    // Sin datos del pedido ni claves: solo la ruta, el código y el motivo.
+    console.warn('[envios] Sendcloud', path, response.status, message);
+    throw new SendcloudError(response.status, message);
   }
   return { status: response.status, data: data as T };
 }
