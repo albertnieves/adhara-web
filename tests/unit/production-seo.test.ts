@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { indexingEnabled } from '@/modules/i18n/indexing';
+import { indexingEnabled, indexingHeaders } from '@/modules/i18n/indexing';
 import {
   productStructuredData,
   serializeJsonLd,
@@ -24,6 +24,27 @@ const production = {
 };
 
 describe('apertura a buscadores', () => {
+  it('la cabecera HTTP no contradice la apertura y mantiene cerradas las rutas operativas', () => {
+    const closed = indexingHeaders({ ...production, SEO_INDEXING: '' });
+    expect(closed).toEqual([
+      {
+        source: '/:path*',
+        headers: [{ key: 'X-Robots-Tag', value: 'noindex, nofollow' }],
+      },
+    ]);
+    const open = indexingHeaders(production);
+    expect(open.map((rule) => rule.source)).not.toContain('/:path*');
+    expect(open.map((rule) => rule.source)).toEqual(
+      expect.arrayContaining(['/admin/:path*', '/api/:path*', '/auth/:path*']),
+    );
+    for (const rule of open)
+      expect(rule.headers).toEqual([
+        { key: 'X-Robots-Tag', value: 'noindex, nofollow' },
+      ]);
+    expect(indexingHeaders({ ...production, VERCEL_ENV: 'preview' })).toEqual(
+      closed,
+    );
+  });
   it('exige consentimiento explícito, producción y dominio canónico', () => {
     expect(indexingEnabled(production)).toBe(true);
     for (const override of [

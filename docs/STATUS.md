@@ -1,5 +1,11 @@
 # Estado real — 26/10/2026
 
+## Siguiente objetivo: cierre técnico SEO (25/10)
+
+Rama `codex/seo-indexacion-controlada`, sobre la #48 de operación (todavía sin fusionar). El sitemap, JSON-LD y metadatos ya existían; esta rama corrige la cabecera global de noindex que los contradecía al encender SEO. Ahora la cabecera usa la misma decisión que `SEO_INDEXING`; mantiene cerrados panel, API, Auth, cuenta, cesta, checkout y pedidos en los tres idiomas. No se ha activado la indexación ni publicado Production. Criterios y activación del titular en [SEO_RELEASE.md](SEO_RELEASE.md). El aislamiento remoto y la restauración de la #48 continúan pendientes.
+
+Validación local del cierre SEO con Node 24.16.0 y pnpm 11.19.0: `pnpm check` correcto (690 unitarias y build), 6 E2E HTTP con SEO apagado y 2 E2E HTTP con apertura encendida en compilación local sin claves remotas. La segunda compilación se ensayó directamente con Next y las tres variables SEO de prueba; no es un despliegue ni una conexión a Production. Las cabeceras de 15 rutas operativas se comprueban en ambos modos. La suite completa con navegador sigue pendiente de CI por la descarga fallida de Chromium en este host.
+
 ## Objetivo activo: entornos y operación (25/10)
 
 Rama `codex/entornos-operacion` (PR #48), actualizada con `main` el 27/10, con la #47, la #50 y la #51 ya fusionadas. Esta sección es el estado vigente; las entradas fechadas de debajo conservan la evidencia de cada entrega. Pasos operativos en [OPERATIONS.md](OPERATIONS.md), banco y negocio en [PLAN_APERTURA.md](PLAN_APERTURA.md), orden de mejoras en [ROADMAP.md](ROADMAP.md).
@@ -13,7 +19,7 @@ Rama `codex/entornos-operacion` (PR #48), actualizada con `main` el 27/10, con l
 | Datos remotos       | Único proyecto `atelier-dev`, saludable; 35 migraciones hasta `20261024120000`; copia correcta hoy  | Restauración de prueba en entorno aislado                                                     |
 | Venta               | Correo de prueba enviado; sin correos pendientes en la consulta de hoy                              | Bizum, TPV live, envíos, accesos, firewall y legal según PLAN_APERTURA                        |
 
-No se han movido datos, cambiado variables remotas ni creado recursos de pago. Con las variables compartidas actuales, la nueva Preview se bloqueará de forma intencionada. La protección no retira el acceso de despliegues antiguos. **Siguiente tarea concreta:** completar el aislamiento remoto descrito en OPERATIONS y ensayar restauración; después cerrar la apertura y la activación SEO. El sitemap y JSON-LD ya existen; queda revisar la cabecera global de `noindex`, que sigue siendo incondicional.
+No se han movido datos, cambiado variables remotas ni creado recursos de pago. Con las variables compartidas actuales, la nueva Preview se bloqueará de forma intencionada. La protección no retira el acceso de despliegues antiguos. **Siguiente tarea concreta:** completar el aislamiento remoto descrito en OPERATIONS y ensayar restauración; después cerrar la apertura y la activación SEO. El sitemap y JSON-LD ya existen; la cabecera global incondicional se corrige en la rama de cierre SEO de la sección anterior, aún sin fusionar.
 
 Validación de esta rama con Node 24.16.0 y pnpm 11.19.0: `pnpm check` correcto (lint, tipos, 687 unitarias y build), formato y escaneo de secretos correctos. 16 E2E HTTP correctas (salud, idioma, seguridad, robots/sitemap); suite completa intentada y detenida por falta de Chromium tras fallar su descarga (33 correctas antes de detenerse). Bloqueo de `pnpm build` contra la base real comprobado. Sin SQL nuevo: pgTAP, tipos de base y recorridos autenticados quedan en la CI; no se han ejecutado aquí.
 

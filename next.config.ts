@@ -1,5 +1,6 @@
 import type { NextConfig } from 'next';
 import createNextIntlPlugin from 'next-intl/plugin';
+import { indexingHeaders } from './src/modules/i18n/indexing';
 const withNextIntl = createNextIntlPlugin('./src/modules/i18n/request.ts');
 const config: NextConfig = {
   reactStrictMode: true,
@@ -31,7 +32,6 @@ const config: NextConfig = {
             key: 'Permissions-Policy',
             value: 'camera=(), microphone=(), geolocation=()',
           },
-          { key: 'X-Robots-Tag', value: 'noindex, nofollow' },
           // HSTS explícito (Vercel ya lo pone en su dominio) y una CSP mínima
           // que no obliga a renderizar cada página: sin marcos, sin plugins y
           // sin <base> ajena (DECISIONS §162).
@@ -45,6 +45,7 @@ const config: NextConfig = {
           },
         ],
       },
+      ...indexingHeaders(),
       {
         source: '/admin/:path*',
         headers: [{ key: 'Cache-Control', value: 'private, no-store' }],
