@@ -1,5 +1,7 @@
 # Abrir la venta online — semana del 26/10/2026
 
+**Operación, 25/10:** la rama `codex/entornos-operacion` parte de la #47. Su nuevo build rechaza conectar una Preview a la base real; completar la prueba antigua de Bizum y después el aislamiento de [OPERATIONS.md](OPERATIONS.md). No retiró variables ni claves remotas. La #47 sigue abierta. Esta lista conserva los pasos del banco y negocio; STATUS contiene el estado vigente.
+
 A petición del usuario (23/10): el banco ya ha dado el TPV virtual y la venta online se quiere abrir la semana que viene. Esta lista sustituye a «Pendientes para activar ventas» de [PLAN_PEDIDOS_WEB.md](PLAN_PEDIDOS_WEB.md) y recoge lo comprobado el 23/10. Decisiones en [DECISIONS.md](DECISIONS.md) §164–165.
 
 El código del checkout, el pago con Redsys, los correos y las devoluciones está hecho y probado con un banco simulado (P03–P07). Falta sobre todo configuración y la prueba con el banco.

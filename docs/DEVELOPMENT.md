@@ -1,28 +1,25 @@
-# Desarrollo con Codex
+# Desarrollo con Codex y Claude
 
-## Bloques siguientes
+El estado vigente está en [STATUS.md](STATUS.md). La operación y los entornos se describen en [OPERATIONS.md](OPERATIONS.md); el banco y los datos de negocio en [PLAN_APERTURA.md](PLAN_APERTURA.md). Las fases históricas y decisiones siguen en sus informes, no son instrucciones para repetir infraestructura ya creada.
 
-1. Repositorio privado conectado y CI real en tres workflows (`ci.yml`, `db.yml`, `e2e.yml`). Falta que el usuario configure la protección de `main` exigiendo los tres.
-2. Consolidar arquitectura y decisiones de la Fase 1: idiomas, cuatro tipos de precio, costes internos y permisos. Los originales no se sobrescriben.
-3. Preparar Supabase local con Docker y CLI versionada. Crear dev en región UE tras elegir organización. Escribir migraciones, seed solo de referencia, pgTAP y tipos generados. Probar denegación por defecto y aislamiento de costes.
-4. Implementar sesión, invitación, roles y MFA del admin (fase A1 de docs/ADMIN_PLAN.md). La matriz de `src/modules/auth/domain/permissions.ts` es la fuente del seed de `role_permissions` y de la tabla de verdad pgTAP. Hace falta el email del primer owner. No pedir secretos por chat: configurar variables de entorno local o del proveedor.
-5. Vercel ya está conectado al repositorio (producción desde `main`, previews por rama). Falta conectarlo al entorno dev para previews y separar producción cuando proceda. Verificar CI, base de datos y E2E completos.
-6. Importar el catálogo real «CATALOGO global 2026» cuando esté en el repositorio o en el chat (pasarlo a CSV y usar Catálogo → Importar, con revisión previa): perfumes, formatos y PVP con su página como procedencia; imágenes del PDF como provisionales. Después, publicar.
-7. Fase 1 cerrada el 02/10 con excepciones escritas ([informe](phases/FASE_1_REPORT.md), DECISIONS §83–90). Fase 2 (Design System) en preparación: tareas DS-00 a DS-12 en [phases/FASE_2_PLAN.md](phases/FASE_2_PLAN.md). Cada tarea es una rama y una PR; se marca su casilla al fusionar. En paralelo, preparación de la Fase 3.
-8. Panel de administración: A0–A1 hechas; A2 en versión base; A3, A4.1 (con informe diario programado) e informes de A8 hechos; A4.2 (asistente) en primera versión de solo lectura (docs/ADMIN_PLAN.md). Orden acordado con el usuario el 01/10: cerrar la Fase 1 (punto 7, hecho); después A5 (pedidos y checkout de F10, con los datos del TPV para cobrar con tarjeta) y A6.1 (mensajes) cuando haya proveedor de correo; luego herramientas de propuesta del asistente.
+## Objetivo activo
 
-## Servicios y acceso que faltan
+Entornos y operación sobre la PR #47. Una tarea por rama `codex/<tema>`, con criterios de aceptación, pruebas y PR. La rama actual parte de `claude/cierre-apertura`: fusionar #47 antes de pasar esta entrega a `main`. No fusionar ni desplegar por defecto.
 
-- GitHub: repositorio privado albertnieves/adhara-web conectado a Codex con lectura y escritura. Git local continúa sin autenticar; GitHub CLI no instalada. Las operaciones remotas se realizan mediante el conector.
-- Docker: no encontrado en la máquina de Codex; necesario para Supabase local y pgTAP en CI. Mientras tanto, pgTAP se ejecuta contra `atelier-dev` con `supabase/tests/tap_remote.py` (revierte todo). En las sesiones de Claude Code en la nube sí hay Docker: la fase R se validó con Supabase local (DECISIONS §64).
-- Supabase: proyecto `atelier-dev` (Frankfurt) accesible con el conector de Supabase de Claude Code. Faltan las cuentas del personal, la configuración de URLs y plantillas de Auth y el proyecto `atelier-prod`.
-- Vercel: proyecto `adhara-web` conectado a GitHub. Funciones en París (cdg1), todos los despliegues protegidos con Vercel Authentication y variables públicas de `atelier-dev` configuradas. Separar producción cuando exista `atelier-prod`.
-- Catálogo PDF: recibido por Drive y convertido en CSV fuera del repositorio (contiene costes). Identidad: L’Atelier du Désert, definitiva desde el 30/09 (DECISIONS §56).
+## Entorno reproducible
 
-## Flujo de trabajo
+- Node de `.nvmrc` y pnpm de `package.json`; versiones exactas y lockfile.
+- `pnpm install --frozen-lockfile`; `pnpm dev` para arrancar desconectado.
+- Con Docker, `pnpm exec supabase start`; `pnpm build:local` y `pnpm test:e2e:local` usan las variables locales mediante `scripts/local-env.ts`.
+- `atelier-dev` es la base real. No cargar fixtures, hacer reset, probar escrituras ni copiar sus claves a Preview. `.env.example` deja Supabase vacío.
+- `pnpm ops:environment` comprueba el destino alojado y se ejecuta antes de cada `pnpm build`. `pnpm ops:health <origen>` comprueba proceso y lectura pública de la base.
 
-Una tarea concreta por rama codex/<tema>. Describir comportamiento y criterios antes de implementar. Hacer pruebas proporcionadas al cambio y reportar las ejecutadas. La CI inicial solo valida el arranque técnico; ampliar a auth, RLS, costes y migraciones al implementarlos. No marcar controles futuros como aprobados.
+## Verificación
 
-## Entrega de acceso y edición (01/10)
+`pnpm check`, `pnpm format:check` y `pnpm scan:secrets` tras cambios funcionales. Con rutas o navegación, build y `pnpm test:e2e`. Con SQL, también Supabase local, pgTAP, `node scripts/check-db-types.ts`, `node scripts/check-db-lint.ts` y concurrencia. La CI repite calidad, base y E2E; Availability vigila la web de producción tras fusionar su workflow.
 
-La rama `codex/admin-delivery-foundation` se apoya en la PR #9 de Claude (`f95c370`), conserva las fases R/S y añade cuatro migraciones, edición de tienda y refuerzo de acceso/operaciones. Ver [entorno reproducible](ADMIN_LOCAL_VALIDATION.md), [guía del panel](ADMIN_OPERATIONS.md) e [informe](DELIVERY_REPORT.md). Las referencias anteriores son el roadmap; no sustituyen el estado verificado del informe.
+No registrar como ejecutado lo que solo hará la CI. No ejecutar scripts de dependencias con credenciales reales. Mantener secretos fuera del chat, logs y artefactos.
+
+## Fuentes y coordinación
+
+Leer `AGENTS.md` y solo las habilidades pertinentes de `SKILLS.md`. Codex y Claude comparten el mismo estado y las mismas reglas. Actualizar primero la sección vigente de STATUS; decisiones nuevas en DECISIONS; informes fechados sin reescribir su historia. El roadmap solo indica orden y criterios, sin duplicar credenciales ni pasos operativos.

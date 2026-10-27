@@ -1,5 +1,22 @@
 # Estado real — 26/10/2026
 
+## Objetivo activo: entornos y operación (25/10)
+
+Rama `codex/entornos-operacion` (PR #48), actualizada con `main` el 27/10, con la #47, la #50 y la #51 ya fusionadas. Esta sección es el estado vigente; las entradas fechadas de debajo conservan la evidencia de cada entrega. Pasos operativos en [OPERATIONS.md](OPERATIONS.md), banco y negocio en [PLAN_APERTURA.md](PLAN_APERTURA.md), orden de mejoras en [ROADMAP.md](ROADMAP.md).
+
+| Área                | Hecho o comprobado                                                                                  | Pendiente para cerrar                                                                         |
+| ------------------- | --------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
+| Código de apertura  | #47 fusionada el 26/10; migración aplicada                                                          | —                                                                                             |
+| Aislamiento         | `pnpm build` rechaza Preview con base real; ejemplo local desconectado                              | Cambiar destinos de variables, retirar pruebas antiguas y verificar una base ficticia aislada |
+| Disponibilidad      | Liveness conservada y readiness de lectura con plazo; script externo y workflow diario en esta rama | Publicar y verificar; el workflow programado comienza al llegar a `main`                      |
+| Revisiones de Codex | Dos automatizaciones diarias activas desde el 26/10, ventanas de mañana Europe/Madrid               | Comprobar sus primeras ejecuciones; no modifican producción                                   |
+| Datos remotos       | Único proyecto `atelier-dev`, saludable; 35 migraciones hasta `20261024120000`; copia correcta hoy  | Restauración de prueba en entorno aislado                                                     |
+| Venta               | Correo de prueba enviado; sin correos pendientes en la consulta de hoy                              | Bizum, TPV live, envíos, accesos, firewall y legal según PLAN_APERTURA                        |
+
+No se han movido datos, cambiado variables remotas ni creado recursos de pago. Con las variables compartidas actuales, la nueva Preview se bloqueará de forma intencionada. La protección no retira el acceso de despliegues antiguos. **Siguiente tarea concreta:** completar el aislamiento remoto descrito en OPERATIONS y ensayar restauración; después cerrar la apertura y la activación SEO. El sitemap y JSON-LD ya existen; queda revisar la cabecera global de `noindex`, que sigue siendo incondicional.
+
+Validación de esta rama con Node 24.16.0 y pnpm 11.19.0: `pnpm check` correcto (lint, tipos, 687 unitarias y build), formato y escaneo de secretos correctos. 16 E2E HTTP correctas (salud, idioma, seguridad, robots/sitemap); suite completa intentada y detenida por falta de Chromium tras fallar su descarga (33 correctas antes de detenerse). Bloqueo de `pnpm build` contra la base real comprobado. Sin SQL nuevo: pgTAP, tipos de base y recorridos autenticados quedan en la CI; no se han ejecutado aquí.
+
 ## Envíos multitransportista (25–26/10)
 
 `claude/envios-multitransportista` (PR #50, fusionada el 26/10 justo después de la #47). A petición del usuario: plataforma multitransportista mientras llegan los contratos, envío pagado según el peso y el transportista elegido, costes reales en el panel y recogida en la tienda o punto de entrega. Plan en [PLAN_ENVIOS.md](PLAN_ENVIOS.md); decisiones §171–176; guía en [ADMIN_OPERATIONS.md](ADMIN_OPERATIONS.md#envíos-y-transportistas).

@@ -8,7 +8,7 @@
   },
   "scripts": {
     "dev": "next dev --webpack --hostname localhost",
-    "build": "next build --webpack",
+    "build": "node scripts/check-deployment-environment.ts && next build --webpack",
     "start": "next start --hostname localhost",
     "lint": "eslint .",
     "typecheck": "next typegen && tsc --noEmit",
@@ -19,6 +19,8 @@
     "check": "pnpm lint && pnpm typecheck && pnpm test:unit && pnpm build",
     "bootstrap:owner": "node scripts/bootstrap-owner.ts",
     "scan:secrets": "node scripts/scan-secrets.ts",
+    "ops:environment": "node scripts/check-deployment-environment.ts",
+    "ops:health": "node scripts/check-site-health.ts",
     "test:db": "supabase test db --local",
     "test:e2e:local": "node scripts/local-env.ts pnpm exec playwright test --config playwright.local.config.ts",
     "build:local": "node scripts/local-env.ts pnpm build"

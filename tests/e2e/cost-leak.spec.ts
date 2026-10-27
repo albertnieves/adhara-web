@@ -70,6 +70,7 @@ test.describe('coste centinela', () => {
     '/en/fragrance/perfume-centinela',
     '/es/casas/marca-centinela',
     '/api/health',
+    '/api/health?check=readiness',
     '/robots.txt',
   ];
 

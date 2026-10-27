@@ -1,104 +1,49 @@
-# Roadmap
+# Roadmap vigente — 25/10/2026
 
-Roadmap de la Fase 0 (`docs/source/FASE_0_ARQUITECTURA.md` §17), con el estado real al 10/10/2026. El orden del documento original se mantiene (ADR-009). El panel de administración avanza en sus propias fases A0–A8 ([ADMIN_PLAN.md](ADMIN_PLAN.md)), enlazadas con estas, y por decisión del usuario se adelantaron partes visuales y operativas (DECISIONS §27 y fases R y S).
+Orden de trabajo. [STATUS.md](STATUS.md) contiene el estado verificado y sus entradas fechadas; [OPERATIONS.md](OPERATIONS.md), los pasos técnicos; [PLAN_APERTURA.md](PLAN_APERTURA.md), los pasos del banco y negocio. El plan original de 17 fases se conserva en `docs/source/FASE_0_ARQUITECTURA.md` y los informes de fase; no sustituye a este orden actualizado.
 
-Estados: **hecha**, **cerrada con excepciones** (criterios cumplidos salvo excepciones escritas en DECISIONS), **en parte** (hay entregas, faltan criterios), **pendiente**.
+## 1. Entornos y operación — objetivo activo
 
-| #   | Fase                     | Estado                                | Qué hay y qué falta                                                                                                                                                                                                                                                                                                                                                                                                   |
-| --- | ------------------------ | ------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 0   | Arquitectura             | Hecha                                 | Documentos en `docs/source/`. La «rev. 2» citada por el plan de la Fase 1 no se recibió (DECISIONS §4).                                                                                                                                                                                                                                                                                                               |
-| 1   | Fundaciones              | Cerrada con excepciones               | 02/10/2026. Informe en [phases/FASE_1_REPORT.md](phases/FASE_1_REPORT.md); excepciones en DECISIONS §83–90.                                                                                                                                                                                                                                                                                                           |
-| 2   | Design System            | Cerrada a falta de la revisión visual | 04/10/2026. DS-00 a DS-12 hechas: tokens en dos capas, contraste AA, `/admin/diseno`, biblioteca común y tienda y panel migrados, con axe y objetivos de 44 px como pruebas que fallan. 12 de 13 criterios cumplidos; falta la revisión visual del usuario (criterio 13). Informe en [phases/FASE_2_REPORT.md](phases/FASE_2_REPORT.md).                                                                              |
-| 3   | Importación del catálogo | En parte                              | 424 perfumes del PDF y 34 de la compra cargados como borradores con procedencia; importador CSV con revisión en el panel. Falta importar el CSV de costes (usuario) y el informe de importación.                                                                                                                                                                                                                      |
-| 4   | Research                 | En parte                              | Perfiles olfativos de 47 de los 50 publicados, cada uno con su fuente (DECISIONS §108–111). Procedencia del resto simplificada en `source_ref` y en la media ([PRODUCT_RESEARCH.md](PRODUCT_RESEARCH.md)).                                                                                                                                                                                                            |
-| 5   | Catálogo (tienda)        | En parte                              | Colección con filtros en es/ca/en con ISR y catálogo olfativo con filtros por familia, estación, momento y nota. En el móvil, cuadrícula de dos columnas con vista amplia opcional (§119). Páginas de casa e índice de casas (§148). Faltan colecciones, búsqueda global y objetivos de Lighthouse.                                                                                                                   |
-| 6   | Ficha y Scent Journey    | En parte                              | Ficha con galería o escena 3D, formatos, PVP, disponibilidad y «También de» la misma casa; ficha olfativa con pirámide, rueda de estaciones, huella y perfumes afines. Faltan el Scent Journey completo y JSON-LD.                                                                                                                                                                                                    |
-| 7   | Media                    | En parte                              | Imágenes por perfume con origen, fuente y marca de provisional; subida desde el panel. Faltan biblioteca, flujo de aprobación y derechos.                                                                                                                                                                                                                                                                             |
-| 8   | 3D                       | En parte                              | Escena de unboxing bajo demanda para los 4 perfumes del piloto. Faltan el resto del catálogo, pipeline GLB y presupuestos en CI.                                                                                                                                                                                                                                                                                      |
-| 9   | Inventario               | Hecha en lo principal                 | Niveles, movimientos de solo inserción, recuentos, mostrador, compras, recepciones, reposición y prueba de concurrencia. Las reservas del checkout llegan con la F10.                                                                                                                                                                                                                                                 |
-| 10  | Carrito y checkout       | Hecha en la PR #31, apagada           | PR de trabajo [#31](https://github.com/albertnieves/adhara-web/pull/31) (borrador): P01–P07 hechas el 12/10 sin los datos del banco ni del correo: base de datos, cesta y checkout con recogida y envío, pago con Redsys, panel, correos, devoluciones y E2E con banco simulado (`PLAN_PEDIDOS_WEB.md`). Apagada hasta configurar el TPV (y probarlo en su entorno de pruebas) y el correo (DECISIONS §82, §137–140). |
-| 11  | Admin operativo          | En parte                              | Informes, auditoría, equipo, contenido, suscriptores, informe diario del asistente, pedidos web (PR #31), códigos de descuento (§149–152) y bandeja de mensajes (A6.1, §153–157, apagada). Faltan clientes y promociones automáticas.                                                                                                                                                                                 |
-| 12  | Click & Collect          | Pendiente                             | Depende de la F10.                                                                                                                                                                                                                                                                                                                                                                                                    |
-| 13  | Homepage                 | En parte                              | Portada animada con título editable desde el panel (borrador, vista previa y publicación), preguntas frecuentes y suscripción al club.                                                                                                                                                                                                                                                                                |
-| 14  | Cuenta de cliente        | Hecha en una rama, apagada            | Email y contraseña o Google (Apple después), pedidos de la cuenta, datos y dirección, baja y checkout que rellena y vincula; tras `CUSTOMER_ACCOUNTS` (PLAN_CUENTA_CLIENTE, DECISIONS §142–146). Falta la configuración del usuario para encenderla.                                                                                                                                                                  |
-| 15  | SEO y analítica          | En parte                              | Canonical y hreflang por idioma con el dominio propio. Todo `noindex` hasta que se decida abrir a buscadores; sin sitemap ni analítica.                                                                                                                                                                                                                                                                               |
-| 16  | QA y seguridad           | Pendiente                             | Ya hay pgTAP, E2E, auditoría de maquetación y axe, prueba de fuga de costes y escaneo de secretos en CI.                                                                                                                                                                                                                                                                                                              |
-| 17  | Producción               | En parte                              | Dominio `latelierdudesert.com` y web pública desde el 10/10 (§117–118); textos legales en borrador (§113–116). Plan Pro de Vercel contratado el 11/10 (§134). Faltan `atelier-prod`, pagos reales, copias de seguridad y monitorización.                                                                                                                                                                              |
+- PR #47 de cierre de apertura: abierta y con sus tres workflows correctos en el último commit comprobado. Fusionarla antes de la rama de operación.
+- Comprobación de destino antes de construir, ejemplo de desarrollo desconectado, readiness y vigilancia de disponibilidad: implementados en `codex/entornos-operacion`, pendientes de revisión y publicación.
+- Separar las variables de Preview de los datos reales que conserva `atelier-dev`; preparar datos ficticios y retirar el acceso de las pruebas antiguas.
+- Registrar una restauración de copia en un entorno aislado y su comprobación.
+- Dos revisiones diarias de Codex ya creadas: técnica y avance, desde el 26/10 por la mañana, Europe/Madrid.
 
-## Dónde estamos (10/10/2026)
+**Cierre:** una prueba completa en Preview no cambia ningún dato ni envía ningún correo desde Production; las URLs de pruebas antiguas ya no operan sobre datos reales; Availability pasa en `main` y hay evidencia de restauración. Detalle y límites en OPERATIONS.
 
-La web es un **escaparate completo y público**: colección con PVP, fichas (4 con escena 3D), catálogo olfativo, club de promociones y textos legales, en tres idiomas y en `latelierdudesert.com`, todavía sin indexar. El **panel cubre la operación de la tienda física**: catálogo, precios con Ómnibus, costes y márgenes, inventario, mostrador, compras, reposición, informes y asistente. **No se puede comprar online**: es lo siguiente y depende sobre todo de datos del banco.
+## 2. Apertura de la venta — completar los bloqueos externos
 
-Lo que falta para cada paso depende más de decisiones y datos del negocio que de código: TPV virtual, correo transaccional, datos legales de envíos y pagos y `atelier-prod` (STATUS, «Pendiente del usuario»).
+Carrito, reservas, recogida/envío, Redsys, correos, devoluciones, panel y pruebas con banco simulado ya existen. La venta sigue apagada. La #47 completa protecciones de las devoluciones, contacto y coherencia de envíos legales; aún no está fusionada.
 
-## Siguientes fases y entregas
+Comprobar Bizum y su devolución, pase y datos reales del TPV, tarifas ofrecidas, accesos/MFA, reglas del firewall, transportista/plazos y revisión de la asesoría. Correo de pedidos y copias ya funcionan: no volver a tratarlos como servicios sin configurar. La cuenta de cliente y el contacto tienen su activación y requisitos propios.
 
-Seis hitos. Cada entrega es una PR revisable con su verificación (`pnpm check`, E2E y, si toca la base, pgTAP y tipos). Tamaño relativo: S (un día), M (dos o tres días), L (una semana o más). No hay fechas: el ritmo lo marcan los bloqueos de la última columna.
+**Cierre:** lista de PLAN_APERTURA completada, compra real pequeña y devolución verificadas por el titular y venta encendida con autorización.
 
-### H0 — En curso
+## 3. SEO base
 
-| Entrega                       | Qué incluye                                                                                                                        | Tamaño | Bloquea                               |
-| ----------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- | ------ | ------------------------------------- |
-| Móvil: cuadrícula y menú      | Esta rama: cuadrícula de dos columnas con vista amplia, menú móvil que vuelve a navegar y galería de 44 px.                        | S      | Revisión                              |
-| Cierre de la Fase 2           | Revisión visual del usuario en la Preview (`/admin/diseno`, tonos de colección, tienda y panel).                                   | S      | Usuario                               |
-| Presentación al cliente (#32) | Documentación de la presentación y reparto de cuentas. Antes de fusionar, renumerar su §113 (ya existe en `main`).                 | S      | Revisión                              |
-| Consola del titular           | Control del negocio y consola solo para el titular: métricas por perfume, visitas, copias, estado, asistente y calidad (§122–130). | L      | Usuario: migraciones en `atelier-dev` |
+Ya existen `src/app/sitemap.ts`, robots, JSON-LD de producto, metadatos sociales y pruebas de `SEO_INDEXING`. El siguiente trabajo es cerrar su validación y activación: `next.config.ts` todavía envía `X-Robots-Tag: noindex, nofollow` de forma incondicional, incluso con la bandera encendida. Corregir esa coherencia con pruebas de las cabeceras y mantener la apertura apagada hasta aprobarla. Publicar solo productos con datos y media verificados.
 
-### H1 — Escaparate listo para abrir a buscadores
+**Cierre:** pruebas ES/CA/EN, sitemap y datos estructurados correctos, sin indexar panel, borradores ni cuentas.
 
-Objetivo: que la web pueda indexarse y enlazarse sin riesgo, aunque aún no venda online.
+## 4. Búsqueda global y filtros móviles
 
-| Entrega                   | Qué incluye                                                                                                                                                     | Tamaño | Bloquea                             |
-| ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ | ----------------------------------- |
-| Catálogo completo (F3)    | Importar el CSV de costes desde el panel, revisar marcas «por revisar» y los 6 perfumes sin marca, fijar PVP y publicar por tandas; informe de importación.     | M      | Usuario (importación y revisión)    |
-| Filtros móviles           | Filtros de la colección en una fila con desplazamiento o en un panel «Filtros» (hoy ocupan cinco filas a 390 px) y controles de 44 px (pendiente 12 de STATUS). | S      | Decisión de diseño                  |
-| Legal definitivo          | Teléfono, envíos, pagos y arbitraje en los textos; revisión de la asesoría (§113–116).                                                                          | S      | Cliente y asesoría                  |
-| SEO base (F15)            | Sitemap por idioma, JSON-LD de producto, Open Graph y quitar `noindex` cuando lo legal esté cerrado.                                                            | M      | Legal definitivo                    |
-| Fotos y derechos (F7)     | Derechos de las fotos oficiales o fotos propias; los 6 publicados sin foto oficial.                                                                             | M      | Usuario                             |
-| Infraestructura comercial | Vercel Pro (hecho el 11/10), `atelier-prod` con copias diarias, URLs de Auth con el dominio, MFA del administrador de la tienda y `main` protegida.             | S      | Usuario (planes y cuentas, ver #32) |
+Buscar perfumes, casas y familias; filtros claros a 390 px y estados vacíos útiles. Aprovechar los perfiles existentes y medir el rendimiento antes de añadir un buscador externo.
 
-### H2 — Venta online con recogida en tienda (F10, F12, A5)
+**Cierre:** búsqueda y navegación por teclado, móvil y tres idiomas verificadas, sin degradación de carga ni accesibilidad.
 
-Objetivo: primera venta real pagada con tarjeta, con recogida en Castelldefels y envío a la península y Baleares (decisión del 12/10, DECISIONS §136). Sigue el plan de la PR #31.
+## 5. Scent Journey
 
-| Entrega                  | Qué incluye                                                                                                                                                                            | Tamaño | Bloquea                             |
-| ------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ | ----------------------------------- |
-| P02 Persistencia         | Pedidos, líneas, intentos de pago y reservas con RLS, pgTAP y tipos. **Hecha el 11/10 en la PR #31.**                                                                                  | L      | —                                   |
-| P03 Carrito y checkout   | Cesta y checkout es/ca/en, recogida y envío con tarifas del panel, reserva. **Hecha (apagada) el 12/10.**                                                                              | L      | —                                   |
-| P04 TPV                  | Redsys por redirección. **Hecha el 12/10 con banco simulado**; falta un pago de prueba en su sandbox.                                                                                  | M      | **Datos del TPV virtual del banco** |
-| P05 Panel de pedidos     | Listado, ficha, incidencias, preparar → listo para recoger → entregado. **Hecha el 12/10 en la PR #31.**                                                                               | M      | P02                                 |
-| P06 Correo y reembolsos  | Confirmación y avisos (Resend) y devoluciones con el TPV. **Hecha el 12/10**; falta configurar el correo.                                                                              | M      | **Proveedor de correo y DNS**       |
-| P07 Validación integrada | Pago correcto y rechazado, firma falsa, importe alterado, duplicados, última unidad, caducidad. **Hecha.**                                                                             | M      | —                                   |
-| Transportista            | **Hecho el 25/10 y fusionado el 26/10 (PR #50)** (§171–176): Sendcloud o contrato propio, precio por peso y transportista, etiquetas, recogida o punto y seguimiento. Falta la cuenta. | M      | Cuenta de Sendcloud y pesos         |
+Recorrido por familias, notas y momentos con perfiles verificados, reglas explicables y enlaces a perfumes disponibles. No inventar notas ni claims. La IA no es requisito para la primera versión.
 
-### H3 — Clientes y mensajes (A6.1, A7, F14)
+**Cierre:** recomendaciones reproducibles con fuente y respuesta útil si faltan datos.
 
-| Entrega                    | Qué incluye                                                                                                                                                                                       | Tamaño | Bloquea                 |
-| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ | ----------------------- |
-| Bandeja de mensajes (A6.1) | Formulario de contacto y email entrante y saliente, enlazados a cliente y pedido, con plantillas y plazos. **Hecha el 16/10 en `claude/bandeja-mensajes`, con el formulario apagado** (§153–157). | L      | Proveedor de correo     |
-| Fichas de cliente (A7)     | Pedidos, mensajes y consentimientos; exportación y borrado RGPD.                                                                                                                                  | M      | H2                      |
-| Promociones                | Códigos de campaña para Sender hechos el 15/10 (§149–152). Faltan promociones automáticas y códigos únicos por suscriptor.                                                                        | M      | H2                      |
-| Cuenta de cliente (F14)    | **Hecha y apagada (13–14/10):** email o Google, pedidos, datos y baja, sin obligar a registrarse para comprar.                                                                                    | M      | Correo de Auth y Google |
+## 6. 3D selectivo y rendimiento
 
-### H4 — Catálogo y experiencia (F4–F8, F13)
+Ampliar los cuatro pilotos a productos destacados con medidas reales. Pipeline GLB y presupuestos de peso y carga; Lighthouse CI en una entrega propia. Fotos reales o con derechos y alternativa accesible sin WebGL.
 
-| Entrega               | Qué incluye                                                                                          | Tamaño | Bloquea                           |
-| --------------------- | ---------------------------------------------------------------------------------------------------- | ------ | --------------------------------- |
-| Marcas y colecciones  | Páginas de casa hechas el 15/10 (§148). Faltan colecciones editoriales (tonos D3) y búsqueda global. | M      | Revisión visual de la Fase 2 (D3) |
-| Scent Journey         | Recorrido guiado por familias y momentos a partir de los perfiles olfativos.                         | M      | Perfiles del resto del catálogo   |
-| Research del catálogo | Perfiles olfativos y textos con fuente para los perfumes que se publiquen.                           | L      | Catálogo publicado (H1)           |
-| 3D para más perfumes  | Pipeline GLB, presupuestos de peso en CI y escenas para los más vendidos.                            | L      | Medidas reales del kit de tienda  |
-| Rendimiento           | Objetivos de Lighthouse en móvil para portada, colección y ficha.                                    | S      | —                                 |
+**Cierre:** comparación móvil y escritorio con carga bajo demanda, movimiento reducido y presupuestos comprobados.
 
-### H5 — QA, seguridad y producción (F16, F17)
+## Pendientes que continúan
 
-| Entrega               | Qué incluye                                                                                                                                                                                        | Tamaño | Bloquea        |
-| --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ | -------------- |
-| Revisión de seguridad | **Hecha el 17/10** (§158–162, [informe](SECURITY_REVIEW_2026-10.md)); quedan el Firewall y el captcha; contraseñas filtradas activadas el 23/10 y arreglos de devoluciones hechos el 24/10 (§168). | M      | H2             |
-| Operación             | Monitorización de errores y disponibilidad, copias comprobadas con una restauración de prueba y guía de incidencias.                                                                               | M      | `atelier-prod` |
-| Migraciones           | Despliegue automático de migraciones de `main` a `atelier-prod` con revisión.                                                                                                                      | S      | `atelier-prod` |
-| Analítica             | Solo si se decide: sin cookies o con aviso de consentimiento que permita rechazar.                                                                                                                 | S      | Decisión legal |
-
-## Orden recomendado
-
-H0 → H1 (en paralelo con P02 de H2, que no necesita credenciales) → resto de H2 en cuanto lleguen los datos del TPV → H3 → H4 y H5. Lo único que de verdad frena la venta online es el **TPV virtual** (STATUS, pendiente 6) y el **correo transaccional** (pendiente 7): conviene pedirlos ya.
+Completar catálogo, costes y procedencias desde el panel; perfiles y derechos de media; fichas de cliente y consentimiento; promociones automáticas; configuración de cuenta de cliente/contacto y futura ayuda del asistente. No activar IA o proveedores nuevos por anticipación. Sentry se evaluará como integración de errores específica: esta entrega usa sondas y revisión de logs, sin añadir su SDK.
