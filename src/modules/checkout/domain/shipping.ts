@@ -1,8 +1,8 @@
 /*
- * Envíos (DECISIONS §136): península y Baleares, con las tarifas del panel.
- * Las mismas reglas que private.shipping_zone en la migración
- * 20261012120000_web_checkout: aquí solo sirven para enseñar el importe
- * antes de pagar; el que cuenta lo calcula la base al crear el pedido.
+ * Zonas de envío (DECISIONS §136): península y Baleares. Las mismas reglas
+ * que private.shipping_zone en la migración 20261012120000_web_checkout. El
+ * precio sale del peso y del servicio elegido (src/modules/shipping, §172) y
+ * lo calcula la base al crear el pedido.
  */
 
 export const SHIPPING_ZONES = ['peninsula', 'baleares'] as const;
@@ -12,13 +12,6 @@ export type ShippingZone = (typeof SHIPPING_ZONES)[number];
 export const SHIPPING_ZONE_LABELS: Readonly<Record<ShippingZone, string>> = {
   peninsula: 'Península',
   baleares: 'Illes Balears',
-};
-
-export type ShippingRate = {
-  zone: ShippingZone;
-  priceCents: number;
-  /** Envío gratis desde este importe de artículos; null: nunca. */
-  freeFromCents: number | null;
 };
 
 const POSTAL_CODE = /^(0[1-9]|[1-4][0-9]|5[0-2])[0-9]{3}$/;
@@ -37,11 +30,4 @@ export function shippingZone(postalCode: string): ShippingZone | null {
 
 export function isPostalCode(value: string): boolean {
   return /^[0-9]{5}$/.test(value.trim());
-}
-
-/** Gastos de envío de un pedido con `itemsCents` de artículos. */
-export function shippingCost(itemsCents: number, rate: ShippingRate): number {
-  return rate.freeFromCents !== null && itemsCents >= rate.freeFromCents
-    ? 0
-    : rate.priceCents;
 }

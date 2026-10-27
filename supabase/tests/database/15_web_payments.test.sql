@@ -52,8 +52,9 @@ select is(
    from pago),
   array['currency', 'discount_cents', 'discount_code', 'fulfillment', 'items_cents',
         'locale', 'number', 'order_id', 'paid_at', 'payable', 'reservation',
-        'reserved_until', 'shipping_cents', 'status', 'total_cents'],
-  'solo estado e importes: sin nombre, email, teléfono ni dirección');
+        'reserved_until', 'shipment', 'shipping_cents', 'shipping_service_label',
+        'status', 'total_cents'],
+  'solo estado, importes y seguimiento: sin nombre, email, teléfono ni dirección');
 
 select is(
   (select public.web_order_status((summary ->> 'order_id')::uuid)
@@ -62,7 +63,8 @@ select is(
     'status', 'pending_payment', 'fulfillment', 'click_collect', 'locale', 'ca',
     'items_cents', 13000, 'shipping_cents', 0, 'total_cents', 13000,
     'discount_code', null, 'discount_cents', 0,
-    'currency', 'EUR', 'reservation', 'active', 'paid_at', null, 'payable', true),
+    'currency', 'EUR', 'reservation', 'active', 'paid_at', null, 'payable', true,
+    'shipping_service_label', null, 'shipment', null),
   'recién creado: pendiente, con la reserva y pagable');
 
 select ok(

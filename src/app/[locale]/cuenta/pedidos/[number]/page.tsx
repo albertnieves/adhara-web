@@ -91,9 +91,24 @@ export default async function AccountOrderPage({ params }: { params: Params }) {
                 ? t('orders.shipping')
                 : `${t('orders.pickup')} · ${store.address}, ${store.city}`}
             </p>
+            {order.carrierName && (
+              <p>{t('order.carrier', { carrier: order.carrierName })}</p>
+            )}
             {order.trackingReference && (
               <p>
                 {t('order.tracking', { reference: order.trackingReference })}
+              </p>
+            )}
+            {order.trackingUrl && (
+              <p>
+                <a
+                  href={order.trackingUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="link-underline font-semibold"
+                >
+                  {t('order.trackingLink')}
+                </a>
               </p>
             )}
           </dd>

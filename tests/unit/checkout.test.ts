@@ -13,9 +13,9 @@ import {
   readReturnResult,
   serializeCart,
   setLineQuantity,
-  shippingCost,
   shippingZone,
 } from '@/modules/checkout';
+import { optionCost } from '@/modules/shipping';
 
 const A = '00000000-0000-4000-8000-0000000000a1';
 const B = '00000000-0000-4000-8000-0000000000b2';
@@ -111,15 +111,14 @@ describe('zonas de envío (las mismas que private.shipping_zone)', () => {
     expect(sql).toContain("left(p_postal_code, 2) in ('35', '38', '51', '52')");
   });
 
-  it('envío gratis desde el importe, incluido', () => {
-    const rate = {
-      zone: 'peninsula' as const,
-      priceCents: 495,
-      freeFromCents: 6000,
-    };
-    expect(shippingCost(5999, rate)).toBe(495);
-    expect(shippingCost(6000, rate)).toBe(0);
-    expect(shippingCost(9999, { ...rate, freeFromCents: null })).toBe(495);
+  it('envío gratis desde el importe, incluido, en los servicios que cuentan', () => {
+    const option = { priceCents: 495, freeEligible: true };
+    expect(optionCost(option, 5999, 6000)).toBe(495);
+    expect(optionCost(option, 6000, 6000)).toBe(0);
+    expect(optionCost(option, 9999, null)).toBe(495);
+    expect(optionCost({ ...option, freeEligible: false }, 9999, 6000)).toBe(
+      495,
+    );
   });
 });
 
@@ -170,14 +169,25 @@ describe('formulario de finalizar compra', () => {
         postalCode: 'zoneUnavailable',
       });
     }
+    const address = {
+      ...base,
+      fulfillment: 'shipping',
+      phone: '+34 600 000 000',
+      addressLine1: 'Carrer Major 1',
+      postalCode: '07001',
+      city: 'Palma',
+    };
+    // Con envío hay que elegir transportista (DECISIONS §172).
+    const withoutService = checkoutInput.safeParse(address);
+    expect(withoutService.success).toBe(false);
+    if (!withoutService.success)
+      expect(fieldErrors(withoutService.error.issues)).toEqual({
+        shippingServiceId: 'shippingServiceRequired',
+      });
     expect(
       checkoutInput.safeParse({
-        ...base,
-        fulfillment: 'shipping',
-        phone: '+34 600 000 000',
-        addressLine1: 'Carrer Major 1',
-        postalCode: '07001',
-        city: 'Palma',
+        ...address,
+        shippingServiceId: '00000000-0000-4000-8000-0000000000e1',
       }).success,
     ).toBe(true);
   });

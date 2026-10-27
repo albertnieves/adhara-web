@@ -33,6 +33,18 @@ export type OrderStatusView = {
   paidAt: string | null;
   /** Se puede (volver a) pagar ahora: pendiente con la reserva en pie. */
   payable: boolean;
+  /** Transportista y servicio elegidos («Correos · Paq Estándar»). */
+  shippingServiceLabel: string | null;
+  /** Etiqueta viva y su seguimiento (§175); null sin etiqueta. */
+  shipment: OrderShipmentView | null;
+};
+
+export type OrderShipmentView = {
+  carrierName: string;
+  trackingNumber: string | null;
+  trackingUrl: string | null;
+  status: string;
+  deliveredAt: string | null;
 };
 
 /** Lo que dijo el banco al volver; solo orienta el mensaje, nunca el estado. */

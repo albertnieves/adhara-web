@@ -41,9 +41,22 @@ from (values ('00000000-0000-4000-8000-0000000019c1'::uuid),
              ('00000000-0000-4000-8000-0000000019c2'::uuid)) v(id)
 cross join public.stock_locations l where l.code = 'castelldefels';
 insert into public.shipping_rates (zone, price_cents, free_from_cents, active)
-values ('peninsula', 495, 7500, true)
+values ('peninsula', null, 7500, true)
 on conflict (zone) do update
-  set price_cents = 495, free_from_cents = 7500, active = true;
+  set price_cents = null, free_from_cents = 7500, active = true;
+-- Envío por peso (20261025120000): un servicio de tramo único sin IVA.
+insert into public.shipping_settings (sender_name, address_line1, postal_code, city,
+  phone, email, packaging_weight_g, shipping_vat_bps)
+values ('Tienda de descuentos', 'Carrer de la Tenda 1', '08860', 'Castelldefels',
+  '600000000', 'tienda-descuentos@test.invalid', 0, 0);
+insert into public.shipping_services (id, provider, code, carrier_code, carrier_name,
+  name, zones, active)
+values ('00000000-0000-4000-8000-0000000019e1', 'manual', 'prueba-19', 'prueba',
+  'Transportista', 'Estándar', '{peninsula}', true);
+insert into internal.shipping_service_rates (service_id, zone, min_weight_g, max_weight_g, cost_cents)
+values ('00000000-0000-4000-8000-0000000019e1', 'peninsula', 1, 30000, 495);
+update public.product_variants set shipping_weight_g = 300
+  where id in ('00000000-0000-4000-8000-0000000019c1', '00000000-0000-4000-8000-0000000019c2');
 
 create function pg_temp.act_as(user_id text, aal text) returns void
 language sql as $$
@@ -94,7 +107,9 @@ language sql as $$
     p_items,
     jsonb_build_object('full_name', 'Cliente', 'email', p_email, 'phone', '600000000',
       'address_line1', 'Carrer de Prova 1', 'postal_code', '08860', 'city', 'Castelldefels'),
-    'redsys', 30, p_code);
+    'redsys', 30, p_code,
+    p_shipping_service_id => case when p_fulfillment = 'shipping'
+      then '00000000-0000-4000-8000-0000000019e1'::uuid end);
 $$;
 create function pg_temp.ref(p_request uuid) returns text
 language sql as $$

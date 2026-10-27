@@ -34,6 +34,21 @@ import {
   RefundActions,
   ReleaseReservation,
 } from '@/modules/orders/ui';
+import {
+  HANDOVER_LABELS,
+  PICKUP_API_CARRIERS,
+  SHIPMENT_STATUS_LABELS,
+  SHIPMENT_STATUS_TONES,
+  nextWorkingDays,
+  weightText,
+} from '@/modules/shipping';
+import {
+  getOrderShipments,
+  getShippingSettings,
+  listServiceSummaries,
+  sendcloudConfig,
+} from '@/modules/shipping/server';
+import { CreateLabel, ShipmentHandover } from '@/modules/shipping/ui';
 import { Badge, Eyebrow, Table } from '@/components/ui';
 
 export const metadata: Metadata = { title: 'Pedido web' };
@@ -115,6 +130,22 @@ export default async function WebOrderPage({
   if (!detail) notFound();
   const { order, lines, contact, attempts, payments, refunds, emails, events } =
     detail;
+  // Envío (DECISIONS §171–176): etiquetas, servicios y ajustes.
+  const shippingOrder = order.fulfillment === 'shipping';
+  const canFulfill = isAllowed(session, 'orders.fulfill');
+  const canCosts = isAllowed(session, 'pricing.view_cost');
+  const [shipments, shippingSettings, services] = shippingOrder
+    ? await Promise.all([
+        getOrderShipments(staff.supabase, id, { withCosts: canCosts }),
+        getShippingSettings(staff.supabase),
+        listServiceSummaries(staff.supabase),
+      ])
+    : [[], null, []];
+  const shipment = shipments.find((s) => s.status !== 'cancelled') ?? null;
+  const cancelledShipments = shipments.filter((s) => s.status === 'cancelled');
+  const chosenService =
+    services.find((s) => s.id === order.shippingServiceId) ?? null;
+  const sendcloudReady = sendcloudConfig() !== null;
   const tpvReady = redsysConfig() !== null;
   const openRefund = refunds.find(
     (r) => r.status === 'requested' || r.status === 'unknown',
@@ -252,6 +283,7 @@ export default async function WebOrderPage({
           orderId={order.id}
           revision={order.revision}
           actions={actions}
+          defaultTracking={shipment?.trackingNumber ?? ''}
         />
       </div>
 
@@ -382,6 +414,209 @@ export default async function WebOrderPage({
           </p>
         )}
       </Section>
+
+      {shippingOrder && (
+        <Section title="Envío" className="print:hidden">
+          <dl className="mb-8 grid gap-4 text-sm sm:grid-cols-2 xl:grid-cols-4">
+            <div>
+              <Eyebrow as="dt">Elegido por el cliente</Eyebrow>
+              <dd className="mt-1">
+                {order.shippingServiceLabel ?? '—'}
+                <span className="text-fg-muted block text-xs">
+                  Pagó{' '}
+                  {order.shippingCents === 0
+                    ? 'nada (envío gratis)'
+                    : euros(order.shippingCents)}
+                </span>
+              </dd>
+            </div>
+            <div>
+              <Eyebrow as="dt">Peso calculado</Eyebrow>
+              <dd className="mt-1">
+                {order.shippingWeightG
+                  ? weightText(order.shippingWeightG)
+                  : '—'}
+                <span className="text-fg-muted block text-xs">
+                  Perfumes y embalaje
+                </span>
+              </dd>
+            </div>
+            {shipment && (
+              <>
+                <div>
+                  <Eyebrow as="dt">Etiqueta</Eyebrow>
+                  <dd className="mt-1">
+                    {shipment.carrierName} · {shipment.serviceName}{' '}
+                    <Badge tone={SHIPMENT_STATUS_TONES[shipment.status]}>
+                      {SHIPMENT_STATUS_LABELS[shipment.status]}
+                    </Badge>
+                    <span className="text-fg-muted block text-xs break-all">
+                      {shipment.trackingUrl ? (
+                        <a
+                          href={shipment.trackingUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="link-underline"
+                        >
+                          {shipment.trackingNumber ?? 'Seguimiento'}
+                        </a>
+                      ) : (
+                        (shipment.trackingNumber ?? 'Sin número de seguimiento')
+                      )}
+                      {' · '}
+                      {weightText(shipment.weightG)}
+                    </span>
+                  </dd>
+                </div>
+                <div>
+                  <Eyebrow as="dt">Entrega al transportista</Eyebrow>
+                  <dd className="mt-1">
+                    {shipment.handover
+                      ? HANDOVER_LABELS[shipment.handover]
+                      : 'Pendiente'}
+                    {shipment.pickup && (
+                      <span className="text-fg-muted block text-xs">
+                        {DATE_TIME.format(
+                          new Date(shipment.pickup.windowStart),
+                        )}
+                        –{TIME.format(new Date(shipment.pickup.windowEnd))}
+                        {shipment.pickup.status === 'by_phone'
+                          ? ' · pedida por teléfono'
+                          : ''}
+                      </span>
+                    )}
+                    {shipment.dropoffPoint?.name && (
+                      <span className="text-fg-muted block text-xs">
+                        {shipment.dropoffPoint.name}
+                      </span>
+                    )}
+                  </dd>
+                </div>
+                {canCosts && shipment.costCents !== null && (
+                  <div>
+                    <Eyebrow as="dt">Coste real</Eyebrow>
+                    <dd className="mt-1 tabular-nums">
+                      {euros(shipment.costCents)} sin IVA
+                      <span className="text-fg-muted block text-xs">
+                        Cobrado al cliente: {euros(order.shippingCents)} con IVA
+                      </span>
+                    </dd>
+                  </div>
+                )}
+              </>
+            )}
+          </dl>
+
+          {canFulfill &&
+            !shipment &&
+            ['paid', 'processing'].includes(order.status) &&
+            (canCustomers ? (
+              <CreateLabel
+                orderId={order.id}
+                defaultWeightG={order.shippingWeightG}
+                paidShippingCents={order.shippingCents}
+                chosenLabel={order.shippingServiceLabel}
+                chosenCode={
+                  chosenService?.provider === 'sendcloud'
+                    ? chosenService.code
+                    : null
+                }
+                sendcloudReady={sendcloudReady}
+                canSeeCosts={canCosts}
+                services={services
+                  .filter((s) => s.provider === 'manual' || !sendcloudReady)
+                  .map((s) => ({
+                    id: s.id,
+                    label: `${s.carrierName} · ${s.name}`,
+                    provider: s.provider,
+                  }))}
+              />
+            ) : (
+              <p className="text-fg-muted text-sm">
+                La etiqueta lleva la dirección del cliente: la crea quien tiene
+                el permiso de clientes.
+              </p>
+            ))}
+          {canFulfill && shipment && shippingSettings && (
+            <ShipmentHandover
+              orderId={order.id}
+              shipment={{
+                id: shipment.id,
+                provider: shipment.provider,
+                carrierCode: shipment.carrierCode,
+                carrierName: shipment.carrierName,
+                status: shipment.status,
+                handover: shipment.handover,
+                weightG: shipment.weightG,
+              }}
+              pickupApi={PICKUP_API_CARRIERS.has(shipment.carrierCode)}
+              pickupPhone={
+                services.find((s) => s.id === shipment.serviceId)
+                  ?.pickupPhone ??
+                services.find(
+                  (s) =>
+                    s.carrierCode === shipment.carrierCode && s.pickupPhone,
+                )?.pickupPhone ??
+                null
+              }
+              workingDays={nextWorkingDays(new Date(), 6)}
+              pickupStart={shippingSettings.pickupStart}
+              pickupEnd={shippingSettings.pickupEnd}
+              sendcloudReady={sendcloudReady}
+            />
+          )}
+          {!shippingSettings && canFulfill && (
+            <p className="text-warning mt-4 text-sm">
+              Faltan los ajustes de envío (remitente y franja de recogida) en
+              Configuración → Envíos.
+            </p>
+          )}
+
+          {shipment && shipment.events.length > 0 && (
+            <div className="mt-8">
+              <h3 className="mb-3 text-lg">Seguimiento</h3>
+              <ol className="divide-border border-border divide-y border-y">
+                {[...shipment.events].reverse().map((event) => (
+                  <li
+                    key={event.id}
+                    className="grid gap-1 py-3 text-sm sm:grid-cols-[9rem_1fr_auto] sm:gap-4"
+                  >
+                    <span className="text-fg-muted tabular-nums">
+                      {DATE_TIME.format(new Date(event.at))}
+                    </span>
+                    <span>
+                      {SHIPMENT_STATUS_LABELS[event.status]}
+                      {event.message && (
+                        <span className="text-fg-muted block text-xs">
+                          {event.message}
+                        </span>
+                      )}
+                    </span>
+                    <span className="text-fg-muted text-xs">
+                      {event.source === 'staff'
+                        ? 'Panel'
+                        : event.source === 'sendcloud'
+                          ? 'Transportista'
+                          : 'Sistema'}
+                    </span>
+                  </li>
+                ))}
+              </ol>
+            </div>
+          )}
+          {cancelledShipments.length > 0 && (
+            <p className="text-fg-muted mt-4 text-xs">
+              Etiquetas canceladas:{' '}
+              {cancelledShipments
+                .map(
+                  (s) =>
+                    `${s.carrierName}${s.trackingNumber ? ` ${s.trackingNumber}` : ''}`,
+                )
+                .join(' · ')}
+            </p>
+          )}
+        </Section>
+      )}
 
       <Section title="Pago" className="print:hidden">
         {attempts.length === 0 && payments.length === 0 ? (

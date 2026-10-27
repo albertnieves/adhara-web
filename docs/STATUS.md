@@ -1,4 +1,4 @@
-# Estado real — 25/10/2026
+# Estado real — 26/10/2026
 
 ## Siguiente objetivo: cierre técnico SEO (25/10)
 
@@ -8,11 +8,11 @@ Validación local del cierre SEO con Node 24.16.0 y pnpm 11.19.0: `pnpm check` c
 
 ## Objetivo activo: entornos y operación (25/10)
 
-Rama `codex/entornos-operacion`, sobre la #47 aún abierta (`claude/cierre-apertura`). Esta sección es el estado vigente; las entradas fechadas de debajo conservan la evidencia de cada entrega. Pasos operativos en [OPERATIONS.md](OPERATIONS.md), banco y negocio en [PLAN_APERTURA.md](PLAN_APERTURA.md), orden de mejoras en [ROADMAP.md](ROADMAP.md).
+Rama `codex/entornos-operacion` (PR #48), actualizada con `main` el 27/10, con la #47, la #50 y la #51 ya fusionadas. Esta sección es el estado vigente; las entradas fechadas de debajo conservan la evidencia de cada entrega. Pasos operativos en [OPERATIONS.md](OPERATIONS.md), banco y negocio en [PLAN_APERTURA.md](PLAN_APERTURA.md), orden de mejoras en [ROADMAP.md](ROADMAP.md).
 
 | Área                | Hecho o comprobado                                                                                  | Pendiente para cerrar                                                                         |
 | ------------------- | --------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
-| Código de apertura  | #47 con CI/Database/E2E correctas en `316ba9b`; migración aplicada                                  | Fusionar #47; aún no publicada                                                                |
+| Código de apertura  | #47 fusionada el 26/10; migración aplicada                                                          | —                                                                                             |
 | Aislamiento         | `pnpm build` rechaza Preview con base real; ejemplo local desconectado                              | Cambiar destinos de variables, retirar pruebas antiguas y verificar una base ficticia aislada |
 | Disponibilidad      | Liveness conservada y readiness de lectura con plazo; script externo y workflow diario en esta rama | Publicar y verificar; el workflow programado comienza al llegar a `main`                      |
 | Revisiones de Codex | Dos automatizaciones diarias activas desde el 26/10, ventanas de mañana Europe/Madrid               | Comprobar sus primeras ejecuciones; no modifican producción                                   |
@@ -23,6 +23,19 @@ No se han movido datos, cambiado variables remotas ni creado recursos de pago. C
 
 Validación de esta rama con Node 24.16.0 y pnpm 11.19.0: `pnpm check` correcto (lint, tipos, 687 unitarias y build), formato y escaneo de secretos correctos. 16 E2E HTTP correctas (salud, idioma, seguridad, robots/sitemap); suite completa intentada y detenida por falta de Chromium tras fallar su descarga (33 correctas antes de detenerse). Bloqueo de `pnpm build` contra la base real comprobado. Sin SQL nuevo: pgTAP, tipos de base y recorridos autenticados quedan en la CI; no se han ejecutado aquí.
 
+## Envíos multitransportista (25–26/10)
+
+`claude/envios-multitransportista` (PR #50, fusionada el 26/10 justo después de la #47). A petición del usuario: plataforma multitransportista mientras llegan los contratos, envío pagado según el peso y el transportista elegido, costes reales en el panel y recogida en la tienda o punto de entrega. Plan en [PLAN_ENVIOS.md](PLAN_ENVIOS.md); decisiones §171–176; guía en [ADMIN_OPERATIONS.md](ADMIN_OPERATIONS.md#envíos-y-transportistas).
+
+- **Checkout (es/ca/en):** con el código postal salen los transportistas activos que llevan ese peso, con precio y plazo; el cliente elige. Peso = formatos (pesados en Catálogo → Pesos de envío) + embalaje; precio = coste real del tramo sin IVA + IVA del envío + recargo. Sin peso de algún formato, solo recogida. La base lo calcula al enseñarlo y al crear el pedido.
+- **Panel:** Configuración → Envíos (remitente, embalaje, zonas, servicios y «Actualizar tarifas desde Sendcloud» con el coste real por tramo, que entra en `internal`); servicios manuales para contratos propios; ficha del pedido con «Ver tarifas reales», «Crear etiqueta» (PDF A6 o A4), recogida en la tienda (por la plataforma o por teléfono) o punto de entrega cercano, cancelación y seguimiento; Web → Envíos con lo pendiente, las recogidas, lo que va de camino y las incidencias.
+- **Seguimiento:** aviso firmado de Sendcloud en `/api/envios/sendcloud` → «Enviado» al primer escaneo (con el correo y el enlace) y «Completado» al entregar. El cliente ve transportista y enlace en la página del pedido, en «Mis pedidos» y en el correo.
+- **Base:** migración `20261025120000_shipping_carriers.sql`, **aplicada en `atelier-dev` el 26/10** antes de fusionar, a petición del usuario, desde el SQL Editor (el conector caducó dos veces con la confirmación del `drop`, sin aplicar nada) y comprobada (§176): versión con el md5 del archivo, objetos y permisos iguales a la base ensayada, datos sin cambios y asesor de seguridad sin tipos de aviso nuevos.
+- **Sin cuenta real de Sendcloud:** todo probado contra una API simulada hecha con sus especificaciones OpenAPI v3.
+- **Claves de Sendcloud en Production (26/10):** el panel ve la integración, pero la primera sincronización devolvió «rechazó las claves». La puerta de la API v3 contesta los errores de autenticación como `{error: {message}}`, que el panel no leía, así que solo enseñaba un texto genérico. Tras regenerar las claves, la sincronización funcionó. Desde la rama `claude/envios-servicios`, el panel muestra el código HTTP y el motivo de Sendcloud (401: claves; 403: permiso o plan) y lo deja en los registros de Vercel, sin claves ni datos del pedido; cada servicio se enciende o se apaga con un botón en su fila (antes, solo desde su ficha), y «Abrir el portal de Sendcloud» lleva a su web para los envíos hechos a mano.
+- **Comprobado en local** (Supabase local con Docker, base reiniciada como en la CI, `WEB_CHECKOUT=1` y TPV y Sendcloud simulados): pgTAP 1042/1042 en 25 archivos (81 nuevas en `24_shipping`; las de checkout, pagos, correos, cuenta y descuentos adaptadas al precio por peso); tipos generados iguales; `db lint` sin errores; concurrencia correcta 3 veces con bases nuevas, con dos carreras nuevas (dos etiquetas a la vez para un pedido: entra una; el mismo «entregado» dos veces: el stock sale una vez); `pnpm check` correcto (lint, tipos, 678 unitarias, 19 nuevas, y build); `format:check` y `scan:secrets` correctos; tienda pública 278 correctas y 38 omitidas; panel con sesión 54/54, con `shipping.spec.ts` (sincronizar, activar, pesar, elegir SEUR o Correos por su precio, pagar, tarifas reales, etiqueta en PDF, recogida, aviso firmado → «Enviado» y «Completado», aviso sin firma rechazado y punto de entrega) y la auditoría de diseño de Configuración → Envíos, Web → Envíos y Pesos de envío. La auditoría encontró y se corrigió una fecha imposible (13.º mes) que se convertía en otra.
+- **Para encenderlo (usuario):** pesar los formatos, remitente y embalaje, un servicio (manual o de Sendcloud con `SENDCLOUD_PUBLIC_KEY` y `SENDCLOUD_SECRET_KEY`), confirmar con cada transportista que acepta perfumes (UN1266) y «Ofrecer el envío» (PLAN_ENVIOS, «Para encenderlo»).
+
 ## Cierre de la apertura (24/10)
 
 `claude/cierre-apertura`, sobre `claude/vigilant-mendel-p4mv93` (la de Bizum, §167, que entra con ella). A petición del usuario: dejar lista la apertura y hacer el código pendiente. Decisión §168; lista de lo que queda en [PLAN_APERTURA.md](PLAN_APERTURA.md).
@@ -30,11 +43,12 @@ Validación de esta rama con Node 24.16.0 y pnpm 11.19.0: `pnpm check` correcto 
 - **Devoluciones** (revisión de seguridad): una petición repetida ya no se manda dos veces al banco; una devolución sin respuesta clara, o enviada hace más de 10 minutos sin respuesta guardada, se reenvía o se resuelve en la ficha con «Consta hecha en el portal» / «No consta en el portal»; y con una devolución abierta el pedido no cambia de estado. Migración `20261024120000_refund_safeguards.sql`, **aplicada en `atelier-dev` el 24/10** antes de fusionar, a petición del usuario y comprobada (§168).
 - **Correo de confirmación** sin el nombre del comprador en el saludo.
 - **Formulario de contacto:** freno por cliente (5 cada 10 minutos), lo que faltaba en código para encenderlo.
-- **Textos legales:** los gastos de envío y el envío gratis salen de las tarifas activas del panel; aparecen al encender «Ofrecer el envío».
+- **Textos legales:** los gastos de envío y el envío gratis salen de las tarifas activas del panel; aparecen al encender «Ofrecer el envío». (Con la rama de envíos, «según el peso y el transportista», §172.)
 - **Comprobado en producción (solo lectura, 24/10):** en Production están `CRON_SECRET`, `RESEND_API_KEY`, `EMAIL_FROM` y `SUPABASE_SECRET_KEY`; faltan `REDSYS_*` reales (llegan con el pase) y `WEB_CHECKOUT`. Supabase con las 34 migraciones del repositorio hasta `20261023120000` y sin avisos nuevos (ya no marca las contraseñas filtradas). Pedidos 1001–1003 de la prueba con BBVA (cancelado y dos sin pagar con la reserva liberada); ningún código de descuento. Tarifas guardadas sin ofrecer; email y teléfono de la tienda puestos. Una administradora de la tienda con MFA; la otra cuenta (del 30/09) no ha entrado nunca. Firewall de Vercel sin configuración.
 - **Comprobado en local sin Docker** (Postgres 16 con la emulación de §146 y pgTAP 1.3.2): pgTAP 961/961 en 24 archivos (34 nuevas); concurrencia correcta 3 veces con el caso nuevo; tipos generados iguales; `pnpm check` correcto (lint, tipos, 659 unitarias y build); `format:check` y `scan:secrets` correctos. `db lint` y E2E, en la CI de la PR.
 - **Firewall de Vercel:** aprobadas dos reglas de 60 peticiones por minuto y por IP (acciones de la tienda fuera de `/admin` y aviso del banco), pero la API de Vercel responde que el proyecto no tiene configuración de Firewall: hay que crearlas en el panel de Vercel (PLAN_APERTURA, paso 2).
-- **Siguiente:** fusionar la PR #47 con la CI en verde, Bizum por debajo de 5 € y el pase a producción del TPV (PLAN_APERTURA).
+- **Bizum probado el 25/10 en la Preview de BBVA** (pedidos 1004 y 1005, 3,29 € con el código `PRUEBATPV`): rechazo con aviso del banco, pago aceptado y confirmado solo en 14 s, devolución 0900 y unidad de vuelta al stock. La prueba del TPV está completa (PLAN_APERTURA, paso 1).
+- **Siguiente:** desactivar `PRUEBATPV`, comprobar las operaciones en el portal de pruebas, «Pasar a producción», fusionar la PR #47 y, con el correo del pase, las `REDSYS_*` reales (PLAN_APERTURA).
 
 ## Datos de pruebas del TPV de BBVA y Bizum (23/10)
 

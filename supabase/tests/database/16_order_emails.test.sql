@@ -28,7 +28,20 @@ update public.products set status = 'published'
 insert into public.inventory_levels (variant_id, location_id, on_hand)
 select '00000000-0000-4000-8000-0000000016c1', id, 10
 from public.stock_locations where code = 'castelldefels';
-insert into public.shipping_rates (zone, price_cents, active) values ('peninsula', 500, true);
+insert into public.shipping_rates (zone, price_cents, active) values ('peninsula', null, true);
+-- Envío por peso (20261025120000): un servicio de tramo único sin IVA.
+insert into public.shipping_settings (sender_name, address_line1, postal_code, city,
+  phone, email, packaging_weight_g, shipping_vat_bps)
+values ('Tienda de correos', 'Carrer de la Tenda 1', '08860', 'Castelldefels',
+  '600000000', 'tienda-correos@test.invalid', 0, 0);
+insert into public.shipping_services (id, provider, code, carrier_code, carrier_name,
+  name, zones, active)
+values ('00000000-0000-4000-8000-0000000016e1', 'manual', 'prueba-16', 'prueba',
+  'Transportista', 'Estándar', '{peninsula}', true);
+insert into internal.shipping_service_rates (service_id, zone, min_weight_g, max_weight_g, cost_cents)
+values ('00000000-0000-4000-8000-0000000016e1', 'peninsula', 1, 30000, 500);
+update public.product_variants set shipping_weight_g = 400
+  where id = '00000000-0000-4000-8000-0000000016c1';
 
 create function pg_temp.act_as(user_id text, aal text) returns void
 language sql as $$
@@ -95,7 +108,7 @@ select public.web_order_create('00000000-0000-4000-8000-0000000016d2', 'ca', 'sh
   null, '[{"variant_id": "00000000-0000-4000-8000-0000000016c1", "quantity": 1}]',
   '{"full_name": "Client d''enviament", "email": "envio@test.invalid", "phone": "600000000",
     "address_line1": "Carrer Major 1", "postal_code": "08860", "city": "Castelldefels"}',
-  'redsys', 30);
+  'redsys', 30, p_shipping_service_id => '00000000-0000-4000-8000-0000000016e1');
 
 select is(pg_temp.emails('00000000-0000-4000-8000-0000000016d1'), '{}'::text[],
   'un pedido sin pagar no manda correo');
@@ -155,6 +168,8 @@ select is(
       where request_id = '00000000-0000-4000-8000-0000000016d2'),
     'locale', 'ca', 'fulfillment', 'shipping', 'items_cents', 7000,
     'shipping_cents', 500, 'total_cents', 7500, 'tracking_reference', 'TRK-123',
+    'tracking_url', null, 'carrier_name', null,
+    'shipping_service_label', 'Transportista · Estándar',
     'discount_code', null, 'discount_cents', 0,
     'full_name', 'Client d''enviament', 'email', 'envio@test.invalid',
     'address', jsonb_build_object('line1', 'Carrer Major 1', 'line2', null,
