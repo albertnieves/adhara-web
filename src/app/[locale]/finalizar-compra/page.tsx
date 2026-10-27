@@ -16,8 +16,8 @@ import { requireLocale } from '@/modules/i18n/server';
 
 /**
  * Finalizar compra (P03): la cesta sale de la cookie y los importes del
- * catálogo y de las tarifas activas; el pedido lo crea la base con
- * web_order_create. El pago con tarjeta llega con P04.
+ * catálogo y de los servicios de envío para el peso de la cesta (§172); el
+ * pedido lo crea la base con web_order_create. El pago, con P04.
  */
 export const dynamic = 'force-dynamic';
 
@@ -84,7 +84,7 @@ export default async function CheckoutPage({ params }: { params: Params }) {
         )}
         itemsCents={quote.itemsCents}
         purchasable={quote.purchasable}
-        rates={quote.rates}
+        shipping={quote.shipping}
         store={{ address: store.address, city: store.city }}
         account={account}
         signInNext={signInNext}

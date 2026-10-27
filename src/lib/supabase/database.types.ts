@@ -991,6 +991,10 @@ export type Database = {
           reserved_until: string;
           revision: number;
           shipping_cents: number;
+          shipping_service_id: string | null;
+          shipping_service_label: string | null;
+          shipping_weight_g: number | null;
+          shipping_zone: string | null;
           status: string;
           total_cents: number;
           tracking_reference: string | null;
@@ -1017,6 +1021,10 @@ export type Database = {
           reserved_until: string;
           revision?: number;
           shipping_cents?: number;
+          shipping_service_id?: string | null;
+          shipping_service_label?: string | null;
+          shipping_weight_g?: number | null;
+          shipping_zone?: string | null;
           status?: string;
           total_cents: number;
           tracking_reference?: string | null;
@@ -1043,6 +1051,10 @@ export type Database = {
           reserved_until?: string;
           revision?: number;
           shipping_cents?: number;
+          shipping_service_id?: string | null;
+          shipping_service_label?: string | null;
+          shipping_weight_g?: number | null;
+          shipping_zone?: string | null;
           status?: string;
           total_cents?: number;
           tracking_reference?: string | null;
@@ -1061,6 +1073,13 @@ export type Database = {
             columns: ['location_id'];
             isOneToOne: false;
             referencedRelation: 'stock_locations';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'orders_shipping_service_id_fkey';
+            columns: ['shipping_service_id'];
+            isOneToOne: false;
+            referencedRelation: 'shipping_services';
             referencedColumns: ['id'];
           },
         ];
@@ -1246,6 +1265,7 @@ export type Database = {
           position: number;
           product_id: string;
           retail_price_cents: number | null;
+          shipping_weight_g: number | null;
           size_ml: number | null;
           sku: string | null;
           updated_at: string;
@@ -1260,6 +1280,7 @@ export type Database = {
           position?: number;
           product_id: string;
           retail_price_cents?: number | null;
+          shipping_weight_g?: number | null;
           size_ml?: number | null;
           sku?: string | null;
           updated_at?: string;
@@ -1274,6 +1295,7 @@ export type Database = {
           position?: number;
           product_id?: string;
           retail_price_cents?: number | null;
+          shipping_weight_g?: number | null;
           size_ml?: number | null;
           sku?: string | null;
           updated_at?: string;
@@ -1367,11 +1389,209 @@ export type Database = {
           },
         ];
       };
+      shipment_events: {
+        Row: {
+          actor_id: string | null;
+          at: string;
+          id: number;
+          message: string | null;
+          provider_status_id: number | null;
+          received_at: string;
+          shipment_id: string;
+          source: string;
+          status: string;
+        };
+        Insert: {
+          actor_id?: string | null;
+          at: string;
+          id?: never;
+          message?: string | null;
+          provider_status_id?: number | null;
+          received_at?: string;
+          shipment_id: string;
+          source: string;
+          status: string;
+        };
+        Update: {
+          actor_id?: string | null;
+          at?: string;
+          id?: never;
+          message?: string | null;
+          provider_status_id?: number | null;
+          received_at?: string;
+          shipment_id?: string;
+          source?: string;
+          status?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'shipment_events_shipment_id_fkey';
+            columns: ['shipment_id'];
+            isOneToOne: false;
+            referencedRelation: 'shipments';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      shipment_pickups: {
+        Row: {
+          carrier_code: string;
+          carrier_name: string;
+          created_at: string;
+          created_by: string | null;
+          id: string;
+          note: string | null;
+          parcels: number;
+          provider: string;
+          provider_pickup_id: string | null;
+          status: string;
+          total_weight_g: number;
+          window_end: string;
+          window_start: string;
+        };
+        Insert: {
+          carrier_code: string;
+          carrier_name: string;
+          created_at?: string;
+          created_by?: string | null;
+          id?: string;
+          note?: string | null;
+          parcels: number;
+          provider: string;
+          provider_pickup_id?: string | null;
+          status: string;
+          total_weight_g: number;
+          window_end: string;
+          window_start: string;
+        };
+        Update: {
+          carrier_code?: string;
+          carrier_name?: string;
+          created_at?: string;
+          created_by?: string | null;
+          id?: string;
+          note?: string | null;
+          parcels?: number;
+          provider?: string;
+          provider_pickup_id?: string | null;
+          status?: string;
+          total_weight_g?: number;
+          window_end?: string;
+          window_start?: string;
+        };
+        Relationships: [];
+      };
+      shipments: {
+        Row: {
+          cancelled_at: string | null;
+          carrier_code: string;
+          carrier_name: string;
+          created_at: string;
+          created_by: string | null;
+          delivered_at: string | null;
+          dropoff_point: Json | null;
+          external_reference: string | null;
+          handover: string | null;
+          handover_at: string | null;
+          id: string;
+          order_id: string;
+          parcels: number;
+          pickup_id: string | null;
+          provider: string;
+          provider_parcel_id: string | null;
+          provider_shipment_id: string | null;
+          service_id: string | null;
+          service_name: string;
+          status: string;
+          status_at: string | null;
+          status_message: string | null;
+          tracking_number: string | null;
+          tracking_url: string | null;
+          weight_g: number;
+        };
+        Insert: {
+          cancelled_at?: string | null;
+          carrier_code: string;
+          carrier_name: string;
+          created_at?: string;
+          created_by?: string | null;
+          delivered_at?: string | null;
+          dropoff_point?: Json | null;
+          external_reference?: string | null;
+          handover?: string | null;
+          handover_at?: string | null;
+          id?: string;
+          order_id: string;
+          parcels?: number;
+          pickup_id?: string | null;
+          provider: string;
+          provider_parcel_id?: string | null;
+          provider_shipment_id?: string | null;
+          service_id?: string | null;
+          service_name: string;
+          status?: string;
+          status_at?: string | null;
+          status_message?: string | null;
+          tracking_number?: string | null;
+          tracking_url?: string | null;
+          weight_g: number;
+        };
+        Update: {
+          cancelled_at?: string | null;
+          carrier_code?: string;
+          carrier_name?: string;
+          created_at?: string;
+          created_by?: string | null;
+          delivered_at?: string | null;
+          dropoff_point?: Json | null;
+          external_reference?: string | null;
+          handover?: string | null;
+          handover_at?: string | null;
+          id?: string;
+          order_id?: string;
+          parcels?: number;
+          pickup_id?: string | null;
+          provider?: string;
+          provider_parcel_id?: string | null;
+          provider_shipment_id?: string | null;
+          service_id?: string | null;
+          service_name?: string;
+          status?: string;
+          status_at?: string | null;
+          status_message?: string | null;
+          tracking_number?: string | null;
+          tracking_url?: string | null;
+          weight_g?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'shipments_order_id_fkey';
+            columns: ['order_id'];
+            isOneToOne: false;
+            referencedRelation: 'orders';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'shipments_pickup_id_fkey';
+            columns: ['pickup_id'];
+            isOneToOne: false;
+            referencedRelation: 'shipment_pickups';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'shipments_service_id_fkey';
+            columns: ['service_id'];
+            isOneToOne: false;
+            referencedRelation: 'shipping_services';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       shipping_rates: {
         Row: {
           active: boolean;
           free_from_cents: number | null;
-          price_cents: number;
+          price_cents: number | null;
           updated_at: string;
           updated_by: string | null;
           zone: string;
@@ -1379,7 +1599,7 @@ export type Database = {
         Insert: {
           active?: boolean;
           free_from_cents?: number | null;
-          price_cents: number;
+          price_cents?: number | null;
           updated_at?: string;
           updated_by?: string | null;
           zone: string;
@@ -1387,10 +1607,154 @@ export type Database = {
         Update: {
           active?: boolean;
           free_from_cents?: number | null;
-          price_cents?: number;
+          price_cents?: number | null;
           updated_at?: string;
           updated_by?: string | null;
           zone?: string;
+        };
+        Relationships: [];
+      };
+      shipping_services: {
+        Row: {
+          active: boolean;
+          carrier_code: string;
+          carrier_name: string;
+          code: string;
+          contract_id: number | null;
+          created_at: string;
+          dangerous_goods: boolean | null;
+          first_mile: string | null;
+          free_eligible: boolean;
+          id: string;
+          name: string;
+          pickup_phone: string | null;
+          position: number;
+          provider: string;
+          surcharge_cents: number;
+          synced_at: string | null;
+          tracking_url_template: string | null;
+          transit_days: number | null;
+          updated_at: string;
+          updated_by: string | null;
+          zones: string[];
+        };
+        Insert: {
+          active?: boolean;
+          carrier_code: string;
+          carrier_name: string;
+          code: string;
+          contract_id?: number | null;
+          created_at?: string;
+          dangerous_goods?: boolean | null;
+          first_mile?: string | null;
+          free_eligible?: boolean;
+          id?: string;
+          name: string;
+          pickup_phone?: string | null;
+          position?: number;
+          provider: string;
+          surcharge_cents?: number;
+          synced_at?: string | null;
+          tracking_url_template?: string | null;
+          transit_days?: number | null;
+          updated_at?: string;
+          updated_by?: string | null;
+          zones?: string[];
+        };
+        Update: {
+          active?: boolean;
+          carrier_code?: string;
+          carrier_name?: string;
+          code?: string;
+          contract_id?: number | null;
+          created_at?: string;
+          dangerous_goods?: boolean | null;
+          first_mile?: string | null;
+          free_eligible?: boolean;
+          id?: string;
+          name?: string;
+          pickup_phone?: string | null;
+          position?: number;
+          provider?: string;
+          surcharge_cents?: number;
+          synced_at?: string | null;
+          tracking_url_template?: string | null;
+          transit_days?: number | null;
+          updated_at?: string;
+          updated_by?: string | null;
+          zones?: string[];
+        };
+        Relationships: [];
+      };
+      shipping_settings: {
+        Row: {
+          address_line1: string;
+          address_line2: string | null;
+          city: string;
+          country: string;
+          email: string;
+          house_number: string | null;
+          id: boolean;
+          max_weight_g: number;
+          packaging_weight_g: number;
+          parcel_height_cm: number | null;
+          parcel_length_cm: number | null;
+          parcel_width_cm: number | null;
+          phone: string;
+          pickup_end: string;
+          pickup_start: string;
+          postal_code: string;
+          sender_contact: string | null;
+          sender_name: string;
+          shipping_vat_bps: number;
+          updated_at: string;
+          updated_by: string | null;
+        };
+        Insert: {
+          address_line1: string;
+          address_line2?: string | null;
+          city: string;
+          country?: string;
+          email: string;
+          house_number?: string | null;
+          id?: boolean;
+          max_weight_g?: number;
+          packaging_weight_g: number;
+          parcel_height_cm?: number | null;
+          parcel_length_cm?: number | null;
+          parcel_width_cm?: number | null;
+          phone: string;
+          pickup_end?: string;
+          pickup_start?: string;
+          postal_code: string;
+          sender_contact?: string | null;
+          sender_name: string;
+          shipping_vat_bps?: number;
+          updated_at?: string;
+          updated_by?: string | null;
+        };
+        Update: {
+          address_line1?: string;
+          address_line2?: string | null;
+          city?: string;
+          country?: string;
+          email?: string;
+          house_number?: string | null;
+          id?: boolean;
+          max_weight_g?: number;
+          packaging_weight_g?: number;
+          parcel_height_cm?: number | null;
+          parcel_length_cm?: number | null;
+          parcel_width_cm?: number | null;
+          phone?: string;
+          pickup_end?: string;
+          pickup_start?: string;
+          postal_code?: string;
+          sender_contact?: string | null;
+          sender_name?: string;
+          shipping_vat_bps?: number;
+          updated_at?: string;
+          updated_by?: string | null;
         };
         Relationships: [];
       };
@@ -1648,6 +2012,42 @@ export type Database = {
         Returns: number;
       };
       admin_cancel_invite: { Args: { p_email: string }; Returns: undefined };
+      admin_cancel_shipment: {
+        Args: { p_shipment_id: string };
+        Returns: {
+          cancelled_at: string | null;
+          carrier_code: string;
+          carrier_name: string;
+          created_at: string;
+          created_by: string | null;
+          delivered_at: string | null;
+          dropoff_point: Json | null;
+          external_reference: string | null;
+          handover: string | null;
+          handover_at: string | null;
+          id: string;
+          order_id: string;
+          parcels: number;
+          pickup_id: string | null;
+          provider: string;
+          provider_parcel_id: string | null;
+          provider_shipment_id: string | null;
+          service_id: string | null;
+          service_name: string;
+          status: string;
+          status_at: string | null;
+          status_message: string | null;
+          tracking_number: string | null;
+          tracking_url: string | null;
+          weight_g: number;
+        };
+        SetofOptions: {
+          from: '*';
+          to: 'shipments';
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
       admin_control_assistant_usage: {
         Args: { p_from: string; p_to: string };
         Returns: {
@@ -2068,6 +2468,45 @@ export type Database = {
         };
         Returns: number;
       };
+      admin_record_dropoff: {
+        Args: { p_point?: Json; p_shipment_id: string };
+        Returns: {
+          channel: string;
+          created_at: string;
+          currency: string;
+          customer_id: string | null;
+          discount_cents: number;
+          discount_code: string | null;
+          discount_code_id: string | null;
+          fulfillment: string;
+          id: string;
+          items_cents: number;
+          locale: string;
+          location_id: string;
+          number: number;
+          paid_at: string | null;
+          received_transaction_id: string | null;
+          request_id: string;
+          reservation: string;
+          reserved_until: string;
+          revision: number;
+          shipping_cents: number;
+          shipping_service_id: string | null;
+          shipping_service_label: string | null;
+          shipping_weight_g: number | null;
+          shipping_zone: string | null;
+          status: string;
+          total_cents: number;
+          tracking_reference: string | null;
+          updated_at: string;
+        };
+        SetofOptions: {
+          from: '*';
+          to: 'orders';
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
       admin_record_inventory_movement: {
         Args: {
           p_location_id: string;
@@ -2095,6 +2534,66 @@ export type Database = {
         SetofOptions: {
           from: '*';
           to: 'inventory_movements';
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
+      admin_record_pickup: {
+        Args: { p_pickup: Json; p_shipment_ids: string[] };
+        Returns: {
+          carrier_code: string;
+          carrier_name: string;
+          created_at: string;
+          created_by: string | null;
+          id: string;
+          note: string | null;
+          parcels: number;
+          provider: string;
+          provider_pickup_id: string | null;
+          status: string;
+          total_weight_g: number;
+          window_end: string;
+          window_start: string;
+        };
+        SetofOptions: {
+          from: '*';
+          to: 'shipment_pickups';
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
+      admin_record_shipment: {
+        Args: { p_order_id: string; p_shipment: Json };
+        Returns: {
+          cancelled_at: string | null;
+          carrier_code: string;
+          carrier_name: string;
+          created_at: string;
+          created_by: string | null;
+          delivered_at: string | null;
+          dropoff_point: Json | null;
+          external_reference: string | null;
+          handover: string | null;
+          handover_at: string | null;
+          id: string;
+          order_id: string;
+          parcels: number;
+          pickup_id: string | null;
+          provider: string;
+          provider_parcel_id: string | null;
+          provider_shipment_id: string | null;
+          service_id: string | null;
+          service_name: string;
+          status: string;
+          status_at: string | null;
+          status_message: string | null;
+          tracking_number: string | null;
+          tracking_url: string | null;
+          weight_g: number;
+        };
+        SetofOptions: {
+          from: '*';
+          to: 'shipments';
           isOneToOne: true;
           isSetofReturn: false;
         };
@@ -2185,6 +2684,10 @@ export type Database = {
           reserved_until: string;
           revision: number;
           shipping_cents: number;
+          shipping_service_id: string | null;
+          shipping_service_label: string | null;
+          shipping_weight_g: number | null;
+          shipping_zone: string | null;
           status: string;
           total_cents: number;
           tracking_reference: string | null;
@@ -2378,17 +2881,80 @@ export type Database = {
           isSetofReturn: false;
         };
       };
-      admin_save_shipping_rate: {
-        Args: {
-          p_active: boolean;
-          p_free_from_cents: number;
-          p_price_cents: number;
-          p_zone: string;
+      admin_save_shipping_service: {
+        Args: { p_id: string; p_service: Json };
+        Returns: {
+          active: boolean;
+          carrier_code: string;
+          carrier_name: string;
+          code: string;
+          contract_id: number | null;
+          created_at: string;
+          dangerous_goods: boolean | null;
+          first_mile: string | null;
+          free_eligible: boolean;
+          id: string;
+          name: string;
+          pickup_phone: string | null;
+          position: number;
+          provider: string;
+          surcharge_cents: number;
+          synced_at: string | null;
+          tracking_url_template: string | null;
+          transit_days: number | null;
+          updated_at: string;
+          updated_by: string | null;
+          zones: string[];
         };
+        SetofOptions: {
+          from: '*';
+          to: 'shipping_services';
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
+      admin_save_shipping_service_rates: {
+        Args: { p_rates: Json; p_service_id: string; p_zone: string };
+        Returns: number;
+      };
+      admin_save_shipping_settings: {
+        Args: { p_settings: Json };
+        Returns: {
+          address_line1: string;
+          address_line2: string | null;
+          city: string;
+          country: string;
+          email: string;
+          house_number: string | null;
+          id: boolean;
+          max_weight_g: number;
+          packaging_weight_g: number;
+          parcel_height_cm: number | null;
+          parcel_length_cm: number | null;
+          parcel_width_cm: number | null;
+          phone: string;
+          pickup_end: string;
+          pickup_start: string;
+          postal_code: string;
+          sender_contact: string | null;
+          sender_name: string;
+          shipping_vat_bps: number;
+          updated_at: string;
+          updated_by: string | null;
+        };
+        SetofOptions: {
+          from: '*';
+          to: 'shipping_settings';
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
+      admin_save_shipping_zone: {
+        Args: { p_active: boolean; p_free_from_cents: number; p_zone: string };
         Returns: {
           active: boolean;
           free_from_cents: number | null;
-          price_cents: number;
+          price_cents: number | null;
           updated_at: string;
           updated_by: string | null;
           zone: string;
@@ -2424,6 +2990,7 @@ export type Database = {
         };
         Returns: undefined;
       };
+      admin_save_variant_weights: { Args: { p_items: Json }; Returns: number };
       admin_set_conversation_status: {
         Args: {
           p_conversation_id: string;
@@ -2484,6 +3051,23 @@ export type Database = {
         };
         Returns: undefined;
       };
+      admin_shipment_costs: {
+        Args: { p_order_id: string };
+        Returns: {
+          cost_cents: number;
+          recorded_at: string;
+          shipment_id: string;
+          source: string;
+        }[];
+      };
+      admin_shipping_services: {
+        Args: Record<PropertyKey, never>;
+        Returns: Json;
+      };
+      admin_shipping_sync: {
+        Args: { p_provider: string; p_services: Json };
+        Returns: Json;
+      };
       admin_stock_watch_facts: {
         Args: { p_location_id: string };
         Returns: {
@@ -2541,6 +3125,10 @@ export type Database = {
           reserved_until: string;
           revision: number;
           shipping_cents: number;
+          shipping_service_id: string | null;
+          shipping_service_label: string | null;
+          shipping_weight_g: number | null;
+          shipping_zone: string | null;
           status: string;
           total_cents: number;
           tracking_reference: string | null;
@@ -2685,6 +3273,7 @@ export type Database = {
           p_location_id: string;
           p_provider: string;
           p_request_id: string;
+          p_shipping_service_id?: string;
         };
         Returns: Json;
       };
@@ -2740,6 +3329,20 @@ export type Database = {
         Returns: number;
       };
       web_order_status: { Args: { p_order_id: string }; Returns: Json };
+      web_shipment_event: {
+        Args: {
+          p_at: string;
+          p_message: string;
+          p_parcel_id: string;
+          p_provider: string;
+          p_provider_status_id: number;
+          p_status: string;
+          p_tracking_number?: string;
+          p_tracking_url?: string;
+        };
+        Returns: Json;
+      };
+      web_shipping_quote: { Args: { p_items: Json }; Returns: Json };
     };
     Enums: {
       [_ in never]: never;

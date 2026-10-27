@@ -49,6 +49,12 @@ const SECTIONS: (NavItem & { permission?: Permission })[] = [
     group: 'Web',
   },
   {
+    href: '/admin/envios',
+    label: 'Envíos',
+    permission: 'orders.view',
+    group: 'Web',
+  },
+  {
     href: '/admin/mensajes',
     label: 'Mensajes',
     permission: 'messages.view',

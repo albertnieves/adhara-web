@@ -16,10 +16,13 @@ export function OrderActions({
   orderId,
   revision,
   actions,
+  defaultTracking = '',
 }: {
   orderId: string;
   revision: number;
   actions: PanelTransition[];
+  /** Seguimiento de la etiqueta del pedido, si la hay. */
+  defaultTracking?: string;
 }) {
   const [state, dispatch, pending] = useActionState(changeWebOrderStatus, IDLE);
   const [confirm, confirmDialog] = useConfirm();
@@ -46,7 +49,12 @@ export function OrderActions({
           hint="Opcional: el de la empresa de transporte."
           className="max-w-sm"
         >
-          <Input name="tracking" maxLength={120} autoComplete="off" />
+          <Input
+            name="tracking"
+            maxLength={120}
+            autoComplete="off"
+            defaultValue={defaultTracking}
+          />
         </Field>
       )}
       <div className="flex flex-wrap items-center gap-3">

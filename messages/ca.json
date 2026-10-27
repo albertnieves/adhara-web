@@ -274,7 +274,7 @@
     "pickup": "Recollida a la botiga",
     "pickupHint": "Gratuïta, a {address}, {city}. T’avisarem quan estigui a punt.",
     "shipping": "Enviament a domicili",
-    "shippingHint": "A la península i a les Balears.",
+    "shippingHint": "A la península i a les Balears, amb el transportista que triïs.",
     "shippingSoon": "L’enviament a domicili estarà disponible aviat.",
     "address": "Adreça d’enviament",
     "addressLine1": "Carrer i número",
@@ -341,10 +341,19 @@
       "disabled": "La compra en línia encara no està disponible.",
       "busy": "Massa intents seguits des d’aquesta connexió. Espera uns minuts i torna-ho a provar.",
       "generic": "No hem pogut registrar la comanda. Torna-ho a provar d’aquí a uns minuts.",
-      "review": "Revisa les dades marcades."
+      "review": "Revisa les dades marcades.",
+      "shippingServiceRequired": "Tria un transportista per a l’enviament.",
+      "shippingServiceUnavailable": "Aquest transportista ja no està disponible per a aquesta comanda. Tria’n un altre.",
+      "shippingWeightUnknown": "Algun perfum de la cistella encara no es pot enviar. Pots recollir-lo a la botiga."
     },
     "accountSignedIn": "Compres amb el teu compte ({email}). La comanda quedarà a «Les meves comandes».",
-    "accountSignIn": "Tens compte? <link>Entra</link> per fer servir les teves dades desades i veure després la comanda al teu compte."
+    "accountSignIn": "Tens compte? <link>Entra</link> per fer servir les teves dades desades i veure després la comanda al teu compte.",
+    "carrier": "Transportista",
+    "carrierHint": "El preu depèn del pes de la comanda i del transportista.",
+    "carrierPostalFirst": "Escriu el codi postal per veure els transportistes i els preus.",
+    "transitDays": "{days, plural, one {Lliurament en # dia laborable} other {Lliurament en # dies laborables}}",
+    "carrierFree": "Gratis amb aquesta comanda",
+    "shippingWeightMissing": "Algun perfum de la cistella encara no es pot enviar. Pots recollir-lo a la botiga."
   },
   "order": {
     "title": "La teva comanda",
@@ -377,6 +386,20 @@
     "retryErrors": {
       "expired": "La reserva ha caducat: fes la comanda una altra vegada.",
       "generic": "No hem pogut connectar amb el banc. Torna-ho a provar d’aquí a uns minuts."
+    },
+    "shipmentTitle": "Seguiment de l’enviament",
+    "shipmentCarrier": "El porta {carrier}.",
+    "shipmentTracking": "Número de seguiment: {tracking}",
+    "shipmentLink": "Veure el seguiment",
+    "shipmentStatus": {
+      "label_created": "Preparant l’enviament",
+      "in_transit": "En camí",
+      "out_for_delivery": "En repartiment",
+      "at_pickup_point": "T’espera en un punt de recollida",
+      "delivered": "Lliurat",
+      "exception": "Incidència en el lliurament: el transportista es posarà en contacte amb tu",
+      "returned": "Retornat a la botiga",
+      "cancelled": "Preparant l’enviament"
     }
   },
   "email": {
@@ -403,7 +426,9 @@
     "seller": "Venedor: {holder}, NIF {taxId}, {address}.",
     "contact": "Dubtes? Respon aquest correu o escriu-nos a {email}.",
     "attachment": "condicions-de-venda.txt",
-    "signature": "L’Atelier du Désert · Perfumeria àrab a Castelldefels"
+    "signature": "L’Atelier du Désert · Perfumeria àrab a Castelldefels",
+    "carrier": "El porta {carrier}.",
+    "trackingLink": "Seguiment: {url}"
   },
   "contact": {
     "title": "Contacte",
@@ -542,7 +567,9 @@
       "total": "Total",
       "refunded": "Retornat",
       "vat": "IVA inclòs",
-      "help": "Dubtes amb aquesta comanda? Escriu-nos a {email} amb el número de comanda."
+      "help": "Dubtes amb aquesta comanda? Escriu-nos a {email} amb el número de comanda.",
+      "carrier": "Transportista: {carrier}",
+      "trackingLink": "Veure el seguiment"
     },
     "status": {
       "awaitingPayment": "Pendent de pagament",

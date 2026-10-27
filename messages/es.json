@@ -274,7 +274,7 @@
     "pickup": "Recogida en la tienda",
     "pickupHint": "Gratis, en {address}, {city}. Te avisaremos cuando esté listo.",
     "shipping": "Envío a domicilio",
-    "shippingHint": "A la península y a Baleares.",
+    "shippingHint": "A la península y a Baleares, con el transportista que elijas.",
     "shippingSoon": "El envío a domicilio estará disponible pronto.",
     "address": "Dirección de envío",
     "addressLine1": "Calle y número",
@@ -341,10 +341,19 @@
       "disabled": "La compra online aún no está disponible.",
       "busy": "Demasiados intentos seguidos desde esta conexión. Espera unos minutos y vuelve a probar.",
       "generic": "No hemos podido registrar el pedido. Inténtalo de nuevo en unos minutos.",
-      "review": "Revisa los datos marcados."
+      "review": "Revisa los datos marcados.",
+      "shippingServiceRequired": "Elige un transportista para el envío.",
+      "shippingServiceUnavailable": "Ese transportista ya no está disponible para este pedido. Elige otro.",
+      "shippingWeightUnknown": "Algún perfume de la cesta aún no se puede enviar. Puedes recogerlo en la tienda."
     },
     "accountSignedIn": "Compras con tu cuenta ({email}). El pedido quedará en «Mis pedidos».",
-    "accountSignIn": "¿Tienes cuenta? <link>Entra</link> para usar tus datos guardados y ver luego el pedido en tu cuenta."
+    "accountSignIn": "¿Tienes cuenta? <link>Entra</link> para usar tus datos guardados y ver luego el pedido en tu cuenta.",
+    "carrier": "Transportista",
+    "carrierHint": "El precio depende del peso del pedido y del transportista.",
+    "carrierPostalFirst": "Escribe el código postal para ver los transportistas y sus precios.",
+    "transitDays": "{days, plural, one {Entrega en # día laborable} other {Entrega en # días laborables}}",
+    "carrierFree": "Gratis con este pedido",
+    "shippingWeightMissing": "Algún perfume de la cesta aún no se puede enviar. Puedes recogerlo en la tienda."
   },
   "order": {
     "title": "Tu pedido",
@@ -377,6 +386,20 @@
     "retryErrors": {
       "expired": "La reserva ha caducado: haz el pedido otra vez.",
       "generic": "No hemos podido conectar con el banco. Inténtalo de nuevo en unos minutos."
+    },
+    "shipmentTitle": "Seguimiento del envío",
+    "shipmentCarrier": "Lo lleva {carrier}.",
+    "shipmentTracking": "Número de seguimiento: {tracking}",
+    "shipmentLink": "Ver el seguimiento",
+    "shipmentStatus": {
+      "label_created": "Preparando el envío",
+      "in_transit": "En camino",
+      "out_for_delivery": "En reparto",
+      "at_pickup_point": "Esperándote en un punto de recogida",
+      "delivered": "Entregado",
+      "exception": "Incidencia en la entrega: el transportista te contactará",
+      "returned": "Devuelto a la tienda",
+      "cancelled": "Preparando el envío"
     }
   },
   "email": {
@@ -403,7 +426,9 @@
     "seller": "Vendedor: {holder}, NIF {taxId}, {address}.",
     "contact": "¿Dudas? Responde a este correo o escríbenos a {email}.",
     "attachment": "condiciones-de-venta.txt",
-    "signature": "L’Atelier du Désert · Perfumería árabe en Castelldefels"
+    "signature": "L’Atelier du Désert · Perfumería árabe en Castelldefels",
+    "carrier": "Lo lleva {carrier}.",
+    "trackingLink": "Seguimiento: {url}"
   },
   "contact": {
     "title": "Contacto",
@@ -542,7 +567,9 @@
       "total": "Total",
       "refunded": "Devuelto",
       "vat": "IVA incluido",
-      "help": "¿Dudas con este pedido? Escríbenos a {email} con el número de pedido."
+      "help": "¿Dudas con este pedido? Escríbenos a {email} con el número de pedido.",
+      "carrier": "Transportista: {carrier}",
+      "trackingLink": "Ver el seguimiento"
     },
     "status": {
       "awaitingPayment": "Pendiente de pago",

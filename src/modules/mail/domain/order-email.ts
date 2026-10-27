@@ -29,6 +29,9 @@ export type OrderEmailJob = {
   shipping_cents: number;
   total_cents: number;
   tracking_reference: string | null;
+  /** Transportista y enlace de seguimiento de la etiqueta (§175). */
+  carrier_name?: string | null;
+  tracking_url?: string | null;
   /** Lo da la cola, pero el correo no lo usa (DECISIONS §168). */
   full_name: string;
   email: string;
@@ -129,8 +132,12 @@ export function renderOrderEmail(
     intro.push(t('readyBring'));
   } else {
     intro.push(t('shippedLead', { number, address }));
+    if (job.carrier_name)
+      intro.push(t('carrier', { carrier: job.carrier_name }));
     if (job.tracking_reference)
       intro.push(t('tracking', { tracking: job.tracking_reference }));
+    if (job.tracking_url?.startsWith('https://'))
+      intro.push(t('trackingLink', { url: job.tracking_url }));
   }
 
   const rows: [string, string][] = [

@@ -67,6 +67,9 @@ export type AccountOrder = {
   createdAt: string;
   paidAt: string | null;
   trackingReference: string | null;
+  /** Transportista y enlace de seguimiento de la etiqueta (§175). */
+  carrierName: string | null;
+  trackingUrl: string | null;
   contact: { fullName: string; email: string; phone: string | null };
   address: {
     addressLine1: string | null;

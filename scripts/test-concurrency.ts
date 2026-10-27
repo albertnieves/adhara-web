@@ -511,6 +511,83 @@ if (refundState === 'requested/-') {
   );
 }
 assert.equal(await level(refundUnit), '1/1');
+// Envíos (DECISIONS §171–176): dos etiquetas a la vez para el mismo pedido y
+// el mismo aviso de «entregado» dos veces a la vez.
+const shipUnit = randomUUID(),
+  shipService = randomUUID();
+const shipSetup = await query(
+  `insert into public.product_variants(id,product_id,size_ml,retail_price_cents,shipping_weight_g) values('${shipUnit}','${shopProduct}',30,2000,300); insert into public.inventory_levels(variant_id,location_id,on_hand) values('${shipUnit}','${location}',2);
+insert into public.shipping_settings(sender_name,address_line1,postal_code,city,phone,email,packaging_weight_g) values('Prueba','Carrer 1','08860','Castelldefels','600000000','envios@test.invalid',100) on conflict (id) do nothing;
+insert into public.shipping_rates(zone,price_cents,free_from_cents,active) values('peninsula',null,null,true) on conflict (zone) do update set active=true;
+insert into public.shipping_services(id,provider,code,carrier_code,carrier_name,name,zones,active) values('${shipService}','manual','concurrency','prueba','Prueba','Estándar','{peninsula}',true);
+insert into internal.shipping_service_rates(service_id,zone,min_weight_g,max_weight_g,cost_cents) values('${shipService}','peninsula',1,30000,400);`,
+);
+assert.equal(shipSetup.code, 0, shipSetup.text);
+const shipped = await query(
+  server(
+    `select public.web_order_create('${randomUUID()}','es','shipping','${location}','[{"variant_id":"${shipUnit}","quantity":1}]'::jsonb,'{"full_name":"Prueba","email":"envio@test.invalid","phone":"600000000","address_line1":"Carrer 1","postal_code":"28001","city":"Madrid"}'::jsonb,'redsys',30,null,null,'${shipService}')`,
+  ),
+);
+assert.equal(shipped.code, 0, shipped.text);
+const shipRef = await reference(shipUnit);
+const shipPaid = await query(
+  server(
+    `select public.web_order_record_payment('redsys','${shipRef}','tx-ship','succeeded',2000+ceil(400*1.21)::int,'EUR')`,
+  ),
+);
+assert.equal(shipPaid.code, 0, shipPaid.text);
+const shipOrder = (
+  await query(
+    `select o.id from public.orders o join public.order_lines l on l.order_id=o.id where l.variant_id='${shipUnit}'`,
+  )
+).text.trim();
+const labelRace = await Promise.all(
+  ['9101', '9102'].map((parcel) =>
+    query(
+      as(
+        replier,
+        `select public.admin_record_shipment('${shipOrder}','{"provider":"sendcloud","service_id":"${shipService}","provider_parcel_id":"${parcel}","tracking_number":"T${parcel}","weight_g":400}'); select pg_sleep(0.2)`,
+      ),
+    ),
+  ),
+);
+assert.equal(
+  labelRace.filter((x) => x.code === 0).length,
+  1,
+  JSON.stringify(labelRace),
+);
+assert.ok(
+  labelRace.some((x) => x.text.includes('shipment_exists')),
+  JSON.stringify(labelRace),
+);
+const parcel = (
+  await query(
+    `select provider_parcel_id from public.shipments where order_id='${shipOrder}' and status<>'cancelled'`,
+  )
+).text.trim();
+const deliveredRace = await Promise.all(
+  [0, 1].map(() =>
+    query(
+      server(
+        `select public.web_shipment_event('sendcloud','${parcel}','delivered',11,'Delivered','2026-10-28T12:00:00Z'); select pg_sleep(0.2)`,
+      ),
+    ),
+  ),
+);
+assert.ok(
+  deliveredRace.every((x) => x.code === 0),
+  JSON.stringify(deliveredRace),
+);
+assert.equal(
+  (
+    await query(
+      `select o.status || '/' || o.reservation || '/' || (select count(*) from public.shipment_events e join public.shipments s on s.id=e.shipment_id where s.order_id=o.id and e.source='sendcloud') from public.orders o where o.id='${shipOrder}'`,
+    )
+  ).text.trim(),
+  'completed/consumed/1',
+);
+// Una sola salida del stock: quedan 1 en mano y nada reservado.
+assert.equal(await level(shipUnit), '1/0');
 console.log(
-  `Concurrencia real correcta: precio, imagen, recepción, último administrador, pedidos web, códigos de descuento, mensajes, liberación de reservas (${releaseState}) y devoluciones atascadas (${refundState}). Fixtures permanecen solo en el contenedor local hasta db reset.`,
+  `Concurrencia real correcta: precio, imagen, recepción, último administrador, pedidos web, códigos de descuento, mensajes, liberación de reservas (${releaseState}), devoluciones atascadas (${refundState}) y envíos (una etiqueta por pedido y un solo «entregado»). Fixtures permanecen solo en el contenedor local hasta db reset.`,
 );

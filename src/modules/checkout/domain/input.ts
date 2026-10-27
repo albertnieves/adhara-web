@@ -23,6 +23,9 @@ export const CHECKOUT_ERRORS = [
   'cartChanged',
   'outOfStock',
   'shippingUnavailable',
+  'shippingServiceRequired',
+  'shippingServiceUnavailable',
+  'shippingWeightUnknown',
   'unavailable',
   'discount',
   'disabled',
@@ -53,6 +56,13 @@ export const checkoutInput = z
     postalCode: text(5),
     city: text(120),
     province: text(120),
+    // Servicio de envío elegido (§172); la base comprueba que lleva este peso.
+    shippingServiceId: z
+      .string()
+      .trim()
+      .optional()
+      .transform((value) => value || null)
+      .pipe(z.uuid('shippingServiceRequired').nullable()),
     acceptTerms: z.literal('on', { message: 'termsRequired' }),
     // Código ya aplicado en el resumen; la base lo vuelve a comprobar todo.
     discountCode: z
@@ -81,6 +91,8 @@ export const checkoutInput = z
       issue('postalCode', 'postalCodeInvalid');
     else if (!shippingZone(input.postalCode))
       issue('postalCode', 'zoneUnavailable');
+    else if (!input.shippingServiceId)
+      issue('shippingServiceId', 'shippingServiceRequired');
   });
 export type CheckoutInput = z.infer<typeof checkoutInput>;
 
