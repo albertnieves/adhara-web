@@ -53,17 +53,27 @@ Web → Pedidos web (con `orders.view`). **La tienda aún no vende online**: la 
 
 ### Envíos y transportistas
 
-El cliente elige transportista al pagar y paga el envío según el peso del pedido (DECISIONS §171–176; plan en [PLAN_ENVIOS.md](PLAN_ENVIOS.md)). La recogida en la tienda sigue siendo gratis. Canarias, Ceuta y Melilla no tienen envío (IGIC y aduana).
+El cliente elige transportista al pagar y paga el envío según el peso del pedido (DECISIONS §171–177; plan en [PLAN_ENVIOS.md](PLAN_ENVIOS.md)). La recogida en la tienda sigue siendo gratis. Canarias, Ceuta y Melilla no tienen envío (IGIC y aduana).
 
-**Configuración → Envíos** (administrador del sistema, `settings.manage` con MFA):
+Todo lo de los envíos está en **Web → Envíos**, con cuatro pestañas (cada una sale solo a quien tiene su permiso): **Seguimiento** (`orders.view`), **Transportistas y tarifas** y **Remitente y zonas** (`settings.manage`) y **Pesos de los formatos** (`catalog.edit`). Las direcciones antiguas (Configuración → Envíos y Catálogo → Pesos de envío) llevan a su pestaña. La etiqueta, el punto de entrega y la cancelación se hacen en la ficha de cada pedido, porque llevan la dirección del cliente.
+
+**Envíos → Seguimiento** (`orders.view`; pedir recogidas, `orders.fulfill`), el trabajo del día:
+
+- **Contadores** de cada etapa, en el orden del paquete: Sin etiqueta → Por entregar → Esperando (recogida pedida o dejado en un punto, hasta el primer escaneo) → De camino → Entregados (30 días), con Incidencias aparte. Pulsar uno enseña solo esa etapa.
+- **Por hacer** (lo que se ve al entrar): incidencias, lo que el transportista no ha escaneado a tiempo (la recogida era otro día o el paquete lleva 2 días en el punto), pedidos pagados sin etiqueta y etiquetas por entregar. Si no hay nada, lo dice.
+- **Cada fila dice qué hacer** («Pide la recogida o llévalo a un punto», «Recogida el jueves…», «Revisa el seguimiento…») y se marca en color lo que espera desde hace 2 días o más. «Nº …» abre la ficha del pedido directamente en su bloque «Envío».
+- **Por entregar** va en una tarjeta por transportista con sus paquetes y el peso total; «Pedir la recogida de N paquetes» abre la recogida para todos a la vez.
+- **Buscar** por número de pedido (exacto, también «Nº 1042» o «#1042») o parte del número de seguimiento, mientras se escribe; **Transportista** filtra por el de la etiqueta o, sin etiqueta, el que eligió el cliente. Los contadores cuentan con la búsqueda; «Ver todas las etapas» enseña todo junto.
+
+**Envíos → Transportistas y tarifas** y **Envíos → Remitente y zonas** (administrador del sistema, `settings.manage` con MFA):
 
 - **Plataforma multitransportista (Sendcloud):** con sus claves en Vercel, «Actualizar tarifas desde Sendcloud» trae los servicios de la cuenta con su **coste real** por tramo de peso, cotizado desde la tienda hasta Madrid, Sevilla y A Coruña (península) y Palma, Maó y Eivissa (Baleares), quedándose con el más alto. Los nuevos entran **apagados**. Los que entregan en un punto o una taquilla no se traen (la tienda vende entrega a domicilio). Repítelo cuando cambien las tarifas: los que la plataforma ya no ofrece se apagan. «Abrir el portal de Sendcloud» lleva a su web, para crear a mano un envío que no viene de la tienda online (por ejemplo, un paquete de 1 kg para un cliente de la tienda física) y ver etiquetas y facturas. Si Sendcloud rechaza una petición, el aviso dice su código: 401, las claves; 403, un permiso o el plan de la cuenta.
 - **Remitente, embalaje y recogidas:** la dirección de la tienda para las etiquetas y las recogidas (con el código postal), el peso de la caja y el relleno (se suma a los perfumes), el peso máximo con envío, las medidas de la caja habitual (opcionales), la franja habitual de recogida y el IVA que se suma al coste (21 % por defecto). Sin estos datos no hay envío.
 - **Zonas:** «Ofrecer el envío» y desde cuánto es gratis (vacío: nunca). El envío gratis solo se aplica en los servicios que cuentan para él.
 - **Servicios:** cada uno con lo que ve el cliente (nombre, plazo en días laborables), un recargo opcional con IVA, las zonas, si cuenta para el envío gratis, el teléfono de recogidas (para los transportistas que no las admiten por la plataforma) y «Ofrecer este servicio en la tienda». **Para encenderlo o apagarlo basta el botón «Encender» / «Apagar» de su fila en la lista**; el aviso dice si aún falta «Ofrecer el envío» en su zona. En su ficha (pulsando el nombre) están los tramos: peso, coste sin IVA y precio al cliente, y se cambian el nombre, el plazo, el recargo y las zonas. **Antes de activar uno, confirma con el transportista que acepta perfumes** (llevan alcohol: mercancía peligrosa UN1266, clase 3) y en qué servicios; a Baleares, mejor uno que vaya por barco.
-- **Servicio manual:** para un contrato propio sin API (o mientras llega la plataforma). Se escriben los tramos («hasta» tantos gramos y su coste sin IVA) y el enlace de seguimiento con `{tracking}`; la etiqueta se hace en la web del transportista.
+- **Servicio manual** («Añadir un servicio manual», al final de Transportistas y tarifas): para un contrato propio sin API (o mientras llega la plataforma). Se escriben los tramos («hasta» tantos gramos y su coste sin IVA) y el enlace de seguimiento con `{tracking}`; la etiqueta se hace en la web del transportista.
 
-**Catálogo → Pesos de envío** (`catalog.edit`): los gramos de cada formato con su caja, pesados en la tienda. Un formato sin peso no se puede enviar (la cesta solo se recoge en la tienda). «Rellenar los vacíos por tamaño» copia el peso de un frasco de cada tamaño a los formatos sin peso; revisa los de frasco o caja distintos antes de guardar.
+**Envíos → Pesos de los formatos** (`catalog.edit`): los gramos de cada formato con su caja, pesados en la tienda. Un formato sin peso no se puede enviar (la cesta solo se recoge en la tienda). «Rellenar los vacíos por tamaño» copia el peso de un frasco de cada tamaño a los formatos sin peso; revisa los de frasco o caja distintos antes de guardar.
 
 **En la ficha del pedido**, bloque «Envío» (`orders.fulfill`; la etiqueta lleva la dirección, así que también `customers.view`):
 
@@ -71,11 +81,9 @@ El cliente elige transportista al pagar y paga el envío según el peso del pedi
 2. **«Ver tarifas reales»:** lo que cobra ahora la plataforma por este paquete a esta dirección, con todos los servicios: coste sin IVA, con IVA y la diferencia con lo cobrado (con `pricing.view_cost`). Cambia el peso si el paquete pesa distinto.
 3. **«Crear etiqueta»** en la fila del servicio (normalmente el que eligió el cliente): la compra en la plataforma al momento, guarda su coste y el pedido pasa a «Preparando». Después, **«Descargar etiqueta»** en A6 (impresora de etiquetas) o A4. Si te equivocas, **«Cancelar la etiqueta»** antes de que la recojan. Con un servicio manual, «Apuntar envío» con el número de seguimiento.
 4. **Entregarlo al transportista:**
-   - **Recogida en la tienda:** día y franja. «Pedirla por la plataforma» si el transportista la admite (Correos, Correos Express, DHL Parcel Iberia, UPS, FedEx; mejor con dos días laborables de margen). Si no (SEUR, GLS…), llama al teléfono de recogidas del servicio y apúntala con «La he pedido por teléfono o en su web». En **Web → Envíos** se pide una sola recogida para todas las etiquetas pendientes del mismo transportista.
+   - **Recogida en la tienda:** día y franja. «Pedirla por la plataforma» si el transportista la admite (Correos, Correos Express, DHL Parcel Iberia, UPS, FedEx; mejor con dos días laborables de margen). Si no (SEUR, GLS…), llama al teléfono de recogidas del servicio y apúntala con «La he pedido por teléfono o en su web». En **Envíos → Seguimiento** se pide una sola recogida para todas las etiquetas pendientes del mismo transportista.
    - **Punto de entrega:** «Buscar puntos cerca de la tienda» lista los del transportista a menos de 5 km con su horario de hoy. Al dejarlo, «Lo he dejado en el punto»: el pedido pasa a «Enviado» y el cliente recibe el correo con el seguimiento.
-5. **Seguimiento automático:** con el aviso de la plataforma configurado, cuando el transportista escanea el paquete el pedido pasa solo a «Enviado» (con el correo y el enlace de seguimiento) y, al entregarlo, a «Completado». Las incidencias (ausente, dirección, devuelto) salen en la cronología y en Web → Envíos. «Marcar enviado» sigue disponible a mano, con el seguimiento de la etiqueta ya puesto.
-
-**Web → Envíos** (`orders.view`): pagados sin etiqueta, etiquetas por entregar (con la recogida por transportista), recogidas pedidas, de camino, incidencias y entregados en 30 días.
+5. **Seguimiento automático:** con el aviso de la plataforma configurado, cuando el transportista escanea el paquete el pedido pasa solo a «Enviado» (con el correo y el enlace de seguimiento) y, al entregarlo, a «Completado». Las incidencias (ausente, dirección, devuelto) salen en la cronología y en Envíos → Seguimiento. «Marcar enviado» sigue disponible a mano, con el seguimiento de la etiqueta ya puesto.
 
 ## Mensajes
 

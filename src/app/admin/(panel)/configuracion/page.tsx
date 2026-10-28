@@ -10,10 +10,10 @@ export default async function SettingsPage() {
     <main>
       <PageHeader eyebrow="Configuración" title="Datos de la tienda">
         <Link
-          href="/admin/configuracion/envios"
+          href="/admin/envios/transportistas"
           className={buttonClass('outline', 'lg')}
         >
-          Tarifas de envío
+          Envíos y transportistas
         </Link>
         <form action={enterStorefrontPreview}>
           <button className={buttonClass('outline', 'lg')}>

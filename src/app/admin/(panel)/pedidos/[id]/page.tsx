@@ -70,16 +70,28 @@ const LOCALES: Record<string, string> = {
 
 function Section({
   title,
+  id,
+  action,
   children,
   className = '',
 }: {
   title: string;
+  /** Ancla para llegar desde otra página (#envio desde Envíos). */
+  id?: string;
+  /** Enlace a la derecha del título. */
+  action?: ReactNode;
   children: ReactNode;
   className?: string;
 }) {
   return (
-    <section className={`border-border border-t py-10 ${className}`}>
-      <h2 className="mb-6 text-2xl font-light">{title}</h2>
+    <section
+      id={id}
+      className={`border-border scroll-mt-6 border-t py-10 ${className}`}
+    >
+      <div className="mb-6 flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2">
+        <h2 className="text-2xl font-light">{title}</h2>
+        {action}
+      </div>
       {children}
     </section>
   );
@@ -134,6 +146,7 @@ export default async function WebOrderPage({
   const shippingOrder = order.fulfillment === 'shipping';
   const canFulfill = isAllowed(session, 'orders.fulfill');
   const canCosts = isAllowed(session, 'pricing.view_cost');
+  const canSettings = isAllowed(session, 'settings.manage');
   const [shipments, shippingSettings, services] = shippingOrder
     ? await Promise.all([
         getOrderShipments(staff.supabase, id, { withCosts: canCosts }),
@@ -416,7 +429,19 @@ export default async function WebOrderPage({
       </Section>
 
       {shippingOrder && (
-        <Section title="Envío" className="print:hidden">
+        <Section
+          title="Envío"
+          id="envio"
+          className="print:hidden"
+          action={
+            <Link
+              href="/admin/envios"
+              className="link-underline text-fg-muted inline-flex min-h-11 items-center text-sm"
+            >
+              Todos los envíos →
+            </Link>
+          }
+        >
           <dl className="mb-8 grid gap-4 text-sm sm:grid-cols-2 xl:grid-cols-4">
             <div>
               <Eyebrow as="dt">Elegido por el cliente</Eyebrow>
@@ -567,8 +592,15 @@ export default async function WebOrderPage({
           )}
           {!shippingSettings && canFulfill && (
             <p className="text-warning mt-4 text-sm">
-              Faltan los ajustes de envío (remitente y franja de recogida) en
-              Configuración → Envíos.
+              Faltan los ajustes de envío (remitente y franja de recogida) en{' '}
+              {canSettings ? (
+                <Link href="/admin/envios/ajustes" className="link-underline">
+                  Envíos → Remitente y zonas
+                </Link>
+              ) : (
+                'Envíos → Remitente y zonas (administrador del sistema)'
+              )}
+              .
             </p>
           )}
 

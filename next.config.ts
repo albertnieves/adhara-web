@@ -20,6 +20,27 @@ const config: NextConfig = {
       },
     ],
   },
+  // Envíos en una sola sección del panel (DECISIONS §177): las direcciones
+  // anteriores siguen llevando a su página.
+  async redirects() {
+    return [
+      {
+        source: '/admin/configuracion/envios',
+        destination: '/admin/envios/transportistas',
+        permanent: false,
+      },
+      {
+        source: '/admin/configuracion/envios/:id',
+        destination: '/admin/envios/transportistas/:id',
+        permanent: false,
+      },
+      {
+        source: '/admin/catalogo/pesos',
+        destination: '/admin/envios/pesos',
+        permanent: false,
+      },
+    ];
+  },
   async headers() {
     return [
       {

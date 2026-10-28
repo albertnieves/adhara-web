@@ -2,7 +2,7 @@ import { formatEuros } from '@/lib/money';
 
 /*
  * Gastos de envío de los textos legales, a partir de las zonas activas de
- * Panel → Configuración → Envíos (DECISIONS §136, §168, §172). Desde §172 el
+ * Panel → Envíos (DECISIONS §136, §168, §172). Desde §172 el
  * precio depende del peso y del transportista que elige el cliente: el texto
  * lo dice y remite al importe que se ve antes de pagar. Sin ninguna zona
  * activa («Ofrecer el envío» apagado) no hay línea de gastos, y la de envío

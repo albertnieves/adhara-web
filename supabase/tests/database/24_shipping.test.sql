@@ -437,30 +437,32 @@ select throws_ok(
 select is(
   public.web_shipment_event('sendcloud', '404404', 'in_transit', 3, 'En camino', now()) ->> 'known',
   'false', 'un paquete que no es de la tienda se ignora');
+-- Las horas de los avisos van después de la de la etiqueta (now() de la
+-- transacción): con fechas fijas, la prueba caducaba al pasar esas fechas.
 select is(
   public.web_shipment_event('sendcloud', '9001', 'in_transit', 22,
-    'Shipment picked up by driver', '2026-10-27T10:00:00Z') ->> 'order_status',
+    'Shipment picked up by driver', now() + interval '1 hour') ->> 'order_status',
   'shipped', 'el transportista lo recoge: el pedido de SEUR pasa a «Enviado» solo');
 select is(
   public.web_shipment_event('sendcloud', '9001', 'in_transit', 22,
-    'Shipment picked up by driver', '2026-10-27T10:00:00Z') ->> 'recorded',
+    'Shipment picked up by driver', now() + interval '1 hour') ->> 'recorded',
   'false', 'el mismo aviso otra vez no se repite');
 select is(
   public.web_shipment_event('sendcloud', '9001', 'delivered', 11, 'Delivered',
-    '2026-10-28T12:00:00Z') ->> 'order_status',
+    now() + interval '3 hours') ->> 'order_status',
   'completed', 'entregado: el pedido se completa');
 select is(
   public.web_shipment_event('sendcloud', '9001', 'out_for_delivery', 92, 'Driver en route',
-    '2026-10-28T08:00:00Z') ->> 'status',
+    now() + interval '2 hours') ->> 'status',
   'delivered', 'un aviso atrasado no deshace el estado');
 select is(
-  (select array[(s.delivered_at = '2026-10-28T12:00:00Z')::text,
+  (select array[(s.delivered_at = now() + interval '3 hours')::text,
                 (select count(*)::text from public.shipment_events e where e.shipment_id = s.id)]
    from public.shipments s where s.provider_parcel_id = '9001'),
   array['true', '4'], 'se guarda la hora de entrega y los avisos (etiqueta + 3)');
 select is(
   public.web_shipment_event('sendcloud', '9002', 'exception', 80, 'Unable to deliver',
-    '2026-10-29T09:00:00Z') ->> 'order_status',
+    now() + interval '1 day') ->> 'order_status',
   'processing', 'una incidencia no cambia el pedido');
 select is(
   (select e.kind from public.order_events e join public.orders o on o.id = e.order_id

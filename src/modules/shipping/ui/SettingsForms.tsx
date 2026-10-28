@@ -21,7 +21,7 @@ import {
 } from '../server/actions';
 import { useShippingAction } from './useShippingAction';
 
-/* Panel → Configuración → Envíos (settings.manage). */
+/* Panel → Envíos → Transportistas y tarifas, Remitente y zonas (settings.manage). */
 
 export type SettingsFormValues = {
   senderName: string;

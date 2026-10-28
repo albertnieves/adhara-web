@@ -229,7 +229,7 @@ test('panel: el administrador del sistema ofrece el envío a Baleares', async ({
 }) => {
   await page.setViewportSize({ width: 1280, height: 900 });
   await login(page, await user('system_admin'));
-  await page.goto('/admin/configuracion/envios');
+  await page.goto('/admin/envios/ajustes');
   const baleares = page
     .locator('section')
     .filter({ hasText: 'Códigos postales que empiezan por 07.' });
@@ -253,8 +253,22 @@ test('panel: el administrador del sistema ofrece el envío a Baleares', async ({
 test('el administrador de la tienda no ve las tarifas', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 900 });
   await login(page, await user('store_admin'));
-  await page.goto('/admin/configuracion/envios');
-  await expect(
-    page.getByRole('heading', { name: '404', exact: true }),
-  ).toBeVisible();
+  // Las direcciones antiguas llevan a las nuevas, que siguen cerradas.
+  for (const path of [
+    '/admin/envios/transportistas',
+    '/admin/envios/ajustes',
+    '/admin/configuracion/envios',
+  ]) {
+    await page.goto(path);
+    await expect(
+      page.getByRole('heading', { name: '404', exact: true }),
+    ).toBeVisible();
+  }
+  // En Envíos ve el seguimiento y los pesos, sin las pestañas de ajustes.
+  await page.goto('/admin/envios');
+  const tabs = page.getByRole('navigation', { name: 'Apartados de Envíos' });
+  await expect(tabs.getByRole('link')).toHaveText([
+    'Seguimiento',
+    'Pesos de los formatos',
+  ]);
 });

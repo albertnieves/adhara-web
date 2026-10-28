@@ -1,16 +1,16 @@
 # Entornos y operación
 
-Actualizado el 25/10/2026. Objetivo activo: separar pruebas y datos reales y vigilar la apertura de la venta online. El estado de entregas vive en [STATUS.md](STATUS.md), los pasos del banco y negocio en [PLAN_APERTURA.md](PLAN_APERTURA.md) y el orden posterior en [ROADMAP.md](ROADMAP.md).
+Actualizado el 28/10/2026. Objetivo activo: separar pruebas y datos reales y vigilar la apertura de la venta online. El estado de entregas vive en [STATUS.md](STATUS.md), los pasos del banco y negocio en [PLAN_APERTURA.md](PLAN_APERTURA.md) y el orden posterior en [ROADMAP.md](ROADMAP.md).
 
 ## Entornos comprobados
 
-| Uso                    | Recurso                                            | Estado el 25/10                                                                                                     |
-| ---------------------- | -------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
-| Código                 | `albertnieves/adhara-web`                          | `main`; PR #47 abierta, rama `claude/cierre-apertura`                                                               |
-| Web                    | Vercel `atelier-web`                               | Dominio `latelierdudesert.com`; equipo `latelierdudesert`                                                           |
-| Datos reales           | Supabase `atelier-dev`, ref `xgpsislololgbakzcmad` | Único proyecto remoto; `ACTIVE_HEALTHY`; PostgreSQL 17                                                              |
-| Pruebas                | Supabase local en CI                               | Efímero, con datos de prueba; no usa las claves de la tienda                                                        |
-| Preview remota aislada | Por configurar                                     | Las variables públicas actuales se comparten con Production; las previews antiguas siguen conectadas a datos reales |
+| Uso                    | Recurso                                            | Estado el 25/10                                                                                             |
+| ---------------------- | -------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| Código                 | `albertnieves/adhara-web`                          | `main`; PR #47 abierta, rama `claude/cierre-apertura`                                                       |
+| Web                    | Vercel `atelier-web`                               | Dominio `latelierdudesert.com`; equipo `latelierdudesert`                                                   |
+| Datos reales           | Supabase `atelier-dev`, ref `xgpsislololgbakzcmad` | Único proyecto remoto; `ACTIVE_HEALTHY`; PostgreSQL 17                                                      |
+| Pruebas                | Supabase local en CI                               | Efímero, con datos de prueba; no usa las claves de la tienda                                                |
+| Preview remota aislada | Por configurar                                     | Desde el 28/10, Preview sin Supabase (desconectada); las previews antiguas siguen conectadas a datos reales |
 
 **El nombre `atelier-dev` no significa que sea una base de pruebas.** No se renombra ni se mueve en esta entrega: contiene la operación real y se conserva su referencia. No crear un `atelier-prod` vacío y cambiar la web hacia él. Un traslado posterior requiere copiar y contrastar datos y Storage, configurar Auth, probar, planificar el corte y dejar recuperación.
 
@@ -30,6 +30,8 @@ Actualizado el 25/10/2026. Objetivo activo: separar pruebas y datos reales y vig
 
 1. Terminar y registrar la prueba pendiente de Bizum de la #47 antes de retirar el acceso del entorno de pruebas antiguo. No introducir un bypass para esa rama en el nuevo comprobador.
 2. En Vercel, conservar en **Production** las dos variables públicas actuales y sus secretos. Quitar el destino Preview de las variables compartidas, sin borrar el destino Production. Retirar las variables de pago de las ramas de pruebas terminadas y revocar su clave privilegiada temporal.
+   - **Hecho el 28/10** (a petición del usuario, porque todas las Preview fallaban en el comprobador): `NEXT_PUBLIC_SUPABASE_URL` y `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` quedan solo en Production y Development. Las Preview nuevas compilan desconectadas (catálogo vacío y panel cerrado).
+   - **Pendiente (usuario, en Vercel → `atelier-web` → Settings → Environment Variables):** borrar las variables de Preview de dos ramas de pruebas terminadas, que la conexión de Vercel de esta sesión no puede borrar: `claude/vigilant-mendel-p4mv93` (`SUPABASE_SECRET_KEY`, `REDSYS_SECRET_KEY`, `REDSYS_MERCHANT_CODE`, `REDSYS_TERMINAL`, `REDSYS_ENVIRONMENT` y `WEB_CHECKOUT`) y `claude/exciting-brown-j08p6y` (`REDSYS_SECRET_KEY`, `REDSYS_MERCHANT_CODE`, `REDSYS_TERMINAL`, `REDSYS_ENVIRONMENT` y `WEB_CHECKOUT`). Si la `SUPABASE_SECRET_KEY` de esa rama fue una clave creada para la prueba, revocarla en Supabase → Settings → API Keys; si es la misma que usa Production, no revocarla sin poner antes otra en Production.
 3. Para previews visuales, no configurar Supabase. Para pruebas completas remotas, preparar una base aislada en la cuenta del negocio, con región UE, migraciones versionadas y datos ficticios. No copiar clientes, costes reales, contactos ni pedidos de producción. Elegir proyecto o branch de Supabase con su coste revisado antes de provisionarlo.
 4. Solo en **Preview**, configurar la URL, la clave publicable y `ATELIER_PREVIEW_SUPABASE_REF` de esa base. Si la prueba necesita checkout, usar una clave privilegiada exclusiva de esa base y el TPV `test`. No compartir secretos de Production.
 5. Redesplegar la rama y comprobar `pnpm ops:health <origen-preview>`, acceso/MFA, stock ficticio, pago de prueba, reservas y devoluciones. Consultar la base real antes y después: ningún movimiento ni correo de esa prueba debe aparecer en ella.

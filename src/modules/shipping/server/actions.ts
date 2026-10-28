@@ -56,8 +56,7 @@ function platformError(error: unknown): string {
 }
 
 function refresh() {
-  revalidatePath('/admin/configuracion/envios', 'layout');
-  revalidatePath('/admin/envios');
+  revalidatePath('/admin/envios', 'layout');
   revalidatePath('/admin/pedidos', 'layout');
 }
 
@@ -65,7 +64,7 @@ const text = (max: number) => z.string().trim().max(max);
 const grams = z.coerce.number().int().min(1).max(100000);
 
 // ---------------------------------------------------------------------------
-// Configuración → Envíos (settings.manage)
+// Envíos → Transportistas y tarifas, Remitente y zonas (settings.manage)
 // ---------------------------------------------------------------------------
 
 const settingsInput = z.object({
@@ -365,7 +364,7 @@ export async function saveShippingService(
     );
   if (s.pickupPhone && !/^[0-9 +().-]{6,30}$/.test(s.pickupPhone))
     return fail('El teléfono de recogidas no es válido.');
-  const { data, error } = await supabase.rpc('admin_save_shipping_service', {
+  const { error } = await supabase.rpc('admin_save_shipping_service', {
     p_id: (s.id || null) as string,
     p_service: {
       carrier_name: s.carrierName || null,
@@ -382,7 +381,6 @@ export async function saveShippingService(
   });
   if (error) return fail(describe(error));
   refresh();
-  if (!s.id) revalidatePath(`/admin/configuracion/envios/${data.id}`);
   return ok(
     s.id
       ? `Servicio guardado${s.active ? ' y activo' : ''}.`
@@ -433,7 +431,7 @@ export async function saveServiceRates(
 }
 
 // ---------------------------------------------------------------------------
-// Pesos de los formatos (catalog.edit)
+// Envíos → Pesos de los formatos (catalog.edit)
 // ---------------------------------------------------------------------------
 
 export async function saveVariantWeights(
@@ -463,7 +461,7 @@ export async function saveVariantWeights(
     p_items: items,
   });
   if (error) return fail(describe(error));
-  revalidatePath('/admin/catalogo/pesos');
+  revalidatePath('/admin/envios/pesos');
   return ok(`${data} ${data === 1 ? 'peso guardado' : 'pesos guardados'}.`);
 }
 
