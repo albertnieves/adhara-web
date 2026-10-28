@@ -23,6 +23,10 @@ No se han movido datos, cambiado variables remotas ni creado recursos de pago. C
 
 Validación de esta rama con Node 24.16.0 y pnpm 11.19.0: `pnpm check` correcto (lint, tipos, 687 unitarias y build), formato y escaneo de secretos correctos. 16 E2E HTTP correctas (salud, idioma, seguridad, robots/sitemap); suite completa intentada y detenida por falta de Chromium tras fallar su descarga (33 correctas antes de detenerse). Bloqueo de `pnpm build` contra la base real comprobado. Sin SQL nuevo: pgTAP, tipos de base y recorridos autenticados quedan en la CI; no se han ejecutado aquí.
 
+## Vercel: Preview sin la base real (28/10)
+
+Todas las Preview fallaban desde la #48 en `pnpm ops:environment` («Preview no puede conectarse a la base real de la tienda»), porque las dos variables públicas de Supabase estaban también en Preview. Producción, bien (todos los despliegues de `main`, «Ready»). A petición del usuario, esas dos variables quedan solo en Production y Development: las Preview compilan desconectadas, sin catálogo ni panel. Pendiente del usuario: borrar en Vercel las variables sobrantes de dos ramas de pruebas del TPV ([OPERATIONS.md](OPERATIONS.md#completar-el-aislamiento-remoto), paso 2). Para Preview completas hace falta una base de pruebas aparte (paso 3).
+
 ## Panel: sección Envíos ordenada (28/10)
 
 Rama `claude/tender-noether-ivuayb`, sin fusionar. A petición del usuario: panel más fácil de usar y todo lo de envíos en su sección, legible y ordenado. Decidido con él: primero solo Envíos y mover los ajustes y los pesos dentro. Decisión §177; guía en [ADMIN_OPERATIONS.md](ADMIN_OPERATIONS.md#envíos-y-transportistas). Solo panel: sin migraciones, permisos ni cambios en la tienda.
