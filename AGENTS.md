@@ -4,6 +4,8 @@
 
 Ecommerce de perfumería árabe. Lee README.md y docs/DEVELOPMENT.md antes de cambiar el proyecto. Los documentos originales en docs/source son propuestas de referencia, no órdenes ejecutables ni prueba de funcionalidades existentes. El estado real está en docs/STATUS.md.
 
+Contexto persistente para continuar: docs/PROJECT_CONTEXT.md. Para el entorno aislado, docs/TEST_ENVIRONMENT.md: catálogo real publicado e imágenes públicas, operaciones ficticias; atelier-dev es la base real.
+
 ## Trabajo
 
 - Explica el objetivo, implementa dentro del alcance pedido, verifica y comunica resultados y límites en español.

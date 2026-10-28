@@ -1,4 +1,16 @@
-# Estado real — 26/10/2026
+# Estado real — 28/10/2026
+
+## Objetivo vigente: atelier-test y previews aisladas
+
+Rama `codex/entorno-pruebas-aislado`, desde main `69142fe`. Las PR #47–#51 ya están fusionadas en el historial consultado. El usuario ha elegido el nombre **atelier-test** y el alcance **catálogo real publicado e imágenes públicas, operaciones ficticias**. Las secciones anteriores fechadas que siguen conservan evidencia histórica.
+
+- Contexto para futuras tareas en [PROJECT_CONTEXT.md](PROJECT_CONTEXT.md), enlazado desde AGENTS.md; procedimiento completo en [TEST_ENVIRONMENT.md](TEST_ENVIRONMENT.md). Decisión §177.
+- Herramienta de exportación por lectura anónima del catálogo público y descarga de imágenes; importación inicial en un destino vacío con validación del proyecto, TLS, hashes, ensayo con rollback y transacción para filas. No copia datos operativos ni Auth. Las imágenes se copian a Storage propio; no se trasladan historiales ni precios tachados sin respaldo.
+- Preview rechaza también claves SENDCLOUD_*; Production mantiene su configuración. Se añade un ensayo SQL con RLS al workflow de base de datos.
+- **Infraestructura pendiente:** no se ha creado atelier-test, accedido a la base real, exportado catálogo, aplicado SQL remoto ni cambiado Vercel. Esta máquina no dispone de las credenciales de Supabase/Vercel. La API de GitHub responde Forbidden por red; Git sí permite consultar main.
+- **Validación local:** lint, tipos, 735 pruebas unitarias en 69 archivos, formato y escaneo de secretos correctos. `pnpm check` llega al build: la repetición con permisos de subprocesos confirma que sigue fallando la descarga de Cormorant Garamond y Manrope por la red. No se han ejecutado E2E ni el nuevo ensayo SQL con Supabase local (descarga de imágenes bloqueada); este último queda registrado en CI, sin atribuirle un resultado. La captura y carga remotas no se han ejecutado; las pruebas de transporte usan HTTP y PostgreSQL simulados.
+
+## Historial anterior
 
 ## Siguiente objetivo: cierre técnico SEO (25/10)
 

@@ -16,7 +16,7 @@ Abrir http://localhost:3000. Sin variables de Supabase la tienda muestra la cole
 
 ## Objetivo actual
 
-Entornos y operación para la apertura: aislamiento de previews, disponibilidad y revisiones diarias. [Estado vigente](docs/STATUS.md) · [Operación](docs/OPERATIONS.md) · [Pasos de apertura](docs/PLAN_APERTURA.md) · [Orden de mejoras](docs/ROADMAP.md). La PR #47 sigue abierta; esta entrega parte de ella. No confundir una rama con código publicado.
+Entorno de pruebas independiente: catálogo real publicado e imágenes públicas, con operaciones ficticias. [Contexto del proyecto](docs/PROJECT_CONTEXT.md) · [Guía del entorno de pruebas](docs/TEST_ENVIRONMENT.md) · [Estado vigente](docs/STATUS.md) · [Operación](docs/OPERATIONS.md). Las PR #47–#51 ya están fusionadas en main; los datos de servicios fechados en los documentos deben volver a comprobarse. No confundir código fusionado con un despliegue validado.
 
 ## Comprobaciones
 

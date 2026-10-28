@@ -119,4 +119,24 @@ describe('aislamiento de despliegues', () => {
       deploymentEnvironmentIssues({ VERCEL_ENV: 'production' }),
     ).not.toEqual([]);
   });
+  it.each([
+    'SENDCLOUD_PUBLIC_KEY',
+    'SENDCLOUD_SECRET_KEY',
+    'SENDCLOUD_WEBHOOK_SECRET',
+  ])('bloquea %s en Preview sin afectar Production', (name) => {
+    expect(
+      deploymentEnvironmentIssues({
+        ...isolated,
+        [name]: 'private-value',
+      }).join(' '),
+    ).toContain(name);
+    expect(
+      deploymentEnvironmentIssues({
+        VERCEL_ENV: 'production',
+        NEXT_PUBLIC_SUPABASE_URL: production,
+        NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: 'public-test-key',
+        [name]: 'private-value',
+      }),
+    ).toEqual([]);
+  });
 });

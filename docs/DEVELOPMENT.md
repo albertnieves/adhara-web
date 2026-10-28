@@ -4,7 +4,7 @@ El estado vigente está en [STATUS.md](STATUS.md). La operación y los entornos 
 
 ## Objetivo activo
 
-Entornos y operación sobre la PR #47. Una tarea por rama `codex/<tema>`, con criterios de aceptación, pruebas y PR. La rama actual parte de `claude/cierre-apertura`: fusionar #47 antes de pasar esta entrega a `main`. No fusionar ni desplegar por defecto.
+Entorno de pruebas independiente, con catálogo real publicado e imágenes públicas y operaciones ficticias. Contexto persistente en [PROJECT_CONTEXT.md](PROJECT_CONTEXT.md); preparación y aceptación en [TEST_ENVIRONMENT.md](TEST_ENVIRONMENT.md). Una tarea por rama `codex/<tema>`, desde el main vigente, con criterios de aceptación, pruebas y PR. Las PR #47–#51 ya están fusionadas en el main consultado el 28/10. No fusionar ni desplegar a producción por defecto.
 
 ## Entorno reproducible
 

@@ -1,5 +1,7 @@
 # Entornos y operación
 
+Continuación del 28/10/2026: [entorno independiente de pruebas](TEST_ENVIRONMENT.md), con catálogo público real e imágenes copiadas y operaciones ficticias. La nueva entrega parte de main con #47–#51 fusionadas. Las observaciones de servicios y pasos fechados del 25/10 que siguen son históricos y deben volver a comprobarse antes de cambiar Vercel o Supabase.
+
 Actualizado el 25/10/2026. Objetivo activo: separar pruebas y datos reales y vigilar la apertura de la venta online. El estado de entregas vive en [STATUS.md](STATUS.md), los pasos del banco y negocio en [PLAN_APERTURA.md](PLAN_APERTURA.md) y el orden posterior en [ROADMAP.md](ROADMAP.md).
 
 ## Entornos comprobados

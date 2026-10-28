@@ -76,12 +76,15 @@ export function deploymentEnvironmentIssues(env: Environment): string[] {
     issues.push('Preview solo admite REDSYS_ENVIRONMENT=test.');
   if (env.REDSYS_SECRET_KEY && env.REDSYS_ENVIRONMENT !== 'test')
     issues.push('La clave de Redsys en Preview requiere el entorno test.');
-  // Hasta disponer de un proveedor de pruebas con destinatarios restringidos.
+  // Hasta disponer de proveedores de pruebas con destinos restringidos.
   for (const name of [
     'RESEND_API_KEY',
     'SENDER_API_TOKEN',
     'CRON_SECRET',
     'SUPABASE_BACKUPS_TOKEN',
+    'SENDCLOUD_PUBLIC_KEY',
+    'SENDCLOUD_SECRET_KEY',
+    'SENDCLOUD_WEBHOOK_SECRET',
   ]) {
     if (env[name])
       issues.push(
