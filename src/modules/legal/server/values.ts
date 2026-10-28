@@ -12,7 +12,7 @@ import type { LegalField } from '../domain/types';
 export type LegalValues = Partial<Record<LegalField, string | null>>;
 
 /**
- * Zonas con «Ofrecer el envío» de Panel → Configuración → Envíos (la tienda
+ * Zonas con «Ofrecer el envío» de Panel → Envíos → Remitente y zonas (la tienda
  * lee solo las activas). Si no se pueden leer, la línea no se publica.
  */
 const activeShippingZones = cache(async (): Promise<LegalShippingZone[]> => {

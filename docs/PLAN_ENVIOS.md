@@ -5,7 +5,7 @@ A petición del usuario (25/10): «Para empezar, plataforma multitransportista, 
 ## Qué hace
 
 1. **El cliente elige transportista y paga según el peso.** En «Finalizar compra», con el código postal, salen los servicios activos que llevan ese peso a esa zona, con su precio y su plazo (es/ca/en). El peso es el de los formatos de la cesta más el embalaje. El precio es el coste real del transportista sin IVA para ese tramo de peso, más el IVA del envío y el recargo del servicio. El envío gratis de la zona solo vale en los servicios marcados. La base calcula peso y precio al enseñarlo (`web_shipping_quote`) y otra vez al crear el pedido (`web_order_create`): el navegador no fija ningún importe.
-2. **El panel trae los costes reales.** Configuración → Envíos sincroniza los servicios de la plataforma con sus tramos de coste. En la ficha del pedido, «Ver tarifas reales» cotiza ese paquete a esa dirección con todos los servicios y enseña lo cobrado frente al coste.
+2. **El panel trae los costes reales.** Envíos → Transportistas y tarifas sincroniza los servicios de la plataforma con sus tramos de coste. En la ficha del pedido, «Ver tarifas reales» cotiza ese paquete a esa dirección con todos los servicios y enseña lo cobrado frente al coste.
 3. **Etiqueta, recogida o punto de entrega.** «Crear etiqueta» la compra en la plataforma y guarda su coste; se descarga en PDF (A6 o A4). Después, **recogida en la tienda** (por la API si el transportista la admite o por teléfono, apuntada) o **punto de entrega** (lista de puntos cercanos del transportista; al dejarlo, el pedido sale).
 4. **Seguimiento automático.** El aviso firmado de la plataforma pasa el pedido a «Enviado» al primer escaneo (con el correo y el enlace de seguimiento) y a «Completado» al entregarse. Las incidencias quedan en la cronología y en Web → Envíos.
 5. **Contratos propios sin API.** Un servicio «manual» con sus tramos escritos en el panel funciona igual en el checkout; la etiqueta se hace en la web del transportista y se apunta el número de seguimiento. Sirve para abrir antes de tener la plataforma y para los contratos directos que lleguen.
@@ -32,8 +32,8 @@ A petición del usuario (25/10): «Para empezar, plataforma multitransportista, 
 
 ## Para encenderlo (usuario)
 
-1. **Pesar los formatos** que se publiquen (Catálogo → Pesos de envío) y el embalaje. Sin peso no hay envío para esa cesta.
-2. **Configuración → Envíos → Remitente, embalaje y recogidas:** código postal de la tienda, teléfono, email, gramos del embalaje y franja de recogida.
+1. **Pesar los formatos** que se publiquen (Envíos → Pesos de los formatos) y el embalaje. Sin peso no hay envío para esa cesta.
+2. **Envíos → Remitente y zonas → Remitente, embalaje y recogidas:** código postal de la tienda, teléfono, email, gramos del embalaje y franja de recogida.
 3. **Con contrato propio sin plataforma** (para abrir ya): «Añadir un servicio manual» (p. ej. Correos Paq Estándar), sus tramos en la península (y Baleares si se envía), enlace de seguimiento con `{tracking}`, teléfono de recogidas y «Ofrecer este servicio en la tienda».
 4. **Con Sendcloud:** crear la cuenta y activar los transportistas; Settings → Integrations → «Sendcloud API» → claves; en Vercel → `atelier-web` → Environment Variables (Production, «Sensitive»): `SENDCLOUD_PUBLIC_KEY` y `SENDCLOUD_SECRET_KEY` (y `SENDCLOUD_WEBHOOK_SECRET` solo si la integración firma con una «Webhook Signature Key» propia). En la integración, «Webhook feedback enabled» con la URL `https://latelierdudesert.com/api/envios/sendcloud`. Redesplegar, «Actualizar tarifas desde Sendcloud», revisar y activar los servicios.
 5. **Confirmar con cada transportista que acepta perfumes** (llevan alcohol: UN1266, clase 3, cantidades limitadas) y en qué servicios; a Baleares, por barco. Activar solo esos.

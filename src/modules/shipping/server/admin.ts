@@ -406,6 +406,8 @@ export type BoardOrder = {
   id: string;
   number: number;
   status: string;
+  /** El servicio que eligió el cliente (para saber su transportista). */
+  serviceId: string | null;
   serviceLabel: string | null;
   weightG: number | null;
   paidAt: string | null;
@@ -418,7 +420,7 @@ export type BoardShipment = ShipmentView & {
 };
 
 /**
- * Panel → Web → Envíos: pedidos pagados sin etiqueta y etiquetas vivas o
+ * Envíos → Seguimiento: pedidos pagados sin etiqueta y etiquetas vivas o
  * recientes (30 días), con su recogida.
  */
 export async function getShippingBoard(supabase: Supabase): Promise<{
@@ -430,7 +432,7 @@ export async function getShippingBoard(supabase: Supabase): Promise<{
     supabase
       .from('orders')
       .select(
-        'id, number, status, shipping_service_label, shipping_weight_g, paid_at, shipments(status)',
+        'id, number, status, shipping_service_id, shipping_service_label, shipping_weight_g, paid_at, shipments(status)',
       )
       .eq('fulfillment', 'shipping')
       .in('status', ['paid', 'processing'])
@@ -454,6 +456,7 @@ export async function getShippingBoard(supabase: Supabase): Promise<{
         id: o.id,
         number: o.number,
         status: o.status,
+        serviceId: o.shipping_service_id,
         serviceLabel: o.shipping_service_label,
         weightG: o.shipping_weight_g,
         paidAt: o.paid_at,

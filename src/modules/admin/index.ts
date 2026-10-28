@@ -4,6 +4,8 @@ export { describeDbError } from './errors';
 export { FormMessage } from './ui/FormMessage';
 export { PageHeader } from './ui/PageHeader';
 export { PrintButton } from './ui/PrintButton';
+export { SectionTabs } from './ui/SectionTabs';
+export type { SectionTab } from './ui/SectionTabs';
 export { StatusBadge } from './ui/StatusBadge';
 export { useAdminAction } from './use-admin-action';
 export { AuthError, AuthScreen } from './ui/AuthScreen';

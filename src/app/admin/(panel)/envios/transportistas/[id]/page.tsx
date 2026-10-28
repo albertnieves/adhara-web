@@ -3,7 +3,6 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { z } from 'zod';
 import { formatEuros } from '@/lib/money';
-import { PageHeader } from '@/modules/admin';
 import { isAllowed } from '@/modules/auth';
 import { requirePermission } from '@/modules/auth/server';
 import { SHIPPING_ZONE_LABELS, SHIPPING_ZONES } from '@/modules/checkout';
@@ -15,7 +14,7 @@ import {
 } from '@/modules/shipping';
 import { listShippingServices } from '@/modules/shipping/server';
 import { ServiceForm, ServiceRatesForm } from '@/modules/shipping/ui';
-import { Badge, Card, Eyebrow, Table } from '@/components/ui';
+import { Badge, Card, Eyebrow, Heading, Table } from '@/components/ui';
 
 export const metadata: Metadata = { title: 'Servicio de envío' };
 
@@ -24,7 +23,7 @@ function euros(cents: number | null) {
 }
 
 /**
- * Un servicio de envío: lo que ve el cliente (nombre, plazo, recargo, zonas,
+ * Envíos → Transportistas y tarifas → un servicio: lo que ve el cliente (nombre, plazo, recargo, zonas,
  * envío gratis) y sus tramos de peso con el coste real y el precio. Los de la
  * plataforma se actualizan desde ella; los manuales se escriben aquí.
  */
@@ -44,15 +43,18 @@ export default async function ShippingServicePage({
   const manual = service.provider === 'manual';
 
   return (
-    <main>
-      <PageHeader eyebrow="Configuración · Envíos" title={service.label}>
+    <div>
+      <div className="mb-8">
         <Link
-          href="/admin/configuracion/envios"
-          className="border-border hover:border-fg tracking-caps inline-flex min-h-11 items-center border px-5 text-xs font-semibold uppercase"
+          href="/admin/envios/transportistas"
+          className="link-underline text-fg-muted inline-flex min-h-11 items-center text-sm"
         >
-          Todos los servicios
+          ← Todos los servicios
         </Link>
-      </PageHeader>
+        <Heading level={2} size="h3" className="mt-1">
+          {service.label}
+        </Heading>
+      </div>
 
       <dl className="mb-8 grid gap-4 text-sm sm:grid-cols-2 xl:grid-cols-4">
         <div>
@@ -106,7 +108,7 @@ export default async function ShippingServicePage({
 
       <div className="space-y-6">
         <Card as="section">
-          <Eyebrow as="h2" className="mb-4">
+          <Eyebrow as="h3" className="mb-4">
             Lo que ve el cliente
           </Eyebrow>
           <ServiceForm
@@ -136,7 +138,7 @@ export default async function ShippingServicePage({
           return (
             <Card as="section" key={zone}>
               <div className="mb-4 flex flex-wrap items-center gap-3">
-                <Eyebrow as="h2">Tramos · {SHIPPING_ZONE_LABELS[zone]}</Eyebrow>
+                <Eyebrow as="h3">Tramos · {SHIPPING_ZONE_LABELS[zone]}</Eyebrow>
                 {!service.zones.includes(zone) && (
                   <Badge tone="neutral">No se ofrece</Badge>
                 )}
@@ -214,6 +216,6 @@ export default async function ShippingServicePage({
           );
         })}
       </div>
-    </main>
+    </div>
   );
 }

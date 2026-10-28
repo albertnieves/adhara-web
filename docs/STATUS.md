@@ -1,4 +1,4 @@
-# Estado real — 26/10/2026
+# Estado real — 28/10/2026
 
 ## Siguiente objetivo: cierre técnico SEO (25/10)
 
@@ -22,6 +22,15 @@ Rama `codex/entornos-operacion` (PR #48), actualizada con `main` el 27/10, con l
 No se han movido datos, cambiado variables remotas ni creado recursos de pago. Con las variables compartidas actuales, la nueva Preview se bloqueará de forma intencionada. La protección no retira el acceso de despliegues antiguos. **Siguiente tarea concreta:** completar el aislamiento remoto descrito en OPERATIONS y ensayar restauración; después cerrar la apertura y la activación SEO. El sitemap y JSON-LD ya existen; la cabecera global incondicional se corrige en la rama de cierre SEO de la sección anterior, aún sin fusionar.
 
 Validación de esta rama con Node 24.16.0 y pnpm 11.19.0: `pnpm check` correcto (lint, tipos, 687 unitarias y build), formato y escaneo de secretos correctos. 16 E2E HTTP correctas (salud, idioma, seguridad, robots/sitemap); suite completa intentada y detenida por falta de Chromium tras fallar su descarga (33 correctas antes de detenerse). Bloqueo de `pnpm build` contra la base real comprobado. Sin SQL nuevo: pgTAP, tipos de base y recorridos autenticados quedan en la CI; no se han ejecutado aquí.
+
+## Panel: sección Envíos ordenada (28/10)
+
+Rama `claude/tender-noether-ivuayb`, sin fusionar. A petición del usuario: panel más fácil de usar y todo lo de envíos en su sección, legible y ordenado. Decidido con él: primero solo Envíos y mover los ajustes y los pesos dentro. Decisión §177; guía en [ADMIN_OPERATIONS.md](ADMIN_OPERATIONS.md#envíos-y-transportistas). Solo panel: sin migraciones, permisos ni cambios en la tienda.
+
+- **Una sección con pestañas:** Seguimiento, Transportistas y tarifas, Remitente y zonas y Pesos de los formatos, cada una con su permiso. Las direcciones antiguas (Configuración → Envíos, Catálogo → Pesos de envío) redirigen.
+- **Seguimiento:** contadores por etapa que filtran; «Por hacer» al entrar (incidencias, lo que el transportista no ha escaneado a tiempo, pedidos sin etiqueta y etiquetas por entregar); cada fila dice qué hacer y marca lo que lleva 2 días o más; buscador por pedido o seguimiento mientras se escribe y filtro por transportista; lo que hay que entregar, en una tarjeta por transportista con la recogida de todos. Los paquetes dejados en un punto sin escanear ya salen (antes no aparecían en ninguna sección).
+- **Ficha del pedido:** el tablero abre el bloque «Envío» directamente y este enlaza de vuelta.
+- **Comprobado en local** (Node 24.16.0, Supabase local con Docker y los datos de prueba de la CI, `WEB_CHECKOUT=1`, TPV y Sendcloud simulados): `pnpm check` correcto (lint, tipos, 728 unitarias, 16 nuevas del tablero, y build); `format:check` y `scan:secrets` correctos; panel con sesión 14/14 en `shipping`, `checkout`, `admin-orders` y `layout-audit` (el pedido sale en la tarjeta de su transportista con la recogida y el enlace a `#envio`, pasa a «Esperando» con su día, el dejado en un punto aparece, el administrador de la tienda solo ve Seguimiento y Pesos y las direcciones antiguas le dan 404); auditoría de diseño y axe de las cuatro pestañas a 390, 768, 1280 y 1440 px sin hallazgos. Capturas revisadas con datos de ejemplo en la base local (incidencia, pedido pagado hace 3 días, etiqueta por entregar). Sin base remota ni pgTAP: no hay cambios de base de datos.
 
 ## Envíos multitransportista (25–26/10)
 

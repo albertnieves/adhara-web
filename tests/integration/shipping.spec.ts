@@ -142,7 +142,7 @@ test('el titular sincroniza las tarifas de Sendcloud, activa servicios y pesa el
 }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await login(page, await user('system_admin'));
-  await page.goto('/admin/configuracion/envios');
+  await page.goto('/admin/envios/transportistas');
   await expect(page.getByText('Sendcloud conectado')).toBeVisible();
   await page
     .getByRole('button', { name: 'Actualizar tarifas desde Sendcloud' })
@@ -181,7 +181,7 @@ test('el titular sincroniza las tarifas de Sendcloud, activa servicios y pesa el
 
   // Correos, con el botón de su fila: se enciende, se apaga y se vuelve a
   // encender sin entrar en la ficha.
-  await page.goto('/admin/configuracion/envios');
+  await page.goto('/admin/envios/transportistas');
   const correosRow = table
     .getByRole('row')
     .filter({ hasText: 'Sendcloud' })
@@ -217,7 +217,7 @@ test('el titular sincroniza las tarifas de Sendcloud, activa servicios y pesa el
   ]);
 
   // Pesos de envío.
-  await page.goto('/admin/catalogo/pesos');
+  await page.goto('/admin/envios/pesos');
   await page
     .getByLabel(new RegExp(`Peso de .*${product.name} 100 ml, en gramos`))
     .fill('450');
@@ -287,8 +287,25 @@ test('el cliente elige SEUR, la tienda crea la etiqueta, pide la recogida y el s
   expect(pdf.headers()['content-type']).toBe('application/pdf');
   expect((await pdf.body()).toString('latin1')).toContain('%PDF-1.4');
 
-  // Recogida en la tienda por la plataforma.
-  await page.reload();
+  // Envíos → Seguimiento: en «Por hacer», en la tarjeta de SEUR, con la
+  // recogida al lado y el enlace a la ficha.
+  await page.goto(`/admin/envios?q=${order.number}`);
+  await expect(
+    page.getByRole('link', { name: /Por hacer/, exact: false }),
+  ).toHaveAttribute('aria-current', 'page');
+  const seurGroup = page.getByRole('region', { name: 'SEUR', exact: true });
+  await expect(
+    seurGroup.getByRole('link', { name: `Nº ${order.number}` }),
+  ).toHaveAttribute('href', `/admin/pedidos/${order.id}#envio`);
+  await expect(
+    seurGroup.getByText('Pide la recogida o llévalo a un punto de entrega.'),
+  ).toBeVisible();
+  await expect(
+    seurGroup.getByText('Pedir la recogida de 1 paquete'),
+  ).toBeVisible();
+
+  // Recogida en la tienda por la plataforma, desde la ficha.
+  await page.goto(`/admin/pedidos/${order.id}`);
   await expect(page.getByText('Pedirla por la plataforma')).toBeVisible();
   await page.getByText('La he pedido por teléfono o en su web').click();
   await page.getByText('Pedirla por la plataforma').click();
@@ -304,6 +321,13 @@ test('el cliente elige SEUR, la tienda crea la etiqueta, pide la recogida y el s
     quantity: 1,
     address: { postal_code: '08860' },
   });
+  // Pedida: pasa a «Esperando al transportista» con su día.
+  await page.goto(`/admin/envios?vista=esperando&q=${order.number}`);
+  await expect(
+    page
+      .getByRole('table', { name: 'Esperando al transportista' })
+      .getByText(/^Recogida el .*, de \d{2}:\d{2} a \d{2}:\d{2}\.$/),
+  ).toBeVisible();
 
   // Aviso sin firma: rechazado.
   const event = (
@@ -424,4 +448,11 @@ test('con Correos lo deja en un punto de entrega y el pedido sale', async ({
     },
   });
   expect((await orderOf(await emailOf(order.id))).status).toBe('shipped');
+  // Dejado en el punto y sin escanear: en «Esperando al transportista».
+  await page.goto(`/admin/envios?vista=esperando&q=${order.number}`);
+  await expect(
+    page.getByText(
+      'Dejado en Oficina de Correos de Castelldefels; falta el primer escaneo.',
+    ),
+  ).toBeVisible();
 });

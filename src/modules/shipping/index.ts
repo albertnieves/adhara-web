@@ -10,6 +10,35 @@ export {
 } from './domain/brackets';
 export type { RateEntry } from './domain/brackets';
 export {
+  BOARD_STAGES,
+  BOARD_STAGE_INFO,
+  BOARD_VIEWS,
+  BOARD_VIEW_LABELS,
+  LATE_AFTER_DAYS,
+  boardViewHref,
+  daysAgoText,
+  groupByCarrier,
+  madridDaysSince,
+  matchesBoardQuery,
+  needsAction,
+  paidWaitStep,
+  parseBoardFilter,
+  shipmentAttention,
+  shipmentBoardStatus,
+  shipmentNextStep,
+  shipmentStage,
+} from './domain/board';
+export type {
+  BoardFilter,
+  BoardSearch,
+  BoardShipmentFacts,
+  BoardStage,
+  BoardView,
+  NextStep,
+  ShipmentAttention,
+  StepTone,
+} from './domain/board';
+export {
   FIRST_MILE_LABELS,
   HANDOVER_LABELS,
   PROVIDER_LABELS,

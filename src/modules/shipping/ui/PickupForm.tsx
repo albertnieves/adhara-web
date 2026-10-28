@@ -92,7 +92,7 @@ export function PickupForm({
                 . Ten a mano los bultos, el peso y la franja de abajo.
               </>
             ) : (
-              'Añade el teléfono de recogidas del servicio en Configuración → Envíos.'
+              'Añade el teléfono de recogidas del servicio en Envíos → Transportistas y tarifas.'
             )
           }
         />
