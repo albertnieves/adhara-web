@@ -124,7 +124,6 @@ const escape = (text: string) =>
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&apos;')
     // Caracteres de control que XML no admite.
-    // eslint-disable-next-line no-control-regex
     .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, '');
 
 /** El feed en RSS 2.0 con el espacio de nombres de Google. */
