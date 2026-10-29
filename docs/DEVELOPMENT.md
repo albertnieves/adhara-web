@@ -4,7 +4,7 @@ El estado vigente está en [STATUS.md](STATUS.md). La operación y los entornos 
 
 ## Objetivo activo
 
-Entornos y operación sobre la PR #47. Una tarea por rama `codex/<tema>`, con criterios de aceptación, pruebas y PR. La rama actual parte de `claude/cierre-apertura`: fusionar #47 antes de pasar esta entrega a `main`. No fusionar ni desplegar por defecto.
+Apertura de la venta online ([ROADMAP.md](ROADMAP.md), punto 1); entornos y operación (#48) y cabeceras SEO (#49) ya están en `main`. Una tarea por rama `codex/<tema>` (o la que asigne el entorno), con criterios de aceptación, pruebas y PR. No fusionar ni desplegar por defecto.
 
 ## Entorno reproducible
 

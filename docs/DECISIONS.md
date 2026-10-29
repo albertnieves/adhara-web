@@ -845,3 +845,12 @@ A petición del usuario («quiero que mejoremos el panel de administrador de la 
      - **Estado en el tablero:** una etiqueta con recogida pedida o dejada en un punto sigue como `label_created` en la base; el tablero la enseña como «Recogida pedida» o «Dejado en un punto» (`shipmentBoardStatus`), sin cambiar el estado guardado.
      - **Enlaces según permiso:** los avisos que remiten a «Remitente y zonas» solo enlazan para quien tiene `settings.manage`; a los demás les dicen a quién toca.
      - **Comprobado en local:** `pnpm check` (728 unitarias, 16 nuevas), formato y secretos; panel con sesión en `shipping`, `checkout`, `admin-orders` y `layout-audit` (auditoría de diseño y axe de las cuatro pestañas a 390, 768, 1280 y 1440 px), con Supabase local y Sendcloud simulado. Sin migraciones ni pgTAP nuevos.
+
+## Fusión de #48 y #49 y roadmap — 27/10/2026
+
+Registrada en la PR #52 (abierta el 27/10) e incorporada el 29/10 con la rama de analítica y publicidad; se numera detrás de §177, que llegó antes a `main`.
+
+178. **#48 y #49 fusionadas con `main`; la apertura de la venta pasa a ser el objetivo activo del roadmap.** A petición del usuario («quiero que trabajes en cerrar y fusionar las dos PR abiertas, y actualices el roadmap»).
+     - **Fusión:** las dos PR estaban encadenadas sobre la #47 (ya fusionada). Se actualizaron con `main` por merge, sin rebase ni push forzado, con los conflictos de documentos resueltos conservando las dos partes (§169–170 antes de §171–176), se cambió su base a `main` y se fusionaron por orden (#48 y después #49) con la CI en verde.
+     - **Previews:** con la #48 en `main`, todas las Previews fallan el build mientras las dos variables públicas de Supabase tengan el destino Preview. Es el comportamiento buscado en §169; quitarlo es configuración del titular (OPERATIONS, paso 2) y no se ha cambiado desde aquí.
+     - **Orden del roadmap:** primero la apertura, porque lo que falta es configuración y trámites del titular, del banco y de la asesoría; después entornos, catálogo y SEO, clientes y mensajes, búsqueda, Scent Journey y 3D. Se recupera el estado de las 17 fases del plan original como referencia. `atelier-dev` sigue siendo la base de producción (§169): el «`atelier-prod`» del roadmap anterior deja de ser un objetivo.
