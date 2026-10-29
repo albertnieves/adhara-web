@@ -4,9 +4,9 @@ Actualizado el 28/10/2026. Objetivo activo: separar pruebas y datos reales y vig
 
 ## Entornos comprobados
 
-| Uso                    | Recurso                                            | Estado el 25/10                                                                                             |
+| Uso                    | Recurso                                            | Estado (revisado el 29/10)                                                                                  |
 | ---------------------- | -------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
-| Código                 | `albertnieves/adhara-web`                          | `main`; PR #47 abierta, rama `claude/cierre-apertura`                                                       |
+| Código                 | `albertnieves/adhara-web`                          | `main`, con la #47 (26/10), la #48 y la #49 (27/10) y la #53 (28/10) fusionadas                             |
 | Web                    | Vercel `atelier-web`                               | Dominio `latelierdudesert.com`; equipo `latelierdudesert`                                                   |
 | Datos reales           | Supabase `atelier-dev`, ref `xgpsislololgbakzcmad` | Único proyecto remoto; `ACTIVE_HEALTHY`; PostgreSQL 17                                                      |
 | Pruebas                | Supabase local en CI                               | Efímero, con datos de prueba; no usa las claves de la tienda                                                |
@@ -37,7 +37,7 @@ Actualizado el 28/10/2026. Objetivo activo: separar pruebas y datos reales y vig
 5. Redesplegar la rama y comprobar `pnpm ops:health <origen-preview>`, acceso/MFA, stock ficticio, pago de prueba, reservas y devoluciones. Consultar la base real antes y después: ningún movimiento ni correo de esa prueba debe aparecer en ella.
 6. Comprobar las URLs antiguas tras revocar su acceso. Un cambio de variables solo afecta a nuevos despliegues; retirar los despliegues de prueba antiguos desde Vercel cuando ya no sean necesarios. No cerrar el objetivo hasta verificarlo.
 
-No se han creado recursos de pago, cambiado variables remotas ni revocado claves con esta PR. La #47 sigue siendo una dependencia: esta rama se compara con `claude/cierre-apertura`; tras fusionar la #47, cambiar la base de esta PR a `main` y repetir sus comprobaciones.
+No se han creado recursos de pago, cambiado variables remotas ni revocado claves con esta PR. La #47 se fusionó el 26/10; esta PR, actualizada con `main` y con su CI repetida, el 27/10.
 
 ## Disponibilidad
 

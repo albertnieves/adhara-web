@@ -2,7 +2,9 @@ import { describe, expect, it } from 'vitest';
 import {
   deploymentEnvironmentIssues,
   PRODUCTION_SUPABASE_REF,
+  TRACKING_ID_FORMATS,
 } from '../../scripts/check-deployment-environment';
+import { TRACKING_ENV, TRACKING_ID_PATTERNS } from '../../src/modules/tracking';
 
 const production = `https://${PRODUCTION_SUPABASE_REF}.supabase.co`;
 const previewRef = 'abcdefghijklmnopqrst';
@@ -118,5 +120,66 @@ describe('aislamiento de despliegues', () => {
     expect(
       deploymentEnvironmentIssues({ VERCEL_ENV: 'production' }),
     ).not.toEqual([]);
+  });
+});
+
+describe('IDs de analítica y publicidad (DECISIONS §179)', () => {
+  const productionBase = {
+    VERCEL_ENV: 'production',
+    NEXT_PUBLIC_SUPABASE_URL: production,
+    NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: 'public-test-key',
+  };
+
+  it('Production para el build con un ID mal escrito, sin mostrarlo', () => {
+    expect(
+      deploymentEnvironmentIssues({
+        ...productionBase,
+        NEXT_PUBLIC_GA_MEASUREMENT_ID: 'G-ABC123XYZ9',
+        NEXT_PUBLIC_META_PIXEL_ID: '1234567890123456',
+      }),
+    ).toEqual([]);
+    const issues = deploymentEnvironmentIssues({
+      ...productionBase,
+      NEXT_PUBLIC_GA_MEASUREMENT_ID: 'UA-1234-1',
+      NEXT_PUBLIC_GOOGLE_ADS_PURCHASE_LABEL: 'AbC-dEf_123',
+    });
+    expect(issues).toEqual([
+      'NEXT_PUBLIC_GA_MEASUREMENT_ID no tiene el formato esperado.',
+      'NEXT_PUBLIC_GOOGLE_ADS_PURCHASE_LABEL necesita NEXT_PUBLIC_GOOGLE_ADS_ID.',
+    ]);
+  });
+
+  it('una Preview con los IDs compila (no mide, pero no falla)', () => {
+    expect(
+      deploymentEnvironmentIssues({
+        VERCEL_ENV: 'preview',
+        NEXT_PUBLIC_GA_MEASUREMENT_ID: 'G-ABC123XYZ9',
+      }),
+    ).toEqual([]);
+  });
+
+  it('usa los mismos formatos que la tienda', () => {
+    const samples = [
+      'G-ABC123XYZ9',
+      'UA-1234-1',
+      'AW-123456789',
+      'AW-12',
+      'AbC-dEf_123',
+      'a b',
+      '1234567890123456',
+      '12ab',
+      'CABCDEFGHIJ1234567890',
+      'cabcdefghij1234567890',
+      '',
+    ];
+    for (const [key, name] of Object.entries(TRACKING_ENV)) {
+      const app = TRACKING_ID_PATTERNS[key as keyof typeof TRACKING_ENV];
+      const script = TRACKING_ID_FORMATS[name]!;
+      for (const sample of samples)
+        expect(script.test(sample), `${name} ${sample}`).toBe(app.test(sample));
+    }
+    expect(Object.keys(TRACKING_ID_FORMATS).sort()).toEqual(
+      Object.values(TRACKING_ENV).sort(),
+    );
   });
 });

@@ -8,6 +8,18 @@ export const ca: LegalCopy = {
     contents: 'En aquesta pàgina',
     pending: 'Pendent',
     related: 'Altres textos legals',
+    cookieSettings: 'Configurar galetes',
+    onlyWith: 'Només es publica amb',
+  },
+  conditions: {
+    optional: 'galetes d’analítica o de publicitat configurades',
+    noOptional: 'sense galetes d’analítica ni de publicitat',
+    analytics: 'analítica configurada',
+    ads: 'publicitat configurada',
+    ga4: 'Google Analytics configurat',
+    googleAds: 'Google Ads configurat',
+    meta: 'píxel de Meta configurat',
+    tiktok: 'píxel de TikTok configurat',
   },
   fields: {
     holder: 'titular (raó social o nom)',
@@ -340,15 +352,61 @@ export const ca: LegalCopy = {
           ],
         },
         {
+          id: 'analitica-publicidad',
+          title: 'Analítica i publicitat',
+          when: 'optional',
+          blocks: [
+            {
+              list: [
+                'Dades: els identificadors de les galetes, la teva adreça IP, dades del teu navegador i del teu dispositiu, les pàgines de la botiga que visites, els perfums que veus o afegeixes a la cistella i, si compres, el número de la comanda i el seu import. No enviem el teu nom, el teu correu, el teu telèfon ni la teva adreça.',
+                'Finalitat: segons el que acceptis, saber de manera estadística com es fa servir el web (analítica) i mostrar-te anuncis dels nostres perfums en altres webs i xarxes socials i mesurar quines campanyes porten a una compra (publicitat).',
+                'Base jurídica: el teu consentiment (art. 6.1.a del RGPD i art. 22.2 de la LSSI), que pots retirar quan vulguis des de «Configurar galetes», al peu de cada pàgina, sense que afecti el que s’ha tractat abans.',
+                'Conservació: les galetes duren el que indica la [política de galetes](doc:cookies); el que reben les empreses següents ho conserven segons la seva configuració i la seva pròpia política.',
+              ],
+            },
+            'Qui rep aquestes dades, només si acceptes el tipus de galetes que fa servir:',
+            {
+              when: 'ga4',
+              blocks: [
+                'Google Ireland Limited, per a Google Analytics, com a encarregat del tractament. Conserva les dades de cada visitant com a màxim 14 mesos. Google les pot transferir a Google LLC, als Estats Units, adherida al Marc de Privacitat de Dades UE-EUA.',
+              ],
+            },
+            {
+              when: 'googleAds',
+              blocks: [
+                'Google Ireland Limited, per als anuncis de Google, com a responsable del que fa després amb aquestes dades segons la seva política. Google les pot transferir a Google LLC, als Estats Units, adherida al Marc de Privacitat de Dades UE-EUA.',
+              ],
+            },
+            {
+              when: 'meta',
+              blocks: [
+                'Meta Platforms Ireland Limited, per als anuncis de Facebook i Instagram. Som corresponsables amb Meta de recollir aquestes dades al web i enviar-les-hi; el que Meta fa després ho decideix ella, com a responsable, segons la seva política. Meta les pot transferir a Meta Platforms, Inc., als Estats Units, adherida al Marc de Privacitat de Dades UE-EUA.',
+              ],
+            },
+            {
+              when: 'tiktok',
+              blocks: [
+                'TikTok Technology Limited (Irlanda), per als anuncis de TikTok, en els mateixos termes que Meta. TikTok pot accedir a les dades des de fora de l’Espai Econòmic Europeu amb les clàusules contractuals tipus de la Comissió Europea.',
+              ],
+            },
+          ],
+        },
+        {
           id: 'destinatarios',
           title: 'Qui accedeix a les teves dades',
           blocks: [
-            'No venem ni cedim les teves dades. Només hi accedeixen, amb contracte d’encàrrec de tractament i només per prestar-nos el seu servei, aquests proveïdors:',
+            'No venem les teves dades. Només hi accedeixen, amb contracte d’encàrrec de tractament i només per prestar-nos el seu servei, aquests proveïdors:',
             {
               list: [
                 'Proveïdors d’allotjament web i de base de dades, amb servidors a la Unió Europea.',
                 'El proveïdor d’enviament dels correus del Club L’Atelier.',
                 'L’entitat bancària que processa els pagaments, l’empresa de transport i el proveïdor dels correus de les comandes i de les respostes a les teves consultes.',
+              ],
+            },
+            {
+              when: 'optional',
+              blocks: [
+                'Si acceptes les galetes d’analítica o de publicitat, també reben dades les empreses que s’indiquen a [Analítica i publicitat](doc:privacy#analitica-publicidad).',
               ],
             },
             'Si tries entrar amb Google, Google comprova la teva identitat com a responsable independent, segons la seva pròpia [política de privacitat](https://policies.google.com/privacy).',
@@ -380,6 +438,12 @@ export const ca: LegalCopy = {
             },
             'Escriu-nos per correu electrònic o per correu postal a la botiga ({storeAddress}) indicant quin dret vols exercir. Si tenim dubtes sobre la teva identitat, et podrem demanar que l’acreditis. Et respondrem en el termini d’un mes.',
             'No prenem decisions automatitzades ni elaborem perfils amb efectes sobre tu.',
+            {
+              when: 'ads',
+              blocks: [
+                'Si acceptes les galetes de publicitat, les plataformes publicitàries fan servir la teva navegació per decidir quins anuncis mostrar-te. No té efectes jurídics sobre tu ni t’afecta de manera significativa, i ho evites rebutjant aquestes galetes.',
+              ],
+            },
             'Si creus que no hem tractat bé les teves dades, pots reclamar davant l’[Agència Espanyola de Protecció de Dades](https://www.aepd.es).',
           ],
         },
@@ -423,10 +487,21 @@ export const ca: LegalCopy = {
           id: 'cookies-usadas',
           title: 'Quines galetes fem servir',
           blocks: [
-            'Aquest web només fa servir galetes tècniques, necessàries perquè funcioni. No fem servir galetes d’analítica, de publicitat ni de xarxes socials, i les tipografies se serveixen des del nostre servidor, sense crides a tercers.',
+            {
+              when: 'noOptional',
+              blocks: [
+                'Aquest web només fa servir galetes tècniques, necessàries perquè funcioni. No fem servir galetes d’analítica, de publicitat ni de xarxes socials, i les tipografies se serveixen des del nostre servidor, sense crides a tercers.',
+              ],
+            },
+            {
+              when: 'optional',
+              blocks: [
+                'Aquest web fa servir galetes tècniques, necessàries perquè funcioni, i, només si les acceptes, galetes d’altres empreses per a l’analítica o la publicitat, que s’expliquen als apartats següents. Les tipografies se serveixen des del nostre servidor, sense crides a tercers.',
+              ],
+            },
             {
               table: {
-                caption: 'Galetes d’aquest web',
+                caption: 'Galetes tècniques d’aquest web',
                 head: ['Galeta', 'Titular', 'Per a què serveix', 'Durada'],
                 rows: [
                   [
@@ -441,6 +516,15 @@ export const ca: LegalCopy = {
                     'Recordar que has acceptat les condicions del web, per no tornar-te-les a demanar.',
                     '1 any',
                   ],
+                  {
+                    when: 'optional',
+                    cells: [
+                      'atelier_cookies',
+                      'Pròpia',
+                      'Recordar si acceptes o rebutges les galetes d’analítica i de publicitat, i quan ho vas triar.',
+                      '1 any',
+                    ],
+                  },
                   [
                     'atelier_cesta',
                     'Pròpia',
@@ -471,11 +555,143 @@ export const ca: LegalCopy = {
           ],
         },
         {
-          id: 'consentimiento',
-          title: 'Per què no et demanem consentiment',
+          id: 'analitica',
+          title: 'Galetes d’analítica',
+          when: 'analytics',
           blocks: [
-            'Les galetes tècniques, i les que desen una preferència que tries tu, com l’idioma, estan exemptes de consentiment segons l’article 22.2 de la LSSI i la guia de l’Agència Espanyola de Protecció de Dades. Per això no et demanem que acceptis galetes: l’avís que veus en entrar és perquè coneguis les nostres condicions.',
-            'Si en el futur fem servir galetes d’analítica o de publicitat, et demanarem permís abans d’instal·lar-les, amb l’opció de rebutjar-les tan fàcilment com acceptar-les, i actualitzarem aquesta política.',
+            'Només si les acceptes, fem servir Google Analytics, un servei de Google Ireland Limited, per saber de manera estadística quantes persones ens visiten, com arriben, quines pàgines veuen i quines compres es completen. Google rep la teva adreça IP (Google Analytics no la desa), dades del teu navegador i del teu dispositiu i les pàgines que visites. No li enviem el teu nom, el teu correu ni altres dades de contacte.',
+            {
+              table: {
+                caption: 'Galetes d’analítica',
+                head: ['Galeta', 'Titular', 'Per a què serveix', 'Durada'],
+                rows: [
+                  {
+                    when: 'ga4',
+                    cells: [
+                      '_ga',
+                      'Google',
+                      'Distingir de manera estadística els visitants.',
+                      '13 mesos',
+                    ],
+                  },
+                  {
+                    when: 'ga4',
+                    cells: [
+                      '_ga_<ID>',
+                      'Google',
+                      'Mantenir l’estat de la visita.',
+                      '13 mesos',
+                    ],
+                  },
+                ],
+              },
+            },
+            'Més informació a [com fa servir Google la informació dels webs que utilitzen els seus serveis](https://policies.google.com/technologies/partner-sites) i a la seva [política de privacitat](https://policies.google.com/privacy).',
+          ],
+        },
+        {
+          id: 'publicidad',
+          title: 'Galetes de publicitat',
+          when: 'ads',
+          blocks: [
+            'Només si les acceptes, les empreses d’aquesta taula ens ajuden a mostrar-te anuncis dels nostres perfums a les seves plataformes i en altres webs segons la teva visita (per exemple, els perfums que has vist) i a mesurar quins anuncis porten a una visita o a una compra. Per fer-ho reben la teva adreça IP, dades del teu navegador i del teu dispositiu, les pàgines de la botiga que visites, els perfums que veus o afegeixes a la cistella i, si compres, el número de la comanda i el seu import. No els enviem el teu nom, el teu correu ni altres dades de contacte.',
+            'Si tens compte als seus serveis, cada empresa pot relacionar aquesta informació amb el teu compte, com a responsable d’aquest tractament i segons la seva pròpia política.',
+            {
+              table: {
+                caption: 'Galetes de publicitat',
+                head: ['Galeta', 'Titular', 'Per a què serveix', 'Durada'],
+                rows: [
+                  {
+                    when: 'googleAds',
+                    cells: [
+                      '_gcl_au',
+                      'Google',
+                      'Mesurar quins anuncis de Google porten a una visita o a una compra.',
+                      '3 mesos',
+                    ],
+                  },
+                  {
+                    when: 'meta',
+                    cells: [
+                      '_fbp',
+                      'Meta',
+                      'Mesurar els anuncis de Facebook i Instagram i mostrar-te anuncis segons la teva visita.',
+                      '3 mesos',
+                    ],
+                  },
+                  {
+                    when: 'meta',
+                    cells: [
+                      '_fbc',
+                      'Meta',
+                      'Recordar l’anunci de Facebook o Instagram des del qual arribes. Només es crea si arribes des d’un.',
+                      '3 mesos',
+                    ],
+                  },
+                  {
+                    when: 'tiktok',
+                    cells: [
+                      '_ttp',
+                      'TikTok',
+                      'Mesurar els anuncis de TikTok i mostrar-te anuncis segons la teva visita.',
+                      '13 mesos',
+                    ],
+                  },
+                  {
+                    when: 'tiktok',
+                    cells: [
+                      '_tt_enable_cookie',
+                      'TikTok',
+                      'Comprovar que el teu navegador admet galetes.',
+                      '13 mesos',
+                    ],
+                  },
+                ],
+              },
+            },
+            {
+              when: 'googleAds',
+              blocks: [
+                'Google Ireland Limited: [com fa servir Google la informació dels webs que utilitzen els seus serveis](https://policies.google.com/technologies/partner-sites) i [política de privacitat](https://policies.google.com/privacy).',
+              ],
+            },
+            {
+              when: 'meta',
+              blocks: [
+                'Meta Platforms Ireland Limited: [política de privacitat](https://www.facebook.com/privacy/policy/) i [política de galetes](https://www.facebook.com/privacy/policies/cookies/).',
+              ],
+            },
+            {
+              when: 'tiktok',
+              blocks: [
+                'TikTok Technology Limited: [política de privacitat](https://www.tiktok.com/legal/page/eea/privacy-policy/es) i [política de galetes](https://www.tiktok.com/legal/page/global/cookie-policy/es).',
+              ],
+            },
+            'Aquestes empreses poden fer servir, a més, les seves pròpies galetes, als seus dominis, i canviar-ne la llista; la vigent és a la seva política de galetes.',
+          ],
+        },
+        {
+          id: 'consentimiento',
+          title: 'El teu consentiment',
+          blocks: [
+            'Les galetes tècniques, i les que desen una preferència que tries tu, com l’idioma, estan exemptes de consentiment segons l’article 22.2 de la LSSI i la guia de l’Agència Espanyola de Protecció de Dades.',
+            {
+              when: 'noOptional',
+              blocks: [
+                'Per això no et demanem que acceptis galetes: l’avís que veus en entrar és perquè coneguis les nostres condicions.',
+                'Si en el futur fem servir galetes d’analítica o de publicitat, et demanarem permís abans d’instal·lar-les, amb l’opció de rebutjar-les tan fàcilment com acceptar-les, i actualitzarem aquesta política.',
+              ],
+            },
+            {
+              when: 'optional',
+              blocks: [
+                'Les d’analítica i de publicitat només s’instal·len si les acceptes a l’avís que veus en entrar, on pots acceptar-les totes, rebutjar-les totes o triar per tipus amb la mateixa facilitat. Si no tries, no s’instal·len, i si les rebutges pots navegar i comprar igualment.',
+                'Desem la teva elecció un any. Després, o si afegim una altra empresa a un tipus de galetes que havies acceptat, et tornarem a preguntar.',
+                'Pots canviar d’opinió o retirar el teu consentiment quan vulguis des de «Configurar galetes», al peu de cada pàgina, o amb aquest botó:',
+                { action: 'cookieSettings' },
+                'Si el retires, esborrem del teu navegador les galetes d’analítica i de publicitat del nostre domini. Les que aquestes empreses desen als seus propis dominis s’esborren des de la configuració del navegador o des del teu compte als seus serveis.',
+              ],
+            },
           ],
         },
         {
@@ -489,6 +705,12 @@ export const ca: LegalCopy = {
                 '[Mozilla Firefox](https://support.mozilla.org/kb/clear-cookies-and-site-data-firefox)',
                 '[Safari](https://support.apple.com/guide/safari/sfri11471/mac)',
                 '[Microsoft Edge](https://support.microsoft.com/microsoft-edge/delete-cookies-in-microsoft-edge-63947406-40ac-c3b8-57b9-2a946a29ae09)',
+              ],
+            },
+            {
+              when: 'ga4',
+              blocks: [
+                'També pots impedir que Google Analytics et mesuri en qualsevol web amb el [complement d’inhabilitació de Google](https://tools.google.com/dlpage/gaoptout).',
               ],
             },
           ],
