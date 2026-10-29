@@ -8,6 +8,8 @@ export {
   merchantFeedXml,
 } from './domain/merchant-feed';
 export type { FeedItem } from './domain/merchant-feed';
+export { EMPTY_SEARCH, searchCatalog, searchTerms } from './domain/search';
+export type { SearchDocument, SearchResult } from './domain/search';
 export {
   AUDIENCES,
   AVAILABILITY,

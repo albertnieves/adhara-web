@@ -15,7 +15,8 @@
     "houses": "Houses",
     "cart": "Basket",
     "account": "Account",
-    "accountLabel": "Your account"
+    "accountLabel": "Your account",
+    "search": "Search"
   },
   "home": {
     "heroEyebrow": "Arabian perfumery · Castelldefels",
@@ -654,5 +655,22 @@
       "generic": "Something went wrong. Please try again in a few minutes.",
       "review": "Check the highlighted fields."
     }
+  },
+  "search": {
+    "eyebrow": "Search",
+    "title": "Find your fragrance",
+    "label": "Search fragrances, houses, families or notes",
+    "placeholder": "Fragrance, house, family or note",
+    "count": "{count, plural, =0 {No fragrances} one {# fragrance} other {# fragrances}} for “{query}”",
+    "houses": "Houses",
+    "families": "Scent families",
+    "products": "Fragrances",
+    "none": "No results for “{query}”",
+    "noneHint": "Check the spelling or try a house, a family (woody, floral…) or a note (vanilla, oud, rose…).",
+    "toCollection": "View the collection",
+    "toScentCatalog": "Go to the scent catalogue",
+    "byFamily": "By scent family",
+    "byHouse": "By house",
+    "metaDescription": "Search Arabian fragrances by name, house, scent family or note at L’Atelier du Désert, in Castelldefels."
   }
 }

@@ -17,6 +17,7 @@ export const routing = defineRouting({
       en: '/scent-catalogue/[slug]',
     },
     '/casas': { es: '/casas', ca: '/cases', en: '/houses' },
+    '/buscar': { es: '/buscar', ca: '/cercar', en: '/search' },
     '/casas/[slug]': {
       es: '/casas/[slug]',
       ca: '/cases/[slug]',
