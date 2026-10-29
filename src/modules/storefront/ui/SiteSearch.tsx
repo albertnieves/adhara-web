@@ -280,6 +280,12 @@ function Suggestions({
   if (families.length === 0 && brands.length === 0) return null;
   return (
     <div className="mt-10 grid gap-10 lg:grid-cols-2">
+      <Link
+        href="/recorrido-olfativo"
+        className={`${buttonClass('outline', 'md')} justify-self-start lg:col-span-2`}
+      >
+        {t('journey.cta')}
+      </Link>
       {families.length > 0 && (
         <section aria-labelledby="sugerencias-familias">
           <Eyebrow as="h2" id="sugerencias-familias">

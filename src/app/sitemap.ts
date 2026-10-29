@@ -37,6 +37,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     '/',
     '/catalogo',
     '/catalogo-olfativo',
+    '/recorrido-olfativo',
     '/casas',
   ] as const)
     add(href, routing.locales);

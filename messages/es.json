@@ -16,7 +16,8 @@
     "cart": "Cesta",
     "account": "Cuenta",
     "accountLabel": "Tu cuenta",
-    "search": "Buscar"
+    "search": "Buscar",
+    "journey": "Recorrido olfativo"
   },
   "home": {
     "heroEyebrow": "Perfumería árabe · Castelldefels",
@@ -672,5 +673,31 @@
     "byFamily": "Por familia olfativa",
     "byHouse": "Por casa",
     "metaDescription": "Busca perfumes árabes por nombre, casa, familia olfativa o nota en L’Atelier du Désert, en Castelldefels."
+  },
+  "journey": {
+    "eyebrow": "Recorrido olfativo",
+    "title": "Tu perfume en tres preguntas",
+    "lead": "Elige lo que te atrae y te proponemos perfumes de la colección según sus fichas olfativas: familias, estaciones, momentos y notas. Cada propuesta dice por qué y de dónde salen sus datos.",
+    "families": "1. ¿Qué familias te atraen?",
+    "familiesHint": "Elige hasta {max}.",
+    "when": "2. ¿Cuándo lo llevarías?",
+    "season": "Estación",
+    "time": "Momento",
+    "notes": "3. ¿Alguna nota?",
+    "notesHint": "Las más presentes en la colección. Opcional.",
+    "likes": "Me encanta",
+    "avoid": "Prefiero evitar",
+    "results": "Te proponemos",
+    "resultsCount": "{count, plural, =0 {Ninguna propuesta} one {# propuesta} other {# propuestas}}",
+    "start": "Elige al menos una familia, estación, momento o nota para ver propuestas.",
+    "none": "Ningún perfume encaja con todo lo que has elegido. Prueba a quitar alguna preferencia.",
+    "reasons": "Coincide en",
+    "viewScent": "Ver su ficha olfativa",
+    "source": "Fuente de las notas",
+    "reset": "Empezar de nuevo",
+    "coverage": "Solo proponemos perfumes con ficha olfativa verificada: {count} de {total} de la colección.",
+    "empty": "El recorrido estará disponible en cuanto la colección tenga fichas olfativas.",
+    "cta": "¿No sabes por dónde empezar? Haz el recorrido olfativo",
+    "metaDescription": "Descubre tu perfume árabe en tres preguntas: familias, estación, momento y notas, con propuestas explicadas según la ficha de cada perfume."
   }
 }

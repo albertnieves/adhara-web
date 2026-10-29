@@ -11,6 +11,7 @@ export { ProductStage } from './ui/ProductStage';
 export { PurchasePanel } from './ui/PurchasePanel';
 export { Reveal } from './ui/Reveal';
 export { ScentCard, ScentCatalogBrowser } from './ui/ScentCatalogBrowser';
+export { ScentJourney } from './ui/ScentJourney';
 export { SiteSearch } from './ui/SiteSearch';
 export type { ScentEntry } from './ui/ScentCatalogBrowser';
 export { ScentGlyph } from './ui/ScentGlyphs';

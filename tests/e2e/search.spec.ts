@@ -45,7 +45,7 @@ test('desde la cabecera: busca por nombre y guarda la búsqueda en la URL', asyn
   await expect(box).toBeFocused();
   await box.fill('centinela');
   await expect(page).toHaveURL(/\/es\/buscar\?q=centinela$/);
-  await expect(page.getByRole('status')).toHaveText(
+  await expect(page.getByRole('main').getByRole('status')).toHaveText(
     /1 perfume para «centinela»/i,
   );
   await expect(
@@ -112,7 +112,9 @@ test('en el móvil, desde el menú', async ({ page }, testInfo) => {
       name: 'Buscar perfumes, casas, familias o notas',
     }),
   ).toHaveValue('rosa');
-  await expect(page.getByRole('status')).toContainText('«rosa»');
+  await expect(page.getByRole('main').getByRole('status')).toContainText(
+    '«rosa»',
+  );
 });
 
 test('en el móvil, las casas de la colección en un desplegable', async ({

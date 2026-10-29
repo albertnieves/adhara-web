@@ -107,7 +107,7 @@ export function Header({
           >
             <button
               type="button"
-              className="min-h-11 md:hidden"
+              className="min-h-11 lg:hidden"
               aria-expanded={open}
               aria-controls="mobile-menu"
               onClick={() => setOpen((value) => !value)}
@@ -118,24 +118,24 @@ export function Header({
             </button>
             <Link
               href="/catalogo"
-              className="link-underline text-2xs tracking-caps-lg hidden uppercase md:inline"
+              className="link-underline text-2xs tracking-caps-lg hidden uppercase lg:inline"
               aria-current={pathname === '/catalogo' ? 'page' : undefined}
             >
               {t('collection')}
             </Link>
             <Link
               href="/catalogo-olfativo"
-              className="link-underline text-2xs tracking-caps-lg hidden uppercase md:inline"
+              className="link-underline text-2xs tracking-caps-lg hidden uppercase lg:inline"
               aria-current={
                 pathname.startsWith('/catalogo-olfativo') ? 'page' : undefined
               }
             >
               {t('scentCatalog')}
             </Link>
-            {/* Desde 1024 px: a 768 px no cabía todo junto al logotipo. */}
+            {/* Desde 1280 px: a 1024 px, en catalán, no cabía junto al logotipo. */}
             <Link
               href={{ pathname: '/', hash: 'experiencia' }}
-              className="link-underline text-2xs tracking-caps-lg hidden uppercase lg:inline"
+              className="link-underline text-2xs tracking-caps-lg hidden uppercase xl:inline"
             >
               {t('experience')}
             </Link>
@@ -146,18 +146,18 @@ export function Header({
           </Link>
 
           <div className="flex items-center justify-end gap-4 lg:gap-6">
-            {/* En el móvil, la búsqueda está en el menú. */}
+            {/* Hasta 1024 px, la búsqueda está en el menú. */}
             <Link
               href="/buscar"
               aria-label={t('search')}
               aria-current={pathname === '/buscar' ? 'page' : undefined}
-              className="hidden size-11 items-center justify-center md:inline-flex"
+              className="hidden size-11 items-center justify-center lg:inline-flex"
             >
               <Icon name="search" />
             </Link>
             <LanguageLinks
               pathname={pathname}
-              className="text-2xs tracking-caps hidden items-center gap-4 md:flex"
+              className="text-2xs tracking-caps hidden items-center gap-4 lg:flex"
             />
             {account && <AccountLink />}
             {cart && <CartLink />}
@@ -176,7 +176,7 @@ export function Header({
             id="mobile-menu"
             key="menu"
             data-tone="dark"
-            className="bg-surface text-fg fixed inset-0 top-18 z-30 flex flex-col justify-between px-6 pt-12 pb-10 md:hidden"
+            className="bg-surface text-fg fixed inset-0 top-18 z-30 flex flex-col justify-between gap-10 overflow-y-auto px-6 pt-12 pb-10 lg:hidden"
             initial={
               reduced ? { opacity: 0 } : { clipPath: 'inset(0 0 100% 0)' }
             }
@@ -184,58 +184,60 @@ export function Header({
             exit={reduced ? { opacity: 0 } : { clipPath: 'inset(0 0 100% 0)' }}
             transition={{ duration: 0.7, ease: EASE }}
           >
-            <form
-              role="search"
-              className="-mt-4 mb-8"
-              onSubmit={(event) => {
-                event.preventDefault();
-                const q = new FormData(event.currentTarget).get('q');
-                setOpen(false);
-                router.push({
-                  pathname: '/buscar',
-                  ...(typeof q === 'string' && q.trim()
-                    ? { query: { q: q.trim() } }
-                    : {}),
-                });
-              }}
-            >
-              <SearchField
-                name="q"
-                label={tSearch('label')}
-                placeholder={tSearch('placeholder')}
-                enterKeyHint="search"
-                autoComplete="off"
-              />
-            </form>
-            <ul className="font-display space-y-4 text-5xl font-light">
-              {[
-                { href: '/' as const, label: t('home') },
-                { href: '/catalogo' as const, label: t('collection') },
-                {
-                  href: '/catalogo-olfativo' as const,
-                  label: t('scentCatalog'),
-                },
-                { href: '/casas' as const, label: t('houses') },
-                ...(account
-                  ? [{ href: '/cuenta' as const, label: t('accountLabel') }]
-                  : []),
-              ].map((item, index) => (
-                <motion.li
-                  key={item.href}
-                  initial={{ opacity: 0, y: 24 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{
-                    delay: 0.25 + index * 0.08,
-                    duration: 0.8,
-                    ease: EASE,
-                  }}
-                >
-                  <Link href={item.href} onClick={() => setOpen(false)}>
-                    {item.label}
-                  </Link>
-                </motion.li>
-              ))}
-            </ul>
+            <div>
+              <form
+                role="search"
+                className="mb-10"
+                onSubmit={(event) => {
+                  event.preventDefault();
+                  const q = new FormData(event.currentTarget).get('q');
+                  setOpen(false);
+                  router.push({
+                    pathname: '/buscar',
+                    ...(typeof q === 'string' && q.trim()
+                      ? { query: { q: q.trim() } }
+                      : {}),
+                  });
+                }}
+              >
+                <SearchField
+                  name="q"
+                  label={tSearch('label')}
+                  placeholder={tSearch('placeholder')}
+                  enterKeyHint="search"
+                  autoComplete="off"
+                />
+              </form>
+              <ul className="font-display space-y-4 text-5xl font-light">
+                {[
+                  { href: '/' as const, label: t('home') },
+                  { href: '/catalogo' as const, label: t('collection') },
+                  {
+                    href: '/catalogo-olfativo' as const,
+                    label: t('scentCatalog'),
+                  },
+                  { href: '/casas' as const, label: t('houses') },
+                  ...(account
+                    ? [{ href: '/cuenta' as const, label: t('accountLabel') }]
+                    : []),
+                ].map((item, index) => (
+                  <motion.li
+                    key={item.href}
+                    initial={{ opacity: 0, y: 24 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{
+                      delay: 0.25 + index * 0.08,
+                      duration: 0.8,
+                      ease: EASE,
+                    }}
+                  >
+                    <Link href={item.href} onClick={() => setOpen(false)}>
+                      {item.label}
+                    </Link>
+                  </motion.li>
+                ))}
+              </ul>
+            </div>
             <div>
               <Eyebrow className="mb-4">{t('language')}</Eyebrow>
               <LanguageLinks

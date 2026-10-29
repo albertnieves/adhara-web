@@ -11,6 +11,21 @@ export type { FeedItem } from './domain/merchant-feed';
 export { EMPTY_SEARCH, searchCatalog, searchTerms } from './domain/search';
 export type { SearchDocument, SearchResult } from './domain/search';
 export {
+  answersFromSearch,
+  answersToSearch,
+  hasAnswers,
+  journeyOptions,
+  JOURNEY_WEIGHTS,
+  MAX_FAMILIES,
+  NO_ANSWERS,
+  recommend,
+} from './domain/journey';
+export type {
+  JourneyAnswers,
+  JourneyDocument,
+  JourneyMatch,
+} from './domain/journey';
+export {
   AUDIENCES,
   AVAILABILITY,
   CONCENTRATIONS,

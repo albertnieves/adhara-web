@@ -11,6 +11,11 @@ export const routing = defineRouting({
       ca: '/cataleg-olfactiu',
       en: '/scent-catalogue',
     },
+    '/recorrido-olfativo': {
+      es: '/recorrido-olfativo',
+      ca: '/recorregut-olfactiu',
+      en: '/scent-journey',
+    },
     '/catalogo-olfativo/[slug]': {
       es: '/catalogo-olfativo/[slug]',
       ca: '/cataleg-olfactiu/[slug]',

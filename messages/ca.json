@@ -16,7 +16,8 @@
     "cart": "Cistella",
     "account": "Compte",
     "accountLabel": "El teu compte",
-    "search": "Cercar"
+    "search": "Cercar",
+    "journey": "Recorregut olfactiu"
   },
   "home": {
     "heroEyebrow": "Perfumeria àrab · Castelldefels",
@@ -672,5 +673,31 @@
     "byFamily": "Per família olfactiva",
     "byHouse": "Per casa",
     "metaDescription": "Cerca perfums àrabs per nom, casa, família olfactiva o nota a L’Atelier du Désert, a Castelldefels."
+  },
+  "journey": {
+    "eyebrow": "Recorregut olfactiu",
+    "title": "El teu perfum en tres preguntes",
+    "lead": "Tria el que t’atrau i et proposem perfums de la col·lecció segons les seves fitxes olfactives: famílies, estacions, moments i notes. Cada proposta diu per què i d’on surten les seves dades.",
+    "families": "1. Quines famílies t’atrauen?",
+    "familiesHint": "Tria’n fins a {max}.",
+    "when": "2. Quan el portaries?",
+    "season": "Estació",
+    "time": "Moment",
+    "notes": "3. Alguna nota?",
+    "notesHint": "Les més presents a la col·lecció. Opcional.",
+    "likes": "M’encanta",
+    "avoid": "Prefereixo evitar",
+    "results": "Et proposem",
+    "resultsCount": "{count, plural, =0 {Cap proposta} one {# proposta} other {# propostes}}",
+    "start": "Tria almenys una família, estació, moment o nota per veure propostes.",
+    "none": "Cap perfum encaixa amb tot el que has triat. Prova de treure alguna preferència.",
+    "reasons": "Coincideix en",
+    "viewScent": "Veure’n la fitxa olfactiva",
+    "source": "Font de les notes",
+    "reset": "Tornar a començar",
+    "coverage": "Només proposem perfums amb fitxa olfactiva verificada: {count} de {total} de la col·lecció.",
+    "empty": "El recorregut estarà disponible quan la col·lecció tingui fitxes olfactives.",
+    "cta": "No saps per on començar? Fes el recorregut olfactiu",
+    "metaDescription": "Descobreix el teu perfum àrab en tres preguntes: famílies, estació, moment i notes, amb propostes explicades segons la fitxa de cada perfum."
   }
 }
