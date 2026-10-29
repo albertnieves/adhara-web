@@ -15,7 +15,9 @@
     "houses": "Casas",
     "cart": "Cesta",
     "account": "Cuenta",
-    "accountLabel": "Tu cuenta"
+    "accountLabel": "Tu cuenta",
+    "search": "Buscar",
+    "journey": "Recorrido olfativo"
   },
   "home": {
     "heroEyebrow": "Perfumería árabe · Castelldefels",
@@ -131,13 +133,15 @@
     "staffAccess": "Acceso del equipo",
     "faq": "Preguntas frecuentes",
     "legal": "Legal",
-    "contact": "Escríbenos"
+    "contact": "Escríbenos",
+    "cookieSettings": "Configurar cookies"
   },
   "faq": {
     "eyebrow": "Dudas",
     "title": "Preguntas frecuentes",
     "buyOnlineQ": "¿Puedo comprar online?",
     "buyOnlineA": "Todavía no. La compra online, con sus envíos y devoluciones, llegará muy pronto y aquí publicaremos sus condiciones. Mientras tanto, te esperamos en la tienda de Castelldefels.",
+    "buyOnlineYes": "Sí. Añade los perfumes a la cesta y paga con tarjeta o Bizum en la página segura del banco. Puedes recogerlos gratis en la tienda de Castelldefels o elegir el envío a domicilio donde esté disponible para tu código postal; antes de pagar verás los gastos y el plazo. Las condiciones están en <shipping>Envíos y devoluciones</shipping>.",
     "visitQ": "¿Dónde está la tienda?",
     "visitA": "En {address}, {city}.",
     "hours": "Horario",
@@ -230,7 +234,26 @@
     "title": "Antes de empezar",
     "body": "En L’Atelier du Désert solo usamos cookies técnicas, necesarias para que la web funcione y para recordar tu idioma. No usamos cookies de publicidad ni de analítica.",
     "links": "Al continuar, aceptas nuestro <notice>aviso legal</notice>, la <privacy>política de privacidad</privacy> y la <cookies>política de cookies</cookies>.",
-    "accept": "Aceptar y continuar"
+    "accept": "Aceptar y continuar",
+    "bodyAnalytics": "Usamos cookies técnicas, necesarias para que la web funcione, y, solo si las aceptas, cookies de analítica para saber cuántas personas nos visitan y qué páginas ven. Puedes aceptarlas, rechazarlas o configurarlas, y cambiar de opinión cuando quieras desde «Configurar cookies», al pie de la página.",
+    "bodyAds": "Usamos cookies técnicas, necesarias para que la web funcione, y, solo si las aceptas, cookies de publicidad para mostrarte nuestros anuncios en otras webs y redes sociales y saber qué campañas funcionan. Puedes aceptarlas, rechazarlas o configurarlas, y cambiar de opinión cuando quieras desde «Configurar cookies», al pie de la página.",
+    "bodyBoth": "Usamos cookies técnicas, necesarias para que la web funcione, y, solo si las aceptas, cookies de analítica, para saber cuántas personas nos visitan y qué páginas ven, y de publicidad, para mostrarte nuestros anuncios en otras webs y redes sociales y saber qué campañas funcionan. Puedes aceptarlas, rechazarlas o configurarlas, y cambiar de opinión cuando quieras desde «Configurar cookies», al pie de la página.",
+    "linksTracking": "Al continuar, aceptas nuestro <notice>aviso legal</notice> y la <privacy>política de privacidad</privacy>. Todos los detalles, en la <cookies>política de cookies</cookies>.",
+    "reject": "Rechazar",
+    "acceptAll": "Aceptar todas",
+    "configure": "Configurar",
+    "settingsEyebrow": "Tu privacidad",
+    "settingsTitle": "Configurar cookies",
+    "settingsIntro": "Elige qué cookies podemos usar. Las técnicas son necesarias y siempre están activas; las demás solo se instalan si las marcas.",
+    "technical": "Técnicas (siempre activas)",
+    "technicalHint": "Para que la web funcione: tu idioma, la cesta, tu pedido y esta elección.",
+    "analytics": "Analítica",
+    "analyticsHint": "Para saber cuántas personas nos visitan y qué páginas ven, y así mejorar la web. {count, plural, one {Proveedor} other {Proveedores}}: {vendors}.",
+    "ads": "Publicidad",
+    "adsHint": "Para mostrarte nuestros anuncios en otras webs y redes sociales y saber qué campañas funcionan. {count, plural, one {Proveedor} other {Proveedores}}: {vendors}.",
+    "rejectAll": "Rechazar todas",
+    "save": "Guardar mi elección",
+    "close": "Cerrar"
   },
   "cart": {
     "title": "Tu cesta",
@@ -633,5 +656,48 @@
       "generic": "Algo ha fallado. Inténtalo de nuevo en unos minutos.",
       "review": "Revisa los campos marcados."
     }
+  },
+  "search": {
+    "eyebrow": "Buscar",
+    "title": "Encuentra tu perfume",
+    "label": "Buscar perfumes, casas, familias o notas",
+    "placeholder": "Perfume, casa, familia o nota",
+    "count": "{count, plural, =0 {Ningún perfume} one {# perfume} other {# perfumes}} para «{query}»",
+    "houses": "Casas",
+    "families": "Familias olfativas",
+    "products": "Perfumes",
+    "none": "Sin resultados para «{query}»",
+    "noneHint": "Revisa cómo está escrito o prueba con una casa, una familia (amaderada, floral…) o una nota (vainilla, oud, rosa…).",
+    "toCollection": "Ver la colección",
+    "toScentCatalog": "Ir al catálogo olfativo",
+    "byFamily": "Por familia olfativa",
+    "byHouse": "Por casa",
+    "metaDescription": "Busca perfumes árabes por nombre, casa, familia olfativa o nota en L’Atelier du Désert, en Castelldefels."
+  },
+  "journey": {
+    "eyebrow": "Recorrido olfativo",
+    "title": "Tu perfume en tres preguntas",
+    "lead": "Elige lo que te atrae y te proponemos perfumes de la colección según sus fichas olfativas: familias, estaciones, momentos y notas. Cada propuesta dice por qué y de dónde salen sus datos.",
+    "families": "1. ¿Qué familias te atraen?",
+    "familiesHint": "Elige hasta {max}.",
+    "when": "2. ¿Cuándo lo llevarías?",
+    "season": "Estación",
+    "time": "Momento",
+    "notes": "3. ¿Alguna nota?",
+    "notesHint": "Las más presentes en la colección. Opcional.",
+    "likes": "Me encanta",
+    "avoid": "Prefiero evitar",
+    "results": "Te proponemos",
+    "resultsCount": "{count, plural, =0 {Ninguna propuesta} one {# propuesta} other {# propuestas}}",
+    "start": "Elige al menos una familia, estación, momento o nota para ver propuestas.",
+    "none": "Ningún perfume encaja con todo lo que has elegido. Prueba a quitar alguna preferencia.",
+    "reasons": "Coincide en",
+    "viewScent": "Ver su ficha olfativa",
+    "source": "Fuente de las notas",
+    "reset": "Empezar de nuevo",
+    "coverage": "Solo proponemos perfumes con ficha olfativa verificada: {count} de {total} de la colección.",
+    "empty": "El recorrido estará disponible en cuanto la colección tenga fichas olfativas.",
+    "cta": "¿No sabes por dónde empezar? Haz el recorrido olfativo",
+    "metaDescription": "Descubre tu perfume árabe en tres preguntas: familias, estación, momento y notas, con propuestas explicadas según la ficha de cada perfume."
   }
 }

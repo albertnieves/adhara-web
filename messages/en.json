@@ -15,7 +15,9 @@
     "houses": "Houses",
     "cart": "Basket",
     "account": "Account",
-    "accountLabel": "Your account"
+    "accountLabel": "Your account",
+    "search": "Search",
+    "journey": "Scent journey"
   },
   "home": {
     "heroEyebrow": "Arabian perfumery · Castelldefels",
@@ -131,13 +133,15 @@
     "staffAccess": "Staff access",
     "faq": "FAQ",
     "legal": "Legal",
-    "contact": "Write to us"
+    "contact": "Write to us",
+    "cookieSettings": "Cookie settings"
   },
   "faq": {
     "eyebrow": "Questions",
     "title": "Frequently asked questions",
     "buyOnlineQ": "Can I buy online?",
     "buyOnlineA": "Not yet. Online shopping, with its shipping and returns, is coming very soon and we will publish its terms here. In the meantime, we look forward to seeing you at our shop in Castelldefels.",
+    "buyOnlineYes": "Yes. Add the fragrances to your basket and pay by card or Bizum on the bank’s secure page. You can collect them free of charge at our shop in Castelldefels or choose home delivery where it is available for your postcode; you will see the cost and delivery time before paying. The terms are in <shipping>Shipping and returns</shipping>.",
     "visitQ": "Where is the shop?",
     "visitA": "At {address}, {city}.",
     "hours": "Opening hours",
@@ -230,7 +234,26 @@
     "title": "Before you start",
     "body": "At L’Atelier du Désert we only use technical cookies, needed for the website to work and to remember your language. We do not use advertising or analytics cookies.",
     "links": "By continuing, you accept our <notice>legal notice</notice>, <privacy>privacy policy</privacy> and <cookies>cookie policy</cookies>.",
-    "accept": "Accept and continue"
+    "accept": "Accept and continue",
+    "bodyAnalytics": "We use technical cookies, needed for the website to work, and, only if you accept them, analytics cookies to know how many people visit us and which pages they see. You can accept, reject or configure them, and change your mind at any time from “Cookie settings” at the bottom of the page.",
+    "bodyAds": "We use technical cookies, needed for the website to work, and, only if you accept them, advertising cookies to show you our ads on other websites and social networks and to know which campaigns work. You can accept, reject or configure them, and change your mind at any time from “Cookie settings” at the bottom of the page.",
+    "bodyBoth": "We use technical cookies, needed for the website to work, and, only if you accept them, analytics cookies, to know how many people visit us and which pages they see, and advertising cookies, to show you our ads on other websites and social networks and to know which campaigns work. You can accept, reject or configure them, and change your mind at any time from “Cookie settings” at the bottom of the page.",
+    "linksTracking": "By continuing, you accept our <notice>legal notice</notice> and <privacy>privacy policy</privacy>. All the details are in our <cookies>cookie policy</cookies>.",
+    "reject": "Reject",
+    "acceptAll": "Accept all",
+    "configure": "Configure",
+    "settingsEyebrow": "Your privacy",
+    "settingsTitle": "Cookie settings",
+    "settingsIntro": "Choose which cookies we may use. Technical cookies are needed and always on; the others are only set if you tick them.",
+    "technical": "Technical (always on)",
+    "technicalHint": "For the website to work: your language, basket, order and this choice.",
+    "analytics": "Analytics",
+    "analyticsHint": "To know how many people visit us and which pages they see, so we can improve the website. {count, plural, one {Provider} other {Providers}}: {vendors}.",
+    "ads": "Advertising",
+    "adsHint": "To show you our ads on other websites and social networks and to know which campaigns work. {count, plural, one {Provider} other {Providers}}: {vendors}.",
+    "rejectAll": "Reject all",
+    "save": "Save my choice",
+    "close": "Close"
   },
   "cart": {
     "title": "Your basket",
@@ -633,5 +656,48 @@
       "generic": "Something went wrong. Please try again in a few minutes.",
       "review": "Check the highlighted fields."
     }
+  },
+  "search": {
+    "eyebrow": "Search",
+    "title": "Find your fragrance",
+    "label": "Search fragrances, houses, families or notes",
+    "placeholder": "Fragrance, house, family or note",
+    "count": "{count, plural, =0 {No fragrances} one {# fragrance} other {# fragrances}} for “{query}”",
+    "houses": "Houses",
+    "families": "Scent families",
+    "products": "Fragrances",
+    "none": "No results for “{query}”",
+    "noneHint": "Check the spelling or try a house, a family (woody, floral…) or a note (vanilla, oud, rose…).",
+    "toCollection": "View the collection",
+    "toScentCatalog": "Go to the scent catalogue",
+    "byFamily": "By scent family",
+    "byHouse": "By house",
+    "metaDescription": "Search Arabian fragrances by name, house, scent family or note at L’Atelier du Désert, in Castelldefels."
+  },
+  "journey": {
+    "eyebrow": "Scent journey",
+    "title": "Your fragrance in three questions",
+    "lead": "Choose what appeals to you and we suggest fragrances from the collection based on their scent profiles: families, seasons, moments and notes. Each suggestion says why and where its data comes from.",
+    "families": "1. Which families appeal to you?",
+    "familiesHint": "Choose up to {max}.",
+    "when": "2. When would you wear it?",
+    "season": "Season",
+    "time": "Moment",
+    "notes": "3. Any notes?",
+    "notesHint": "The most common in the collection. Optional.",
+    "likes": "I love",
+    "avoid": "I’d rather avoid",
+    "results": "Our suggestions",
+    "resultsCount": "{count, plural, =0 {No suggestions} one {# suggestion} other {# suggestions}}",
+    "start": "Choose at least one family, season, moment or note to see suggestions.",
+    "none": "No fragrance matches everything you chose. Try removing a preference.",
+    "reasons": "Matches",
+    "viewScent": "View its scent profile",
+    "source": "Source of the notes",
+    "reset": "Start again",
+    "coverage": "We only suggest fragrances with a verified scent profile: {count} of {total} in the collection.",
+    "empty": "The journey will be available once the collection has scent profiles.",
+    "cta": "Not sure where to start? Take the scent journey",
+    "metaDescription": "Discover your Arabian fragrance in three questions: families, season, moment and notes, with suggestions explained from each fragrance’s profile."
   }
 }

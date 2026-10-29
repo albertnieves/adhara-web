@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { TRACKING_ON } from '../support/tracking';
 
 /*
  * Textos legales: enlazados desde la barra inferior del pie en los tres
@@ -71,6 +72,9 @@ test.describe('aviso de entrada', () => {
     page,
     context,
   }) => {
+    // Con analítica o publicidad, el aviso pide además el consentimiento
+    // (consent.spec.ts); este es el de solo cookies técnicas.
+    test.skip(TRACKING_ON, 'Aviso con consentimiento: consent.spec.ts');
     await page.goto('/es');
     const dialog = page.getByRole('dialog', { name: 'Antes de empezar' });
     await expect(dialog).toBeVisible();

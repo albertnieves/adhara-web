@@ -8,6 +8,8 @@ import { Link } from '@/modules/i18n';
 import type { Locale } from '@/modules/i18n/seo';
 import { LEGAL_COPY, LEGAL_DOCUMENTS, LEGAL_PATHS } from '@/modules/legal';
 import { contactEnabled } from '@/modules/messaging/server';
+import { activeVendors, CookieSettingsButton } from '@/modules/tracking';
+import { serverTrackingConfig } from '@/modules/tracking/server';
 import { FAQ_ANCHOR } from './Faq';
 
 export async function Footer() {
@@ -16,6 +18,7 @@ export async function Footer() {
   const t = await getTranslations('footer');
   const legal = LEGAL_COPY[(await getLocale()) as Locale];
   const nav = await getTranslations('nav');
+  const cookieChoice = activeVendors(serverTrackingConfig()).length > 0;
   return (
     <footer
       data-tone="dark"
@@ -44,6 +47,16 @@ export async function Footer() {
             <li>
               <Link href="/casas" className="link-underline">
                 {nav('houses')}
+              </Link>
+            </li>
+            <li>
+              <Link href="/recorrido-olfativo" className="link-underline">
+                {nav('journey')}
+              </Link>
+            </li>
+            <li>
+              <Link href="/buscar" className="link-underline">
+                {nav('search')}
               </Link>
             </li>
             <li>
@@ -133,6 +146,13 @@ export async function Footer() {
                 </Link>
               </li>
             ))}
+            {cookieChoice && (
+              <li>
+                <CookieSettingsButton className="link-underline hover:text-fg min-h-6 cursor-pointer uppercase">
+                  {t('cookieSettings')}
+                </CookieSettingsButton>
+              </li>
+            )}
           </ul>
         </nav>
         <span className="text-accent-fg">Castelldefels</span>
