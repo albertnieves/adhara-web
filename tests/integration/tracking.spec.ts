@@ -13,7 +13,7 @@ import { archiveProduct, sellableProduct } from './support';
 
 /*
  * Eventos de compra para la analítica y la publicidad aceptadas (DECISIONS
- * §178), de la ficha al pedido pagado, con el TPV simulado: lo que recibe
+ * §179), de la ficha al pedido pagado, con el TPV simulado: lo que recibe
  * cada proveedor, una sola compra por pedido y nada si se rechazaron. Las
  * etiquetas se sirven vacías: las llamadas se leen en sus colas.
  */

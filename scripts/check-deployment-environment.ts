@@ -7,7 +7,7 @@ export const PRODUCTION_SUPABASE_REF = 'xgpsislololgbakzcmad';
 type Environment = Record<string, string | undefined>;
 
 /**
- * IDs públicos de analítica y publicidad (DECISIONS §178). Repite los
+ * IDs públicos de analítica y publicidad (DECISIONS §179). Repite los
  * formatos de src/modules/tracking/domain/config.ts, porque este script se
  * ejecuta con Node sin el resto de la app; una prueba unitaria comprueba que
  * coinciden. Un ID mal escrito se ignoraría en silencio: en Production para

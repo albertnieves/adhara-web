@@ -101,7 +101,7 @@ export default async function ProductPage({ params }: { params: Params }) {
     .filter((p) => p.brand.slug === product.brand.slug && p.id !== product.id)
     .slice(0, 4);
   const sizes = product.variants.map(variantLabel).filter((s) => s !== '—');
-  // Analítica y publicidad (§178): el formato que se ve primero, con su PVP.
+  // Analítica y publicidad (§179): el formato que se ve primero, con su PVP.
   const shown = product.variants.find((variant) => variant.priceCents !== null);
 
   return (

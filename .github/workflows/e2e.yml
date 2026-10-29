@@ -20,7 +20,7 @@ jobs:
     # (Auth, Google y Resend) y revisar la privacidad (DECISIONS §153).
     # Las pruebas crean muchos pedidos desde la misma IP: el freno de las
     # acciones públicas se apaga (nunca en producción; DECISIONS §160).
-    # Analítica y publicidad (DECISIONS §178) con IDs de prueba: el aviso pide
+    # Analítica y publicidad (DECISIONS §179) con IDs de prueba: el aviso pide
     # el consentimiento y las pruebas sirven vacías las etiquetas de Google,
     # Meta y TikTok (tests/support/tracking.ts), así que no sale ninguna
     # petición a esas empresas. El resto de pruebas navega con todo rechazado.

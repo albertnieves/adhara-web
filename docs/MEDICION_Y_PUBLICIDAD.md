@@ -6,14 +6,14 @@
 
 ## Qué hace la web
 
-| Pieza                                        | Para qué sirve                                                                                         | Se enciende con                                                         |
-| -------------------------------------------- | ------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------- |
-| Google Analytics 4                           | Visitas, origen del tráfico, páginas, embudo de compra e ingresos                                      | `NEXT_PUBLIC_GA_MEASUREMENT_ID` (`G-…`)                                 |
-| Google Ads                                   | Medir qué anuncios llevan a una compra y remarketing (anuncios a quien ya visitó la tienda)            | `NEXT_PUBLIC_GOOGLE_ADS_ID` (`AW-…`)                                    |
-| Conversión «Compra» de Google Ads            | Que Google Ads cuente cada venta con su importe                                                        | `NEXT_PUBLIC_GOOGLE_ADS_PURCHASE_LABEL` (la etiqueta de la conversión) |
-| Píxel de Meta                                | Anuncios de Facebook e Instagram: medir ventas y volver a mostrar los perfumes vistos                  | `NEXT_PUBLIC_META_PIXEL_ID` (solo números)                              |
-| Píxel de TikTok                              | Lo mismo en TikTok, donde la perfumería árabe tiene mucho público                                      | `NEXT_PUBLIC_TIKTOK_PIXEL_ID` (letras y números en mayúsculas)          |
-| Feed de productos (`/feeds/productos.xml`)   | Fichas gratuitas y anuncios de Shopping en Google; catálogo para los anuncios dinámicos de Meta        | `WEB_CHECKOUT=1` (solo con la venta online encendida)                   |
+| Pieza                                      | Para qué sirve                                                                                  | Se enciende con                                                        |
+| ------------------------------------------ | ----------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
+| Google Analytics 4                         | Visitas, origen del tráfico, páginas, embudo de compra e ingresos                               | `NEXT_PUBLIC_GA_MEASUREMENT_ID` (`G-…`)                                |
+| Google Ads                                 | Medir qué anuncios llevan a una compra y remarketing (anuncios a quien ya visitó la tienda)     | `NEXT_PUBLIC_GOOGLE_ADS_ID` (`AW-…`)                                   |
+| Conversión «Compra» de Google Ads          | Que Google Ads cuente cada venta con su importe                                                 | `NEXT_PUBLIC_GOOGLE_ADS_PURCHASE_LABEL` (la etiqueta de la conversión) |
+| Píxel de Meta                              | Anuncios de Facebook e Instagram: medir ventas y volver a mostrar los perfumes vistos           | `NEXT_PUBLIC_META_PIXEL_ID` (solo números)                             |
+| Píxel de TikTok                            | Lo mismo en TikTok, donde la perfumería árabe tiene mucho público                               | `NEXT_PUBLIC_TIKTOK_PIXEL_ID` (letras y números en mayúsculas)         |
+| Feed de productos (`/feeds/productos.xml`) | Fichas gratuitas y anuncios de Shopping en Google; catálogo para los anuncios dinámicos de Meta | `WEB_CHECKOUT=1` (solo con la venta online encendida)                  |
 
 **Eventos que se envían** (solo a lo aceptado): ver un perfume, añadir a la cesta, empezar a pagar, compra pagada (una sola vez por pedido, con su número e importe) y alta en el Club L’Atelier. Nunca el nombre, el email, el teléfono, la dirección ni costes.
 

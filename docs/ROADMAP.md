@@ -1,4 +1,4 @@
-# Roadmap vigente — 27/10/2026
+# Roadmap vigente — 29/10/2026
 
 Orden de trabajo. [STATUS.md](STATUS.md) contiene el estado verificado y sus entradas fechadas; [OPERATIONS.md](OPERATIONS.md), los pasos técnicos; [PLAN_APERTURA.md](PLAN_APERTURA.md), los pasos del banco y del negocio; [PLAN_ENVIOS.md](PLAN_ENVIOS.md), los de los transportistas. El plan original de 17 fases se conserva en `docs/source/FASE_0_ARQUITECTURA.md` y los informes de fase; su estado resumido está al final.
 
@@ -7,7 +7,8 @@ Orden de trabajo. [STATUS.md](STATUS.md) contiene el estado verificado y sus ent
 - **Escaparate público** en `latelierdudesert.com` (es/ca/en), sin indexar: colección, fichas, catálogo olfativo, casas, club y textos legales en borrador.
 - **Panel** para la operación de la tienda física: catálogo, precios con Ómnibus, costes y márgenes, inventario, mostrador, compras, reposición, informes, asistente, consola del titular, códigos de descuento, mensajes y envíos.
 - **Venta online hecha y apagada** (`WEB_CHECKOUT`): cesta y checkout con recogida en Castelldefels o envío por peso y transportista, Redsys con tarjeta y Bizum (probados con el entorno de pruebas de BBVA el 23 y el 25/10), correos, devoluciones, Sendcloud (claves en Production y tarifas sincronizadas el 26/10), cuenta de cliente y formulario de contacto, estos dos tras sus propios interruptores.
-- **Fusionadas** desde el roadmap anterior: #47 (cierre de la apertura), #50 y #51 (envíos), #48 (entornos y vigilancia) y #49 (cabeceras SEO). No queda ninguna PR de código abierta salvo la #39 (documentación de la presentación al cliente).
+- **Fusionadas** desde el roadmap anterior: #47 (cierre de la apertura), #50 y #51 (envíos), #48 (entornos y vigilancia), #49 (cabeceras SEO) y #53 (sección Envíos del panel, 28/10).
+- **Analítica, publicidad y feed de productos** (29/10, §179–180, [MEDICION_Y_PUBLICIDAD.md](MEDICION_Y_PUBLICIDAD.md)): hechos y apagados hasta poner los IDs; el feed sale con la venta.
 
 Lo que falta para vender es sobre todo configuración y trámites del titular, del banco y de la asesoría, no código.
 
@@ -21,15 +22,15 @@ Lo que falta para vender es sobre todo configuración y trámites del titular, d
 | Accesos         | MFA de la administradora dada de alta el 23/10                                           | MFA de la cuenta del 30/09 o retirarle el acceso                                                                                                                                         | Titular            |
 | Firewall        | Reglas aprobadas el 24/10 (§168)                                                         | Crear a mano en Vercel las dos reglas de 60 peticiones por minuto (la API no pudo)                                                                                                       | Titular            |
 | Limpieza        | —                                                                                        | Borrar las variables de Preview de las ramas de prueba (`claude/exciting-brown-j08p6y` y `claude/vigilant-mendel-p4mv93`) y revocar la clave secreta creada para la prueba               | Titular            |
-| Día de apertura | —                                                                                        | `WEB_CHECKOUT=1` y redesplegar; compra real pequeña con correo y devolución; anunciar                                                                                                    | Titular            |
+| Día de apertura | La pregunta frecuente de la compra online cambia sola (§180)                             | `WEB_CHECKOUT=1` y redesplegar; texto de la portada en el panel; compra real pequeña con correo y devolución; anunciar                                                                   | Titular            |
 
 **Cierre:** lista de PLAN_APERTURA completada, compra real pequeña y devolución verificadas por el titular y venta encendida con autorización. Lo más lento es el pase a producción del banco: conviene pedirlo ya.
 
 ## 2. Entornos y operación
 
 - **Hecho (#48):** `pnpm build` comprueba el destino. Production exige la base real y rechaza Redsys `test`; Preview rechaza la base real, el correo, los crons y las copias. `/api/health?check=readiness` comprueba una lectura anónima y el workflow Availability lo vigila cada día a las 06:17 UTC.
-- **Consecuencia inmediata:** `NEXT_PUBLIC_SUPABASE_URL` y `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` están compartidas entre Production y Preview, así que **todas las Previews fallan el build** hasta quitarles el destino Preview (OPERATIONS, «Completar el aislamiento remoto», paso 2). Sin ellas, la Preview arranca desconectada y sirve para revisar diseño; para probar pedidos hace falta una base aislada con datos ficticios.
-- **Falta:** separar esas variables, retirar los despliegues de prueba antiguos, preparar la base aislada si se quieren Previews completas y registrar una restauración de copia de prueba.
+- **Previews desconectadas desde el 28/10:** `NEXT_PUBLIC_SUPABASE_URL` y `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` quedan solo en Production y Development, así que las Preview compilan sin datos y sirven para revisar diseño; para probar pedidos hace falta una base aislada con datos ficticios. Availability pasa en `main` desde el 28/10.
+- **Falta (titular):** borrar las variables de Preview de las ramas de prueba del TPV, retirar los despliegues de prueba antiguos, preparar la base aislada si se quieren Previews completas (tiene coste) y registrar una restauración de copia de prueba.
 
 **Cierre:** una Preview completa escribe solo en su base ficticia, las URLs de pruebas antiguas ya no operan sobre datos reales, Availability pasa en `main` y hay evidencia de restauración.
 
@@ -71,7 +72,8 @@ Ampliar los cuatro pilotos a productos destacados con medidas reales. Pipeline G
 - **Revisión visual de la Fase 2** (criterio 13): `/admin/diseno`, tonos de colección, tienda y panel. Es lo único que falta para cerrarla.
 - Perfiles olfativos y procedencias del resto del catálogo; proveedores reales para Reposición; decisiones de las fases R y S (PLAN_TIENDA_REPOSICION, PLAN_INFORMES).
 - Envíos fuera del alcance actual: entrega en punto o taquilla para el cliente, devoluciones con etiqueta, varios bultos, coste de envío en los informes de margen y Canarias.
-- Captcha en el pedido solo si hay abusos; analítica solo si se decide, sin cookies o con aviso que permita rechazar.
+- Captcha en el pedido solo si hay abusos.
+- Medición y publicidad (§179–180): poner los IDs tras la revisión de la asesoría; más adelante, la API de conversiones de Meta y TikTok, un feed en catalán e inglés y el EAN de cada formato para el feed.
 - Sentry como integración de errores específica: hoy hay sondas y revisión de registros, sin su SDK. No activar IA ni proveedores nuevos por anticipación.
 
 ## Estado de las fases del plan original
@@ -93,7 +95,7 @@ Ampliar los cuatro pilotos a productos destacados con medidas reales. Pipeline G
 | 12  | Click & Collect          | Hecha, apagada                        | Se enciende con la venta (recogida en Castelldefels)                                              |
 | 13  | Homepage                 | En parte                              | Colecciones editoriales y contenido de campaña                                                    |
 | 14  | Cuenta de cliente        | Hecha, apagada                        | Google, correo de Auth y `CUSTOMER_ACCOUNTS=1`                                                    |
-| 15  | SEO y analítica          | Código SEO hecho, apagado             | Catálogo revisado, aprobación y `SEO_INDEXING=1`; analítica solo si se decide                     |
+| 15  | SEO y analítica          | Código hecho, apagado                 | Catálogo revisado, aprobación y `SEO_INDEXING=1`; IDs de analítica y publicidad (§179)            |
 | 16  | QA y seguridad           | En parte                              | Firewall de Vercel y, si hay abusos, captcha (revisión del 17/10 hecha)                           |
 | 17  | Producción               | En parte                              | Pase del TPV, aislamiento de Preview, restauración de prueba y despliegue revisado de migraciones |
 

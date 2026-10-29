@@ -19,7 +19,7 @@ import {
 } from '../domain/vendors';
 
 /*
- * Lo que pasa en el navegador (DECISIONS §178): la elección del visitante,
+ * Lo que pasa en el navegador (DECISIONS §179): la elección del visitante,
  * la carga de las etiquetas que ha aceptado y los eventos. Nada de terceros
  * se carga ni se llama antes de aceptar: es el modo «básico» del Consent
  * Mode de Google, el que pide la AEPD.

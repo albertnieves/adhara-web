@@ -1,5 +1,5 @@
 /**
- * Medición opcional de la tienda (DECISIONS §178): analítica y publicidad de
+ * Medición opcional de la tienda (DECISIONS §179): analítica y publicidad de
  * terceros, solo con el consentimiento del visitante. Las cookies técnicas no
  * entran aquí: no necesitan consentimiento (LSSI, art. 22.2).
  */

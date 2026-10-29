@@ -9,12 +9,14 @@ import { siteUrl } from '@/modules/i18n/seo';
 
 /**
  * Feed de productos para Google Merchant Center (fichas gratuitas y anuncios
- * de Shopping) y el catálogo de Meta (anuncios dinámicos), DECISIONS §179.
+ * de Shopping) y el catálogo de Meta (anuncios dinámicos), DECISIONS §180.
  * Solo con la venta online encendida: Google y Meta exigen que el producto
  * se pueda comprar en la página. En español, que es la base del catálogo.
- * No se indexa: es para las plataformas, no para buscadores.
+ * No se indexa: es para las plataformas, no para buscadores. Se genera al
+ * pedirlo y la CDN lo guarda una hora: un fallo puntual de la base no queda
+ * guardado como si fuera el feed.
  */
-export const revalidate = 3600;
+export const dynamic = 'force-dynamic';
 
 const HEADERS = {
   'X-Robots-Tag': 'noindex, nofollow',

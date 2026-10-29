@@ -43,12 +43,12 @@ export function PurchasePanel({
   cart?: boolean;
   /** Necesario con `cart`: la consola cuenta los añadidos por perfume. */
   slug?: string;
-  /** Nombre y casa para la analítica y la publicidad aceptadas (§178). */
+  /** Nombre y casa para la analítica y la publicidad aceptadas (§179). */
   product?: { name: string; brand: string };
 }) {
   const t = useTranslations('product');
   const locale = useLocale();
-  // `?formato=` (anuncios y feed de productos, §179) elige el formato al
+  // `?formato=` (anuncios y feed de productos, §180) elige el formato al
   // llegar; en el servidor y al hidratar, el primero.
   const requested = useSyncExternalStore(
     subscribe,

@@ -19,7 +19,7 @@ export function NewsletterSignup() {
   const locale = useLocale();
   const [state, dispatch, pending] = useActionState(subscribeNewsletter, IDLE);
   // Alta en el Club: un «lead» para la analítica y la publicidad aceptadas
-  // (§178), sin el email.
+  // (§179), sin el email.
   useEffect(() => {
     if (state.status === 'success') track({ type: 'lead' });
   }, [state.status]);

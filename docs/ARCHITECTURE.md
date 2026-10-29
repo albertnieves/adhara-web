@@ -49,29 +49,29 @@ flowchart LR
 - `src/lib/`: infraestructura compartida (clientes de Supabase, dinero, CSV, identificadores de petición).
 - `src/components/ui/`: primitivas del sistema de diseño (Fase 2), las mismas para la tienda y el panel, sin datos ni lógica de dominio. Su referencia está en `/admin/diseno`.
 
-| Módulo       | Qué hace                                                                                  |
-| ------------ | ----------------------------------------------------------------------------------------- |
-| `auth`       | Matriz de permisos, decisión de acceso al panel, sesión, MFA, invitaciones                |
-| `admin`      | Piezas comunes del panel: `useAdminAction`, `Sheet`, avisos, búsqueda                     |
-| `catalog`    | Perfumes, formatos, imágenes, importación CSV, lecturas de la tienda                      |
-| `pricing`    | Margen, Ómnibus, revisión de cambios de PVP y cambios masivos (dominio puro)              |
-| `inventory`  | Movimientos, recuentos, niveles y vigilante de stock                                      |
-| `purchasing` | Proveedores, pedidos de compra, recepciones y propuestas de reposición                    |
-| `reports`    | Existencias y cierre, rotación, márgenes, compras y auditoría                             |
-| `control`    | Consola del titular: negocio, métricas por perfume, visitas, copias, estado               |
-| `assistant`  | Informe diario, resumen y chat con herramientas de solo lectura                           |
-| `content`    | Portada y datos de la tienda con borrador, revisiones y publicación                       |
-| `storefront` | Componentes y lecturas de la tienda pública                                               |
-| `i18n`       | Rutas por idioma, carga de mensajes, metadatos y `buildAlternates`                        |
-| `unboxing`   | Escena 3D bajo demanda de la ficha                                                        |
-| `brand`      | Logotipo y nombre de la marca                                                             |
-| `design`     | Catálogo de tokens, matriz de contraste y página de referencia `/admin/diseno`            |
-| `orders`     | Pedidos web: estados, transiciones, cobros, incidencias y panel (P05)                     |
-| `checkout`   | Cesta en cookie, zonas y tarifas de envío, checkout y caducidad (P03)                     |
-| `payments`   | Redsys por redirección: firma, formulario de pago, notificación y devoluciones (P04, P06) |
-| `mail`       | Correos de los pedidos: plantillas es/ca/en, cola y envío con Resend (P06)                |
-| `messaging`  | Bandeja de mensajes (A6.1): formulario de contacto, panel, respuestas y correo entrante   |
-| `account`    | Cuenta de cliente (F14): acceso con email o Google, pedidos, datos y baja; apagada        |
+| Módulo       | Qué hace                                                                                    |
+| ------------ | ------------------------------------------------------------------------------------------- |
+| `auth`       | Matriz de permisos, decisión de acceso al panel, sesión, MFA, invitaciones                  |
+| `admin`      | Piezas comunes del panel: `useAdminAction`, `Sheet`, avisos, búsqueda                       |
+| `catalog`    | Perfumes, formatos, imágenes, importación CSV, lecturas de la tienda                        |
+| `pricing`    | Margen, Ómnibus, revisión de cambios de PVP y cambios masivos (dominio puro)                |
+| `inventory`  | Movimientos, recuentos, niveles y vigilante de stock                                        |
+| `purchasing` | Proveedores, pedidos de compra, recepciones y propuestas de reposición                      |
+| `reports`    | Existencias y cierre, rotación, márgenes, compras y auditoría                               |
+| `control`    | Consola del titular: negocio, métricas por perfume, visitas, copias, estado                 |
+| `assistant`  | Informe diario, resumen y chat con herramientas de solo lectura                             |
+| `content`    | Portada y datos de la tienda con borrador, revisiones y publicación                         |
+| `storefront` | Componentes y lecturas de la tienda pública                                                 |
+| `i18n`       | Rutas por idioma, carga de mensajes, metadatos y `buildAlternates`                          |
+| `unboxing`   | Escena 3D bajo demanda de la ficha                                                          |
+| `brand`      | Logotipo y nombre de la marca                                                               |
+| `design`     | Catálogo de tokens, matriz de contraste y página de referencia `/admin/diseno`              |
+| `orders`     | Pedidos web: estados, transiciones, cobros, incidencias y panel (P05)                       |
+| `checkout`   | Cesta en cookie, zonas y tarifas de envío, checkout y caducidad (P03)                       |
+| `payments`   | Redsys por redirección: firma, formulario de pago, notificación y devoluciones (P04, P06)   |
+| `mail`       | Correos de los pedidos: plantillas es/ca/en, cola y envío con Resend (P06)                  |
+| `messaging`  | Bandeja de mensajes (A6.1): formulario de contacto, panel, respuestas y correo entrante     |
+| `account`    | Cuenta de cliente (F14): acceso con email o Google, pedidos, datos y baja; apagada          |
 | `tracking`   | Analítica y publicidad con consentimiento (§179): proveedores, elección, etiquetas, eventos |
 
 Reglas de importación: los componentes de cliente solo importan `index.ts`; los secretos y el acceso privilegiado solo existen en módulos `server-only`; `@typescript-eslint/no-explicit-any` y `consistent-type-imports` son errores.

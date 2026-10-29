@@ -27,7 +27,7 @@ const SHIPMENT_STATUS_KEYS: ReadonlySet<string> = new Set(SHIPMENT_STATUSES);
 /**
  * La compra se mide al verla pagada por primera vez, en las 24 horas
  * siguientes al pago: volver a la página días después no cuenta otra venta
- * (el navegador, además, recuerda las ya medidas; §178).
+ * (el navegador, además, recuerda las ya medidas; §179).
  */
 const PURCHASE_WINDOW_MS = 24 * 60 * 60 * 1000;
 function recentlyPaid(paidAt: string | null): boolean {

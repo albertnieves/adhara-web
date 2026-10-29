@@ -49,7 +49,7 @@ const subscribe = () => () => {};
  * muestra en esas páginas para poder leerlas antes. La aceptación queda en
  * una cookie técnica de un año con la versión de los textos.
  *
- * Con analítica o publicidad configuradas (`vendors`, DECISIONS §178), el
+ * Con analítica o publicidad configuradas (`vendors`, DECISIONS §179), el
  * mismo aviso pide el consentimiento: «Rechazar» y «Aceptar todas» con el
  * mismo peso en la primera capa y «Configurar» por tipo en la segunda, como
  * pide la AEPD. Las dos respuestas dejan navegar. «Configurar cookies», al
@@ -222,7 +222,7 @@ function CookieSettings({
     <div className="flex flex-col gap-5 p-8">
       <header className="flex items-start justify-between gap-4">
         <div>
-          <Eyebrow tone="accent">{t('eyebrow')}</Eyebrow>
+          <Eyebrow tone="accent">{t('settingsEyebrow')}</Eyebrow>
           <h2
             id={titleId}
             tabIndex={-1}

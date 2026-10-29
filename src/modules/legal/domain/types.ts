@@ -35,7 +35,7 @@ export const LEGAL_FIELDS = [
 export type LegalField = (typeof LEGAL_FIELDS)[number];
 
 /**
- * Lo que solo se publica con una configuración (DECISIONS §178): con alguna
+ * Lo que solo se publica con una configuración (DECISIONS §179): con alguna
  * cookie opcional (`optional`) o sin ninguna (`noOptional`), con un tipo
  * (`analytics`, `ads`) o con un proveedor concreto.
  */

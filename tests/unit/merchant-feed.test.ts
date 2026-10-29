@@ -9,7 +9,7 @@ import type {
 } from '../../src/modules/catalog/domain/product';
 
 /*
- * Feed de productos para Google Merchant Center y Meta (DECISIONS §179): un
+ * Feed de productos para Google Merchant Center y Meta (DECISIONS §180): un
  * artículo por formato con PVP, sin datos inventados ni fotos generadas.
  */
 

@@ -56,7 +56,7 @@ export default async function CheckoutPage({ params }: { params: Params }) {
   const store = storeData
     ? storeContent.parse(storeData.payload)
     : STORE_DEFAULTS;
-  // Analítica y publicidad aceptadas (§178): lo que hay en la cesta, sin datos
+  // Analítica y publicidad aceptadas (§179): lo que hay en la cesta, sin datos
   // de quien compra.
   const items = quote.lines.flatMap((line) =>
     line.product

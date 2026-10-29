@@ -22,7 +22,7 @@ export function legalDocumentText(
   }: {
     href: (doc: LegalDocumentKey, hash?: string) => string;
     updated: string;
-    /** Proveedores de analítica y publicidad configurados (§178). */
+    /** Proveedores de analítica y publicidad configurados (§179). */
     vendors?: readonly TrackingVendor[];
   },
 ): string {

@@ -56,7 +56,7 @@ type Context = {
 };
 
 /**
- * Lo que depende de una configuración que no está (§178): en la tienda no se
+ * Lo que depende de una configuración que no está (§179): en la tienda no se
  * publica; en la vista previa del personal se ve recuadrado, para revisarlo
  * con la asesoría antes de encenderlo.
  */
@@ -270,7 +270,7 @@ export async function LegalPage({
     preview: draft.isEnabled,
     conditions,
   };
-  // Las secciones de una configuración que no está no se publican (§178).
+  // Las secciones de una configuración que no está no se publican (§179).
   const sections = document.sections.filter(
     (section) => !section.when || ctx.preview || conditions.has(section.when),
   );

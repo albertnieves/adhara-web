@@ -227,7 +227,7 @@ describe('textos legales', () => {
   });
 });
 
-describe('textos de analítica y publicidad (DECISIONS §178)', () => {
+describe('textos de analítica y publicidad (DECISIONS §179)', () => {
   const href = (doc: string, hash?: string) =>
     `https://example.test/${doc}${hash ? `#${hash}` : ''}`;
   const cookiesText = (

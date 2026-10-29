@@ -6,7 +6,7 @@ import {
 
 /**
  * La compilación de las pruebas tiene IDs de analítica y publicidad (e2e.yml,
- * DECISIONS §178). Sin ellos, el aviso es el de solo cookies técnicas.
+ * DECISIONS §179). Sin ellos, el aviso es el de solo cookies técnicas.
  */
 export const TRACKING_ON =
   activeVendors(trackingConfig(process.env)).length > 0;

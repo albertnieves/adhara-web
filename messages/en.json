@@ -240,6 +240,7 @@
     "reject": "Reject",
     "acceptAll": "Accept all",
     "configure": "Configure",
+    "settingsEyebrow": "Your privacy",
     "settingsTitle": "Cookie settings",
     "settingsIntro": "Choose which cookies we may use. Technical cookies are needed and always on; the others are only set if you tick them.",
     "technical": "Technical (always on)",

@@ -3,9 +3,9 @@ import { CONCENTRATION_NAMES, variantLabel } from './product';
 
 /**
  * Feed de productos para Google Merchant Center y el catálogo de Meta
- * (DECISIONS §179): RSS 2.0 con los atributos `g:` de Google, que Meta
+ * (DECISIONS §180): RSS 2.0 con los atributos `g:` de Google, que Meta
  * también lee. Un artículo por formato con PVP, con el mismo ID que los
- * eventos de la analítica y la publicidad (§178) para el remarketing
+ * eventos de la analítica y la publicidad (§179) para el remarketing
  * dinámico.
  *
  * Solo datos verificados del catálogo: sin GTIN ni MPN (la base no los

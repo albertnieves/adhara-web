@@ -23,7 +23,7 @@ import type {
 import { consentFromCookieHeader } from '../../src/modules/tracking/domain/consent';
 
 /*
- * Analítica y publicidad con consentimiento (DECISIONS §178): qué proveedores
+ * Analítica y publicidad con consentimiento (DECISIONS §179): qué proveedores
  * se configuran, cómo se guarda y se lee la elección y qué recibe cada uno.
  */
 

@@ -141,7 +141,7 @@ export const listStorefrontProducts = cache(
 
 /**
  * Lo publicado con el cliente anónimo, sin mirar Draft Mode: para lo que sale
- * de la tienda (el feed de productos, §179), nunca con borradores.
+ * de la tienda (el feed de productos, §180), nunca con borradores.
  */
 export async function listPublishedProducts(
   locale: string,

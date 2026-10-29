@@ -52,7 +52,7 @@ export default async function LocaleLayout({
     getTranslations('nav'),
     draftMode(),
   ]);
-  // Analítica y publicidad (DECISIONS §178): solo los proveedores con ID, y
+  // Analítica y publicidad (DECISIONS §179): solo los proveedores con ID, y
   // nada en la vista previa del personal.
   const tracking = serverTrackingConfig();
   return (

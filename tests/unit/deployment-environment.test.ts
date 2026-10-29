@@ -123,7 +123,7 @@ describe('aislamiento de despliegues', () => {
   });
 });
 
-describe('IDs de analítica y publicidad (DECISIONS §178)', () => {
+describe('IDs de analítica y publicidad (DECISIONS §179)', () => {
   const productionBase = {
     VERCEL_ENV: 'production',
     NEXT_PUBLIC_SUPABASE_URL: production,

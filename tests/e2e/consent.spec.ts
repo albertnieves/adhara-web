@@ -8,7 +8,7 @@ import { consentState } from '../support/legal-consent';
 import { readQueues, stubTrackers, TRACKING_ON } from '../support/tracking';
 
 /*
- * Cookies de analítica y publicidad (DECISIONS §178) con los IDs de prueba de
+ * Cookies de analítica y publicidad (DECISIONS §179) con los IDs de prueba de
  * e2e.yml: nada de Google, Meta ni TikTok se carga antes de aceptar,
  * «Rechazar» está en la primera capa con el mismo aspecto que «Aceptar» y la
  * elección se cambia o se retira desde el pie. Las etiquetas se sirven
