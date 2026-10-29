@@ -20,8 +20,21 @@ import { Link } from '@/modules/i18n';
 import { requireLocale } from '@/modules/i18n/server';
 import { LEGAL_CONTACT_EMAIL } from '@/modules/legal';
 import { SHIPMENT_STATUSES } from '@/modules/shipping';
+import { TrackCommerce } from '@/modules/tracking';
 
 const SHIPMENT_STATUS_KEYS: ReadonlySet<string> = new Set(SHIPMENT_STATUSES);
+
+/**
+ * La compra se mide al verla pagada por primera vez, en las 24 horas
+ * siguientes al pago: volver a la página días después no cuenta otra venta
+ * (el navegador, además, recuerda las ya medidas; §178).
+ */
+const PURCHASE_WINDOW_MS = 24 * 60 * 60 * 1000;
+function recentlyPaid(paidAt: string | null): boolean {
+  if (!paidAt) return false;
+  const age = Date.now() - new Date(paidAt).getTime();
+  return age >= 0 && age < PURCHASE_WINDOW_MS;
+}
 
 /**
  * Vuelta del banco (P04): enseña el estado del pedido de este navegador
@@ -120,6 +133,17 @@ export default async function OrderPage({
     case 'paid':
       return (
         <Shell eyebrow={number} title={t('paidTitle')}>
+          {recentlyPaid(order.paidAt) && (
+            <TrackCommerce
+              event={{
+                type: 'purchase',
+                orderNumber: order.number,
+                valueCents: order.itemsCents - order.discountCents,
+                shippingCents: order.shippingCents,
+                coupon: order.discountCode,
+              }}
+            />
+          )}
           <p className="leading-relaxed">
             {order.fulfillment === 'shipping'
               ? t('paidShipping')

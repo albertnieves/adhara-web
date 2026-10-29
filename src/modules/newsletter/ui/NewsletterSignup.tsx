@@ -2,8 +2,9 @@
 
 import { useLocale, useTranslations } from 'next-intl';
 import type { FormEvent } from 'react';
-import { startTransition, useActionState } from 'react';
+import { startTransition, useActionState, useEffect } from 'react';
 import { Button, Checkbox, Field, Input } from '@/components/ui';
+import { track } from '@/modules/tracking';
 import type { SubscribeState } from '../domain';
 import { subscribeNewsletter } from '../server/actions';
 
@@ -17,6 +18,11 @@ export function NewsletterSignup() {
   const t = useTranslations('newsletter');
   const locale = useLocale();
   const [state, dispatch, pending] = useActionState(subscribeNewsletter, IDLE);
+  // Alta en el Club: un «lead» para la analítica y la publicidad aceptadas
+  // (§178), sin el email.
+  useEffect(() => {
+    if (state.status === 'success') track({ type: 'lead' });
+  }, [state.status]);
   // Sin el reinicio automático de React 19: un error no borra lo escrito.
   function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();

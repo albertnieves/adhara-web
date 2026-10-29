@@ -8,6 +8,18 @@ export const en: LegalCopy = {
     contents: 'On this page',
     pending: 'Pending',
     related: 'Other legal texts',
+    cookieSettings: 'Cookie settings',
+    onlyWith: 'Only published with',
+  },
+  conditions: {
+    optional: 'analytics or advertising cookies configured',
+    noOptional: 'no analytics or advertising cookies',
+    analytics: 'analytics configured',
+    ads: 'advertising configured',
+    ga4: 'Google Analytics configured',
+    googleAds: 'Google Ads configured',
+    meta: 'Meta pixel configured',
+    tiktok: 'TikTok pixel configured',
   },
   fields: {
     holder: 'owner (company or full name)',
@@ -338,15 +350,61 @@ export const en: LegalCopy = {
           ],
         },
         {
+          id: 'analitica-publicidad',
+          title: 'Analytics and advertising',
+          when: 'optional',
+          blocks: [
+            {
+              list: [
+                'Data: cookie identifiers, your IP address, data about your browser and device, the shop pages you visit, the fragrances you view or add to your basket and, if you buy, the order number and amount. We do not send your name, email, phone number or address.',
+                'Purpose: depending on what you accept, knowing statistically how the website is used (analytics) and showing you ads for our fragrances on other websites and social networks and measuring which campaigns lead to a purchase (advertising).',
+                'Legal basis: your consent (art. 6.1.a GDPR and art. 22.2 LSSI), which you can withdraw at any time from “Cookie settings” at the bottom of every page, without affecting earlier processing.',
+                'Retention: cookies last as stated in the [cookie policy](doc:cookies); what the companies below receive is kept according to their settings and their own policy.',
+              ],
+            },
+            'Who receives this data, only if you accept the type of cookies it uses:',
+            {
+              when: 'ga4',
+              blocks: [
+                'Google Ireland Limited, for Google Analytics, as processor. It keeps each visitor’s data for 14 months at most. Google may transfer it to Google LLC, in the United States, certified under the EU-US Data Privacy Framework.',
+              ],
+            },
+            {
+              when: 'googleAds',
+              blocks: [
+                'Google Ireland Limited, for Google ads, as controller of what it does with that data afterwards under its policy. Google may transfer it to Google LLC, in the United States, certified under the EU-US Data Privacy Framework.',
+              ],
+            },
+            {
+              when: 'meta',
+              blocks: [
+                'Meta Platforms Ireland Limited, for Facebook and Instagram ads. We are joint controllers with Meta for collecting this data on the website and sending it to Meta; what Meta does afterwards is decided by Meta, as controller, under its policy. Meta may transfer it to Meta Platforms, Inc., in the United States, certified under the EU-US Data Privacy Framework.',
+              ],
+            },
+            {
+              when: 'tiktok',
+              blocks: [
+                'TikTok Technology Limited (Ireland), for TikTok ads, on the same terms as Meta. TikTok may access the data from outside the European Economic Area under the European Commission’s standard contractual clauses.',
+              ],
+            },
+          ],
+        },
+        {
           id: 'destinatarios',
           title: 'Who can access your data',
           blocks: [
-            'We do not sell or share your data. Only these providers access it, under a data processing agreement and solely to provide their service to us:',
+            'We do not sell your data. Only these providers access it, under a data processing agreement and solely to provide their service to us:',
             {
               list: [
                 'Web hosting and database providers, with servers in the European Union.',
                 'The provider that sends Club L’Atelier emails.',
                 'The bank that processes payments, the carrier and the provider of order emails and of the replies to your enquiries.',
+              ],
+            },
+            {
+              when: 'optional',
+              blocks: [
+                'If you accept analytics or advertising cookies, the companies listed in [Analytics and advertising](doc:privacy#analitica-publicidad) also receive data.',
               ],
             },
             'If you choose to sign in with Google, Google verifies your identity as an independent controller, under its own [privacy policy](https://policies.google.com/privacy).',
@@ -378,6 +436,12 @@ export const en: LegalCopy = {
             },
             'Email us or write to us at the shop ({storeAddress}) stating which right you want to exercise. If we have doubts about your identity, we may ask you to prove it. We will reply within one month.',
             'We do not make automated decisions or create profiles that affect you.',
+            {
+              when: 'ads',
+              blocks: [
+                'If you accept advertising cookies, the advertising platforms use your browsing to decide which ads to show you. This has no legal effects on you and does not significantly affect you, and you avoid it by rejecting those cookies.',
+              ],
+            },
             'If you think we have not handled your data properly, you can complain to the [Spanish Data Protection Agency](https://www.aepd.es).',
           ],
         },
@@ -420,10 +484,21 @@ export const en: LegalCopy = {
           id: 'cookies-usadas',
           title: 'Which cookies we use',
           blocks: [
-            'This website only uses technical cookies that it needs to work. We do not use analytics, advertising or social media cookies, and fonts are served from our own server, without calls to third parties.',
+            {
+              when: 'noOptional',
+              blocks: [
+                'This website only uses technical cookies that it needs to work. We do not use analytics, advertising or social media cookies, and fonts are served from our own server, without calls to third parties.',
+              ],
+            },
+            {
+              when: 'optional',
+              blocks: [
+                'This website uses technical cookies that it needs to work and, only if you accept them, cookies from other companies for analytics or advertising, explained in the following sections. Fonts are served from our own server, without calls to third parties.',
+              ],
+            },
             {
               table: {
-                caption: 'Cookies on this website',
+                caption: 'Technical cookies on this website',
                 head: ['Cookie', 'Owner', 'Purpose', 'Duration'],
                 rows: [
                   [
@@ -438,6 +513,15 @@ export const en: LegalCopy = {
                     'Remember that you accepted the website terms, so we do not ask again.',
                     '1 year',
                   ],
+                  {
+                    when: 'optional',
+                    cells: [
+                      'atelier_cookies',
+                      'Ours',
+                      'Remember whether you accept or reject analytics and advertising cookies, and when you chose.',
+                      '1 year',
+                    ],
+                  },
                   [
                     'atelier_cesta',
                     'Ours',
@@ -468,11 +552,143 @@ export const en: LegalCopy = {
           ],
         },
         {
-          id: 'consentimiento',
-          title: 'Why we do not ask for consent',
+          id: 'analitica',
+          title: 'Analytics cookies',
+          when: 'analytics',
           blocks: [
-            'Technical cookies, and those that store a preference you choose, such as the language, are exempt from consent under article 22.2 of the LSSI and the guidance of the Spanish Data Protection Agency. That is why we do not ask you to accept cookies: the notice you see when you arrive is to let you know our terms.',
-            'If we ever use analytics or advertising cookies, we will ask for your permission before setting them, with the option to reject them as easily as accept them, and we will update this policy.',
+            'Only if you accept them, we use Google Analytics, a service of Google Ireland Limited, to know statistically how many people visit us, how they arrive, which pages they see and which purchases are completed. Google receives your IP address (Google Analytics does not store it), data about your browser and device and the pages you visit. We do not send it your name, email or other contact details.',
+            {
+              table: {
+                caption: 'Analytics cookies',
+                head: ['Cookie', 'Owner', 'Purpose', 'Duration'],
+                rows: [
+                  {
+                    when: 'ga4',
+                    cells: [
+                      '_ga',
+                      'Google',
+                      'Tell visitors apart statistically.',
+                      '13 months',
+                    ],
+                  },
+                  {
+                    when: 'ga4',
+                    cells: [
+                      '_ga_<ID>',
+                      'Google',
+                      'Keep the state of the visit.',
+                      '13 months',
+                    ],
+                  },
+                ],
+              },
+            },
+            'More information in [how Google uses information from sites that use its services](https://policies.google.com/technologies/partner-sites) and its [privacy policy](https://policies.google.com/privacy).',
+          ],
+        },
+        {
+          id: 'publicidad',
+          title: 'Advertising cookies',
+          when: 'ads',
+          blocks: [
+            'Only if you accept them, the companies in this table help us show you ads for our fragrances on their platforms and on other websites based on your visit (for example, the fragrances you have viewed) and measure which ads lead to a visit or a purchase. To do so they receive your IP address, data about your browser and device, the shop pages you visit, the fragrances you view or add to your basket and, if you buy, the order number and amount. We do not send them your name, email or other contact details.',
+            'If you have an account with their services, each company may link this information to your account, as controller of that processing and under its own policy.',
+            {
+              table: {
+                caption: 'Advertising cookies',
+                head: ['Cookie', 'Owner', 'Purpose', 'Duration'],
+                rows: [
+                  {
+                    when: 'googleAds',
+                    cells: [
+                      '_gcl_au',
+                      'Google',
+                      'Measure which Google ads lead to a visit or a purchase.',
+                      '3 months',
+                    ],
+                  },
+                  {
+                    when: 'meta',
+                    cells: [
+                      '_fbp',
+                      'Meta',
+                      'Measure Facebook and Instagram ads and show you ads based on your visit.',
+                      '3 months',
+                    ],
+                  },
+                  {
+                    when: 'meta',
+                    cells: [
+                      '_fbc',
+                      'Meta',
+                      'Remember the Facebook or Instagram ad you came from. It is only created if you come from one.',
+                      '3 months',
+                    ],
+                  },
+                  {
+                    when: 'tiktok',
+                    cells: [
+                      '_ttp',
+                      'TikTok',
+                      'Measure TikTok ads and show you ads based on your visit.',
+                      '13 months',
+                    ],
+                  },
+                  {
+                    when: 'tiktok',
+                    cells: [
+                      '_tt_enable_cookie',
+                      'TikTok',
+                      'Check that your browser accepts cookies.',
+                      '13 months',
+                    ],
+                  },
+                ],
+              },
+            },
+            {
+              when: 'googleAds',
+              blocks: [
+                'Google Ireland Limited: [how Google uses information from sites that use its services](https://policies.google.com/technologies/partner-sites) and [privacy policy](https://policies.google.com/privacy).',
+              ],
+            },
+            {
+              when: 'meta',
+              blocks: [
+                'Meta Platforms Ireland Limited: [privacy policy](https://www.facebook.com/privacy/policy/) and [cookie policy](https://www.facebook.com/privacy/policies/cookies/).',
+              ],
+            },
+            {
+              when: 'tiktok',
+              blocks: [
+                'TikTok Technology Limited: [privacy policy](https://www.tiktok.com/legal/page/eea/privacy-policy/en) and [cookie policy](https://www.tiktok.com/legal/page/global/cookie-policy/en).',
+              ],
+            },
+            'These companies may also use their own cookies, on their own domains, and change their list; the current one is in their cookie policy.',
+          ],
+        },
+        {
+          id: 'consentimiento',
+          title: 'Your consent',
+          blocks: [
+            'Technical cookies, and those that store a preference you choose, such as the language, are exempt from consent under article 22.2 of the LSSI and the guidance of the Spanish Data Protection Agency.',
+            {
+              when: 'noOptional',
+              blocks: [
+                'That is why we do not ask you to accept cookies: the notice you see when you arrive is to let you know our terms.',
+                'If we ever use analytics or advertising cookies, we will ask for your permission before setting them, with the option to reject them as easily as accept them, and we will update this policy.',
+              ],
+            },
+            {
+              when: 'optional',
+              blocks: [
+                'Analytics and advertising cookies are only set if you accept them in the notice you see when you arrive, where you can accept them all, reject them all or choose by type just as easily. If you do not choose, they are not set, and if you reject them you can browse and buy just the same.',
+                'We keep your choice for one year. After that, or if we add another company to a type of cookies you had accepted, we will ask you again.',
+                'You can change your mind or withdraw your consent at any time from “Cookie settings” at the bottom of every page, or with this button:',
+                { action: 'cookieSettings' },
+                'If you withdraw it, we delete the analytics and advertising cookies of our domain from your browser. Those that these companies keep on their own domains are deleted from your browser settings or from your account with their services.',
+              ],
+            },
           ],
         },
         {
@@ -486,6 +702,12 @@ export const en: LegalCopy = {
                 '[Mozilla Firefox](https://support.mozilla.org/kb/clear-cookies-and-site-data-firefox)',
                 '[Safari](https://support.apple.com/guide/safari/sfri11471/mac)',
                 '[Microsoft Edge](https://support.microsoft.com/microsoft-edge/delete-cookies-in-microsoft-edge-63947406-40ac-c3b8-57b9-2a946a29ae09)',
+              ],
+            },
+            {
+              when: 'ga4',
+              blocks: [
+                'You can also stop Google Analytics from measuring you on any website with [Google’s opt-out browser add-on](https://tools.google.com/dlpage/gaoptout).',
               ],
             },
           ],

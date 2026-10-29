@@ -6,6 +6,21 @@ export const PRODUCTION_SUPABASE_REF = 'xgpsislololgbakzcmad';
 
 type Environment = Record<string, string | undefined>;
 
+/**
+ * IDs públicos de analítica y publicidad (DECISIONS §178). Repite los
+ * formatos de src/modules/tracking/domain/config.ts, porque este script se
+ * ejecuta con Node sin el resto de la app; una prueba unitaria comprueba que
+ * coinciden. Un ID mal escrito se ignoraría en silencio: en Production para
+ * el build.
+ */
+export const TRACKING_ID_FORMATS: Record<string, RegExp> = {
+  NEXT_PUBLIC_GA_MEASUREMENT_ID: /^G-[A-Z0-9]{4,20}$/,
+  NEXT_PUBLIC_GOOGLE_ADS_ID: /^AW-\d{6,15}$/,
+  NEXT_PUBLIC_GOOGLE_ADS_PURCHASE_LABEL: /^[A-Za-z0-9_-]{4,64}$/,
+  NEXT_PUBLIC_META_PIXEL_ID: /^\d{10,20}$/,
+  NEXT_PUBLIC_TIKTOK_PIXEL_ID: /^[A-Z0-9]{15,30}$/,
+};
+
 /** Solo devuelve nombres y problemas de configuración, nunca valores de claves. */
 export function deploymentEnvironmentIssues(env: Environment): string[] {
   if (env.VERCEL_ENV !== 'preview' && env.VERCEL_ENV !== 'production')
@@ -49,6 +64,18 @@ export function deploymentEnvironmentIssues(env: Environment): string[] {
       );
     if (env.REDSYS_ENVIRONMENT && env.REDSYS_ENVIRONMENT !== 'live')
       issues.push('Production solo admite REDSYS_ENVIRONMENT=live.');
+    for (const [name, format] of Object.entries(TRACKING_ID_FORMATS)) {
+      const value = env[name]?.trim();
+      if (value && !format.test(value))
+        issues.push(`${name} no tiene el formato esperado.`);
+    }
+    if (
+      env.NEXT_PUBLIC_GOOGLE_ADS_PURCHASE_LABEL &&
+      !env.NEXT_PUBLIC_GOOGLE_ADS_ID
+    )
+      issues.push(
+        'NEXT_PUBLIC_GOOGLE_ADS_PURCHASE_LABEL necesita NEXT_PUBLIC_GOOGLE_ADS_ID.',
+      );
     return issues;
   }
 

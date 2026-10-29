@@ -139,6 +139,27 @@ export const listStorefrontProducts = cache(
   },
 );
 
+/**
+ * Lo publicado con el cliente anónimo, sin mirar Draft Mode: para lo que sale
+ * de la tienda (el feed de productos, §179), nunca con borradores.
+ */
+export async function listPublishedProducts(
+  locale: string,
+): Promise<StorefrontProduct[]> {
+  const supabase = createSupabasePublicClient();
+  if (!supabase) return [];
+  const data = await fetchAll((from, to) =>
+    supabase
+      .from('products')
+      .select(PRODUCT_SELECT)
+      .eq('status', 'published')
+      .eq('variants.active', true)
+      .order('id')
+      .range(from, to),
+  );
+  return data.map((row) => toProduct(row, locale)).sort(byCollectionOrder);
+}
+
 export const getStorefrontProduct = cache(
   async (slug: string, locale: string): Promise<StorefrontProduct | null> => {
     const source = await storefrontSource();

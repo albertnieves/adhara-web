@@ -1,7 +1,15 @@
 import { describe, expect, it } from 'vitest';
 import { routing } from '../../src/modules/i18n/routing';
 import { LEGAL_COPY } from '../../src/modules/legal/content';
+import {
+  activeBlocks,
+  legalConditions,
+  legalUpdatedAt,
+  rowParts,
+  TRACKING_TEXTS_UPDATED_AT,
+} from '../../src/modules/legal/domain/conditions';
 import { LEGAL_ENTITY } from '../../src/modules/legal/domain/entity';
+import { legalDocumentText } from '../../src/modules/legal/domain/plain-text';
 import {
   invalidTokens,
   parseLegalText,
@@ -10,6 +18,7 @@ import {
 } from '../../src/modules/legal/domain/placeholders';
 import { LEGAL_PATHS } from '../../src/modules/legal/domain/routes';
 import {
+  LEGAL_CONDITIONS,
   LEGAL_DOCUMENTS,
   LEGAL_FIELDS,
 } from '../../src/modules/legal/domain/types';
@@ -17,6 +26,7 @@ import type {
   LegalBlock,
   LegalCopy,
 } from '../../src/modules/legal/domain/types';
+import { TRACKING_VENDORS } from '../../src/modules/tracking';
 
 /*
  * Textos legales (modules/legal): los tres idiomas tienen los mismos
@@ -28,7 +38,30 @@ function blockTexts(block: LegalBlock): string[] {
   if (typeof block === 'string') return [block];
   if ('list' in block) return block.list;
   if ('note' in block) return [block.note];
-  return [block.table.caption, ...block.table.head, ...block.table.rows.flat()];
+  if ('when' in block) return block.blocks.flatMap(blockTexts);
+  if ('action' in block) return [];
+  return [
+    block.table.caption,
+    ...block.table.head,
+    ...block.table.rows.flatMap((row) => rowParts(row).cells),
+  ];
+}
+
+/** Forma de un bloque: tipo, condición y tamaño, sin el texto. */
+function blockShape(block: LegalBlock): unknown {
+  if (typeof block === 'string') return 'p';
+  if ('list' in block) return ['list', block.list.length];
+  if ('note' in block) return 'note';
+  if ('when' in block) return [block.when, block.blocks.map(blockShape)];
+  if ('action' in block) return ['action', block.action];
+  return [
+    'table',
+    block.table.head.length,
+    block.table.rows.map((row) => [
+      rowParts(row).when,
+      rowParts(row).cells.length,
+    ]),
+  ];
 }
 
 function allTexts(copy: LegalCopy): string[] {
@@ -134,7 +167,8 @@ describe('textos legales', () => {
         const ids = (copy: LegalCopy) =>
           copy.documents[doc].sections.map((section) => [
             section.id,
-            section.blocks.length,
+            section.when ?? null,
+            section.blocks.map(blockShape),
           ]);
         expect(ids(other), doc).toEqual(ids(es));
       }
@@ -142,6 +176,9 @@ describe('textos legales', () => {
       expect(docLinksOf(allTexts(other))).toEqual(docLinksOf(allTexts(es)));
       expect(Object.keys(other.fields).sort()).toEqual(
         [...LEGAL_FIELDS].sort(),
+      );
+      expect(Object.keys(other.conditions).sort()).toEqual(
+        [...LEGAL_CONDITIONS].sort(),
       );
     },
   );
@@ -187,5 +224,94 @@ describe('textos legales', () => {
           Object.keys(value).sort().join() === 'ca,en,es',
       ).toBe(true);
     }
+  });
+});
+
+describe('textos de analítica y publicidad (DECISIONS §178)', () => {
+  const href = (doc: string, hash?: string) =>
+    `https://example.test/${doc}${hash ? `#${hash}` : ''}`;
+  const cookiesText = (
+    locale: 'es' | 'ca' | 'en',
+    vendors: (typeof TRACKING_VENDORS)[number][],
+  ) =>
+    legalDocumentText(
+      LEGAL_COPY[locale],
+      'cookies',
+      {},
+      {
+        href,
+        updated: '2026-10-29',
+        vendors,
+      },
+    );
+
+  it('las condiciones salen de los proveedores configurados', () => {
+    expect([...legalConditions([])]).toEqual(['noOptional']);
+    expect([...legalConditions(['ga4', 'meta'])].sort()).toEqual(
+      ['ads', 'analytics', 'ga4', 'meta', 'optional'].sort(),
+    );
+  });
+
+  it('un grupo o una fila con condición solo se publica si se cumple', () => {
+    const blocks: LegalBlock[] = [
+      'siempre',
+      { when: 'meta', blocks: ['solo con Meta'] },
+      {
+        table: {
+          caption: 'c',
+          head: ['a', 'b'],
+          rows: [['x', '1'], { when: 'tiktok', cells: ['y', '2'] }],
+        },
+      },
+    ];
+    expect(activeBlocks(blocks, legalConditions([]))).toEqual([
+      'siempre',
+      { table: { caption: 'c', head: ['a', 'b'], rows: [['x', '1']] } },
+    ]);
+    expect(activeBlocks(blocks, legalConditions(['meta', 'tiktok']))).toEqual([
+      'siempre',
+      'solo con Meta',
+      {
+        table: {
+          caption: 'c',
+          head: ['a', 'b'],
+          rows: [['x', '1'], { when: 'tiktok', cells: ['y', '2'] }],
+        },
+      },
+    ]);
+  });
+
+  it.each(['es', 'ca', 'en'] as const)(
+    '%s: sin proveedores, la política de cookies no habla de terceros',
+    (locale) => {
+      const text = cookiesText(locale, []);
+      expect(text).not.toMatch(
+        /Google Analytics|_ga|_gcl|_fbp|_ttp|Meta Platforms|TikTok|atelier_cookies/,
+      );
+    },
+  );
+
+  it.each(['es', 'ca', 'en'] as const)(
+    '%s: cada proveedor configurado aparece con sus cookies, y solo él',
+    (locale) => {
+      const onlyMeta = cookiesText(locale, ['meta']);
+      expect(onlyMeta).toMatch(/_fbp/);
+      expect(onlyMeta).toMatch(/atelier_cookies/);
+      expect(onlyMeta).not.toMatch(/_ga\b|_gcl_au|_ttp|Google Analytics/);
+      const all = cookiesText(locale, [...TRACKING_VENDORS]);
+      for (const cookie of ['_ga', '_gcl_au', '_fbp', '_ttp', 'gaoptout'])
+        expect(all, cookie).toContain(cookie);
+    },
+  );
+
+  it('la fecha de cookies y privacidad cambia sola al configurar la medición', () => {
+    const none = legalConditions([]);
+    const some = legalConditions(['ga4']);
+    expect(legalUpdatedAt('2026-10-16', 'cookies', none)).toBe('2026-10-16');
+    expect(legalUpdatedAt('2026-10-16', 'cookies', some)).toBe(
+      TRACKING_TEXTS_UPDATED_AT,
+    );
+    expect(legalUpdatedAt('2026-10-16', 'terms', some)).toBe('2026-10-16');
+    expect(legalUpdatedAt('2027-01-01', 'privacy', some)).toBe('2027-01-01');
   });
 });

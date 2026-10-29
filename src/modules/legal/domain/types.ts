@@ -34,17 +34,44 @@ export const LEGAL_FIELDS = [
 ] as const;
 export type LegalField = (typeof LEGAL_FIELDS)[number];
 
-/** Un bloque de texto: párrafo, lista, tabla o nota destacada. */
+/**
+ * Lo que solo se publica con una configuración (DECISIONS §178): con alguna
+ * cookie opcional (`optional`) o sin ninguna (`noOptional`), con un tipo
+ * (`analytics`, `ads`) o con un proveedor concreto.
+ */
+export const LEGAL_CONDITIONS = [
+  'optional',
+  'noOptional',
+  'analytics',
+  'ads',
+  'ga4',
+  'googleAds',
+  'meta',
+  'tiktok',
+] as const;
+export type LegalCondition = (typeof LEGAL_CONDITIONS)[number];
+
+/** Una fila de tabla, siempre o solo con una condición. */
+export type LegalRow = string[] | { when: LegalCondition; cells: string[] };
+
+/**
+ * Un bloque de texto: párrafo, lista, tabla, nota destacada, un grupo que
+ * solo se publica con una condición o el botón «Configurar cookies».
+ */
 export type LegalBlock =
   | string
   | { list: string[]; ordered?: boolean }
-  | { table: { head: string[]; rows: string[][]; caption: string } }
-  | { note: string };
+  | { table: { head: string[]; rows: LegalRow[]; caption: string } }
+  | { note: string }
+  | { when: LegalCondition; blocks: LegalBlock[] }
+  | { action: 'cookieSettings' };
 
 export type LegalSection = {
   /** Ancla estable (no cambia con el idioma). */
   id: string;
   title: string;
+  /** La sección entera solo se publica con esta condición. */
+  when?: LegalCondition;
   blocks: LegalBlock[];
 };
 
@@ -63,7 +90,13 @@ export type LegalCopy = {
     contents: string;
     pending: string;
     related: string;
+    /** Botón para cambiar la elección de cookies. */
+    cookieSettings: string;
+    /** Vista previa: «Solo se publica con …». */
+    onlyWith: string;
   };
+  /** Cada condición en palabras, para la vista previa del personal. */
+  conditions: Record<LegalCondition, string>;
   /** Qué falta, en palabras del idioma, para el marcador «Pendiente: …». */
   fields: Record<LegalField, string>;
   documents: Record<LegalDocumentKey, LegalDocument>;

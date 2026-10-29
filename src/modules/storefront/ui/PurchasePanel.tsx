@@ -2,12 +2,13 @@
 
 import { AnimatePresence, motion } from 'motion/react';
 import { useLocale, useTranslations } from 'next-intl';
-import { useState } from 'react';
+import { useState, useSyncExternalStore } from 'react';
 import { Badge, Button, Eyebrow, Price } from '@/components/ui';
 import type { BadgeTone } from '@/components/ui';
 import type { Availability, ProductVariant } from '@/modules/catalog';
 import { variantLabel } from '@/modules/catalog';
 import { AddToCartButton } from '@/modules/checkout/ui';
+import { track } from '@/modules/tracking';
 import { trackProductEvent } from './TrackEvent';
 
 const TONE: Record<Availability, BadgeTone> = {
@@ -15,6 +16,11 @@ const TONE: Record<Availability, BadgeTone> = {
   low_stock: 'warning',
   out_of_stock: 'neutral',
 };
+/** La URL no avisa de sus cambios: basta con leerla al pintar. */
+const subscribe = () => () => {};
+const requestedVariant = () =>
+  new URLSearchParams(window.location.search).get('formato');
+
 const LABEL: Record<Availability, 'inStock' | 'lowStock' | 'outOfStock'> = {
   in_stock: 'inStock',
   low_stock: 'lowStock',
@@ -30,16 +36,31 @@ export function PurchasePanel({
   availability,
   cart = false,
   slug,
+  product,
 }: {
   variants: ProductVariant[];
   availability: Record<string, Availability>;
   cart?: boolean;
   /** Necesario con `cart`: la consola cuenta los añadidos por perfume. */
   slug?: string;
+  /** Nombre y casa para la analítica y la publicidad aceptadas (§178). */
+  product?: { name: string; brand: string };
 }) {
   const t = useTranslations('product');
   const locale = useLocale();
-  const [selectedId, setSelectedId] = useState(variants[0]?.id ?? null);
+  // `?formato=` (anuncios y feed de productos, §179) elige el formato al
+  // llegar; en el servidor y al hidratar, el primero.
+  const requested = useSyncExternalStore(
+    subscribe,
+    requestedVariant,
+    () => null,
+  );
+  const [chosenId, setSelectedId] = useState<string | null>(null);
+  const selectedId =
+    chosenId ??
+    (variants.some((v) => v.id === requested) ? requested : null) ??
+    variants[0]?.id ??
+    null;
   const selected = variants.find((v) => v.id === selectedId) ?? null;
   const status = selected ? availability[selected.id] : undefined;
 
@@ -110,7 +131,21 @@ export function PurchasePanel({
           <AddToCartButton
             key={selected.id}
             variantId={selected.id}
-            onAdded={() => trackProductEvent(slug, 'add_to_cart')}
+            onAdded={() => {
+              trackProductEvent(slug, 'add_to_cart');
+              if (product && selected.priceCents != null)
+                track({
+                  type: 'add_to_cart',
+                  item: {
+                    id: selected.id,
+                    name: product.name,
+                    brand: product.brand,
+                    variant: variantLabel(selected),
+                    priceCents: selected.priceCents,
+                    quantity: 1,
+                  },
+                });
+            }}
           />
         ) : (
           <Button size="lg" disabled className="w-full">

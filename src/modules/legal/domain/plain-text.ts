@@ -1,12 +1,15 @@
+import type { TrackingVendor } from '@/modules/tracking';
+import { activeBlocks, legalConditions, rowParts } from './conditions';
 import { visibleSegments } from './placeholders';
 import type { LegalSegment } from './placeholders';
 import type { LegalCopy, LegalDocumentKey, LegalField } from './types';
 
 /**
  * Un texto legal en texto plano, como se publica en la tienda (sin los
- * párrafos con datos pendientes). Lo adjunta el correo de confirmación del
- * pedido: las condiciones en un soporte duradero (LEGAL.md). Los enlaces a
- * otros textos van como URL completas que da `href`.
+ * párrafos con datos pendientes ni lo que depende de una configuración que
+ * no está). Lo adjunta el correo de confirmación del pedido: las condiciones
+ * en un soporte duradero (LEGAL.md). Los enlaces a otros textos van como URL
+ * completas que da `href`.
  */
 export function legalDocumentText(
   copy: LegalCopy,
@@ -15,12 +18,16 @@ export function legalDocumentText(
   {
     href,
     updated,
+    vendors = [],
   }: {
     href: (doc: LegalDocumentKey, hash?: string) => string;
     updated: string;
+    /** Proveedores de analítica y publicidad configurados (§178). */
+    vendors?: readonly TrackingVendor[];
   },
 ): string {
   const document = copy.documents[doc];
+  const conditions = legalConditions(vendors);
   const line = (text: string) => {
     const segments = visibleSegments(text, values, false);
     return segments ? segments.map((s) => segmentText(s, href)).join('') : null;
@@ -31,8 +38,9 @@ export function legalDocumentText(
     `${copy.ui.updated}: ${updated}`,
   ];
   for (const section of document.sections) {
+    if (section.when && !conditions.has(section.when)) continue;
     const body: string[] = [];
-    for (const block of section.blocks) {
+    for (const block of activeBlocks(section.blocks, conditions)) {
       if (typeof block === 'string') {
         const text = line(block);
         if (text) body.push(text);
@@ -46,17 +54,17 @@ export function legalDocumentText(
       } else if ('note' in block) {
         const text = line(block.note);
         if (text) body.push(text);
-      } else {
+      } else if ('table' in block) {
         const [first, ...labels] = block.table.head;
         body.push(
           [
             block.table.caption,
-            ...block.table.rows.map(
-              ([name, ...cells]) =>
-                `- ${first}: ${name}; ${cells
-                  .map((cell, i) => `${labels[i]}: ${cell}`)
-                  .join('; ')}`,
-            ),
+            ...block.table.rows.map((row) => {
+              const [name, ...cells] = rowParts(row).cells;
+              return `- ${first}: ${name}; ${cells
+                .map((cell, i) => `${labels[i]}: ${cell}`)
+                .join('; ')}`;
+            }),
           ].join('\n'),
         );
       }

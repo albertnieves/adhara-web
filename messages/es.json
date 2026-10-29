@@ -131,13 +131,15 @@
     "staffAccess": "Acceso del equipo",
     "faq": "Preguntas frecuentes",
     "legal": "Legal",
-    "contact": "Escríbenos"
+    "contact": "Escríbenos",
+    "cookieSettings": "Configurar cookies"
   },
   "faq": {
     "eyebrow": "Dudas",
     "title": "Preguntas frecuentes",
     "buyOnlineQ": "¿Puedo comprar online?",
     "buyOnlineA": "Todavía no. La compra online, con sus envíos y devoluciones, llegará muy pronto y aquí publicaremos sus condiciones. Mientras tanto, te esperamos en la tienda de Castelldefels.",
+    "buyOnlineYes": "Sí. Añade los perfumes a la cesta y paga con tarjeta o Bizum en la página segura del banco. Puedes recogerlos gratis en la tienda de Castelldefels o elegir el envío a domicilio donde esté disponible para tu código postal; antes de pagar verás los gastos y el plazo. Las condiciones están en <shipping>Envíos y devoluciones</shipping>.",
     "visitQ": "¿Dónde está la tienda?",
     "visitA": "En {address}, {city}.",
     "hours": "Horario",
@@ -230,7 +232,25 @@
     "title": "Antes de empezar",
     "body": "En L’Atelier du Désert solo usamos cookies técnicas, necesarias para que la web funcione y para recordar tu idioma. No usamos cookies de publicidad ni de analítica.",
     "links": "Al continuar, aceptas nuestro <notice>aviso legal</notice>, la <privacy>política de privacidad</privacy> y la <cookies>política de cookies</cookies>.",
-    "accept": "Aceptar y continuar"
+    "accept": "Aceptar y continuar",
+    "bodyAnalytics": "Usamos cookies técnicas, necesarias para que la web funcione, y, solo si las aceptas, cookies de analítica para saber cuántas personas nos visitan y qué páginas ven. Puedes aceptarlas, rechazarlas o configurarlas, y cambiar de opinión cuando quieras desde «Configurar cookies», al pie de la página.",
+    "bodyAds": "Usamos cookies técnicas, necesarias para que la web funcione, y, solo si las aceptas, cookies de publicidad para mostrarte nuestros anuncios en otras webs y redes sociales y saber qué campañas funcionan. Puedes aceptarlas, rechazarlas o configurarlas, y cambiar de opinión cuando quieras desde «Configurar cookies», al pie de la página.",
+    "bodyBoth": "Usamos cookies técnicas, necesarias para que la web funcione, y, solo si las aceptas, cookies de analítica, para saber cuántas personas nos visitan y qué páginas ven, y de publicidad, para mostrarte nuestros anuncios en otras webs y redes sociales y saber qué campañas funcionan. Puedes aceptarlas, rechazarlas o configurarlas, y cambiar de opinión cuando quieras desde «Configurar cookies», al pie de la página.",
+    "linksTracking": "Al continuar, aceptas nuestro <notice>aviso legal</notice> y la <privacy>política de privacidad</privacy>. Todos los detalles, en la <cookies>política de cookies</cookies>.",
+    "reject": "Rechazar",
+    "acceptAll": "Aceptar todas",
+    "configure": "Configurar",
+    "settingsTitle": "Configurar cookies",
+    "settingsIntro": "Elige qué cookies podemos usar. Las técnicas son necesarias y siempre están activas; las demás solo se instalan si las marcas.",
+    "technical": "Técnicas (siempre activas)",
+    "technicalHint": "Para que la web funcione: tu idioma, la cesta, tu pedido y esta elección.",
+    "analytics": "Analítica",
+    "analyticsHint": "Para saber cuántas personas nos visitan y qué páginas ven, y así mejorar la web. {count, plural, one {Proveedor} other {Proveedores}}: {vendors}.",
+    "ads": "Publicidad",
+    "adsHint": "Para mostrarte nuestros anuncios en otras webs y redes sociales y saber qué campañas funcionan. {count, plural, one {Proveedor} other {Proveedores}}: {vendors}.",
+    "rejectAll": "Rechazar todas",
+    "save": "Guardar mi elección",
+    "close": "Cerrar"
   },
   "cart": {
     "title": "Tu cesta",

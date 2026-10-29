@@ -20,7 +20,16 @@ jobs:
     # (Auth, Google y Resend) y revisar la privacidad (DECISIONS §153).
     # Las pruebas crean muchos pedidos desde la misma IP: el freno de las
     # acciones públicas se apaga (nunca en producción; DECISIONS §160).
+    # Analítica y publicidad (DECISIONS §178) con IDs de prueba: el aviso pide
+    # el consentimiento y las pruebas sirven vacías las etiquetas de Google,
+    # Meta y TikTok (tests/support/tracking.ts), así que no sale ninguna
+    # petición a esas empresas. El resto de pruebas navega con todo rechazado.
     env:
+      NEXT_PUBLIC_GA_MEASUREMENT_ID: G-E2ETEST01
+      NEXT_PUBLIC_GOOGLE_ADS_ID: AW-100000001
+      NEXT_PUBLIC_GOOGLE_ADS_PURCHASE_LABEL: e2eCompra
+      NEXT_PUBLIC_META_PIXEL_ID: '1000000000000001'
+      NEXT_PUBLIC_TIKTOK_PIXEL_ID: CE2ETEST000000000001
       WEB_CHECKOUT: '1'
       CUSTOMER_ACCOUNTS: '1'
       CONTACT_FORM: '1'

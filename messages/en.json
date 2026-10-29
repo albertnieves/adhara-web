@@ -131,13 +131,15 @@
     "staffAccess": "Staff access",
     "faq": "FAQ",
     "legal": "Legal",
-    "contact": "Write to us"
+    "contact": "Write to us",
+    "cookieSettings": "Cookie settings"
   },
   "faq": {
     "eyebrow": "Questions",
     "title": "Frequently asked questions",
     "buyOnlineQ": "Can I buy online?",
     "buyOnlineA": "Not yet. Online shopping, with its shipping and returns, is coming very soon and we will publish its terms here. In the meantime, we look forward to seeing you at our shop in Castelldefels.",
+    "buyOnlineYes": "Yes. Add the fragrances to your basket and pay by card or Bizum on the bank’s secure page. You can collect them free of charge at our shop in Castelldefels or choose home delivery where it is available for your postcode; you will see the cost and delivery time before paying. The terms are in <shipping>Shipping and returns</shipping>.",
     "visitQ": "Where is the shop?",
     "visitA": "At {address}, {city}.",
     "hours": "Opening hours",
@@ -230,7 +232,25 @@
     "title": "Before you start",
     "body": "At L’Atelier du Désert we only use technical cookies, needed for the website to work and to remember your language. We do not use advertising or analytics cookies.",
     "links": "By continuing, you accept our <notice>legal notice</notice>, <privacy>privacy policy</privacy> and <cookies>cookie policy</cookies>.",
-    "accept": "Accept and continue"
+    "accept": "Accept and continue",
+    "bodyAnalytics": "We use technical cookies, needed for the website to work, and, only if you accept them, analytics cookies to know how many people visit us and which pages they see. You can accept, reject or configure them, and change your mind at any time from “Cookie settings” at the bottom of the page.",
+    "bodyAds": "We use technical cookies, needed for the website to work, and, only if you accept them, advertising cookies to show you our ads on other websites and social networks and to know which campaigns work. You can accept, reject or configure them, and change your mind at any time from “Cookie settings” at the bottom of the page.",
+    "bodyBoth": "We use technical cookies, needed for the website to work, and, only if you accept them, analytics cookies, to know how many people visit us and which pages they see, and advertising cookies, to show you our ads on other websites and social networks and to know which campaigns work. You can accept, reject or configure them, and change your mind at any time from “Cookie settings” at the bottom of the page.",
+    "linksTracking": "By continuing, you accept our <notice>legal notice</notice> and <privacy>privacy policy</privacy>. All the details are in our <cookies>cookie policy</cookies>.",
+    "reject": "Reject",
+    "acceptAll": "Accept all",
+    "configure": "Configure",
+    "settingsTitle": "Cookie settings",
+    "settingsIntro": "Choose which cookies we may use. Technical cookies are needed and always on; the others are only set if you tick them.",
+    "technical": "Technical (always on)",
+    "technicalHint": "For the website to work: your language, basket, order and this choice.",
+    "analytics": "Analytics",
+    "analyticsHint": "To know how many people visit us and which pages they see, so we can improve the website. {count, plural, one {Provider} other {Providers}}: {vendors}.",
+    "ads": "Advertising",
+    "adsHint": "To show you our ads on other websites and social networks and to know which campaigns work. {count, plural, one {Provider} other {Providers}}: {vendors}.",
+    "rejectAll": "Reject all",
+    "save": "Save my choice",
+    "close": "Close"
   },
   "cart": {
     "title": "Your basket",
