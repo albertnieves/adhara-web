@@ -1,7 +1,10 @@
 import { getTranslations } from 'next-intl/server';
 import type { ReactNode } from 'react';
 import { Eyebrow, Heading, Icon } from '@/components/ui';
+import { checkoutEnabled } from '@/modules/checkout/server';
 import type { StoreContent } from '@/modules/content';
+import { Link } from '@/modules/i18n';
+import { LEGAL_PATHS } from '@/modules/legal';
 import { Reveal } from './Reveal';
 
 /** Ancla de la sección: la enlaza el pie desde cualquier página. */
@@ -10,15 +13,30 @@ export const FAQ_ANCHOR = 'preguntas-frecuentes';
 /**
  * Preguntas frecuentes de la portada, plegadas: solo se ven las preguntas y
  * se abre una cada vez (`<details name>`, sin JavaScript). Las respuestas
- * dicen lo que ya consta en la tienda; los envíos y las devoluciones se
- * publicarán con la compra online. Los datos de la tienda salen del panel.
+ * dicen lo que ya consta en la tienda; «¿Puedo comprar online?» cambia sola
+ * al encender la venta (WEB_CHECKOUT). Los datos de la tienda salen del panel.
  */
 export async function Faq({ store }: { store: StoreContent }) {
   const t = await getTranslations('faq');
   const contact = [store.phone, store.email].filter(Boolean);
 
   const items: { id: string; question: string; answer: ReactNode }[] = [
-    { id: 'compra', question: t('buyOnlineQ'), answer: t('buyOnlineA') },
+    {
+      id: 'compra',
+      question: t('buyOnlineQ'),
+      answer: checkoutEnabled()
+        ? t.rich('buyOnlineYes', {
+            shipping: (chunks) => (
+              <Link
+                href={LEGAL_PATHS.shipping}
+                className="link-underline text-fg"
+              >
+                {chunks}
+              </Link>
+            ),
+          })
+        : t('buyOnlineA'),
+    },
     {
       id: 'tienda',
       question: t('visitQ'),

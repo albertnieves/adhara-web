@@ -12,8 +12,13 @@ test('preguntas frecuentes plegadas en la portada', async ({ page }) => {
   const questions = faq.locator('summary');
   await expect(questions).toHaveCount(5);
 
-  // Cerradas: solo se ven las preguntas.
-  const answer = faq.getByText(/^Todavía no\. La compra online/);
+  // Cerradas: solo se ven las preguntas. La primera respuesta depende de
+  // si la venta online está encendida (e2e.yml la enciende).
+  const answer = faq.getByText(
+    process.env.WEB_CHECKOUT === '1'
+      ? /^Sí\. Añade los perfumes a la cesta/
+      : /^Todavía no\. La compra online/,
+  );
   await expect(answer).toBeHidden();
 
   // Intro abre la pregunta enfocada.

@@ -13,6 +13,8 @@ import { indexingEnabled } from '@/modules/i18n/indexing';
 import { LegalConsent } from '@/modules/legal';
 import { NewsletterSection } from '@/modules/newsletter/server';
 import { Footer, Header, PreviewBanner } from '@/modules/storefront';
+import { activeVendors, TrackingTags } from '@/modules/tracking';
+import { serverTrackingConfig } from '@/modules/tracking/server';
 import { fontVariables } from '../fonts';
 import '../globals.css';
 
@@ -50,6 +52,9 @@ export default async function LocaleLayout({
     getTranslations('nav'),
     draftMode(),
   ]);
+  // Analítica y publicidad (DECISIONS §179): solo los proveedores con ID, y
+  // nada en la vista previa del personal.
+  const tracking = serverTrackingConfig();
   return (
     <html lang={locale} className={fontVariables}>
       <body>
@@ -64,7 +69,8 @@ export default async function LocaleLayout({
           <div id="contenido">{children}</div>
           <NewsletterSection />
           <Footer />
-          <LegalConsent />
+          <LegalConsent vendors={activeVendors(tracking)} />
+          <TrackingTags config={tracking} suppressed={draft.isEnabled} />
           {draft.isEnabled && <PreviewBanner />}
         </NextIntlClientProvider>
       </body>

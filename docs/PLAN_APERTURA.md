@@ -81,9 +81,10 @@ El código del checkout, el pago con Redsys, los correos y las devoluciones est�
 ## 4. Día de la apertura
 
 1. Fusionada la PR #47 (`claude/cierre-apertura`, lleva dentro la de Bizum, `claude/vigilant-mendel-p4mv93`). Su migración `20261024120000_refund_safeguards` ya está aplicada en `atelier-dev` desde el 24/10: las migraciones están al día.
-2. Variables de Production completas, con `WEB_CHECKOUT=1`, y redesplegado.
+2. Variables de Production completas, con `WEB_CHECKOUT=1`, y redesplegado. Con la venta encendida, la pregunta frecuente «¿Puedo comprar online?» ya responde que sí (§180), pero **el texto de la portada** («Ven a descubrir las fragancias en persona. La compra online llegará muy pronto.», en es y ca) es contenido del panel: cambiarlo en Panel → Contenido → Portada y publicar.
 3. Antes de anunciarlo: una compra real de poco importe con una tarjeta propia, el correo de confirmación recibido y su devolución desde el panel. Si algo falla, quitar `WEB_CHECKOUT` y redesplegar apaga la venta.
 4. Anunciar la venta.
+5. Opcional, para vender más ([MEDICION_Y_PUBLICIDAD.md](MEDICION_Y_PUBLICIDAD.md), §179–180): dar de alta el feed `https://latelierdudesert.com/feeds/productos.xml` en Google Merchant Center (fichas gratuitas en Google Shopping) y en el catálogo de Meta, y, tras la revisión de la asesoría, poner los IDs de Analytics, Google Ads, Meta o TikTok en Production.
 
 ## Decisiones del 23/10
 

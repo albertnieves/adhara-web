@@ -3,6 +3,12 @@ export {
   serializeJsonLd,
 } from './domain/structured-data';
 export {
+  GOOGLE_PERFUME_CATEGORY,
+  merchantFeedItems,
+  merchantFeedXml,
+} from './domain/merchant-feed';
+export type { FeedItem } from './domain/merchant-feed';
+export {
   AUDIENCES,
   AVAILABILITY,
   CONCENTRATIONS,

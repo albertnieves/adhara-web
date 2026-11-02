@@ -5,6 +5,7 @@ export {
   getAvailability,
   getScentProfile,
   getStorefrontProduct,
+  listPublishedProducts,
   listScentProfiles,
   listStorefrontProducts,
 } from './server/storefront';

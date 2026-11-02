@@ -72,6 +72,7 @@ test.describe('coste centinela', () => {
     '/api/health',
     '/api/health?check=readiness',
     '/robots.txt',
+    '/feeds/productos.xml',
   ];
 
   test('el perfume centinela está publicado', async ({ request }) => {

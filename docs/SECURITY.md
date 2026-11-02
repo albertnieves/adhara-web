@@ -83,7 +83,7 @@ Plan en [PLAN_CUENTA_CLIENTE.md](PLAN_CUENTA_CLIENTE.md); decisiones §142–146
 
 ## Cabeceras e indexación
 
-`next.config.ts` añade a todas las respuestas `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy: strict-origin-when-cross-origin`, `Permissions-Policy` sin cámara, micrófono ni geolocalización y `X-Robots-Tag: noindex, nofollow`, HSTS (`max-age=63072000; includeSubDomains`) y una CSP mínima (`frame-ancestors 'none'; object-src 'none'; base-uri 'self'`; DECISIONS §162); sin `X-Powered-By`. `/admin` lleva además `Cache-Control: private, no-store`. `robots.txt` lo prohíbe todo mientras se desarrolla. Comprobado en `tests/e2e/setup.spec.ts` y `admin-auth.spec.ts` (criterio 16).
+`next.config.ts` añade a todas las respuestas `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy: strict-origin-when-cross-origin`, `Permissions-Policy` sin cámara, micrófono ni geolocalización y `X-Robots-Tag: noindex, nofollow`, HSTS (`max-age=63072000; includeSubDomains`) y una CSP mínima (`frame-ancestors 'none'; object-src 'none'; base-uri 'self'`; DECISIONS §162); sin `X-Powered-By`. `/admin` lleva además `Cache-Control: private, no-store`. La CSP no limita `script-src`: las etiquetas de Google, Meta y TikTok (§179) se insertan solo tras el consentimiento y solo en la tienda, nunca en el panel; sus IDs se validan con un formato cerrado antes de escribirlos en el código que se inserta. `robots.txt` lo prohíbe todo mientras se desarrolla. Comprobado en `tests/e2e/setup.spec.ts` y `admin-auth.spec.ts` (criterio 16).
 
 ## Auditoría y solo inserción
 

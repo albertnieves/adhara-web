@@ -15,6 +15,18 @@ export const es: LegalCopy = {
     contents: 'En esta página',
     pending: 'Pendiente',
     related: 'Otros textos legales',
+    cookieSettings: 'Configurar cookies',
+    onlyWith: 'Solo se publica con',
+  },
+  conditions: {
+    optional: 'cookies de analítica o de publicidad configuradas',
+    noOptional: 'sin cookies de analítica ni de publicidad',
+    analytics: 'analítica configurada',
+    ads: 'publicidad configurada',
+    ga4: 'Google Analytics configurado',
+    googleAds: 'Google Ads configurado',
+    meta: 'píxel de Meta configurado',
+    tiktok: 'píxel de TikTok configurado',
   },
   fields: {
     holder: 'titular (razón social o nombre)',
@@ -347,15 +359,61 @@ export const es: LegalCopy = {
           ],
         },
         {
+          id: 'analitica-publicidad',
+          title: 'Analítica y publicidad',
+          when: 'optional',
+          blocks: [
+            {
+              list: [
+                'Datos: los identificadores de las cookies, tu dirección IP, datos de tu navegador y de tu dispositivo, las páginas de la tienda que visitas, los perfumes que ves o añades a la cesta y, si compras, el número del pedido y su importe. No enviamos tu nombre, tu email, tu teléfono ni tu dirección.',
+                'Finalidad: según lo que aceptes, saber de forma estadística cómo se usa la web (analítica) y mostrarte anuncios de nuestros perfumes en otras webs y redes sociales y medir qué campañas llevan a una compra (publicidad).',
+                'Base jurídica: tu consentimiento (art. 6.1.a del RGPD y art. 22.2 de la LSSI), que puedes retirar cuando quieras desde «Configurar cookies», al pie de cada página, sin que afecte a lo tratado antes.',
+                'Conservación: las cookies duran lo que indica la [política de cookies](doc:cookies); lo que reciben las empresas siguientes lo conservan según su configuración y su propia política.',
+              ],
+            },
+            'Quién recibe estos datos, solo si aceptas el tipo de cookies que usa:',
+            {
+              when: 'ga4',
+              blocks: [
+                'Google Ireland Limited, para Google Analytics, como encargado del tratamiento. Conserva los datos de cada visitante como máximo 14 meses. Google puede transferirlos a Google LLC, en Estados Unidos, adherida al Marco de Privacidad de Datos UE-EE. UU.',
+              ],
+            },
+            {
+              when: 'googleAds',
+              blocks: [
+                'Google Ireland Limited, para los anuncios de Google, como responsable de lo que hace después con esos datos según su política. Google puede transferirlos a Google LLC, en Estados Unidos, adherida al Marco de Privacidad de Datos UE-EE. UU.',
+              ],
+            },
+            {
+              when: 'meta',
+              blocks: [
+                'Meta Platforms Ireland Limited, para los anuncios de Facebook e Instagram. Somos corresponsables con Meta de recoger estos datos en la web y enviárselos; lo que Meta hace después lo decide ella, como responsable, según su política. Meta puede transferirlos a Meta Platforms, Inc., en Estados Unidos, adherida al Marco de Privacidad de Datos UE-EE. UU.',
+              ],
+            },
+            {
+              when: 'tiktok',
+              blocks: [
+                'TikTok Technology Limited (Irlanda), para los anuncios de TikTok, en los mismos términos que Meta. TikTok puede acceder a los datos desde fuera del Espacio Económico Europeo con las cláusulas contractuales tipo de la Comisión Europea.',
+              ],
+            },
+          ],
+        },
+        {
           id: 'destinatarios',
           title: 'Quién accede a tus datos',
           blocks: [
-            'No vendemos ni cedemos tus datos. Solo acceden a ellos, con contrato de encargo de tratamiento y solo para prestarnos su servicio, estos proveedores:',
+            'No vendemos tus datos. Solo acceden a ellos, con contrato de encargo de tratamiento y solo para prestarnos su servicio, estos proveedores:',
             {
               list: [
                 'Proveedores de alojamiento web y de base de datos, con servidores en la Unión Europea.',
                 'El proveedor de envío de los correos del Club L’Atelier.',
                 'La entidad bancaria que procesa los pagos, la empresa de transporte y el proveedor de los emails de los pedidos y de las respuestas a tus consultas.',
+              ],
+            },
+            {
+              when: 'optional',
+              blocks: [
+                'Si aceptas las cookies de analítica o de publicidad, también reciben datos las empresas que se indican en [Analítica y publicidad](doc:privacy#analitica-publicidad).',
               ],
             },
             'Si eliges entrar con Google, Google comprueba tu identidad como responsable independiente, según su propia [política de privacidad](https://policies.google.com/privacy).',
@@ -387,6 +445,12 @@ export const es: LegalCopy = {
             },
             'Escríbenos por email o por correo postal a la tienda ({storeAddress}) indicando qué derecho quieres ejercer. Si tenemos dudas sobre tu identidad, podremos pedirte que la acredites. Te responderemos en el plazo de un mes.',
             'No tomamos decisiones automatizadas ni elaboramos perfiles con efectos sobre ti.',
+            {
+              when: 'ads',
+              blocks: [
+                'Si aceptas las cookies de publicidad, las plataformas publicitarias usan tu navegación para decidir qué anuncios mostrarte. No tiene efectos jurídicos sobre ti ni te afecta de forma significativa, y lo evitas rechazando esas cookies.',
+              ],
+            },
             'Si crees que no hemos tratado bien tus datos, puedes reclamar ante la [Agencia Española de Protección de Datos](https://www.aepd.es).',
           ],
         },
@@ -429,10 +493,21 @@ export const es: LegalCopy = {
           id: 'cookies-usadas',
           title: 'Qué cookies usamos',
           blocks: [
-            'Esta web solo usa cookies técnicas, necesarias para que funcione. No usamos cookies de analítica, de publicidad ni de redes sociales, y las tipografías se sirven desde nuestro propio servidor, sin llamadas a terceros.',
+            {
+              when: 'noOptional',
+              blocks: [
+                'Esta web solo usa cookies técnicas, necesarias para que funcione. No usamos cookies de analítica, de publicidad ni de redes sociales, y las tipografías se sirven desde nuestro propio servidor, sin llamadas a terceros.',
+              ],
+            },
+            {
+              when: 'optional',
+              blocks: [
+                'Esta web usa cookies técnicas, necesarias para que funcione, y, solo si las aceptas, cookies de otras empresas para la analítica o la publicidad, que se explican en los apartados siguientes. Las tipografías se sirven desde nuestro propio servidor, sin llamadas a terceros.',
+              ],
+            },
             {
               table: {
-                caption: 'Cookies de esta web',
+                caption: 'Cookies técnicas de esta web',
                 head: ['Cookie', 'Titular', 'Para qué sirve', 'Duración'],
                 rows: [
                   [
@@ -447,6 +522,15 @@ export const es: LegalCopy = {
                     'Recordar que has aceptado las condiciones de la web, para no volver a preguntarte.',
                     '1 año',
                   ],
+                  {
+                    when: 'optional',
+                    cells: [
+                      'atelier_cookies',
+                      'Propia',
+                      'Recordar si aceptas o rechazas las cookies de analítica y de publicidad, y cuándo lo elegiste.',
+                      '1 año',
+                    ],
+                  },
                   [
                     'atelier_cesta',
                     'Propia',
@@ -477,11 +561,143 @@ export const es: LegalCopy = {
           ],
         },
         {
-          id: 'consentimiento',
-          title: 'Por qué no te pedimos consentimiento',
+          id: 'analitica',
+          title: 'Cookies de analítica',
+          when: 'analytics',
           blocks: [
-            'Las cookies técnicas, y las que guardan una preferencia que tú eliges, como el idioma, están exentas de consentimiento según el artículo 22.2 de la LSSI y la guía de la Agencia Española de Protección de Datos. Por eso no te pedimos que aceptes cookies: el aviso que ves al entrar es para que conozcas nuestras condiciones.',
-            'Si en el futuro usamos cookies de analítica o de publicidad, te pediremos permiso antes de instalarlas, con la opción de rechazarlas tan fácilmente como aceptarlas, y actualizaremos esta política.',
+            'Solo si las aceptas, usamos Google Analytics, un servicio de Google Ireland Limited, para saber de forma estadística cuántas personas nos visitan, cómo llegan, qué páginas ven y qué compras se completan. Google recibe tu dirección IP (Google Analytics no la guarda), datos de tu navegador y de tu dispositivo y las páginas que visitas. No le enviamos tu nombre, tu email ni otros datos de contacto.',
+            {
+              table: {
+                caption: 'Cookies de analítica',
+                head: ['Cookie', 'Titular', 'Para qué sirve', 'Duración'],
+                rows: [
+                  {
+                    when: 'ga4',
+                    cells: [
+                      '_ga',
+                      'Google',
+                      'Distinguir de forma estadística a los visitantes.',
+                      '13 meses',
+                    ],
+                  },
+                  {
+                    when: 'ga4',
+                    cells: [
+                      '_ga_<ID>',
+                      'Google',
+                      'Mantener el estado de la visita.',
+                      '13 meses',
+                    ],
+                  },
+                ],
+              },
+            },
+            'Más información en [cómo usa Google la información de las webs que usan sus servicios](https://policies.google.com/technologies/partner-sites) y en su [política de privacidad](https://policies.google.com/privacy).',
+          ],
+        },
+        {
+          id: 'publicidad',
+          title: 'Cookies de publicidad',
+          when: 'ads',
+          blocks: [
+            'Solo si las aceptas, las empresas de esta tabla nos ayudan a mostrarte anuncios de nuestros perfumes en sus plataformas y en otras webs según tu visita (por ejemplo, los perfumes que has visto) y a medir qué anuncios llevan a una visita o a una compra. Para ello reciben tu dirección IP, datos de tu navegador y de tu dispositivo, las páginas de la tienda que visitas, los perfumes que ves o añades a la cesta y, si compras, el número del pedido y su importe. No les enviamos tu nombre, tu email ni otros datos de contacto.',
+            'Si tienes cuenta en sus servicios, cada empresa puede relacionar esta información con tu cuenta, como responsable de ese tratamiento y según su propia política.',
+            {
+              table: {
+                caption: 'Cookies de publicidad',
+                head: ['Cookie', 'Titular', 'Para qué sirve', 'Duración'],
+                rows: [
+                  {
+                    when: 'googleAds',
+                    cells: [
+                      '_gcl_au',
+                      'Google',
+                      'Medir qué anuncios de Google llevan a una visita o a una compra.',
+                      '3 meses',
+                    ],
+                  },
+                  {
+                    when: 'meta',
+                    cells: [
+                      '_fbp',
+                      'Meta',
+                      'Medir los anuncios de Facebook e Instagram y mostrarte anuncios según tu visita.',
+                      '3 meses',
+                    ],
+                  },
+                  {
+                    when: 'meta',
+                    cells: [
+                      '_fbc',
+                      'Meta',
+                      'Recordar el anuncio de Facebook o Instagram desde el que llegas. Solo se crea si llegas desde uno.',
+                      '3 meses',
+                    ],
+                  },
+                  {
+                    when: 'tiktok',
+                    cells: [
+                      '_ttp',
+                      'TikTok',
+                      'Medir los anuncios de TikTok y mostrarte anuncios según tu visita.',
+                      '13 meses',
+                    ],
+                  },
+                  {
+                    when: 'tiktok',
+                    cells: [
+                      '_tt_enable_cookie',
+                      'TikTok',
+                      'Comprobar que tu navegador admite cookies.',
+                      '13 meses',
+                    ],
+                  },
+                ],
+              },
+            },
+            {
+              when: 'googleAds',
+              blocks: [
+                'Google Ireland Limited: [cómo usa Google la información de las webs que usan sus servicios](https://policies.google.com/technologies/partner-sites) y [política de privacidad](https://policies.google.com/privacy).',
+              ],
+            },
+            {
+              when: 'meta',
+              blocks: [
+                'Meta Platforms Ireland Limited: [política de privacidad](https://www.facebook.com/privacy/policy/) y [política de cookies](https://www.facebook.com/privacy/policies/cookies/).',
+              ],
+            },
+            {
+              when: 'tiktok',
+              blocks: [
+                'TikTok Technology Limited: [política de privacidad](https://www.tiktok.com/legal/page/eea/privacy-policy/es) y [política de cookies](https://www.tiktok.com/legal/page/global/cookie-policy/es).',
+              ],
+            },
+            'Estas empresas pueden usar además sus propias cookies, en sus dominios, y cambiar su lista; la vigente está en su política de cookies.',
+          ],
+        },
+        {
+          id: 'consentimiento',
+          title: 'Tu consentimiento',
+          blocks: [
+            'Las cookies técnicas, y las que guardan una preferencia que tú eliges, como el idioma, están exentas de consentimiento según el artículo 22.2 de la LSSI y la guía de la Agencia Española de Protección de Datos.',
+            {
+              when: 'noOptional',
+              blocks: [
+                'Por eso no te pedimos que aceptes cookies: el aviso que ves al entrar es para que conozcas nuestras condiciones.',
+                'Si en el futuro usamos cookies de analítica o de publicidad, te pediremos permiso antes de instalarlas, con la opción de rechazarlas tan fácilmente como aceptarlas, y actualizaremos esta política.',
+              ],
+            },
+            {
+              when: 'optional',
+              blocks: [
+                'Las de analítica y de publicidad solo se instalan si las aceptas en el aviso que ves al entrar, donde puedes aceptarlas todas, rechazarlas todas o elegir por tipo con la misma facilidad. Si no eliges, no se instalan, y si las rechazas puedes navegar y comprar igual.',
+                'Guardamos tu elección un año. Después, o si añadimos otra empresa a un tipo de cookies que habías aceptado, te volveremos a preguntar.',
+                'Puedes cambiar de opinión o retirar tu consentimiento cuando quieras desde «Configurar cookies», al pie de cada página, o con este botón:',
+                { action: 'cookieSettings' },
+                'Si lo retiras, borramos de tu navegador las cookies de analítica y de publicidad de nuestro dominio. Las que estas empresas guardan en sus propios dominios se borran desde la configuración de tu navegador o desde tu cuenta en sus servicios.',
+              ],
+            },
           ],
         },
         {
@@ -495,6 +711,12 @@ export const es: LegalCopy = {
                 '[Mozilla Firefox](https://support.mozilla.org/kb/clear-cookies-and-site-data-firefox)',
                 '[Safari](https://support.apple.com/guide/safari/sfri11471/mac)',
                 '[Microsoft Edge](https://support.microsoft.com/microsoft-edge/delete-cookies-in-microsoft-edge-63947406-40ac-c3b8-57b9-2a946a29ae09)',
+              ],
+            },
+            {
+              when: 'ga4',
+              blocks: [
+                'También puedes impedir que Google Analytics te mida en cualquier web con el [complemento de inhabilitación de Google](https://tools.google.com/dlpage/gaoptout).',
               ],
             },
           ],
