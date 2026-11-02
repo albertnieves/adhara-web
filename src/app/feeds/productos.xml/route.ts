@@ -28,8 +28,14 @@ export async function GET() {
     return new Response('Not Found', { status: 404, headers: HEADERS });
   const base = siteUrl();
   let products;
+  let availability;
   try {
     products = await listPublishedProducts('es');
+    // Sin disponibilidad, todo saldría agotado durante una hora (§183).
+    availability = await getAvailability(
+      products.map((product) => product.id),
+      { strict: true },
+    );
   } catch (error) {
     console.error('[feed] no se pudo leer el catálogo', error);
     return new Response('Service Unavailable', {
@@ -37,9 +43,6 @@ export async function GET() {
       headers: { ...HEADERS, 'Cache-Control': 'no-store' },
     });
   }
-  const availability = await getAvailability(
-    products.map((product) => product.id),
-  );
   const items = merchantFeedItems(
     products,
     availability,
@@ -54,6 +57,7 @@ export async function GET() {
       if (variant) url.searchParams.set('formato', variant);
       return url.href;
     },
+    base,
   );
   const xml = merchantFeedXml(items, {
     title: 'L’Atelier du Désert',

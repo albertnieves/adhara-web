@@ -1,4 +1,14 @@
-# Estado real — 29/10/2026
+# Estado real — 02/11/2026
+
+## Revisión de las PR #54 y #55 (02/11)
+
+Rama `claude/revision-busqueda`, sobre `claude/busqueda-global` (#55, que incluye la #54 y la #52). A petición del usuario: revisar el código y avanzar. Decisión §183. Sin migraciones ni variables.
+
+- **El feed de Google y Meta saldría vacío:** las 75 fotos de los perfumes publicados son oficiales y provisionales (consulta de solo lectura en `atelier-dev`) y el panel solo quitaba esa marca a las fotos propias. Ahora la ficha del panel tiene «Derechos confirmados» y «Volver a provisional» en las imágenes oficiales y del catálogo (`media.edit`); un borrador generado no se puede confirmar. Confirmarlo es del titular, con permiso por escrito de la marca ([ADMIN_OPERATIONS](ADMIN_OPERATIONS.md#catálogo-y-operaciones), [MEDICION_Y_PUBLICIDAD](MEDICION_Y_PUBLICIDAD.md)).
+- **Feed:** las fotos de los 4 pilotos (`/media/pilot/…`) salen con la URL completa; si falla la lectura de disponibilidad responde 503 en vez de publicar todo agotado durante una hora.
+- **Anuncios:** `view_item` usa el formato de `?formato=` (el del anuncio o el feed), no siempre el primero.
+- **Revisado sin cambios:** consentimiento, búsqueda y reglas del recorrido.
+- **Comprobado en local** (Node 24.16.0, Supabase local con Docker y los datos de la CI, configuración de `e2e.yml`): lint, tipos, 771 unitarias (1 nueva) y build correctos; `format:check` y `scan:secrets` correctos; panel con sesión 58/58, con las 2 nuevas (`media-rights`: confirmar los derechos lleva la foto al feed con la URL completa y volver a provisional la saca; `tracking`: `view_item` del formato de `?formato=`); tienda pública 320 correctas y 51 omitidas, con 1 fallo local por la caché de Next (un perfume de prueba archivado por SQL tras pasar antes la batería del panel), que pasa al limpiarla (`cost-leak` y `feed`, 58 correctas). La CI lo repite en orden limpio.
 
 ## Búsqueda global, filtros en el móvil y recorrido olfativo (29/10)
 

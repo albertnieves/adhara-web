@@ -64,7 +64,7 @@ Haz los pasos de cada proveedor que quieras usar; los demás pueden quedarse sin
 2. **Google Merchant Center** ([merchants.google.com](https://merchants.google.com)): verifica y reclama el dominio, configura los envíos (España peninsular y Baleares, con los mismos importes que el checkout) y la política de devoluciones, y añade el feed como «fuente de datos programada» con esa URL, país España e idioma español. Actívalo para las **fichas gratuitas** y, si se quieren anuncios, vincúlalo con Google Ads.
 3. **Catálogo de Meta** (Commerce Manager → Catálogo → Orígenes de datos → Feed de datos → URL programada): la misma URL, cada día. Conéctalo al píxel para los anuncios dinámicos.
 4. **Sin GTIN (EAN):** la base no tiene el código de barras de los perfumes y no se inventa. Merchant Center avisará de «identificadores que faltan» y los anuncios pueden rendir menos. Para mejorarlo hace falta guardar el EAN de cada formato (otra entrega, con migración).
-5. **Fotos:** solo entran perfumes con foto propia, oficial de la marca o del catálogo, y nunca las generadas o provisionales. Un perfume sin foto así no sale en el feed.
+5. **Fotos:** solo entran perfumes con foto propia, o oficial de la marca o del catálogo con los derechos confirmados; nunca las generadas ni las provisionales. Un perfume sin foto así no sale en el feed. **Hoy saldría vacío:** las 75 fotos de los perfumes publicados son oficiales y provisionales (consulta del 02/11). Para que un perfume entre, subid una foto propia o, con permiso por escrito de la marca, pulsad «Derechos confirmados» en Catálogo → ficha → Imágenes (DECISIONS §183). Las de la propia web (`/media/…`) salen con la URL completa.
 
 ### 7. Asesoría
 

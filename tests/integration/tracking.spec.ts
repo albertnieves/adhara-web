@@ -9,7 +9,7 @@ import { consentState } from '../support/legal-consent';
 import { readQueues, stubTrackers, TRACKING_ON } from '../support/tracking';
 import { fakeBank, nextVisit, notificationBody, notify } from './bank';
 import type { TestProduct } from './support';
-import { archiveProduct, sellableProduct } from './support';
+import { admin, archiveProduct, psql, sellableProduct } from './support';
 
 /*
  * Eventos de compra para la analítica y la publicidad aceptadas (DECISIONS
@@ -161,6 +161,47 @@ test.describe('con todo aceptado', () => {
     expect(
       (await googleEvents(page)).filter((call) => call[1] === 'purchase'),
     ).toEqual([]);
+  });
+});
+
+test.describe('desde un anuncio', () => {
+  test.use({ storageState: consentState(ALL_GRANTED) });
+
+  test('con ?formato=, la visita es de ese formato (§183)', async ({
+    page,
+    context,
+  }) => {
+    await stubTrackers(context);
+    const product = await sellableProduct(3);
+    created.push(product);
+    psql(
+      `insert into public.product_variants (product_id, sku, size_ml, retail_price_cents, position)
+       select p.id, 'PED-30-' || p.id, 30, 2990, 1
+       from public.products p where p.slug = :'slug';`,
+      { slug: product.slug },
+    );
+    const { data, error } = await admin
+      .from('product_variants')
+      .select('id, products!inner(slug)')
+      .eq('products.slug', product.slug)
+      .eq('size_ml', 30)
+      .single();
+    if (error) throw error;
+    await page.goto(`/es/perfume/${product.slug}?formato=${data.id}`);
+    await expect
+      .poll(async () =>
+        (await googleEvents(page)).filter((call) => call[1] === 'view_item'),
+      )
+      .toEqual([
+        [
+          'event',
+          'view_item',
+          expect.objectContaining({
+            value: 29.9,
+            items: [expect.objectContaining({ item_id: String(data.id) })],
+          }),
+        ],
+      ]);
   });
 });
 
