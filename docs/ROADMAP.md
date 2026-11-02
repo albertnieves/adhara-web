@@ -46,7 +46,7 @@ Lo que falta para vender es sobre todo configuración y trámites del titular, d
 ## 4. Clientes y mensajes
 
 - **Encender lo hecho:** bandeja de mensajes y formulario de contacto (subdominio de recepción en Resend, webhook y `CONTACT_FORM=1`) y cuenta de cliente (Google, correo de Auth y `CUSTOMER_ACCOUNTS=1`).
-- **Ficha de cliente (A7) hecha** (02/11, §184, sin fusionar): Web → Clientes con pedidos, mensajes, Club y cuenta de cada email y «Descargar sus datos» auditada. Su migración se aplica en `atelier-dev` antes de fusionar. El borrado sigue en Mensajes y Suscriptores; el plazo de conservación de los pedidos, con la asesoría.
+- **Ficha de cliente (A7) hecha** (02/11, §184, PR #57): Web → Clientes con pedidos, mensajes, Club y cuenta de cada email y «Descargar sus datos» auditada. Su migración está aplicada en `atelier-dev` desde el 02/11. El borrado sigue en Mensajes y Suscriptores; el plazo de conservación de los pedidos, con la asesoría.
 - **Código por hacer:** promociones automáticas y códigos únicos por suscriptor.
 
 **Cierre:** un cliente escribe, compra y consulta sus pedidos, y el personal lo ve todo en su ficha sin ver más de lo que su permiso permite.
