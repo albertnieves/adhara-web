@@ -47,7 +47,8 @@ Lo que falta para vender es sobre todo configuración y trámites del titular, d
 
 - **Encender lo hecho:** bandeja de mensajes y formulario de contacto (subdominio de recepción en Resend, webhook y `CONTACT_FORM=1`) y cuenta de cliente (Google, correo de Auth y `CUSTOMER_ACCOUNTS=1`).
 - **Ficha de cliente (A7) hecha** (02/11, §184, PR #57): Web → Clientes con pedidos, mensajes, Club y cuenta de cada email y «Descargar sus datos» auditada. Su migración está aplicada en `atelier-dev` desde el 02/11. El borrado sigue en Mensajes y Suscriptores; el plazo de conservación de los pedidos, con la asesoría.
-- **Código por hacer:** promociones automáticas y códigos únicos por suscriptor.
+- **Códigos únicos por suscriptor hechos** (02/11, §185, PR #58): lotes de códigos de un solo uso, uno por suscriptor del Club o un número fijo, con CSV para Sender. Su migración está aplicada en `atelier-dev` desde el 02/11.
+- **Por decidir y hacer:** promociones automáticas (qué tipo: rebaja por casa o colección, regalo o envío gratis desde un importe) y si un código personal debe valer solo con el email de su destinatario.
 
 **Cierre:** un cliente escribe, compra y consulta sus pedidos, y el personal lo ve todo en su ficha sin ver más de lo que su permiso permite.
 
@@ -80,25 +81,25 @@ Ampliar los cuatro pilotos a productos destacados con medidas reales. Pipeline G
 
 ## Estado de las fases del plan original
 
-| #   | Fase                     | Estado                                | Qué falta                                                                                         |
-| --- | ------------------------ | ------------------------------------- | ------------------------------------------------------------------------------------------------- |
-| 0   | Arquitectura             | Hecha                                 | —                                                                                                 |
-| 1   | Fundaciones              | Cerrada con excepciones               | Excepciones en DECISIONS §83–90                                                                   |
-| 2   | Design System            | Cerrada a falta de la revisión visual | Revisión visual del titular (criterio 13)                                                         |
-| 3   | Importación del catálogo | En parte                              | CSV de costes, revisión y publicación por tandas; informe de importación                          |
-| 4   | Research                 | En parte                              | Perfiles con fuente del resto del catálogo (47 de los 50 publicados los tienen)                   |
-| 5   | Catálogo (tienda)        | En parte                              | Colecciones editoriales y objetivos de Lighthouse (búsqueda global hecha, §181)                   |
-| 6   | Ficha y Scent Journey    | Hecha                                 | — (recorrido olfativo, §182; ficha olfativa y JSON-LD ya existían)                                |
-| 7   | Media                    | En parte                              | Biblioteca, flujo de aprobación y derechos de las fotos                                           |
-| 8   | 3D                       | En parte                              | Más perfumes, pipeline GLB y presupuestos en CI                                                   |
-| 9   | Inventario               | Hecha                                 | — (las reservas del checkout llegaron con la F10)                                                 |
-| 10  | Carrito y checkout       | Hecha, apagada                        | Pase a producción del TPV y `WEB_CHECKOUT=1`                                                      |
-| 11  | Admin operativo          | En parte                              | Promociones automáticas, WhatsApp y borradores del asistente (A6.2–A6.3); fichas de cliente, §184 |
-| 12  | Click & Collect          | Hecha, apagada                        | Se enciende con la venta (recogida en Castelldefels)                                              |
-| 13  | Homepage                 | En parte                              | Colecciones editoriales y contenido de campaña                                                    |
-| 14  | Cuenta de cliente        | Hecha, apagada                        | Google, correo de Auth y `CUSTOMER_ACCOUNTS=1`                                                    |
-| 15  | SEO y analítica          | Código hecho, apagado                 | Catálogo revisado, aprobación y `SEO_INDEXING=1`; IDs de analítica y publicidad (§179)            |
-| 16  | QA y seguridad           | En parte                              | Firewall de Vercel y, si hay abusos, captcha (revisión del 17/10 hecha)                           |
-| 17  | Producción               | En parte                              | Pase del TPV, aislamiento de Preview, restauración de prueba y despliegue revisado de migraciones |
+| #   | Fase                     | Estado                                | Qué falta                                                                                           |
+| --- | ------------------------ | ------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| 0   | Arquitectura             | Hecha                                 | —                                                                                                   |
+| 1   | Fundaciones              | Cerrada con excepciones               | Excepciones en DECISIONS §83–90                                                                     |
+| 2   | Design System            | Cerrada a falta de la revisión visual | Revisión visual del titular (criterio 13)                                                           |
+| 3   | Importación del catálogo | En parte                              | CSV de costes, revisión y publicación por tandas; informe de importación                            |
+| 4   | Research                 | En parte                              | Perfiles con fuente del resto del catálogo (47 de los 50 publicados los tienen)                     |
+| 5   | Catálogo (tienda)        | En parte                              | Colecciones editoriales y objetivos de Lighthouse (búsqueda global hecha, §181)                     |
+| 6   | Ficha y Scent Journey    | Hecha                                 | — (recorrido olfativo, §182; ficha olfativa y JSON-LD ya existían)                                  |
+| 7   | Media                    | En parte                              | Biblioteca, flujo de aprobación y derechos de las fotos                                             |
+| 8   | 3D                       | En parte                              | Más perfumes, pipeline GLB y presupuestos en CI                                                     |
+| 9   | Inventario               | Hecha                                 | — (las reservas del checkout llegaron con la F10)                                                   |
+| 10  | Carrito y checkout       | Hecha, apagada                        | Pase a producción del TPV y `WEB_CHECKOUT=1`                                                        |
+| 11  | Admin operativo          | En parte                              | Promociones automáticas, WhatsApp y borradores del asistente (A6.2–A6.3); fichas, §184; lotes, §185 |
+| 12  | Click & Collect          | Hecha, apagada                        | Se enciende con la venta (recogida en Castelldefels)                                                |
+| 13  | Homepage                 | En parte                              | Colecciones editoriales y contenido de campaña                                                      |
+| 14  | Cuenta de cliente        | Hecha, apagada                        | Google, correo de Auth y `CUSTOMER_ACCOUNTS=1`                                                      |
+| 15  | SEO y analítica          | Código hecho, apagado                 | Catálogo revisado, aprobación y `SEO_INDEXING=1`; IDs de analítica y publicidad (§179)              |
+| 16  | QA y seguridad           | En parte                              | Firewall de Vercel y, si hay abusos, captcha (revisión del 17/10 hecha)                             |
+| 17  | Producción               | En parte                              | Pase del TPV, aislamiento de Preview, restauración de prueba y despliegue revisado de migraciones   |
 
 `atelier-dev` es la base de producción aunque conserve el nombre: no se crea un `atelier-prod` vacío para cambiar la web hacia él (OPERATIONS).

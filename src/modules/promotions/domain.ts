@@ -287,3 +287,162 @@ export const discountCodeInput = z
     };
   });
 export type DiscountCodeInput = z.infer<typeof discountCodeInput>;
+
+/*
+ * Lotes de códigos únicos (DECISIONS §185): códigos normales de un solo uso
+ * con las mismas condiciones, uno para cada suscriptor activo del Club (para
+ * importarlos en Sender) o un número fijo. Los crea la base
+ * (admin_create_discount_batch); aquí, el formulario y el CSV.
+ */
+
+export const DISCOUNT_BATCH_AUDIENCES = ['subscribers', 'count'] as const;
+export type DiscountBatchAudience = (typeof DISCOUNT_BATCH_AUDIENCES)[number];
+export const DISCOUNT_BATCH_MAX = 5000;
+export const DISCOUNT_BATCH_PREFIX = /^[A-Z0-9]{2,10}$/;
+
+/** Un lote del panel con sus usos (admin_list_discount_batches). */
+export type DiscountBatch = {
+  id: string;
+  name: string;
+  prefix: string;
+  audience: DiscountBatchAudience;
+  createdAt: string;
+  kind: DiscountKind;
+  percentBp: BasisPoints | null;
+  amountCents: Cents | null;
+  minItemsCents: Cents | null;
+  startsAt: string | null;
+  endsAt: string | null;
+  excludeSaleItems: boolean;
+  codes: number;
+  activeCodes: number;
+  /** Códigos con un pedido vivo o cobrado. */
+  usedCodes: number;
+  paidUses: number;
+  paidDiscountCents: Cents;
+};
+
+export type DiscountBatchStatus =
+  'active' | 'scheduled' | 'expired' | 'exhausted' | 'inactive';
+
+/** Estado del lote: apagado si no queda ningún código encendido. */
+export function discountBatchStatus(
+  batch: Pick<
+    DiscountBatch,
+    'activeCodes' | 'codes' | 'usedCodes' | 'startsAt' | 'endsAt'
+  >,
+  now: Date = new Date(),
+): DiscountBatchStatus {
+  if (batch.activeCodes === 0) return 'inactive';
+  if (batch.endsAt && new Date(batch.endsAt) <= now) return 'expired';
+  if (batch.usedCodes >= batch.codes) return 'exhausted';
+  if (batch.startsAt && new Date(batch.startsAt) > now) return 'scheduled';
+  return 'active';
+}
+
+/** Datos del formulario del lote, ya en céntimos, puntos básicos e ISO. */
+export const discountBatchInput = z
+  .object({
+    name: z
+      .string()
+      .trim()
+      .min(1, 'Ponle un nombre a la campaña.')
+      .max(120, 'Como mucho 120 caracteres.'),
+    prefix: z
+      .string()
+      .trim()
+      .transform((value) => value.toUpperCase())
+      .refine((value) => DISCOUNT_BATCH_PREFIX.test(value), {
+        message: 'De 2 a 10 letras o números, sin guiones ni espacios.',
+      }),
+    kind: z.enum(DISCOUNT_KINDS),
+    value: z.string().trim(),
+    minItems: z.string().trim(),
+    startsAt: optionalDate,
+    endsAt: optionalDate,
+    excludeSaleItems: z.boolean(),
+    audience: z.enum(DISCOUNT_BATCH_AUDIENCES),
+    count: z.string().trim(),
+  })
+  .transform((input, ctx) => {
+    const issue = (path: string, message: string) => {
+      ctx.addIssue({ code: 'custom', path: [path], message });
+      return z.NEVER;
+    };
+    let percentBp: BasisPoints | null = null;
+    let amountCents: Cents | null = null;
+    if (input.kind === 'percent') {
+      percentBp = parsePercent(input.value);
+      if (percentBp === null || percentBp < 100 || percentBp > 9000)
+        return issue('value', 'Entre el 1 % y el 90 %.');
+    } else {
+      amountCents = parseEuros(input.value);
+      if (amountCents === null || amountCents < 100 || amountCents > 100_000)
+        return issue('value', 'Entre 1 € y 1.000 €.');
+    }
+    let minItemsCents: Cents | null = null;
+    if (input.minItems) {
+      minItemsCents = parseEuros(input.minItems);
+      if (minItemsCents === null || minItemsCents < 1)
+        return issue('minItems', 'Escribe un importe, por ejemplo 50 o 49,90.');
+    }
+    if (
+      input.startsAt &&
+      input.endsAt &&
+      new Date(input.endsAt) <= new Date(input.startsAt)
+    )
+      return issue('endsAt', 'El final tiene que ir después del inicio.');
+    let count: number | null = null;
+    if (input.audience === 'count') {
+      count = Number(input.count);
+      if (!Number.isInteger(count) || count < 1 || count > DISCOUNT_BATCH_MAX)
+        return issue(
+          'count',
+          `Un número entero de 1 a ${DISCOUNT_BATCH_MAX.toLocaleString('es-ES')}.`,
+        );
+    }
+    return {
+      name: input.name,
+      prefix: input.prefix,
+      kind: input.kind,
+      percentBp,
+      amountCents,
+      minItemsCents,
+      startsAt: input.startsAt,
+      endsAt: input.endsAt,
+      excludeSaleItems: input.excludeSaleItems,
+      audience: input.audience,
+      count,
+    };
+  });
+export type DiscountBatchInput = z.infer<typeof discountBatchInput>;
+
+/** Una fila del CSV del lote (admin_discount_batch_codes). */
+export type DiscountBatchCode = {
+  code: string;
+  /** null sin destinatario o sin permiso de clientes. */
+  email: string | null;
+  active: boolean;
+  used: boolean;
+};
+
+/**
+ * Filas del CSV para Sender: «email» y «codigo» (los dos campos que se
+ * importan) y, para el equipo, si está usado o apagado.
+ */
+export function discountBatchCsvRows(codes: readonly DiscountBatchCode[]) {
+  return [
+    ['email', 'codigo', 'usado', 'activo'],
+    ...codes.map((row) => [
+      row.email ?? '',
+      row.code,
+      row.used ? 'sí' : 'no',
+      row.active ? 'sí' : 'no',
+    ]),
+  ];
+}
+
+/** «codigos-club-2026-11-02.csv». */
+export function discountBatchFileName(prefix: string, now: Date): string {
+  return `codigos-${prefix.toLowerCase()}-${now.toISOString().slice(0, 10)}.csv`;
+}

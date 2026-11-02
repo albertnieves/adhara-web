@@ -50,6 +50,7 @@ const ROUTES = [
   '/admin/suscriptores',
   '/admin/descuentos',
   '/admin/descuentos/nuevo',
+  '/admin/descuentos/lotes/nuevo',
   '/admin/configuracion',
   '/admin/equipo',
   '/admin/asistente',
@@ -100,12 +101,23 @@ async function anyOrderId() {
 
 /** Un código de descuento, si hay (los crea discounts.spec.ts, que corre antes). */
 async function anyDiscountCodeId() {
+  // Uno de campaña: los de un lote no tienen ficha propia (§185).
   const { data: code } = await admin
     .from('discount_codes')
     .select('id')
+    .is('batch_id', null)
     .limit(1)
     .maybeSingle();
   return code ? String(code.id) : undefined;
+}
+
+async function anyDiscountBatchId() {
+  const { data: batch } = await admin
+    .from('discount_batches')
+    .select('id')
+    .limit(1)
+    .maybeSingle();
+  return batch ? String(batch.id) : undefined;
 }
 
 /**
@@ -196,10 +208,11 @@ test('panel: diseño sin solapes ni desbordes en todas sus pantallas', async ({
   makeControlOwner(email);
   await login(page, email);
 
-  const [product, order, discount, conversation] = await Promise.all([
+  const [product, order, discount, batch, conversation] = await Promise.all([
     anyProductId(),
     anyOrderId(),
     anyDiscountCodeId(),
+    anyDiscountBatchId(),
     auditConversation(),
   ]);
   const routes = [
@@ -207,6 +220,7 @@ test('panel: diseño sin solapes ni desbordes en todas sus pantallas', async ({
     ...(product ? [`/admin/catalogo/${product}`] : []),
     ...(order ? [`/admin/pedidos/${order}`] : []),
     ...(discount ? [`/admin/descuentos/${discount}`] : []),
+    ...(batch ? [`/admin/descuentos/lotes/${batch}`] : []),
     `/admin/mensajes/${conversation.id}`,
     `/admin/mensajes/plantillas/${conversation.templateId}`,
     `/admin/clientes/${conversation.customerKey}`,
