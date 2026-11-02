@@ -2,7 +2,12 @@
 
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { useLocale, useTranslations } from 'next-intl';
-import { useDeferredValue, useMemo, useState } from 'react';
+import {
+  useDeferredValue,
+  useMemo,
+  useState,
+  useSyncExternalStore,
+} from 'react';
 import {
   Button,
   EmptyState,
@@ -33,6 +38,14 @@ import { ScentGlyph } from './ScentGlyphs';
 import { ScentMoments } from './ScentProfileView';
 import { ViewToggle } from './ViewToggle';
 import { productGridClass, useCatalogView } from './catalogView';
+
+/** La URL no avisa de sus cambios: basta con leerla al pintar. */
+const subscribeNoop = () => () => {};
+/** `?familia=floral`: la búsqueda de la tienda enlaza una familia (§181). */
+function familyFromUrl(): ScentFamily | null {
+  const value = new URLSearchParams(window.location.search).get('familia');
+  return SCENT_FAMILIES.find((family) => family === value) ?? null;
+}
 
 export type ScentEntry = {
   product: StorefrontProduct;
@@ -142,7 +155,16 @@ export function ScentCatalogBrowser({ entries }: { entries: ScentEntry[] }) {
   const t = useTranslations();
   const reduced = useReducedMotion();
   const [query, setQuery] = useState('');
-  const [family, setFamily] = useState<ScentFamily | null>(null);
+  const requested = useSyncExternalStore(
+    subscribeNoop,
+    familyFromUrl,
+    () => null,
+  );
+  // undefined: aún no se ha tocado el filtro y manda la URL.
+  const [chosen, setFamily] = useState<ScentFamily | null | undefined>(
+    undefined,
+  );
+  const family = chosen === undefined ? requested : chosen;
   const [season, setSeason] = useState<Season | null>(null);
   const [time, setTime] = useState<TimeOfDay | null>(null);
   const [view, setView] = useCatalogView();

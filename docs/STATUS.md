@@ -1,5 +1,15 @@
 # Estado real — 29/10/2026
 
+## Búsqueda global, filtros en el móvil y recorrido olfativo (29/10)
+
+Rama `claude/busqueda-global`, sobre la de analítica y publicidad (PR #54, que incluye). Puntos 5 y 6 del roadmap, dentro del encargo del usuario de terminar lo pendiente que no dependa de él. Decisiones §181–182. Sin migraciones ni cambios en el panel.
+
+- **Búsqueda** en `/es/buscar`, `/ca/cercar` y `/en/search`: perfumes por nombre, casa, familia o nota (las notas en los tres idiomas), con las casas y familias que coinciden, la búsqueda en la URL y propuestas cuando no hay nada. Icono en la cabecera desde 1024 px; caja de búsqueda en el menú del móvil y la tableta. No se indexa.
+- **Recorrido olfativo** en `/es/recorrido-olfativo`, `/ca/recorregut-olfactiu` y `/en/scent-journey`: familias, estación y momento, y notas que gustan o se evitan; propuestas al momento con su porqué y la fuente de cada perfil, con reglas fijas y sin IA. Solo perfumes con ficha olfativa. Enlazado desde el catálogo olfativo, la búsqueda y el pie; en el sitemap.
+- **Filtros en el móvil:** las casas de la colección en un desplegable; el catálogo olfativo acepta `?familia=`.
+- **Cabecera de la tableta** (visto el 17/10): hasta 1024 px es la del móvil (menú, logotipo, cuenta y cesta) y «La experiencia» se ve desde 1280 px; medida sin solapes en es y ca a 768, 1024 y 1280 px. El menú enlaza también las casas y se desplaza en pantallas bajas.
+- **Comprobado en local** (Node 24.16.0, Supabase local con Docker y los datos de la CI, con la configuración de `e2e.yml`): `pnpm check` correcto (lint, tipos, 770 unitarias en 72 archivos, 12 nuevas, y build); `format:check` y `scan:secrets` correctos; tienda pública 319 correctas y 51 omitidas, y panel con sesión 56/56. Los 2 fallos de esa vuelta eran del perfume de prueba, cuya fuente cambia a propósito la batería del panel (en la CI va después); la prueba ya no depende de ese valor. Tras los últimos retoques, 78 correctas en recorrido, búsqueda, navegación móvil, catálogo olfativo, consentimiento y auditoría de diseño y axe (con las seis vistas nuevas a 390, 768, 1280 y 1440 px), y el recorrido 24/24 repetido cuatro veces.
+
 ## Analítica, publicidad y feed de productos (29/10)
 
 Rama `claude/cookies-analitica-publicidad`. A petición del usuario: cookies de analítica y de publicidad para monetizar el tráfico y terminar lo pendiente que no dependa de él. Decisiones §179–180; guía para encenderlo en [MEDICION_Y_PUBLICIDAD.md](MEDICION_Y_PUBLICIDAD.md); textos legales en [LEGAL.md](LEGAL.md), punto 6. Sin migraciones ni cambios en el panel.

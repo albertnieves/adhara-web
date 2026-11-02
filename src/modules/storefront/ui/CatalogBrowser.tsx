@@ -110,7 +110,26 @@ export function CatalogBrowser({
   return (
     <div>
       <div className="border-border flex flex-col gap-6 border-y py-6 lg:flex-row lg:items-center lg:justify-between">
-        <div className="flex flex-wrap items-center gap-2">
+        {/*
+         * En el móvil, las casas en un desplegable: con más de una docena de
+         * casas, los botones ocupaban media pantalla (roadmap 5, §181).
+         */}
+        <label className="flex items-center gap-3 sm:hidden">
+          <Eyebrow as="span">{t('brand')}</Eyebrow>
+          <Select
+            value={brand ?? ''}
+            onChange={(event) => setBrand(event.target.value || null)}
+            className="min-w-0 flex-1"
+          >
+            <option value="">{t('allBrands')}</option>
+            {brands.map(([slug, name]) => (
+              <option key={slug} value={slug}>
+                {name}
+              </option>
+            ))}
+          </Select>
+        </label>
+        <div className="hidden flex-wrap items-center gap-2 sm:flex">
           <Chip active={brand === null} onClick={() => setBrand(null)}>
             {t('allBrands')}
           </Chip>

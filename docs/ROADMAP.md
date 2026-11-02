@@ -9,6 +9,7 @@ Orden de trabajo. [STATUS.md](STATUS.md) contiene el estado verificado y sus ent
 - **Venta online hecha y apagada** (`WEB_CHECKOUT`): cesta y checkout con recogida en Castelldefels o envío por peso y transportista, Redsys con tarjeta y Bizum (probados con el entorno de pruebas de BBVA el 23 y el 25/10), correos, devoluciones, Sendcloud (claves en Production y tarifas sincronizadas el 26/10), cuenta de cliente y formulario de contacto, estos dos tras sus propios interruptores.
 - **Fusionadas** desde el roadmap anterior: #47 (cierre de la apertura), #50 y #51 (envíos), #48 (entornos y vigilancia), #49 (cabeceras SEO) y #53 (sección Envíos del panel, 28/10).
 - **Analítica, publicidad y feed de productos** (29/10, §179–180, [MEDICION_Y_PUBLICIDAD.md](MEDICION_Y_PUBLICIDAD.md)): hechos y apagados hasta poner los IDs; el feed sale con la venta.
+- **Búsqueda global, filtros en el móvil y recorrido olfativo** (29/10, §181–182): hechos; se publican al fusionar su PR. Puntos 5 y 6 de este roadmap.
 
 Lo que falta para vender es sobre todo configuración y trámites del titular, del banco y de la asesoría, no código.
 
@@ -49,17 +50,17 @@ Lo que falta para vender es sobre todo configuración y trámites del titular, d
 
 **Cierre:** un cliente escribe, compra y consulta sus pedidos, y el personal lo ve todo en su ficha sin ver más de lo que su permiso permite.
 
-## 5. Búsqueda global y filtros móviles
+## 5. Búsqueda global y filtros móviles — hecho (29/10, §181)
 
-Buscar perfumes, casas y familias; filtros claros a 390 px y estados vacíos útiles. Aprovechar los perfiles existentes y medir el rendimiento antes de añadir un buscador externo.
+`/es/buscar` busca perfumes por nombre, casa, familia o nota en los tres idiomas, con casas y familias como resultados propios, la búsqueda en la URL y propuestas cuando no hay nada. Icono en la cabecera desde 1024 px y caja en el menú del móvil y la tableta; casas de la colección en un desplegable en el móvil; cabecera de la tableta sin solapes.
 
-**Cierre:** búsqueda y navegación por teclado, móvil y tres idiomas verificadas, sin degradación de carga ni accesibilidad.
+**Pendiente:** medir el peso de la página si el catálogo publicado pasa de unos cientos de perfumes.
 
-## 6. Scent Journey
+## 6. Scent Journey — hecho (29/10, §182)
 
-Recorrido por familias, notas y momentos con perfiles verificados, reglas explicables y enlaces a perfumes disponibles. No inventar notas ni claims. La IA no es requisito para la primera versión.
+`/es/recorrido-olfativo`: tres preguntas (familias, estación y momento, notas que gustan o se evitan) y propuestas al momento con su porqué y la fuente de cada perfil, con reglas fijas y reproducibles, sin IA. Solo perfumes con ficha olfativa.
 
-**Cierre:** recomendaciones reproducibles con fuente y respuesta útil si faltan datos.
+**Pendiente:** más perfiles olfativos con fuente (hoy 47 de 50 publicados) para que el recorrido cubra todo lo que se publique; una versión con IA, solo si se decide.
 
 ## 7. 3D selectivo y rendimiento
 
@@ -85,8 +86,8 @@ Ampliar los cuatro pilotos a productos destacados con medidas reales. Pipeline G
 | 2   | Design System            | Cerrada a falta de la revisión visual | Revisión visual del titular (criterio 13)                                                         |
 | 3   | Importación del catálogo | En parte                              | CSV de costes, revisión y publicación por tandas; informe de importación                          |
 | 4   | Research                 | En parte                              | Perfiles con fuente del resto del catálogo (47 de los 50 publicados los tienen)                   |
-| 5   | Catálogo (tienda)        | En parte                              | Colecciones editoriales, búsqueda global y objetivos de Lighthouse                                |
-| 6   | Ficha y Scent Journey    | En parte                              | Scent Journey (la ficha olfativa y el JSON-LD ya existen)                                         |
+| 5   | Catálogo (tienda)        | En parte                              | Colecciones editoriales y objetivos de Lighthouse (búsqueda global hecha, §181)                   |
+| 6   | Ficha y Scent Journey    | Hecha                                 | — (recorrido olfativo, §182; ficha olfativa y JSON-LD ya existían)                                |
 | 7   | Media                    | En parte                              | Biblioteca, flujo de aprobación y derechos de las fotos                                           |
 | 8   | 3D                       | En parte                              | Más perfumes, pipeline GLB y presupuestos en CI                                                   |
 | 9   | Inventario               | Hecha                                 | — (las reservas del checkout llegaron con la F10)                                                 |

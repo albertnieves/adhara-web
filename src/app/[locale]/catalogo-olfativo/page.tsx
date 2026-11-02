@@ -1,11 +1,12 @@
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
-import { Eyebrow, Heading } from '@/components/ui';
+import { buttonClass, Eyebrow, Heading } from '@/components/ui';
 import { Star } from '@/modules/brand';
 import {
   listScentProfiles,
   listStorefrontProducts,
 } from '@/modules/catalog/server';
+import { Link } from '@/modules/i18n';
 import { alternatesMetadata } from '@/modules/i18n/metadata';
 import { requireLocale } from '@/modules/i18n/server';
 import { Reveal, ScentCatalogBrowser } from '@/modules/storefront';
@@ -38,8 +39,9 @@ export default async function ScentCatalog({
 }) {
   const { locale } = await params;
   requireLocale(locale);
-  const [t, products, profiles] = await Promise.all([
+  const [t, tJourney, products, profiles] = await Promise.all([
     getTranslations('scent'),
+    getTranslations('journey'),
     listStorefrontProducts(locale),
     listScentProfiles(),
   ]);
@@ -65,6 +67,12 @@ export default async function ScentCatalog({
             <p className="text-fg-muted mt-8 max-w-2xl text-lg leading-relaxed">
               {t('lead')}
             </p>
+            <Link
+              href="/recorrido-olfativo"
+              className={buttonClass('outline', 'md', 'mt-8')}
+            >
+              {tJourney('cta')}
+            </Link>
           </Reveal>
           <Reveal delay={0.15}>
             <ol className="border-border mt-16 grid gap-8 border-t pt-10 sm:grid-cols-3">
