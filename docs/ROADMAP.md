@@ -46,7 +46,8 @@ Lo que falta para vender es sobre todo configuración y trámites del titular, d
 ## 4. Clientes y mensajes
 
 - **Encender lo hecho:** bandeja de mensajes y formulario de contacto (subdominio de recepción en Resend, webhook y `CONTACT_FORM=1`) y cuenta de cliente (Google, correo de Auth y `CUSTOMER_ACCOUNTS=1`).
-- **Código por hacer:** fichas de cliente (A7) con pedidos, mensajes y consentimientos, exportación y borrado RGPD; promociones automáticas y códigos únicos por suscriptor.
+- **Ficha de cliente (A7) hecha** (02/11, §184, sin fusionar): Web → Clientes con pedidos, mensajes, Club y cuenta de cada email y «Descargar sus datos» auditada. Su migración se aplica en `atelier-dev` antes de fusionar. El borrado sigue en Mensajes y Suscriptores; el plazo de conservación de los pedidos, con la asesoría.
+- **Código por hacer:** promociones automáticas y códigos únicos por suscriptor.
 
 **Cierre:** un cliente escribe, compra y consulta sus pedidos, y el personal lo ve todo en su ficha sin ver más de lo que su permiso permite.
 
@@ -92,7 +93,7 @@ Ampliar los cuatro pilotos a productos destacados con medidas reales. Pipeline G
 | 8   | 3D                       | En parte                              | Más perfumes, pipeline GLB y presupuestos en CI                                                   |
 | 9   | Inventario               | Hecha                                 | — (las reservas del checkout llegaron con la F10)                                                 |
 | 10  | Carrito y checkout       | Hecha, apagada                        | Pase a producción del TPV y `WEB_CHECKOUT=1`                                                      |
-| 11  | Admin operativo          | En parte                              | Fichas de cliente (A7), promociones automáticas, WhatsApp y borradores del asistente (A6.2–A6.3)  |
+| 11  | Admin operativo          | En parte                              | Promociones automáticas, WhatsApp y borradores del asistente (A6.2–A6.3); fichas de cliente, §184 |
 | 12  | Click & Collect          | Hecha, apagada                        | Se enciende con la venta (recogida en Castelldefels)                                              |
 | 13  | Homepage                 | En parte                              | Colecciones editoriales y contenido de campaña                                                    |
 | 14  | Cuenta de cliente        | Hecha, apagada                        | Google, correo de Auth y `CUSTOMER_ACCOUNTS=1`                                                    |

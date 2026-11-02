@@ -7,6 +7,7 @@ import { formatEuros } from '@/lib/money';
 import { PageHeader, PrintButton } from '@/modules/admin';
 import { isAllowed } from '@/modules/auth';
 import { requirePermission } from '@/modules/auth/server';
+import { customerKey } from '@/modules/customers/server';
 import { mailConfig } from '@/modules/mail/server';
 import { redsysConfig } from '@/modules/payments/server/config';
 import {
@@ -419,6 +420,14 @@ export default async function WebOrderPage({
                 </dd>
               </div>
             )}
+            <div className="sm:col-span-2 xl:col-span-4">
+              <Link
+                href={`/admin/clientes/${customerKey(contact.email)}`}
+                className="link-underline inline-flex min-h-11 items-center"
+              >
+                Ficha del cliente
+              </Link>
+            </div>
           </dl>
         ) : (
           <p className="text-fg-muted text-sm">
