@@ -8,8 +8,7 @@ Rama `claude/revision-busqueda`, sobre `claude/busqueda-global` (#55, que incluy
 - **Feed:** las fotos de los 4 pilotos (`/media/pilot/…`) salen con la URL completa; si falla la lectura de disponibilidad responde 503 en vez de publicar todo agotado durante una hora.
 - **Anuncios:** `view_item` usa el formato de `?formato=` (el del anuncio o el feed), no siempre el primero.
 - **Revisado sin cambios:** consentimiento, búsqueda y reglas del recorrido.
-- **Comprobado en local:** VERIFICACION_PENDIENTE
-
+- **Comprobado en local** (Node 24.16.0, Supabase local con Docker y los datos de la CI, configuración de `e2e.yml`): lint, tipos, 771 unitarias (1 nueva) y build correctos; `format:check` y `scan:secrets` correctos; panel con sesión 58/58, con las 2 nuevas (`media-rights`: confirmar los derechos lleva la foto al feed con la URL completa y volver a provisional la saca; `tracking`: `view_item` del formato de `?formato=`); tienda pública 320 correctas y 51 omitidas, con 1 fallo local por la caché de Next (un perfume de prueba archivado por SQL tras pasar antes la batería del panel), que pasa al limpiarla (`cost-leak` y `feed`, 58 correctas). La CI lo repite en orden limpio.
 
 ## Búsqueda global, filtros en el móvil y recorrido olfativo (29/10)
 
