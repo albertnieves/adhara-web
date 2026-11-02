@@ -733,8 +733,15 @@ export async function uploadMedia(
 const mediaAction = z.object({
   id: z.uuid(),
   productId: z.uuid(),
-  intent: z.enum(['hero', 'delete']),
+  intent: z.enum(['hero', 'delete', 'rights', 'provisional']),
 });
+
+const MEDIA_MESSAGES = {
+  hero: 'Imagen principal cambiada.',
+  delete: 'Imagen eliminada.',
+  rights: 'Derechos confirmados: la imagen puede ir al feed de productos.',
+  provisional: 'La imagen vuelve a ser provisional.',
+} as const;
 
 export async function updateMedia(
   _: ActionState,
@@ -753,6 +760,29 @@ export async function updateMedia(
       p_product_id: productId,
       p_media_id: id,
     });
+    if (error) return fail(describeDbError(error));
+  } else if (intent === 'rights' || intent === 'provisional') {
+    // Derechos de una imagen oficial o del catálogo (DECISIONS §183): quien
+    // tiene `media.edit` confirma que se puede usar fuera de la web (feed de
+    // Google y Meta). Una foto propia ya no es provisional; un borrador
+    // generado nunca se presenta como el producto real.
+    const { data: current, error: readError } = await supabase
+      .from('product_media')
+      .select('origin')
+      .eq('id', id)
+      .eq('product_id', productId)
+      .maybeSingle();
+    if (readError) return fail(describeDbError(readError));
+    if (!current) return fail('La imagen ya no existe.');
+    if (current.origin !== 'brand_official' && current.origin !== 'catalog_pdf')
+      return fail(
+        'Solo las imágenes oficiales de la marca o del catálogo cambian de estado.',
+      );
+    const { error } = await supabase
+      .from('product_media')
+      .update({ provisional: intent === 'provisional' })
+      .eq('id', id)
+      .eq('product_id', productId);
     if (error) return fail(describeDbError(error));
   } else {
     const row = await supabase
@@ -774,7 +804,5 @@ export async function updateMedia(
     }
   }
   refreshStorefront(productId);
-  return ok(
-    intent === 'hero' ? 'Imagen principal cambiada.' : 'Imagen eliminada.',
-  );
+  return ok(MEDIA_MESSAGES[intent]);
 }

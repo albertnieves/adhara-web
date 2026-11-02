@@ -1,4 +1,15 @@
-# Estado real — 29/10/2026
+# Estado real — 02/11/2026
+
+## Revisión de las PR #54 y #55 (02/11)
+
+Rama `claude/revision-busqueda`, sobre `claude/busqueda-global` (#55, que incluye la #54 y la #52). A petición del usuario: revisar el código y avanzar. Decisión §183. Sin migraciones ni variables.
+
+- **El feed de Google y Meta saldría vacío:** las 75 fotos de los perfumes publicados son oficiales y provisionales (consulta de solo lectura en `atelier-dev`) y el panel solo quitaba esa marca a las fotos propias. Ahora la ficha del panel tiene «Derechos confirmados» y «Volver a provisional» en las imágenes oficiales y del catálogo (`media.edit`); un borrador generado no se puede confirmar. Confirmarlo es del titular, con permiso por escrito de la marca ([ADMIN_OPERATIONS](ADMIN_OPERATIONS.md#catálogo-y-operaciones), [MEDICION_Y_PUBLICIDAD](MEDICION_Y_PUBLICIDAD.md)).
+- **Feed:** las fotos de los 4 pilotos (`/media/pilot/…`) salen con la URL completa; si falla la lectura de disponibilidad responde 503 en vez de publicar todo agotado durante una hora.
+- **Anuncios:** `view_item` usa el formato de `?formato=` (el del anuncio o el feed), no siempre el primero.
+- **Revisado sin cambios:** consentimiento, búsqueda y reglas del recorrido.
+- **Comprobado en local:** VERIFICACION_PENDIENTE
+
 
 ## Búsqueda global, filtros en el móvil y recorrido olfativo (29/10)
 

@@ -27,7 +27,6 @@ import {
   Reveal,
   TrackEvent,
 } from '@/modules/storefront';
-import { TrackCommerce } from '@/modules/tracking';
 
 export const revalidate = 300;
 
@@ -101,8 +100,6 @@ export default async function ProductPage({ params }: { params: Params }) {
     .filter((p) => p.brand.slug === product.brand.slug && p.id !== product.id)
     .slice(0, 4);
   const sizes = product.variants.map(variantLabel).filter((s) => s !== '—');
-  // Analítica y publicidad (§179): el formato que se ve primero, con su PVP.
-  const shown = product.variants.find((variant) => variant.priceCents !== null);
 
   return (
     <main className="pt-18">
@@ -127,21 +124,6 @@ export default async function ProductPage({ params }: { params: Params }) {
         />
       )}
       {trackSlug && <TrackEvent slug={trackSlug} kind="view" />}
-      {trackSlug && shown?.priceCents != null && (
-        <TrackCommerce
-          event={{
-            type: 'view_item',
-            item: {
-              id: shown.id,
-              name: product.name,
-              brand: product.brand.name,
-              variant: variantLabel(shown),
-              priceCents: shown.priceCents,
-              quantity: 1,
-            },
-          }}
-        />
-      )}
       <div className="grid lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)]">
         <div className="lg:sticky lg:top-18 lg:self-start">
           <ProductStage
@@ -193,6 +175,7 @@ export default async function ProductPage({ params }: { params: Params }) {
               availability={availability}
               slug={product.slug}
               product={{ name: product.name, brand: product.brand.name }}
+              trackView={trackSlug !== null}
               cart={checkoutEnabled() && !draft.isEnabled}
             />
           </Reveal>

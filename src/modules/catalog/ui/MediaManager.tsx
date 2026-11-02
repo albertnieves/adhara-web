@@ -38,6 +38,10 @@ function MediaCard({
   media: MediaValues;
 }) {
   const { state, pending, onSubmit } = useAdminAction(updateMedia);
+  // Las oficiales y las del catálogo son provisionales hasta confirmar sus
+  // derechos (§55, §183); la propia no lo es y la generada lo es siempre.
+  const rightsMatter =
+    media.origin === 'brand_official' || media.origin === 'catalog_pdf';
   return (
     <Card as="li" padding="none" className="flex flex-col gap-3 p-3">
       <div className="bg-stage relative aspect-square">
@@ -56,8 +60,10 @@ function MediaCard({
       </div>
       <p className="text-xs">
         {ORIGIN_LABELS[media.origin] ?? media.origin}
-        {media.provisional && (
+        {media.provisional ? (
           <span className="text-accent-fg"> · provisional</span>
+        ) : (
+          rightsMatter && <span> · derechos confirmados</span>
         )}
       </p>
       {media.source && (
@@ -69,10 +75,13 @@ function MediaCard({
         onSubmit={(event) => {
           const submitter = (event.nativeEvent as SubmitEvent)
             .submitter as HTMLButtonElement | null;
-          if (
-            submitter?.value === 'delete' &&
-            !window.confirm('¿Eliminar esta imagen?')
-          ) {
+          const question =
+            submitter?.value === 'delete'
+              ? '¿Eliminar esta imagen?'
+              : submitter?.value === 'rights'
+                ? '¿Tenéis permiso del titular de la imagen para usarla en anuncios y en el feed de Google y Meta? Guarda el permiso por escrito.'
+                : null;
+          if (question && !window.confirm(question)) {
             event.preventDefault();
             return;
           }
@@ -91,6 +100,19 @@ function MediaCard({
             pendingLabel="…"
           >
             Principal
+          </SubmitButton>
+        )}
+        {rightsMatter && (
+          <SubmitButton
+            variant="outline"
+            name="intent"
+            value={media.provisional ? 'rights' : 'provisional'}
+            pending={pending}
+            pendingLabel="…"
+          >
+            {media.provisional
+              ? 'Derechos confirmados'
+              : 'Volver a provisional'}
           </SubmitButton>
         )}
         <SubmitButton

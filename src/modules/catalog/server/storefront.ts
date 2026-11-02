@@ -183,6 +183,16 @@ export const getStorefrontProduct = cache(
 /** Estado de disponibilidad por formato (nunca unidades exactas). */
 export async function getAvailability(
   productIds: string[],
+  {
+    strict = false,
+  }: {
+    /**
+     * Lanza si la lectura falla en vez de devolver vacío (todo agotado). Para
+     * el feed de productos, que no debe publicar un catálogo agotado por un
+     * fallo puntual (§183).
+     */
+    strict?: boolean;
+  } = {},
 ): Promise<Record<string, Availability>> {
   const supabase = createSupabasePublicClient();
   if (!supabase || productIds.length === 0) return {};
@@ -190,6 +200,8 @@ export async function getAvailability(
     p_product_ids: productIds,
   });
   if (error) {
+    if (strict)
+      throw new Error(`No se pudo leer la disponibilidad: ${error.message}`);
     console.error('[catalog] no se pudo leer la disponibilidad', error.message);
     return {};
   }

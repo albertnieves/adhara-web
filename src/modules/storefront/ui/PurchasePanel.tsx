@@ -2,7 +2,7 @@
 
 import { AnimatePresence, motion } from 'motion/react';
 import { useLocale, useTranslations } from 'next-intl';
-import { useState, useSyncExternalStore } from 'react';
+import { useEffect, useState, useSyncExternalStore } from 'react';
 import { Badge, Button, Eyebrow, Price } from '@/components/ui';
 import type { BadgeTone } from '@/components/ui';
 import type { Availability, ProductVariant } from '@/modules/catalog';
@@ -37,6 +37,7 @@ export function PurchasePanel({
   cart = false,
   slug,
   product,
+  trackView = false,
 }: {
   variants: ProductVariant[];
   availability: Record<string, Availability>;
@@ -45,6 +46,11 @@ export function PurchasePanel({
   slug?: string;
   /** Nombre y casa para la analítica y la publicidad aceptadas (§179). */
   product?: { name: string; brand: string };
+  /**
+   * Envía `view_item` al llegar, con el formato que se ve primero (el de
+   * `?formato=` si viene de un anuncio, §183). No en la vista previa.
+   */
+  trackView?: boolean;
 }) {
   const t = useTranslations('product');
   const locale = useLocale();
@@ -63,6 +69,29 @@ export function PurchasePanel({
     null;
   const selected = variants.find((v) => v.id === selectedId) ?? null;
   const status = selected ? availability[selected.id] : undefined;
+
+  // Una vez al llegar: el formato pedido por la URL si tiene PVP; si no, el
+  // primero con PVP. Cambiar de formato después no es otra visita.
+  useEffect(() => {
+    if (!trackView || !product) return;
+    const fromUrl = requestedVariant();
+    const priced = variants.filter((v) => v.priceCents !== null);
+    const shown = priced.find((v) => v.id === fromUrl) ?? priced[0];
+    if (!shown || shown.priceCents === null) return;
+    track({
+      type: 'view_item',
+      item: {
+        id: shown.id,
+        name: product.name,
+        brand: product.brand,
+        variant: variantLabel(shown),
+        priceCents: shown.priceCents,
+        quantity: 1,
+      },
+    });
+    // Solo al montar: las props no cambian en la misma ficha.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="space-y-8">

@@ -42,29 +42,50 @@ export type FeedItem = {
 
 const amount = (cents: number) => `${(cents / 100).toFixed(2)} EUR`;
 
+/**
+ * URL absoluta de una imagen. Las de los pilotos se sirven desde la propia
+ * web (`/media/pilot/…`) y Google y Meta solo aceptan URL completas (§183);
+ * cualquier otra forma se descarta.
+ */
+export function absoluteImageUrl(
+  url: string,
+  siteOrigin: string | URL,
+): string | null {
+  if (/^https?:\/\//i.test(url)) return url;
+  if (url.startsWith('/') && !url.startsWith('//'))
+    return new URL(url, siteOrigin).href;
+  return null;
+}
+
 /** Imágenes válidas, la principal primero. */
-function feedImages(product: StorefrontProduct): string[] {
+function feedImages(
+  product: StorefrontProduct,
+  siteOrigin: string | URL,
+): string[] {
   const media = product.media
     .filter((item) => FEED_ORIGINS.has(item.origin) && !item.provisional)
     .sort((a, b) => a.position - b.position);
   const hero = media.find((item) => item.role === 'hero') ?? media[0];
   if (!hero) return [];
-  return [hero, ...media.filter((item) => item !== hero)].map(
-    (item) => item.url,
-  );
+  return [hero, ...media.filter((item) => item !== hero)].flatMap((item) => {
+    const url = absoluteImageUrl(item.url, siteOrigin);
+    return url ? [url] : [];
+  });
 }
 
 /**
  * Artículos del feed. `link` da la URL de la ficha con el formato elegido
- * (`?formato=`), para que la página muestre el mismo precio que el anuncio.
+ * (`?formato=`), para que la página muestre el mismo precio que el anuncio;
+ * `siteOrigin` completa las imágenes servidas desde la propia web.
  */
 export function merchantFeedItems(
   products: readonly StorefrontProduct[],
   availability: Readonly<Record<string, Availability>>,
   link: (product: StorefrontProduct, variantId: string | null) => string,
+  siteOrigin: string | URL,
 ): FeedItem[] {
   return products.flatMap((product) => {
-    const images = feedImages(product);
+    const images = feedImages(product, siteOrigin);
     if (images.length === 0 || !product.brand.name) return [];
     const priced = product.variants.filter(
       (variant) =>

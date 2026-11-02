@@ -28,6 +28,8 @@ Para recibir mercancía: Inventario → formato → Movimiento → Recepción, c
 
 En el Mostrador, cada línea cobra el PVP salvo que se escriba otro precio por unidad en «Precio/ud.» (un descuento; nunca por encima del PVP). El ticket muestra el total con IVA, y las últimas operaciones, su importe. Ese precio es el que suman las ventas del control; las ventas anteriores a este cambio se estiman con el PVP.
 
+Imágenes de la ficha: cada una guarda su procedencia. Las oficiales de la marca y las del catálogo son **provisionales** hasta confirmar sus derechos; la tienda las enseña igual, pero no van al feed de Google y Meta. Con permiso por escrito del titular de la imagen, «Derechos confirmados» en la tarjeta de la imagen la deja lista para el feed (guardad el permiso); «Volver a provisional» la saca. Una foto propia no es provisional y un borrador generado no se puede confirmar (DECISIONS §183).
+
 ## Perfil olfativo y catálogo olfativo
 
 Catálogo → ficha del perfume → «Perfil olfativo». Las notas se escriben como claves separadas por comas (`bergamot, rose`); la lista «Notas disponibles» da cada clave con su nombre. Una clave que no existe no se guarda: si hace falta una nota nueva, se añade al vocabulario del código con su nombre en es, ca y en. La URL `https` de la fuente es obligatoria y las estaciones y el momento solo se marcan si la fuente los indica. El catálogo olfativo de la tienda (`/es/catalogo-olfativo`) se actualiza al guardar; no muestra precio ni compra.

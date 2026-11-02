@@ -255,7 +255,7 @@ export default async function EditProduct({
       <Section
         id="imagenes"
         title="Imágenes"
-        description="Cada imagen guarda su procedencia. Las que no son fotos propias se marcan como provisionales."
+        description="Cada imagen guarda su procedencia. Las que no son fotos propias se marcan como provisionales; una oficial o del catálogo deja de serlo al confirmar sus derechos, y solo entonces va al feed de Google y Meta."
       >
         <MediaManager
           productId={product.id}

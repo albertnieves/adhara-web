@@ -59,10 +59,16 @@ function product(over: Partial<StorefrontProduct> = {}): StorefrontProduct {
 
 const link = (p: StorefrontProduct, variant: string | null) =>
   `https://latelierdudesert.com/es/perfume/${p.slug}${variant ? `?formato=${variant}` : ''}`;
+const ORIGIN = 'https://latelierdudesert.com';
 
 describe('merchantFeedItems', () => {
   it('un artículo por formato con PVP, con título de marca, nombre, tipo y tamaño', () => {
-    const [item] = merchantFeedItems([product()], { v100: 'low_stock' }, link);
+    const [item] = merchantFeedItems(
+      [product()],
+      { v100: 'low_stock' },
+      link,
+      ORIGIN,
+    );
     expect(item).toEqual({
       id: 'v100',
       groupId: 'asad',
@@ -113,6 +119,7 @@ describe('merchantFeedItems', () => {
       ],
       { v30: 'out_of_stock' },
       link,
+      ORIGIN,
     );
     expect(items.map((item) => [item.id, item.link])).toEqual([
       ['v30', 'https://latelierdudesert.com/es/perfume/asad?formato=v30'],
@@ -141,6 +148,7 @@ describe('merchantFeedItems', () => {
         ],
         {},
         link,
+        ORIGIN,
       ),
     ).toEqual([]);
     const [item] = merchantFeedItems(
@@ -162,8 +170,31 @@ describe('merchantFeedItems', () => {
       ],
       {},
       link,
+      ORIGIN,
     );
     expect(item!.imageLink).toBe('https://img/marca.jpg');
+    expect(item!.additionalImageLinks).toEqual([]);
+  });
+
+  it('las imágenes servidas desde la web salen con la URL completa (§183)', () => {
+    const [item] = merchantFeedItems(
+      [
+        product({
+          media: [
+            media({ url: '/media/pilot/asad/oficial.jpg', role: 'hero' }),
+            media({ url: '//otra.web/foto.jpg', position: 1 }),
+            media({ url: 'relativa.jpg', position: 2 }),
+          ],
+        }),
+      ],
+      {},
+      link,
+      ORIGIN,
+    );
+    expect(item!.imageLink).toBe(
+      'https://latelierdudesert.com/media/pilot/asad/oficial.jpg',
+    );
+    // Ni las de protocolo implícito ni las relativas a la página.
     expect(item!.additionalImageLinks).toEqual([]);
   });
 
@@ -172,6 +203,7 @@ describe('merchantFeedItems', () => {
       [product({ tagline: null, description: null, concentration: 'OTHER' })],
       {},
       link,
+      ORIGIN,
     );
     expect(item!.title).toBe('Lattafa Asad 100 ml');
     expect(item!.description).toBe('Lattafa Asad 100 ml');
@@ -184,6 +216,7 @@ describe('merchantFeedXml', () => {
       [product({ name: 'Oud & <Rosa>', tagline: 'Dulce "y" seco' })],
       { v100: 'in_stock' },
       link,
+      ORIGIN,
     );
     const xml = merchantFeedXml([item!], {
       title: 'L’Atelier du Désert',
