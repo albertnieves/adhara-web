@@ -332,10 +332,61 @@ export type Database = {
           },
         ];
       };
+      discount_batches: {
+        Row: {
+          audience: string;
+          created_at: string;
+          created_by: string | null;
+          id: string;
+          name: string;
+          prefix: string;
+        };
+        Insert: {
+          audience: string;
+          created_at?: string;
+          created_by?: string | null;
+          id?: string;
+          name: string;
+          prefix: string;
+        };
+        Update: {
+          audience?: string;
+          created_at?: string;
+          created_by?: string | null;
+          id?: string;
+          name?: string;
+          prefix?: string;
+        };
+        Relationships: [];
+      };
+      discount_code_recipients: {
+        Row: {
+          code_id: string;
+          email: string;
+        };
+        Insert: {
+          code_id: string;
+          email: string;
+        };
+        Update: {
+          code_id?: string;
+          email?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'discount_code_recipients_code_id_fkey';
+            columns: ['code_id'];
+            isOneToOne: true;
+            referencedRelation: 'discount_codes';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       discount_codes: {
         Row: {
           active: boolean;
           amount_cents: number | null;
+          batch_id: string | null;
           code: string;
           created_at: string;
           created_by: string | null;
@@ -355,6 +406,7 @@ export type Database = {
         Insert: {
           active?: boolean;
           amount_cents?: number | null;
+          batch_id?: string | null;
           code: string;
           created_at?: string;
           created_by?: string | null;
@@ -374,6 +426,7 @@ export type Database = {
         Update: {
           active?: boolean;
           amount_cents?: number | null;
+          batch_id?: string | null;
           code?: string;
           created_at?: string;
           created_by?: string | null;
@@ -390,7 +443,15 @@ export type Database = {
           updated_at?: string;
           updated_by?: string | null;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: 'discount_codes_batch_id_fkey';
+            columns: ['batch_id'];
+            isOneToOne: false;
+            referencedRelation: 'discount_batches';
+            referencedColumns: ['id'];
+          },
+        ];
       };
       inventory_levels: {
         Row: {
@@ -2265,6 +2326,35 @@ export type Database = {
           variant_id: string;
         }[];
       };
+      admin_create_discount_batch: {
+        Args: {
+          p_amount_cents: number;
+          p_audience: string;
+          p_count: number;
+          p_ends_at: string;
+          p_exclude_sale_items: boolean;
+          p_kind: string;
+          p_min_items_cents: number;
+          p_name: string;
+          p_percent_bp: number;
+          p_prefix: string;
+          p_starts_at: string;
+        };
+        Returns: {
+          audience: string;
+          created_at: string;
+          created_by: string | null;
+          id: string;
+          name: string;
+          prefix: string;
+        };
+        SetofOptions: {
+          from: '*';
+          to: 'discount_batches';
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
       admin_create_purchase_order: {
         Args: {
           p_expected_on?: string;
@@ -2275,6 +2365,27 @@ export type Database = {
         };
         Returns: string;
       };
+      admin_customer: { Args: { p_key: string }; Returns: Json };
+      admin_customer_export: { Args: { p_key: string }; Returns: Json };
+      admin_customers: {
+        Args: { p_limit?: number; p_offset?: number; p_search?: string };
+        Returns: {
+          conversations: number;
+          customer_key: string;
+          email: string;
+          first_seen_at: string;
+          full_name: string;
+          has_account: boolean;
+          last_activity_at: string;
+          newsletter: string;
+          open_conversations: number;
+          orders: number;
+          paid_cents: number;
+          paid_orders: number;
+          refunded_cents: number;
+          total_count: number;
+        }[];
+      };
       admin_delete_conversation: {
         Args: { p_conversation_id: string; p_revision: number };
         Returns: undefined;
@@ -2282,6 +2393,15 @@ export type Database = {
       admin_delete_purchase_order: {
         Args: { p_order_id: string; p_revision: number };
         Returns: undefined;
+      };
+      admin_discount_batch_codes: {
+        Args: { p_batch_id: string };
+        Returns: {
+          active: boolean;
+          code: string;
+          email: string;
+          used: boolean;
+        }[];
       };
       admin_get_content: {
         Args: { p_kind: string; p_locale: string };
@@ -2325,6 +2445,28 @@ export type Database = {
           isOneToOne: true;
           isSetofReturn: false;
         };
+      };
+      admin_list_discount_batches: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          active_codes: number;
+          amount_cents: number;
+          audience: string;
+          codes: number;
+          created_at: string;
+          ends_at: string;
+          exclude_sale_items: boolean;
+          id: string;
+          kind: string;
+          min_items_cents: number;
+          name: string;
+          paid_discount_cents: number;
+          paid_uses: number;
+          percent_bp: number;
+          prefix: string;
+          starts_at: string;
+          used_codes: number;
+        }[];
       };
       admin_list_discount_codes: {
         Args: Record<PropertyKey, never>;
@@ -2832,6 +2974,7 @@ export type Database = {
         Returns: {
           active: boolean;
           amount_cents: number | null;
+          batch_id: string | null;
           code: string;
           created_at: string;
           created_by: string | null;
@@ -3021,6 +3164,10 @@ export type Database = {
           isOneToOne: true;
           isSetofReturn: false;
         };
+      };
+      admin_set_discount_batch_active: {
+        Args: { p_active: boolean; p_batch_id: string };
+        Returns: number;
       };
       admin_set_primary_media: {
         Args: { p_media_id: string; p_product_id: string };

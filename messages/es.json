@@ -86,6 +86,7 @@
     "OTHER": "Fragancia"
   },
   "product": {
+    "generatedImage": "Imagen generada",
     "back": "Volver a la colección",
     "size": "Formato",
     "pricePending": "Precio próximamente",

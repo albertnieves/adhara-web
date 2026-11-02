@@ -6,6 +6,7 @@ import { z } from 'zod';
 import { PageHeader } from '@/modules/admin';
 import { isAllowed } from '@/modules/auth';
 import { requirePermission } from '@/modules/auth/server';
+import { customerKey } from '@/modules/customers/server';
 import { mailConfig } from '@/modules/mail/server';
 import {
   CHANNEL_LABELS,
@@ -120,6 +121,12 @@ export default async function ConversationPage({
               <>
                 {contact.fullName ?? 'Sin nombre'}
                 <span className="text-fg-muted block">{contact.email}</span>
+                <Link
+                  href={`/admin/clientes/${customerKey(contact.email)}`}
+                  className="link-underline inline-flex min-h-11 items-center"
+                >
+                  Ficha del cliente
+                </Link>
               </>
             ) : (
               <span className="text-fg-muted">

@@ -1,6 +1,5 @@
 import { readStoreContent } from '@/modules/content/server';
 import { homeContent, storeContent, STORE_DEFAULTS } from '@/modules/content';
-import Image from 'next/image';
 import { EmptyState, Eyebrow, Heading, buttonClass } from '@/components/ui';
 import { getTranslations } from 'next-intl/server';
 import { Star } from '@/modules/brand';
@@ -15,6 +14,7 @@ import {
   Faq,
   Hero,
   ProductCard,
+  ProductImage,
   Reveal,
 } from '@/modules/storefront';
 
@@ -118,12 +118,11 @@ export default async function Home({
               />
               {showcaseImage ? (
                 <div className="absolute inset-16">
-                  <Image
-                    src={showcaseImage.url}
+                  <ProductImage
+                    media={showcaseImage}
+                    brand={showcase?.brand.name ?? ''}
                     alt=""
-                    fill
                     sizes="(min-width: 1024px) 30vw, 70vw"
-                    className="object-contain mix-blend-multiply brightness-[1.04]"
                   />
                 </div>
               ) : (

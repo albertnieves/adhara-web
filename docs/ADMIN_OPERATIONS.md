@@ -99,6 +99,16 @@ Web → Mensajes (con `messages.view`). Cada consulta de un cliente es una conve
 - **Plantillas** (Mensajes → Plantillas): título, idioma y texto de las respuestas frecuentes (envíos, devoluciones de perfumes precintados, disponibilidad). Una apagada no aparece al responder.
 - **Permisos:** el encargado ve las conversaciones y los mensajes, pero no el nombre ni el email del cliente, ni puede responder. Responder, anotar, asignar y las plantillas exigen `messages.reply` con MFA. Si otra persona cambió la conversación a la vez, el panel pide recargar.
 
+## Clientes
+
+Web → Clientes (con `customers.view` y MFA): una ficha por email con todo lo que la tienda sabe de esa persona: pedidos web, mensajes, el Club L’Atelier y su cuenta, si la tiene. Aparecen quienes compran en la web, escriben, se unen al Club o crean una cuenta; las ventas del mostrador no llevan cliente y quien solo envió spam no sale (DECISIONS §184).
+
+- **Buscar** por nombre o parte del email. La búsqueda no se guarda en la dirección de la página, para que los emails no queden en los registros.
+- **Ficha:** datos de contacto sin repetir y de dónde sale cada uno (la cuenta, un pedido o una consulta), Club (alta, texto del consentimiento y baja), cuenta (creación y último acceso), pedidos con lo devuelto y mensajes, con enlaces a cada uno. Desde un pedido o una consulta, «Ficha del cliente» lleva a ella. La dirección de la ficha lleva una clave, nunca el email.
+- **Descargar sus datos** (con `customers.manage`): un archivo con todo lo que hay de ese email, para cuando el cliente lo pide (derecho de acceso). Incluye las notas internas de los mensajes marcadas como `note`: revisarlo antes de enviarlo. Cada descarga queda en la auditoría, sin el email.
+- **Borrar datos:** los mensajes se borran desde su consulta y la suscripción desde Suscriptores; la cuenta la borra el cliente. Los pedidos se conservan por las obligaciones fiscales y contables (el plazo lo confirma la asesoría).
+- **El encargado** no ve clientes.
+
 ## Suscriptores a promociones
 
 Web → Suscriptores muestra las altas de la sección «Club L’Atelier» de la tienda (con `customers.view`), su idioma, fecha y estado: pendiente, en Sender o baja. «Exportar CSV» descarga la lista para importarla en Sender o abrirla en Excel. Con `customers.manage` (MFA) se puede dar de baja o borrar (derecho de supresión); si Sender está conectado, el cambio se hace también allí.
@@ -116,6 +126,15 @@ Web → Códigos de descuento (administradores, `promotions.manage` con MFA). Si
 Reglas: un código por pedido; el descuento es sobre los artículos, nunca sobre el envío; el envío gratis «desde» se calcula con el descuento ya aplicado; un importe fijo exige un pedido de más de ese importe. Cuentan como usos los pedidos pendientes de pago y los cobrados; un pedido que caduca sin pagar, se cancela o se devuelve entero devuelve su uso. La lista enseña los usos, los pedidos cobrados y lo descontado en ellos.
 
 El texto de un código no cambia una vez creado (los pedidos lo guardan): para otra campaña, crea otro. Para retirarlo, desmarca «Activo»; los pedidos ya hechos no cambian. Un código compartido vale para cualquiera que lo tenga: si no debe circular, limita los usos o las fechas.
+
+**Lotes de códigos únicos** (Web → Códigos de descuento → «Nuevo lote de códigos únicos», DECISIONS §185): un código distinto y de un solo uso para cada persona, con las mismas condiciones. A diferencia de un código de campaña, no circula: el primero que lo usa lo gasta.
+
+1. **Crear el lote:** nombre de la campaña, prefijo (de 2 a 10 letras o números: `CLUB` da códigos como `CLUB-7KQ4MZ9X`), descuento, compra mínima y fechas como en un código, y para quién: uno para cada suscriptor activo del Club (hace falta también el permiso de clientes) o un número de códigos sin destinatario (de 1 a 5.000), para repartir en la tienda o en un evento.
+2. **Descargar CSV:** en la ficha del lote, con las columnas `email`, `codigo`, `usado` y `activo`. Cada descarga queda en la auditoría; el archivo lleva datos personales, así que se guarda solo el tiempo necesario.
+3. **En Sender:** añade un campo personalizado para el código, importa el CSV en la lista uniendo la columna `codigo` con ese campo (los suscriptores se reconocen por el email) y pon el campo en el correo con su etiqueta de personalización. Quien se suscriba después no tiene código: para ellos, otro lote.
+4. **Seguimiento:** la lista y la ficha enseñan cuántos se han usado, los pedidos cobrados y lo descontado. «Apagar el lote» deja sin valor todos sus códigos a la vez (los pedidos ya hechos no cambian) y «Encender el lote» los recupera.
+
+Si se borra a un suscriptor (Suscriptores → Borrar), se borra también a quién se dio su código; el código sigue valiendo, sin destinatario. «Descargar sus datos» de la ficha del cliente incluye los códigos que se le dieron.
 
 **Devolver un artículo de un pedido con código:** con «Devolver una parte», devuelve el precio del artículo menos la parte proporcional del descuento (por ejemplo, con un 10 %, de un perfume de 49,90 € se devuelven 44,91 €). Así lo dicen las condiciones de venta.
 

@@ -61,6 +61,12 @@ const SECTIONS: (NavItem & { permission?: Permission })[] = [
     group: 'Web',
   },
   {
+    href: '/admin/clientes',
+    label: 'Clientes',
+    permission: 'customers.view',
+    group: 'Web',
+  },
+  {
     href: '/admin/catalogo',
     label: 'Catálogo',
     permission: 'catalog.edit',
@@ -107,12 +113,6 @@ const SECTIONS: (NavItem & { permission?: Permission })[] = [
     label: 'Equipo',
     permission: 'staff.manage',
     group: 'Administración',
-  },
-  {
-    href: '/admin/clientes',
-    label: 'Clientes',
-    soon: true,
-    group: 'Próximamente',
   },
 ];
 

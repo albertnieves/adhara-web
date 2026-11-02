@@ -7,6 +7,7 @@ import { formatEuros } from '@/lib/money';
 import { PageHeader, PrintButton } from '@/modules/admin';
 import { isAllowed } from '@/modules/auth';
 import { requirePermission } from '@/modules/auth/server';
+import { customerKey } from '@/modules/customers/server';
 import { mailConfig } from '@/modules/mail/server';
 import { redsysConfig } from '@/modules/payments/server/config';
 import {
@@ -375,51 +376,66 @@ export default async function WebOrderPage({
 
       <Section title="Cliente">
         {contact ? (
-          <dl className="grid gap-4 text-sm sm:grid-cols-2 xl:grid-cols-4">
-            <div>
-              <Eyebrow as="dt">Nombre</Eyebrow>
-              <dd className="mt-1 font-semibold">{contact.fullName}</dd>
-            </div>
-            <div>
-              <Eyebrow as="dt">Email</Eyebrow>
-              <dd className="mt-1 break-all">
-                <a href={`mailto:${contact.email}`} className="link-underline">
-                  {contact.email}
-                </a>
-              </dd>
-            </div>
-            <div>
-              <Eyebrow as="dt">Teléfono</Eyebrow>
-              <dd className="mt-1">
-                {contact.phone ? (
+          <>
+            <dl className="grid gap-4 text-sm sm:grid-cols-2 xl:grid-cols-4">
+              <div>
+                <Eyebrow as="dt">Nombre</Eyebrow>
+                <dd className="mt-1 font-semibold">{contact.fullName}</dd>
+              </div>
+              <div>
+                <Eyebrow as="dt">Email</Eyebrow>
+                <dd className="mt-1 break-all">
                   <a
-                    href={`tel:${contact.phone.replace(/[^0-9+]/g, '')}`}
+                    href={`mailto:${contact.email}`}
                     className="link-underline"
                   >
-                    {contact.phone}
+                    {contact.email}
                   </a>
-                ) : (
-                  '—'
-                )}
-              </dd>
-            </div>
-            <div>
-              <Eyebrow as="dt">Idioma</Eyebrow>
-              <dd className="mt-1">{LOCALES[order.locale] ?? order.locale}</dd>
-            </div>
-            {contact.address.length > 0 && (
-              <div className="sm:col-span-2">
-                <Eyebrow as="dt">Dirección de envío</Eyebrow>
-                <dd className="mt-1">
-                  {contact.address.map((part) => (
-                    <span key={part} className="block">
-                      {part}
-                    </span>
-                  ))}
                 </dd>
               </div>
-            )}
-          </dl>
+              <div>
+                <Eyebrow as="dt">Teléfono</Eyebrow>
+                <dd className="mt-1">
+                  {contact.phone ? (
+                    <a
+                      href={`tel:${contact.phone.replace(/[^0-9+]/g, '')}`}
+                      className="link-underline"
+                    >
+                      {contact.phone}
+                    </a>
+                  ) : (
+                    '—'
+                  )}
+                </dd>
+              </div>
+              <div>
+                <Eyebrow as="dt">Idioma</Eyebrow>
+                <dd className="mt-1">
+                  {LOCALES[order.locale] ?? order.locale}
+                </dd>
+              </div>
+              {contact.address.length > 0 && (
+                <div className="sm:col-span-2">
+                  <Eyebrow as="dt">Dirección de envío</Eyebrow>
+                  <dd className="mt-1">
+                    {contact.address.map((part) => (
+                      <span key={part} className="block">
+                        {part}
+                      </span>
+                    ))}
+                  </dd>
+                </div>
+              )}
+            </dl>
+            <p className="mt-4 text-sm">
+              <Link
+                href={`/admin/clientes/${customerKey(contact.email)}`}
+                className="link-underline inline-flex min-h-11 items-center"
+              >
+                Ficha del cliente
+              </Link>
+            </p>
+          </>
         ) : (
           <p className="text-fg-muted text-sm">
             Los datos del cliente solo los ve quien tiene el permiso de

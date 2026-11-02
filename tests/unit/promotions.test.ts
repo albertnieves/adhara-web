@@ -1,6 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import { checkoutInput } from '@/modules/checkout';
 import {
+  discountBatchCsvRows,
+  discountBatchFileName,
+  discountBatchInput,
+  discountBatchStatus,
   discountCodeInput,
   discountErrorFromDb,
   discountStatus,
@@ -209,5 +213,111 @@ describe('código en «Finalizar compra»', () => {
     });
     expect(result.success).toBe(false);
     expect(result.error?.issues[0]?.path).toEqual(['discountCode']);
+  });
+});
+
+/*
+ * Lotes de códigos únicos (DECISIONS §185): el formulario, el estado del lote
+ * y el CSV para Sender.
+ */
+describe('discountBatchInput', () => {
+  const base = {
+    name: ' Bienvenida al Club ',
+    prefix: 'club',
+    kind: 'percent',
+    value: '10',
+    minItems: '',
+    startsAt: '',
+    endsAt: '2026-11-30T23:59',
+    excludeSaleItems: false,
+    audience: 'subscribers',
+    count: '',
+  };
+
+  it('para el Club no pide número; el prefijo va en mayúsculas', () => {
+    const parsed = discountBatchInput.parse(base);
+    expect(parsed).toMatchObject({
+      name: 'Bienvenida al Club',
+      prefix: 'CLUB',
+      percentBp: 1000,
+      amountCents: null,
+      audience: 'subscribers',
+      count: null,
+    });
+    expect(parsed.endsAt).toBe('2026-11-30T22:59:00.000Z');
+  });
+
+  it('un número fijo de 1 a 5.000', () => {
+    const counted = { ...base, audience: 'count', kind: 'amount', value: '5' };
+    expect(
+      discountBatchInput.parse({ ...counted, count: '200' }),
+    ).toMatchObject({ count: 200, amountCents: 500 });
+    for (const count of ['', '0', '5001', '2,5'])
+      expect(discountBatchInput.safeParse({ ...counted, count }).success).toBe(
+        false,
+      );
+  });
+
+  it('rechaza un prefijo con guiones o de una letra, y descuentos fuera de rango', () => {
+    for (const prefix of ['C', 'CLUB-2026', 'DEMASIADOLARGO', 'CLUB NOV'])
+      expect(discountBatchInput.safeParse({ ...base, prefix }).success).toBe(
+        false,
+      );
+    expect(discountBatchInput.safeParse({ ...base, value: '95' }).success).toBe(
+      false,
+    );
+    expect(discountBatchInput.safeParse({ ...base, name: '  ' }).success).toBe(
+      false,
+    );
+  });
+});
+
+describe('discountBatchStatus', () => {
+  const batch = {
+    activeCodes: 3,
+    codes: 3,
+    usedCodes: 1,
+    startsAt: null,
+    endsAt: null,
+  };
+  const now = new Date('2026-11-02T10:00:00Z');
+
+  it('apagado si no queda ningún código encendido; caducado; todos usados', () => {
+    expect(discountBatchStatus(batch, now)).toBe('active');
+    expect(discountBatchStatus({ ...batch, activeCodes: 0 }, now)).toBe(
+      'inactive',
+    );
+    expect(
+      discountBatchStatus({ ...batch, endsAt: '2026-11-01T00:00:00Z' }, now),
+    ).toBe('expired');
+    expect(discountBatchStatus({ ...batch, usedCodes: 3 }, now)).toBe(
+      'exhausted',
+    );
+    expect(
+      discountBatchStatus({ ...batch, startsAt: '2026-11-05T00:00:00Z' }, now),
+    ).toBe('scheduled');
+  });
+});
+
+describe('CSV del lote', () => {
+  it('email y código para Sender, y si está usado o apagado', () => {
+    expect(
+      discountBatchCsvRows([
+        {
+          code: 'CLUB-7KQ4MZ9X',
+          email: 'ana@test.invalid',
+          active: true,
+          used: false,
+        },
+        { code: 'CLUB-PB3WX2HT', email: null, active: false, used: true },
+      ]),
+    ).toEqual([
+      ['email', 'codigo', 'usado', 'activo'],
+      ['ana@test.invalid', 'CLUB-7KQ4MZ9X', 'no', 'sí'],
+      ['', 'CLUB-PB3WX2HT', 'sí', 'no'],
+    ]);
+    expect(
+      discountBatchFileName('CLUB', new Date('2026-11-02T08:00:00Z')),
+    ).toBe('codigos-club-2026-11-02.csv');
   });
 });

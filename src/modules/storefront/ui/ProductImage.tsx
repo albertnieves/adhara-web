@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import { useTranslations } from 'next-intl';
 import type { ProductMedia } from '@/modules/catalog';
 import { Star } from '@/modules/brand';
 
@@ -22,6 +23,7 @@ export function ProductImage({
   priority?: boolean;
   className?: string;
 }) {
+  const t = useTranslations('product');
   if (!media) {
     return (
       <div
@@ -35,13 +37,24 @@ export function ProductImage({
     );
   }
   return (
-    <Image
-      src={media.url}
-      alt={media.alt ?? alt}
-      fill
-      sizes={sizes}
-      priority={priority}
-      className={`object-contain mix-blend-multiply brightness-[1.04] ${className}`}
-    />
+    <>
+      <Image
+        src={media.url}
+        alt={
+          media.origin === 'generated_draft'
+            ? `${media.alt ?? alt} · ${t('generatedImage')}`
+            : (media.alt ?? alt)
+        }
+        fill
+        sizes={sizes}
+        priority={priority}
+        className={`object-contain ${media.origin === 'generated_draft' ? '' : 'mix-blend-multiply brightness-[1.04]'} ${className}`}
+      />
+      {media.origin === 'generated_draft' && (
+        <span className="bg-surface/95 text-fg-muted text-2xs absolute inset-x-0 bottom-0 px-2 py-1 text-center">
+          {t('generatedImage')}
+        </span>
+      )}
+    </>
   );
 }

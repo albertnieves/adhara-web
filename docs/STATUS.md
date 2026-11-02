@@ -1,8 +1,32 @@
 # Estado real — 02/11/2026
 
+## Integración de imágenes generadas (02/11)
+
+PR #59, rama `codex/imagenes-perfumes-stock`: 45 de las 46 propuestas se conectan a los productos existentes en la tienda, con indicación de imagen generada en es/ca/en y conservando las fotografías originales. Miss Sakura mantiene la imagen actual por decisión del usuario, hasta confirmar variante y formato. Sin cambios de precios, inventario o base de datos. Las recreaciones quedan fuera del feed, JSON-LD y tarjetas sociales. Detalles y procedencia en [GENERATED_PRODUCT_IMAGES](GENERATED_PRODUCT_IMAGES.md). Verificado: `pnpm check` (790 unitarias y build), formato, escaneo de secretos y E2E (244 correctas, 118 omitidas sin base configurada); revisión visual con catálogo simulado local en móvil/escritorio y etiqueta es/ca/en. Integración pendiente de fusión; no confundir con publicación en producción.
+
+## Códigos únicos por suscriptor (02/11)
+
+Rama `claude/codigos-unicos` (PR #58). Roadmap, punto 4: lo siguiente del roadmap, a petición del usuario. Decisión §185; guía en [ADMIN_OPERATIONS](ADMIN_OPERATIONS.md#códigos-de-descuento).
+
+- **Lotes de códigos únicos** en Web → Códigos de descuento: un código distinto y de un solo uso (`CLUB-7KQ4MZ9X`) para cada suscriptor activo del Club o un número fijo sin destinatario, con las condiciones de un código normal. Ficha del lote con usos, cobrados, «Descargar CSV» (email y código, para importarlo en Sender) y «Apagar el lote».
+- **La tienda no cambia:** cada código es un código más con un solo uso; «Aplicar» y el pedido lo comprueban como siempre.
+- **Datos personales:** a quién va cada código, solo con los permisos de promociones y de clientes; se borra con el suscriptor y entra en «Descargar sus datos» de la ficha del cliente. Auditoría sin emails.
+- **Base:** migración `20261102150000_discount_batches.sql`, **aplicada en `atelier-dev` el 02/11, antes de fusionar la PR #58**, a petición del usuario: versión registrada con el md5 del archivo, funciones, columnas, restricciones, índices, políticas, disparadores y permisos iguales a la base ensayada, datos sin cambios y asesor de seguridad sin tipos de aviso nuevos (§185).
+- **Comprobado en local** (Node 24.16.0, Supabase local con Docker reiniciado con todas las migraciones, datos de la CI y configuración de `e2e.yml`): pgTAP 1123/1123 en 27 archivos (42 nuevas en `26_discount_batches`); tipos generados iguales; `db lint` sin errores; lint, tipos, 784 unitarias (5 nuevas) y build correctos; `format:check` y `scan:secrets` correctos; panel con sesión 62/62, con `discount-batches.spec.ts` (crear el lote del Club, CSV, un código aplicado en «Finalizar compra», apagado rechazado, encendido y el encargado sin acceso) y la auditoría de diseño y axe del alta y la ficha del lote a 390, 768, 1280 y 1440 px. Capturas revisadas. La tienda pública no cambia y no se ha vuelto a pasar en local (la CI la repite).
+
+## Ficha de cliente (A7, 02/11)
+
+Rama `claude/fichas-clientes` (PR #57), sobre la de la revisión (§183). Roadmap, punto 4: el código que quedaba de «Clientes y mensajes», sin depender del titular. Decisión §184; guía en [ADMIN_OPERATIONS](ADMIN_OPERATIONS.md#clientes).
+
+- **Web → Clientes** (`customers.view` con MFA): una ficha por email con quien compra en la web, escribe, se une al Club o tiene cuenta (el spam no). Lista con pedidos, cobrado menos devuelto, mensajes abiertos, Club, cuenta y última actividad; búsqueda por nombre o email que no va en la URL.
+- **Ficha:** contacto sin repetir y su origen, Club (fecha y texto del consentimiento, baja), cuenta, pedidos y consultas con enlace; «Ficha del cliente» desde cada pedido y consulta. La URL lleva una clave opaca (sha256 del email), nunca el email.
+- **«Descargar sus datos»** (`customers.manage`): JSON para el derecho de acceso con campos elegidos uno a uno (sin ids internos ni referencias del banco), notas internas marcadas para revisarlas, y auditoría sin el email.
+- **Base:** migración `20261102120000_customer_records.sql` con tres funciones y sus ayudas privadas, sin tablas nuevas ni cambios de datos. **Aplicada en `atelier-dev` el 02/11, antes de fusionar la PR #57**, a petición del usuario y con el conector de Supabase: versión registrada con el md5 del archivo, las seis funciones iguales a la base ensayada y el asesor de seguridad sin tipos de aviso nuevos (§184).
+- **Comprobado en local** (Node 24.16.0, Supabase local con Docker reiniciado con todas las migraciones, datos de la CI y configuración de `e2e.yml`): pgTAP 1081/1081 en 26 archivos (39 nuevas en `25_customer_records`); tipos generados iguales; `db lint` sin errores; lint, tipos, 779 unitarias (8 nuevas) y build correctos; `format:check` y `scan:secrets` correctos; tienda pública 321 correctas y 51 omitidas; panel con sesión 59/60 en la vuelta completa: axe marcó el enlace nuevo dentro de la lista de datos del pedido, corregido, y la auditoría de diseño y axe del panel (con la lista y una ficha a 390, 768, 1280 y 1440 px), `customers`, `admin-orders` y `messages` pasan después (10/10). Capturas de la lista y la ficha a 390 y 1440 px revisadas. Concurrencia no ejecutada: las funciones solo leen (y la exportación añade una fila de auditoría).
+
 ## Revisión de las PR #54 y #55 (02/11)
 
-Rama `claude/revision-busqueda`, sobre `claude/busqueda-global` (#55, que incluye la #54 y la #52). A petición del usuario: revisar el código y avanzar. Decisión §183. Sin migraciones ni variables.
+PR #56, fusionada el 02/11 justo después de la #54 y la #55 (que cierran también la #52), a petición del usuario; las tres en producción el mismo día. A petición del usuario: revisar el código y avanzar. Decisión §183. Sin migraciones ni variables.
 
 - **El feed de Google y Meta saldría vacío:** las 75 fotos de los perfumes publicados son oficiales y provisionales (consulta de solo lectura en `atelier-dev`) y el panel solo quitaba esa marca a las fotos propias. Ahora la ficha del panel tiene «Derechos confirmados» y «Volver a provisional» en las imágenes oficiales y del catálogo (`media.edit`); un borrador generado no se puede confirmar. Confirmarlo es del titular, con permiso por escrito de la marca ([ADMIN_OPERATIONS](ADMIN_OPERATIONS.md#catálogo-y-operaciones), [MEDICION_Y_PUBLICIDAD](MEDICION_Y_PUBLICIDAD.md)).
 - **Feed:** las fotos de los 4 pilotos (`/media/pilot/…`) salen con la URL completa; si falla la lectura de disponibilidad responde 503 en vez de publicar todo agotado durante una hora.
@@ -12,7 +36,7 @@ Rama `claude/revision-busqueda`, sobre `claude/busqueda-global` (#55, que incluy
 
 ## Búsqueda global, filtros en el móvil y recorrido olfativo (29/10)
 
-Rama `claude/busqueda-global`, sobre la de analítica y publicidad (PR #54, que incluye). Puntos 5 y 6 del roadmap, dentro del encargo del usuario de terminar lo pendiente que no dependa de él. Decisiones §181–182. Sin migraciones ni cambios en el panel.
+Rama `claude/busqueda-global` (PR #55, fusionada el 02/11), sobre la de analítica y publicidad. Puntos 5 y 6 del roadmap, dentro del encargo del usuario de terminar lo pendiente que no dependa de él. Decisiones §181–182. Sin migraciones ni cambios en el panel.
 
 - **Búsqueda** en `/es/buscar`, `/ca/cercar` y `/en/search`: perfumes por nombre, casa, familia o nota (las notas en los tres idiomas), con las casas y familias que coinciden, la búsqueda en la URL y propuestas cuando no hay nada. Icono en la cabecera desde 1024 px; caja de búsqueda en el menú del móvil y la tableta. No se indexa.
 - **Recorrido olfativo** en `/es/recorrido-olfativo`, `/ca/recorregut-olfactiu` y `/en/scent-journey`: familias, estación y momento, y notas que gustan o se evitan; propuestas al momento con su porqué y la fuente de cada perfil, con reglas fijas y sin IA. Solo perfumes con ficha olfativa. Enlazado desde el catálogo olfativo, la búsqueda y el pie; en el sitemap.
@@ -22,7 +46,7 @@ Rama `claude/busqueda-global`, sobre la de analítica y publicidad (PR #54, que 
 
 ## Analítica, publicidad y feed de productos (29/10)
 
-Rama `claude/cookies-analitica-publicidad`. A petición del usuario: cookies de analítica y de publicidad para monetizar el tráfico y terminar lo pendiente que no dependa de él. Decisiones §179–180; guía para encenderlo en [MEDICION_Y_PUBLICIDAD.md](MEDICION_Y_PUBLICIDAD.md); textos legales en [LEGAL.md](LEGAL.md), punto 6. Sin migraciones ni cambios en el panel.
+Rama `claude/cookies-analitica-publicidad` (PR #54, fusionada el 02/11). A petición del usuario: cookies de analítica y de publicidad para monetizar el tráfico y terminar lo pendiente que no dependa de él. Decisiones §179–180; guía para encenderlo en [MEDICION_Y_PUBLICIDAD.md](MEDICION_Y_PUBLICIDAD.md); textos legales en [LEGAL.md](LEGAL.md), punto 6. Sin migraciones ni cambios en el panel.
 
 - **Apagado hasta poner los IDs** de Google Analytics, Google Ads, píxel de Meta o de TikTok (variables `NEXT_PUBLIC_*`, solo en Production). Sin ellos la web sigue como hoy: el aviso de entrada de siempre, solo cookies técnicas y ninguna llamada a terceros. Cambios de texto sin IDs: la sección «Tu consentimiento» de la política de cookies (antes «Por qué no te pedimos consentimiento», mismo contenido) y «No vendemos tus datos» en la privacidad.
 - **Con los IDs:** el aviso de entrada pide el consentimiento con «Rechazar» y «Aceptar todas» iguales y «Configurar» por tipo; nada de terceros se carga antes de aceptar; «Configurar cookies» al pie para cambiar o retirar (borra sus cookies); la política de cookies y la de privacidad nombran solo los proveedores configurados (en «Ver tienda con borradores» se ven recuadrados los que faltan); eventos de ficha, cesta, pago, compra (una sola vez por pedido) y alta en el Club, sin datos personales. Las Preview nunca miden.
