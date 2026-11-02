@@ -1,5 +1,9 @@
 # Estado real — 02/11/2026
 
+## Integración de imágenes generadas (02/11)
+
+PR #59, rama `codex/imagenes-perfumes-stock`: 45 de las 46 propuestas se conectan a los productos existentes en la tienda, con indicación de imagen generada en es/ca/en y conservando las fotografías originales. Miss Sakura mantiene la imagen actual por decisión del usuario, hasta confirmar variante y formato. Sin cambios de precios, inventario o base de datos. Las recreaciones quedan fuera del feed, JSON-LD y tarjetas sociales. Detalles y procedencia en [GENERATED_PRODUCT_IMAGES](GENERATED_PRODUCT_IMAGES.md). Verificado: `pnpm check` (790 unitarias y build), formato, escaneo de secretos y E2E (244 correctas, 118 omitidas sin base configurada); revisión visual con catálogo simulado local en móvil/escritorio y etiqueta es/ca/en. Integración pendiente de fusión; no confundir con publicación en producción.
+
 ## Códigos únicos por suscriptor (02/11)
 
 Rama `claude/codigos-unicos` (PR #58). Roadmap, punto 4: lo siguiente del roadmap, a petición del usuario. Decisión §185; guía en [ADMIN_OPERATIONS](ADMIN_OPERATIONS.md#códigos-de-descuento).

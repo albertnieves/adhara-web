@@ -35,6 +35,9 @@ export function productStructuredData(
         ];
       })
     : [];
+  const images = product.media.filter(
+    (media) => media.origin !== 'generated_draft',
+  );
   return {
     '@context': 'https://schema.org',
     '@type': 'Product',
@@ -46,9 +49,7 @@ export function productStructuredData(
     ...(product.description || product.tagline
       ? { description: product.description || product.tagline }
       : {}),
-    ...(product.media.length
-      ? { image: product.media.map((media) => media.url) }
-      : {}),
+    ...(images.length ? { image: images.map((media) => media.url) } : {}),
   };
 }
 
