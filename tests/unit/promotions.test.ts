@@ -1,6 +1,15 @@
 import { describe, expect, it } from 'vitest';
 import { checkoutInput } from '@/modules/checkout';
+import type { AppliedDiscount, PromotionOffer } from '@/modules/promotions';
 import {
+  bestOffer,
+  chooseDiscount,
+  missingCents,
+  nextOffer,
+  parsePromotionOffers,
+  promotionInput,
+  promotionStatus,
+  promotionSummary,
   discountBatchCsvRows,
   discountBatchFileName,
   discountBatchInput,
@@ -319,5 +328,230 @@ describe('CSV del lote', () => {
     expect(
       discountBatchFileName('CLUB', new Date('2026-11-02T08:00:00Z')),
     ).toBe('codigos-club-2026-11-02.csv');
+  });
+});
+
+/*
+ * Promociones automáticas (DECISIONS §186): el formulario del panel, lo que
+ * enseña la tienda y la regla con los códigos (no se suman: el que más
+ * descuenta; si empatan, la promoción).
+ */
+describe('promotionInput', () => {
+  const base = {
+    id: '',
+    name: ' Black Friday ',
+    kind: 'percent',
+    value: '10',
+    minItems: '100',
+    brandId: '',
+    excludeSaleItems: false,
+    startsAt: '2026-11-27T00:00',
+    endsAt: '2026-11-30T23:59',
+    active: true,
+  };
+
+  it('un porcentaje desde un importe, con fechas de Madrid y todas las casas', () => {
+    expect(promotionInput.parse(base)).toEqual({
+      id: null,
+      name: 'Black Friday',
+      kind: 'percent',
+      percentBp: 1000,
+      amountCents: null,
+      minItemsCents: 10_000,
+      brandId: null,
+      excludeSaleItems: false,
+      startsAt: '2026-11-26T23:00:00.000Z',
+      endsAt: '2026-11-30T22:59:00.000Z',
+      active: true,
+    });
+  });
+
+  it('un importe fijo de una casa', () => {
+    const brandId = '0b7c8f5e-6a5d-4c4e-9f0e-1d2c3b4a5f60';
+    const parsed = promotionInput.parse({
+      ...base,
+      kind: 'amount',
+      value: '15',
+      minItems: '80,50',
+      brandId,
+    });
+    expect(parsed).toMatchObject({
+      percentBp: null,
+      amountCents: 1500,
+      minItemsCents: 8050,
+      brandId,
+    });
+  });
+
+  it('rechaza lo que la base no aceptaría, con un mensaje para el equipo', () => {
+    const message = (input: Partial<typeof base>) =>
+      promotionInput.safeParse({ ...base, ...input }).error?.issues[0]?.message;
+    expect(message({ name: '  ' })).toMatch(/nombre/);
+    expect(message({ value: '95' })).toMatch(/90 %/);
+    expect(message({ minItems: '' })).toMatch(/desde cuánto/);
+    expect(message({ minItems: '0,50' })).toMatch(/mínimo 1 €/);
+    expect(message({ kind: 'amount', value: '100', minItems: '100' })).toMatch(
+      /mayor que el descuento/,
+    );
+    expect(
+      message({ startsAt: '2026-12-01T00:00', endsAt: '2026-11-30T00:00' }),
+    ).toMatch(/después del inicio/);
+  });
+});
+
+describe('promotionStatus y resumen del panel', () => {
+  const now = new Date('2026-11-28T12:00:00Z');
+  it('activa, programada, terminada o apagada', () => {
+    const p = { active: true, startsAt: null, endsAt: null };
+    expect(promotionStatus(p, now)).toBe('active');
+    expect(
+      promotionStatus({ ...p, startsAt: '2026-11-29T00:00:00Z' }, now),
+    ).toBe('scheduled');
+    expect(promotionStatus({ ...p, endsAt: '2026-11-28T11:00:00Z' }, now)).toBe(
+      'expired',
+    );
+    expect(promotionStatus({ ...p, active: false }, now)).toBe('inactive');
+  });
+
+  it('el resumen dice el descuento, desde cuánto y qué casas', () => {
+    expect(
+      promotionSummary({
+        kind: 'percent',
+        percentBp: 1500,
+        amountCents: null,
+        minItemsCents: 6000,
+        brandName: 'Lattafa',
+        excludeSaleItems: true,
+      }),
+    ).toMatch(/^−15\s%\sdesde 60\s€ · solo Lattafa · sin rebajados$/);
+  });
+});
+
+describe('promociones en la tienda', () => {
+  const offer = (over: Partial<PromotionOffer>): PromotionOffer => ({
+    id: '0b7c8f5e-6a5d-4c4e-9f0e-1d2c3b4a5f60',
+    kind: 'percent',
+    percentBp: 1000,
+    amountCents: null,
+    minItemsCents: 10_000,
+    brandName: null,
+    excludeSaleItems: false,
+    endsAt: null,
+    eligibleCents: 8000,
+    discountCents: 0,
+    ...over,
+  });
+
+  it('lee la respuesta de la base y descarta lo que no entiende', () => {
+    expect(
+      parsePromotionOffers([
+        {
+          id: '0b7c8f5e-6a5d-4c4e-9f0e-1d2c3b4a5f60',
+          kind: 'amount',
+          percent_bp: null,
+          amount_cents: 500,
+          min_items_cents: 5000,
+          brand_name: 'Casa B',
+          exclude_sale_items: false,
+          ends_at: '2026-11-30T22:59:00+00:00',
+          eligible_cents: 5000,
+          discount_cents: 500,
+        },
+      ]),
+    ).toEqual([
+      offer({
+        kind: 'amount',
+        percentBp: null,
+        amountCents: 500,
+        minItemsCents: 5000,
+        brandName: 'Casa B',
+        endsAt: '2026-11-30T22:59:00+00:00',
+        eligibleCents: 5000,
+        discountCents: 500,
+      }),
+    ]);
+    expect(parsePromotionOffers([{ id: 'x' }])).toEqual([]);
+    expect(parsePromotionOffers(null)).toEqual([]);
+  });
+
+  it('la mejor es la que más descuenta; sin ninguna alcanzada, ninguna', () => {
+    const a = offer({ id: 'a', discountCents: 1200 });
+    const b = offer({ id: 'b', discountCents: 1500 });
+    expect(bestOffer([a, b])?.id).toBe('b');
+    expect(bestOffer([offer({})])).toBeNull();
+  });
+
+  it('«te faltan»: la más cercana que mejoraría lo que ya hay', () => {
+    const near = offer({
+      id: 'near',
+      minItemsCents: 9000,
+      eligibleCents: 8000,
+    });
+    const far = offer({ id: 'far', minItemsCents: 15_000 });
+    expect(nextOffer([far, near])?.id).toBe('near');
+    expect(missingCents(near)).toBe(1000);
+    // Ya hay una que da 12 €: un 10 % desde 100 € (10 €) no mejora nada.
+    const got = offer({ id: 'got', discountCents: 1200, minItemsCents: 6000 });
+    expect(nextOffer([got, offer({ id: 'small' })])).toBeNull();
+    // Una casa que no está en la cesta no se propone.
+    expect(nextOffer([offer({ eligibleCents: 0 })])).toBeNull();
+  });
+
+  it('no se suman: el código si descuenta más; si empatan, la promoción', () => {
+    const promotion = offer({ discountCents: 1200 });
+    const code = (cents: number): AppliedDiscount => ({
+      code: 'CLUB',
+      discountCents: cents,
+      excludesSaleItems: false,
+    });
+    expect(chooseDiscount(code(1500), promotion)).toEqual({
+      source: 'code',
+      discountCents: 1500,
+    });
+    expect(chooseDiscount(code(1200), promotion)).toEqual({
+      source: 'promotion',
+      discountCents: 1200,
+    });
+    expect(chooseDiscount(null, promotion).source).toBe('promotion');
+    expect(chooseDiscount(code(500), null)).toEqual({
+      source: 'code',
+      discountCents: 500,
+    });
+    expect(chooseDiscount(null, null)).toEqual({
+      source: null,
+      discountCents: 0,
+    });
+  });
+});
+
+describe('descuento enseñado en «Finalizar compra»', () => {
+  const order = {
+    requestId: '0b7c8f5e-6a5d-4c4e-9f0e-1d2c3b4a5f60',
+    locale: 'es',
+    fulfillment: 'click_collect',
+    fullName: 'Ana',
+    email: 'ana@test.invalid',
+    phone: '',
+    addressLine1: '',
+    addressLine2: '',
+    postalCode: '',
+    city: '',
+    province: '',
+    acceptTerms: 'on',
+  };
+  it('llega a la base en céntimos; sin él o raro, 0 (nunca bloquea)', () => {
+    expect(
+      checkoutInput.parse({ ...order, expectedDiscount: '1200' })
+        .expectedDiscount,
+    ).toBe(1200);
+    expect(checkoutInput.parse(order).expectedDiscount).toBe(0);
+    expect(
+      checkoutInput.parse({ ...order, expectedDiscount: '-5' })
+        .expectedDiscount,
+    ).toBe(0);
+    expect(
+      checkoutInput.parse({ ...order, expectedDiscount: '12.5' })
+        .expectedDiscount,
+    ).toBe(0);
   });
 });

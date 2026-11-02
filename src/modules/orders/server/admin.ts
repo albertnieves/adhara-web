@@ -111,9 +111,11 @@ export type WebOrderDetail = {
     locale: string;
     locationName: string | null;
     itemsCents: number;
-    /** Código de descuento aplicado (§149); 0 y null sin código. */
+    /** Descuento del código (§149) o de la promoción (§186); 0 sin ninguno. */
     discountCents: number;
     discountCode: string | null;
+    /** Nombre interno de la promoción aplicada, tal y como era entonces. */
+    promotionName: string | null;
     shippingCents: number;
     totalCents: number;
     currency: string;
@@ -331,6 +333,7 @@ export async function getWebOrder(
       itemsCents: order.items_cents,
       discountCents: order.discount_cents,
       discountCode: order.discount_code,
+      promotionName: order.promotion_name,
       shippingCents: order.shipping_cents,
       totalCents: order.total_cents,
       currency: order.currency,

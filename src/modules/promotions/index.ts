@@ -1,4 +1,6 @@
 export {
+  bestOffer,
+  chooseDiscount,
   DISCOUNT_BATCH_AUDIENCES,
   DISCOUNT_BATCH_MAX,
   DISCOUNT_CODE_MAX,
@@ -16,8 +18,14 @@ export {
   formatPercent,
   isoToMadridLocal,
   madridLocalToIso,
+  missingCents,
+  nextOffer,
   normalizeDiscountCode,
   parsePercent,
+  parsePromotionOffers,
+  promotionInput,
+  promotionStatus,
+  promotionSummary,
 } from './domain';
 export type {
   AppliedDiscount,
@@ -32,4 +40,8 @@ export type {
   DiscountKind,
   DiscountQuote,
   DiscountStatus,
+  Promotion,
+  PromotionInput,
+  PromotionOffer,
+  PromotionStatus,
 } from './domain';

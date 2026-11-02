@@ -1046,6 +1046,8 @@ export type Database = {
           location_id: string;
           number: number;
           paid_at: string | null;
+          promotion_id: string | null;
+          promotion_name: string | null;
           received_transaction_id: string | null;
           request_id: string;
           reservation: string;
@@ -1076,6 +1078,8 @@ export type Database = {
           location_id: string;
           number?: never;
           paid_at?: string | null;
+          promotion_id?: string | null;
+          promotion_name?: string | null;
           received_transaction_id?: string | null;
           request_id: string;
           reservation?: string;
@@ -1106,6 +1110,8 @@ export type Database = {
           location_id?: string;
           number?: never;
           paid_at?: string | null;
+          promotion_id?: string | null;
+          promotion_name?: string | null;
           received_transaction_id?: string | null;
           request_id?: string;
           reservation?: string;
@@ -1134,6 +1140,13 @@ export type Database = {
             columns: ['location_id'];
             isOneToOne: false;
             referencedRelation: 'stock_locations';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'orders_promotion_id_fkey';
+            columns: ['promotion_id'];
+            isOneToOne: false;
+            referencedRelation: 'promotions';
             referencedColumns: ['id'];
           },
           {
@@ -1420,6 +1433,68 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: 'products_brand_id_fkey';
+            columns: ['brand_id'];
+            isOneToOne: false;
+            referencedRelation: 'brands';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      promotions: {
+        Row: {
+          active: boolean;
+          amount_cents: number | null;
+          brand_id: string | null;
+          created_at: string;
+          created_by: string | null;
+          ends_at: string | null;
+          exclude_sale_items: boolean;
+          id: string;
+          kind: string;
+          min_items_cents: number;
+          name: string;
+          percent_bp: number | null;
+          starts_at: string | null;
+          updated_at: string;
+          updated_by: string | null;
+        };
+        Insert: {
+          active?: boolean;
+          amount_cents?: number | null;
+          brand_id?: string | null;
+          created_at?: string;
+          created_by?: string | null;
+          ends_at?: string | null;
+          exclude_sale_items?: boolean;
+          id?: string;
+          kind: string;
+          min_items_cents: number;
+          name: string;
+          percent_bp?: number | null;
+          starts_at?: string | null;
+          updated_at?: string;
+          updated_by?: string | null;
+        };
+        Update: {
+          active?: boolean;
+          amount_cents?: number | null;
+          brand_id?: string | null;
+          created_at?: string;
+          created_by?: string | null;
+          ends_at?: string | null;
+          exclude_sale_items?: boolean;
+          id?: string;
+          kind?: string;
+          min_items_cents?: number;
+          name?: string;
+          percent_bp?: number | null;
+          starts_at?: string | null;
+          updated_at?: string;
+          updated_by?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'promotions_brand_id_fkey';
             columns: ['brand_id'];
             isOneToOne: false;
             referencedRelation: 'brands';
@@ -2490,6 +2565,27 @@ export type Database = {
           uses: number;
         }[];
       };
+      admin_list_promotions: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          active: boolean;
+          amount_cents: number;
+          brand_id: string;
+          brand_name: string;
+          created_at: string;
+          ends_at: string;
+          exclude_sale_items: boolean;
+          id: string;
+          kind: string;
+          min_items_cents: number;
+          name: string;
+          paid_discount_cents: number;
+          paid_uses: number;
+          percent_bp: number;
+          starts_at: string;
+          uses: number;
+        }[];
+      };
       admin_list_purchase_orders: {
         Args: { p_order_id?: string; p_status?: string };
         Returns: {
@@ -2627,6 +2723,8 @@ export type Database = {
           location_id: string;
           number: number;
           paid_at: string | null;
+          promotion_id: string | null;
+          promotion_name: string | null;
           received_transaction_id: string | null;
           request_id: string;
           reservation: string;
@@ -2820,6 +2918,8 @@ export type Database = {
           location_id: string;
           number: number;
           paid_at: string | null;
+          promotion_id: string | null;
+          promotion_name: string | null;
           received_transaction_id: string | null;
           request_id: string;
           reservation: string;
@@ -3020,6 +3120,44 @@ export type Database = {
         SetofOptions: {
           from: '*';
           to: 'message_templates';
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
+      admin_save_promotion: {
+        Args: {
+          p_active: boolean;
+          p_amount_cents: number;
+          p_brand_id: string;
+          p_ends_at: string;
+          p_exclude_sale_items: boolean;
+          p_id: string;
+          p_kind: string;
+          p_min_items_cents: number;
+          p_name: string;
+          p_percent_bp: number;
+          p_starts_at: string;
+        };
+        Returns: {
+          active: boolean;
+          amount_cents: number | null;
+          brand_id: string | null;
+          created_at: string;
+          created_by: string | null;
+          ends_at: string | null;
+          exclude_sale_items: boolean;
+          id: string;
+          kind: string;
+          min_items_cents: number;
+          name: string;
+          percent_bp: number | null;
+          starts_at: string | null;
+          updated_at: string;
+          updated_by: string | null;
+        };
+        SetofOptions: {
+          from: '*';
+          to: 'promotions';
           isOneToOne: true;
           isSetofReturn: false;
         };
@@ -3266,6 +3404,8 @@ export type Database = {
           location_id: string;
           number: number;
           paid_at: string | null;
+          promotion_id: string | null;
+          promotion_name: string | null;
           received_transaction_id: string | null;
           request_id: string;
           reservation: string;
@@ -3413,6 +3553,7 @@ export type Database = {
           p_contact: Json;
           p_customer_id?: string;
           p_discount_code?: string;
+          p_expected_discount_cents?: number;
           p_fulfillment: string;
           p_hold_minutes?: number;
           p_items: Json;
@@ -3476,6 +3617,7 @@ export type Database = {
         Returns: number;
       };
       web_order_status: { Args: { p_order_id: string }; Returns: Json };
+      web_promotions_quote: { Args: { p_items: Json }; Returns: Json };
       web_shipment_event: {
         Args: {
           p_at: string;

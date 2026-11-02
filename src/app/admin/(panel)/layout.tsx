@@ -86,7 +86,7 @@ const SECTIONS: (NavItem & { permission?: Permission })[] = [
   },
   {
     href: '/admin/descuentos',
-    label: 'Códigos de descuento',
+    label: 'Descuentos y promociones',
     permission: 'promotions.manage',
     group: 'Web',
   },
