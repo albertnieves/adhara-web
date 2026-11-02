@@ -1,5 +1,15 @@
 # Estado real — 02/11/2026
 
+## Ficha de cliente (A7, 02/11)
+
+Rama `claude/fichas-clientes`, sobre la de la revisión (§183). Roadmap, punto 4: el código que quedaba de «Clientes y mensajes», sin depender del titular. Decisión §184; guía en [ADMIN_OPERATIONS](ADMIN_OPERATIONS.md#clientes).
+
+- **Web → Clientes** (`customers.view` con MFA): una ficha por email con quien compra en la web, escribe, se une al Club o tiene cuenta (el spam no). Lista con pedidos, cobrado menos devuelto, mensajes abiertos, Club, cuenta y última actividad; búsqueda por nombre o email que no va en la URL.
+- **Ficha:** contacto sin repetir y su origen, Club (fecha y texto del consentimiento, baja), cuenta, pedidos y consultas con enlace; «Ficha del cliente» desde cada pedido y consulta. La URL lleva una clave opaca (sha256 del email), nunca el email.
+- **«Descargar sus datos»** (`customers.manage`): JSON para el derecho de acceso con campos elegidos uno a uno (sin ids internos ni referencias del banco), notas internas marcadas para revisarlas, y auditoría sin el email.
+- **Base:** migración `20261102120000_customer_records.sql` con tres funciones y sus ayudas privadas, sin tablas nuevas ni cambios de datos. **Falta aplicarla en `atelier-dev` antes de fusionar** (si no, Clientes da error en producción); la consola del titular ya la espera.
+- **Comprobado en local** (Node 24.16.0, Supabase local con Docker reiniciado con todas las migraciones, datos de la CI y configuración de `e2e.yml`): pgTAP 1081/1081 en 26 archivos (39 nuevas en `25_customer_records`); tipos generados iguales; `db lint` sin errores; lint, tipos, 779 unitarias (8 nuevas) y build correctos; `format:check` y `scan:secrets` correctos; tienda pública 321 correctas y 51 omitidas; panel con sesión 59/60 en la vuelta completa: axe marcó el enlace nuevo dentro de la lista de datos del pedido, corregido, y la auditoría de diseño y axe del panel (con la lista y una ficha a 390, 768, 1280 y 1440 px), `customers`, `admin-orders` y `messages` pasan después (10/10). Capturas de la lista y la ficha a 390 y 1440 px revisadas. Concurrencia no ejecutada: las funciones solo leen (y la exportación añade una fila de auditoría).
+
 ## Revisión de las PR #54 y #55 (02/11)
 
 Rama `claude/revision-busqueda`, sobre `claude/busqueda-global` (#55, que incluye la #54 y la #52). A petición del usuario: revisar el código y avanzar. Decisión §183. Sin migraciones ni variables.
