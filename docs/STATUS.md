@@ -2,12 +2,12 @@
 
 ## Códigos únicos por suscriptor (02/11)
 
-Rama `claude/codigos-unicos`. Roadmap, punto 4: lo siguiente del roadmap, a petición del usuario. Decisión §185; guía en [ADMIN_OPERATIONS](ADMIN_OPERATIONS.md#códigos-de-descuento).
+Rama `claude/codigos-unicos` (PR #58). Roadmap, punto 4: lo siguiente del roadmap, a petición del usuario. Decisión §185; guía en [ADMIN_OPERATIONS](ADMIN_OPERATIONS.md#códigos-de-descuento).
 
 - **Lotes de códigos únicos** en Web → Códigos de descuento: un código distinto y de un solo uso (`CLUB-7KQ4MZ9X`) para cada suscriptor activo del Club o un número fijo sin destinatario, con las condiciones de un código normal. Ficha del lote con usos, cobrados, «Descargar CSV» (email y código, para importarlo en Sender) y «Apagar el lote».
 - **La tienda no cambia:** cada código es un código más con un solo uso; «Aplicar» y el pedido lo comprueban como siempre.
 - **Datos personales:** a quién va cada código, solo con los permisos de promociones y de clientes; se borra con el suscriptor y entra en «Descargar sus datos» de la ficha del cliente. Auditoría sin emails.
-- **Base:** migración `20261102150000_discount_batches.sql`. **Falta aplicarla en `atelier-dev` antes de fusionar.**
+- **Base:** migración `20261102150000_discount_batches.sql`, **aplicada en `atelier-dev` el 02/11, antes de fusionar la PR #58**, a petición del usuario: versión registrada con el md5 del archivo, funciones, columnas, restricciones, índices, políticas, disparadores y permisos iguales a la base ensayada, datos sin cambios y asesor de seguridad sin tipos de aviso nuevos (§185).
 - **Comprobado en local** (Node 24.16.0, Supabase local con Docker reiniciado con todas las migraciones, datos de la CI y configuración de `e2e.yml`): pgTAP 1123/1123 en 27 archivos (42 nuevas en `26_discount_batches`); tipos generados iguales; `db lint` sin errores; lint, tipos, 784 unitarias (5 nuevas) y build correctos; `format:check` y `scan:secrets` correctos; panel con sesión 62/62, con `discount-batches.spec.ts` (crear el lote del Club, CSV, un código aplicado en «Finalizar compra», apagado rechazado, encendido y el encargado sin acceso) y la auditoría de diseño y axe del alta y la ficha del lote a 390, 768, 1280 y 1440 px. Capturas revisadas. La tienda pública no cambia y no se ha vuelto a pasar en local (la CI la repite).
 
 ## Ficha de cliente (A7, 02/11)
