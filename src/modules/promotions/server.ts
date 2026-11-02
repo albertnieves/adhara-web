@@ -1,3 +1,9 @@
 import 'server-only';
 
-export { getDiscountCode, listDiscountCodes } from './server/admin';
+export {
+  discountBatchCodes,
+  getDiscountBatch,
+  getDiscountCode,
+  listDiscountBatches,
+  listDiscountCodes,
+} from './server/admin';

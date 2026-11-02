@@ -1,8 +1,14 @@
 export {
+  DISCOUNT_BATCH_AUDIENCES,
+  DISCOUNT_BATCH_MAX,
   DISCOUNT_CODE_MAX,
   DISCOUNT_CODE_MIN,
   DISCOUNT_ERRORS,
   DISCOUNT_KINDS,
+  discountBatchCsvRows,
+  discountBatchFileName,
+  discountBatchInput,
+  discountBatchStatus,
   discountCodeInput,
   discountErrorFromDb,
   discountStatus,
@@ -15,6 +21,11 @@ export {
 } from './domain';
 export type {
   AppliedDiscount,
+  DiscountBatch,
+  DiscountBatchAudience,
+  DiscountBatchCode,
+  DiscountBatchInput,
+  DiscountBatchStatus,
   DiscountCode,
   DiscountCodeInput,
   DiscountError,

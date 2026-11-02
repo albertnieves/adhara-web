@@ -127,6 +127,15 @@ Reglas: un código por pedido; el descuento es sobre los artículos, nunca sobre
 
 El texto de un código no cambia una vez creado (los pedidos lo guardan): para otra campaña, crea otro. Para retirarlo, desmarca «Activo»; los pedidos ya hechos no cambian. Un código compartido vale para cualquiera que lo tenga: si no debe circular, limita los usos o las fechas.
 
+**Lotes de códigos únicos** (Web → Códigos de descuento → «Nuevo lote de códigos únicos», DECISIONS §185): un código distinto y de un solo uso para cada persona, con las mismas condiciones. A diferencia de un código de campaña, no circula: el primero que lo usa lo gasta.
+
+1. **Crear el lote:** nombre de la campaña, prefijo (de 2 a 10 letras o números: `CLUB` da códigos como `CLUB-7KQ4MZ9X`), descuento, compra mínima y fechas como en un código, y para quién: uno para cada suscriptor activo del Club (hace falta también el permiso de clientes) o un número de códigos sin destinatario (de 1 a 5.000), para repartir en la tienda o en un evento.
+2. **Descargar CSV:** en la ficha del lote, con las columnas `email`, `codigo`, `usado` y `activo`. Cada descarga queda en la auditoría; el archivo lleva datos personales, así que se guarda solo el tiempo necesario.
+3. **En Sender:** añade un campo personalizado para el código, importa el CSV en la lista uniendo la columna `codigo` con ese campo (los suscriptores se reconocen por el email) y pon el campo en el correo con su etiqueta de personalización. Quien se suscriba después no tiene código: para ellos, otro lote.
+4. **Seguimiento:** la lista y la ficha enseñan cuántos se han usado, los pedidos cobrados y lo descontado. «Apagar el lote» deja sin valor todos sus códigos a la vez (los pedidos ya hechos no cambian) y «Encender el lote» los recupera.
+
+Si se borra a un suscriptor (Suscriptores → Borrar), se borra también a quién se dio su código; el código sigue valiendo, sin destinatario. «Descargar sus datos» de la ficha del cliente incluye los códigos que se le dieron.
+
 **Devolver un artículo de un pedido con código:** con «Devolver una parte», devuelve el precio del artículo menos la parte proporcional del descuento (por ejemplo, con un 10 %, de un perfume de 49,90 € se devuelven 44,91 €). Así lo dicen las condiciones de venta.
 
 ## Consola del titular (control del negocio y del proyecto)

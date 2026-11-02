@@ -13,9 +13,20 @@ import { formatEuros } from '@/lib/money';
 import { PageHeader } from '@/modules/admin';
 import { requirePermission } from '@/modules/auth/server';
 import { checkoutEnabled } from '@/modules/checkout/server';
-import type { DiscountCode, DiscountStatus } from '@/modules/promotions';
-import { discountStatus, formatDiscountValue } from '@/modules/promotions';
-import { listDiscountCodes } from '@/modules/promotions/server';
+import type {
+  DiscountBatchStatus,
+  DiscountCode,
+  DiscountStatus,
+} from '@/modules/promotions';
+import {
+  discountBatchStatus,
+  discountStatus,
+  formatDiscountValue,
+} from '@/modules/promotions';
+import {
+  listDiscountBatches,
+  listDiscountCodes,
+} from '@/modules/promotions/server';
 
 export const metadata: Metadata = { title: 'Códigos de descuento' };
 
@@ -25,7 +36,10 @@ const DATE = new Intl.DateTimeFormat('es-ES', {
   timeZone: 'Europe/Madrid',
 });
 
-const STATUS: Record<DiscountStatus, { label: string; tone: BadgeTone }> = {
+const STATUS: Record<
+  DiscountStatus | DiscountBatchStatus,
+  { label: string; tone: BadgeTone }
+> = {
   active: { label: 'Activo', tone: 'success' },
   scheduled: { label: 'Programado', tone: 'accent' },
   expired: { label: 'Caducado', tone: 'neutral' },
@@ -46,7 +60,7 @@ function conditions(code: DiscountCode) {
 }
 
 /** «del 01/11 9:00 al 30/11 23:59», «hasta…», «desde…» o «sin fechas». */
-function validity(code: DiscountCode) {
+function validity(code: Pick<DiscountCode, 'startsAt' | 'endsAt'>) {
   const from = code.startsAt ? DATE.format(new Date(code.startsAt)) : null;
   const to = code.endsAt ? DATE.format(new Date(code.endsAt)) : null;
   if (from && to) return `Del ${from} al ${to}`;
@@ -62,12 +76,21 @@ function validity(code: DiscountCode) {
  */
 export default async function DiscountCodes() {
   const { supabase } = await requirePermission('promotions.manage');
-  const codes = await listDiscountCodes(supabase);
+  const [codes, batches] = await Promise.all([
+    listDiscountCodes(supabase),
+    listDiscountBatches(supabase),
+  ]);
   const checkout = checkoutEnabled();
 
   return (
     <main>
       <PageHeader eyebrow="Web" title="Códigos de descuento">
+        <Link
+          href="/admin/descuentos/lotes/nuevo"
+          className={buttonClass('outline')}
+        >
+          Nuevo lote de códigos únicos
+        </Link>
         <Link href="/admin/descuentos/nuevo" className={buttonClass()}>
           Nuevo código
         </Link>
@@ -85,7 +108,9 @@ export default async function DiscountCodes() {
             El descuento es sobre los artículos, nunca sobre el envío, y el
             envío gratis se calcula con el descuento ya aplicado. Un código por
             pedido. Un código compartido vale para quien lo tenga: limita los
-            usos o las fechas si no debe circular.
+            usos o las fechas si no debe circular, o crea un lote de códigos
+            únicos (uno por suscriptor del Club, de un solo uso) para importarlo
+            en Sender.
           </p>
           {!checkout && (
             <p className="text-warning">
@@ -159,6 +184,74 @@ export default async function DiscountCodes() {
           </Table>
         </div>
       )}
+
+      <section
+        aria-labelledby="lotes"
+        className="border-border mt-14 border-t pt-10"
+      >
+        <h2 id="lotes" className="mb-6 text-2xl font-light">
+          Lotes de códigos únicos
+        </h2>
+        {batches.length === 0 ? (
+          <p className="text-fg-muted text-sm">
+            Todavía no hay lotes. Un lote da un código distinto, de un solo uso,
+            a cada suscriptor del Club o crea un número de ellos.
+          </p>
+        ) : (
+          <div className="overflow-x-auto">
+            <Table caption="Lotes de códigos únicos" className="min-w-[56rem]">
+              <thead>
+                <tr>
+                  <th>Lote</th>
+                  <th>Descuento</th>
+                  <th>Vigencia</th>
+                  <th className="text-right">Usados</th>
+                  <th className="text-right">Cobrados</th>
+                  <th>Estado</th>
+                </tr>
+              </thead>
+              <tbody>
+                {batches.map((batch) => {
+                  const status = STATUS[discountBatchStatus(batch)];
+                  return (
+                    <tr key={batch.id}>
+                      <td>
+                        <TextLink href={`/admin/descuentos/lotes/${batch.id}`}>
+                          {batch.name}
+                        </TextLink>
+                        <p className="text-fg-muted font-mono text-xs">
+                          {batch.prefix}-XXXXXXXX ·{' '}
+                          {batch.audience === 'subscribers'
+                            ? 'Club'
+                            : 'sin destinatario'}
+                        </p>
+                      </td>
+                      <td className="text-sm">{formatDiscountValue(batch)}</td>
+                      <td className="text-sm tabular-nums">
+                        {validity(batch)}
+                      </td>
+                      <td className="text-right text-sm tabular-nums">
+                        {batch.usedCodes} / {batch.codes}
+                      </td>
+                      <td className="text-right text-sm tabular-nums">
+                        {batch.paidUses}
+                        {batch.paidDiscountCents > 0 && (
+                          <p className="text-fg-muted text-xs">
+                            −{formatEuros(batch.paidDiscountCents, 'es')}
+                          </p>
+                        )}
+                      </td>
+                      <td>
+                        <Badge tone={status.tone}>{status.label}</Badge>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </Table>
+          </div>
+        )}
+      </section>
     </main>
   );
 }
