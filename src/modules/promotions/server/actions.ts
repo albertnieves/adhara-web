@@ -6,7 +6,11 @@ import type { ActionState } from '@/modules/admin';
 import { describeDbError, fail, ok } from '@/modules/admin';
 import { isAllowed } from '@/modules/auth';
 import { requirePermission } from '@/modules/auth/server';
-import { discountBatchInput, discountCodeInput } from '../domain';
+import {
+  discountBatchInput,
+  discountCodeInput,
+  promotionInput,
+} from '../domain';
 
 /*
  * Panel → Web → Códigos de descuento (DECISIONS §151). promotions.manage
@@ -158,4 +162,60 @@ export async function setDiscountBatchActive(
       ? `Lote encendido: ${data} ${data === 1 ? 'código vuelve' : 'códigos vuelven'} a valer.`
       : `Lote apagado: ${data} ${data === 1 ? 'código deja' : 'códigos dejan'} de valer.`,
   );
+}
+
+const PROMOTION_MESSAGES: Record<string, string> = {
+  invalid_promotion:
+    'Revisa la promoción: del 1 % al 90 % o de 1 € a 1.000 €, un importe mínimo mayor que el descuento y el final después del inicio.',
+  unknown_brand: 'Esa casa ya no existe. Elige otra o «Todas las casas».',
+  not_found: 'Esa promoción ya no existe.',
+};
+
+/**
+ * Alta o cambio de una promoción automática (DECISIONS §186).
+ * promotions.manage (con MFA) aquí y otra vez en admin_save_promotion, que
+ * valida los importes y deja la auditoría. Una nueva lleva a su ficha.
+ */
+export async function savePromotion(
+  _: ActionState,
+  form: FormData,
+): Promise<ActionState> {
+  const { supabase } = await requirePermission('promotions.manage');
+  const text = (name: string) => String(form.get(name) ?? '');
+  const parsed = promotionInput.safeParse({
+    id: text('id'),
+    name: text('name'),
+    kind: text('kind'),
+    value: text('value'),
+    minItems: text('minItems'),
+    brandId: text('brandId'),
+    excludeSaleItems: form.get('excludeSaleItems') === 'on',
+    startsAt: text('startsAt'),
+    endsAt: text('endsAt'),
+    active: form.get('active') === 'on',
+  });
+  if (!parsed.success)
+    return fail(parsed.error.issues[0]?.message ?? 'Revisa los datos.');
+  const input = parsed.data;
+  // Los tipos generados no admiten null en los parámetros opcionales; la
+  // función los trata como «todas las casas» o «sin fecha».
+  const { data, error } = await supabase.rpc('admin_save_promotion', {
+    p_id: input.id as string,
+    p_name: input.name,
+    p_kind: input.kind,
+    p_percent_bp: input.percentBp as number,
+    p_amount_cents: input.amountCents as number,
+    p_min_items_cents: input.minItemsCents,
+    p_brand_id: input.brandId as string,
+    p_exclude_sale_items: input.excludeSaleItems,
+    p_starts_at: input.startsAt as string,
+    p_ends_at: input.endsAt as string,
+    p_active: input.active,
+  });
+  if (error)
+    return fail(PROMOTION_MESSAGES[error.message] ?? describeDbError(error));
+  revalidatePath('/admin/descuentos');
+  if (!input.id) redirect(`/admin/descuentos/promociones/${data.id}?creada=1`);
+  revalidatePath(`/admin/descuentos/promociones/${input.id}`);
+  return ok(`${input.name}: cambios guardados.`);
 }

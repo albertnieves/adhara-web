@@ -28,6 +28,7 @@ export const CHECKOUT_ERRORS = [
   'shippingWeightUnknown',
   'unavailable',
   'discount',
+  'discountChanged',
   'disabled',
   'busy',
   'generic',
@@ -64,6 +65,16 @@ export const checkoutInput = z
       .transform((value) => value || null)
       .pipe(z.uuid('shippingServiceRequired').nullable()),
     acceptTerms: z.literal('on', { message: 'termsRequired' }),
+    // Descuento que enseñó el resumen (código o promoción, §186): la base no
+    // crea el pedido si el suyo sale menor.
+    expectedDiscount: z
+      .string()
+      .trim()
+      .optional()
+      .transform((value) => {
+        const cents = Number(value || 0);
+        return Number.isSafeInteger(cents) && cents >= 0 ? cents : 0;
+      }),
     // Código ya aplicado en el resumen; la base lo vuelve a comprobar todo.
     discountCode: z
       .string()

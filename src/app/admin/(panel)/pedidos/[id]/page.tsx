@@ -355,6 +355,16 @@ export default async function WebOrderPage({
               </dd>
             </>
           )}
+          {order.promotionName && (
+            <>
+              <dt className="text-fg-muted">
+                Promoción «{order.promotionName}»
+              </dt>
+              <dd className="text-right tabular-nums">
+                −{euros(order.discountCents)}
+              </dd>
+            </>
+          )}
           <dt className="text-fg-muted">
             {order.fulfillment === 'click_collect' ? 'Recogida' : 'Envío'}
           </dt>

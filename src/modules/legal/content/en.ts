@@ -165,6 +165,7 @@ export const en: LegalCopy = {
             'The price shown when you place the order applies. When we announce a sale, the previous price we show is the lowest of the preceding 30 days.',
             'If, due to an obvious error, a price does not match the real one (for example, €0 or a ridiculously low price), we will let you know before shipping and you can confirm the order at the correct price or cancel it free of charge.',
             'Discount codes: the codes from our campaigns are entered at checkout. Each code states its discount and conditions (dates, minimum spend, whether it can be used once per email address or a limited number of times, and whether it applies to reduced items). It applies to the items, not to shipping costs, and only one code can be used per order. The discount is shown in the summary before you pay. If you return an item from a discounted order, we refund what you paid for it: its price less its proportional share of the discount.',
+            'Promotions: when there is a promotion (for example, a discount on orders over a certain amount, on all houses or on just one), the basket and the summary show its conditions and dates. It applies automatically once you reach the amount, to the items that count towards it and never to shipping costs. It cannot be combined with a discount code: whichever takes off more applies and, if both take off the same, the promotion. If a promotion ends while you are shopping, we tell you before you pay.',
           ],
         },
         {

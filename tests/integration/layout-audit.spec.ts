@@ -51,6 +51,7 @@ const ROUTES = [
   '/admin/descuentos',
   '/admin/descuentos/nuevo',
   '/admin/descuentos/lotes/nuevo',
+  '/admin/descuentos/promociones/nueva',
   '/admin/configuracion',
   '/admin/equipo',
   '/admin/asistente',
@@ -118,6 +119,15 @@ async function anyDiscountBatchId() {
     .limit(1)
     .maybeSingle();
   return batch ? String(batch.id) : undefined;
+}
+
+async function anyPromotionId() {
+  const { data: promotion } = await admin
+    .from('promotions')
+    .select('id')
+    .limit(1)
+    .maybeSingle();
+  return promotion ? String(promotion.id) : undefined;
 }
 
 /**
@@ -208,19 +218,22 @@ test('panel: diseño sin solapes ni desbordes en todas sus pantallas', async ({
   makeControlOwner(email);
   await login(page, email);
 
-  const [product, order, discount, batch, conversation] = await Promise.all([
-    anyProductId(),
-    anyOrderId(),
-    anyDiscountCodeId(),
-    anyDiscountBatchId(),
-    auditConversation(),
-  ]);
+  const [product, order, discount, batch, promotion, conversation] =
+    await Promise.all([
+      anyProductId(),
+      anyOrderId(),
+      anyDiscountCodeId(),
+      anyDiscountBatchId(),
+      anyPromotionId(),
+      auditConversation(),
+    ]);
   const routes = [
     ...ROUTES,
     ...(product ? [`/admin/catalogo/${product}`] : []),
     ...(order ? [`/admin/pedidos/${order}`] : []),
     ...(discount ? [`/admin/descuentos/${discount}`] : []),
     ...(batch ? [`/admin/descuentos/lotes/${batch}`] : []),
+    ...(promotion ? [`/admin/descuentos/promociones/${promotion}`] : []),
     `/admin/mensajes/${conversation.id}`,
     `/admin/mensajes/plantillas/${conversation.templateId}`,
     `/admin/clientes/${conversation.customerKey}`,

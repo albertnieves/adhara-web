@@ -367,7 +367,8 @@
       "review": "Revisa los datos marcados.",
       "shippingServiceRequired": "Elige un transportista para el envío.",
       "shippingServiceUnavailable": "Ese transportista ya no está disponible para este pedido. Elige otro.",
-      "shippingWeightUnknown": "Algún perfume de la cesta aún no se puede enviar. Puedes recogerlo en la tienda."
+      "shippingWeightUnknown": "Algún perfume de la cesta aún no se puede enviar. Puedes recogerlo en la tienda.",
+      "discountChanged": "El descuento ha cambiado mientras comprabas (por ejemplo, ha terminado una promoción). Revisa el total en el resumen y vuelve a confirmar."
     },
     "accountSignedIn": "Compras con tu cuenta ({email}). El pedido quedará en «Mis pedidos».",
     "accountSignIn": "¿Tienes cuenta? <link>Entra</link> para usar tus datos guardados y ver luego el pedido en tu cuenta.",
@@ -377,6 +378,20 @@
     "transitDays": "{days, plural, one {Entrega en # día laborable} other {Entrega en # días laborables}}",
     "carrierFree": "Gratis con este pedido",
     "shippingWeightMissing": "Algún perfume de la cesta aún no se puede enviar. Puedes recogerlo en la tienda."
+  },
+  "promotion": {
+    "title": "Promoción",
+    "offer": "{value} de descuento en pedidos desde {minimum}.",
+    "offerBrand": "{value} de descuento en {brand} al llevar {minimum} o más de esa casa.",
+    "noSale": "Sin contar los perfumes rebajados.",
+    "until": "Hasta el {date}.",
+    "applied": "Ya la tienes: {amount} menos, que se descuentan al finalizar la compra.",
+    "missing": "Te faltan {amount} para conseguirla.",
+    "appliedCheckout": "Promoción aplicada",
+    "line": "Promoción",
+    "better": "La promoción descuenta lo mismo o más que tu código: se aplica la promoción y el código queda sin usar.",
+    "codeBetter": "Tu código descuenta más que la promoción: se aplica el código. No se suman.",
+    "codeUnused": "Código {code}: no se aplica"
   },
   "order": {
     "title": "Tu pedido",
@@ -451,7 +466,8 @@
     "attachment": "condiciones-de-venta.txt",
     "signature": "L’Atelier du Désert · Perfumería árabe en Castelldefels",
     "carrier": "Lo lleva {carrier}.",
-    "trackingLink": "Seguimiento: {url}"
+    "trackingLink": "Seguimiento: {url}",
+    "promotion": "Promoción"
   },
   "contact": {
     "title": "Contacto",

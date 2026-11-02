@@ -41,9 +41,10 @@ export default async function AccountOrderPage({ params }: { params: Params }) {
   const lang = requireLocale(locale);
   const session = await requireCustomer(lang, accountPath(lang, '/cuenta'));
   if (!/^[1-9][0-9]{0,11}$/.test(number)) notFound();
-  const [t, tc, order, storeData] = await Promise.all([
+  const [t, tc, tp, order, storeData] = await Promise.all([
     getTranslations('account'),
     getTranslations('checkout'),
+    getTranslations('promotion'),
     getAccountOrder(session, Number(number)),
     readStoreContent('store', 'es'),
   ]);
@@ -171,7 +172,9 @@ export default async function AccountOrderPage({ params }: { params: Params }) {
           {order.discountCents > 0 && (
             <>
               <dt className="text-fg-muted">
-                {tc('discount.line', { code: order.discountCode ?? '' })}
+                {order.discountCode
+                  ? tc('discount.line', { code: order.discountCode })
+                  : tp('line')}
               </dt>
               <dd className="text-right tabular-nums">
                 −{euros(order.discountCents)}

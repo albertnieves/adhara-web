@@ -6,6 +6,7 @@ import type {
   DiscountBatchCode,
   DiscountCode,
   DiscountKind,
+  Promotion,
 } from '../domain';
 
 type Supabase = StaffContext['supabase'];
@@ -144,4 +145,64 @@ export async function discountBatchCodes(
     active: row.active,
     used: row.used,
   }));
+}
+
+/**
+ * Promociones automáticas con sus usos (admin_list_promotions:
+ * promotions.manage con MFA), las más recientes primero. Sin datos de
+ * clientes.
+ */
+export async function listPromotions(supabase: Supabase): Promise<Promotion[]> {
+  const { data, error } = await supabase.rpc('admin_list_promotions');
+  if (error) {
+    console.error(
+      '[promociones] no se pudo leer las promociones',
+      error.message,
+    );
+    return [];
+  }
+  return data.map((row) => ({
+    id: row.id,
+    name: row.name,
+    kind: row.kind as DiscountKind,
+    percentBp: row.percent_bp,
+    amountCents: row.amount_cents,
+    minItemsCents: row.min_items_cents,
+    brandId: row.brand_id,
+    brandName: row.brand_name,
+    excludeSaleItems: row.exclude_sale_items,
+    startsAt: row.starts_at,
+    endsAt: row.ends_at,
+    active: row.active,
+    createdAt: row.created_at,
+    uses: row.uses,
+    paidUses: row.paid_uses,
+    paidDiscountCents: Number(row.paid_discount_cents),
+  }));
+}
+
+/** Una promoción con sus usos, o null si no existe o no hay permiso. */
+export async function getPromotion(
+  supabase: Supabase,
+  id: string,
+): Promise<Promotion | null> {
+  const promotions = await listPromotions(supabase);
+  return promotions.find((promotion) => promotion.id === id) ?? null;
+}
+
+/** Casas para limitar una promoción, por nombre. */
+export async function listPromotionBrands(
+  supabase: Supabase,
+): Promise<{ id: string; name: string }[]> {
+  const { data, error } = await supabase
+    .from('brands')
+    .select('id, name')
+    .order('name')
+    .order('id')
+    .limit(1000);
+  if (error) {
+    console.error('[promociones] no se pudo leer las casas', error.message);
+    return [];
+  }
+  return data;
 }

@@ -111,6 +111,7 @@ export default async function CheckoutPage({ params }: { params: Params }) {
         itemsCents={quote.itemsCents}
         purchasable={quote.purchasable}
         shipping={quote.shipping}
+        promotions={quote.promotions}
         store={{ address: store.address, city: store.city }}
         account={account}
         signInNext={signInNext}
