@@ -2275,6 +2275,27 @@ export type Database = {
         };
         Returns: string;
       };
+      admin_customer: { Args: { p_key: string }; Returns: Json };
+      admin_customer_export: { Args: { p_key: string }; Returns: Json };
+      admin_customers: {
+        Args: { p_limit?: number; p_offset?: number; p_search?: string };
+        Returns: {
+          conversations: number;
+          customer_key: string;
+          email: string;
+          first_seen_at: string;
+          full_name: string;
+          has_account: boolean;
+          last_activity_at: string;
+          newsletter: string;
+          open_conversations: number;
+          orders: number;
+          paid_cents: number;
+          paid_orders: number;
+          refunded_cents: number;
+          total_count: number;
+        }[];
+      };
       admin_delete_conversation: {
         Args: { p_conversation_id: string; p_revision: number };
         Returns: undefined;

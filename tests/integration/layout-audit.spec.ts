@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 import type { Page } from '@playwright/test';
-import { randomUUID } from 'node:crypto';
+import { createHash, randomUUID } from 'node:crypto';
 import {
   AUDIT_WIDTHS,
   DESKTOP_WIDTHS,
@@ -39,6 +39,7 @@ const ROUTES = [
   '/admin/envios/pesos',
   '/admin/mensajes',
   '/admin/mensajes/plantillas',
+  '/admin/clientes',
   '/admin/informes',
   '/admin/informes/inventario',
   '/admin/informes/rotacion',
@@ -114,12 +115,13 @@ async function anyDiscountCodeId() {
  */
 async function auditConversation() {
   const long = 'Perfumeríaárabeconunnombremuylargoquenocabe'.repeat(3);
+  const email = `auditoria-${randomUUID().slice(0, 8)}@test.invalid`;
   const submitted = await admin.rpc('web_contact_submit', {
     p_request_id: randomUUID(),
     p_locale: 'en',
     p_topic: 'order',
     p_full_name: 'Cliente de la auditoría con un nombre bastante largo',
-    p_email: `auditoria-${randomUUID().slice(0, 8)}@test.invalid`,
+    p_email: email,
     p_subject: `Consulta de la auditoría ${long}`,
     p_body: `Mensaje de la auditoría.\n\n${long}\n\nCon varias líneas.`,
   });
@@ -144,6 +146,8 @@ async function auditConversation() {
   return {
     id: String(row.id),
     templateId: String(template.id),
+    // Su ficha de cliente (A7, §184): la clave es el sha256 del email.
+    customerKey: createHash('sha256').update(email).digest('hex'),
     cleanup: async () => {
       await admin.from('conversations').delete().eq('id', row.id);
       await admin.from('message_templates').delete().eq('id', template.id);
@@ -205,6 +209,7 @@ test('panel: diseño sin solapes ni desbordes en todas sus pantallas', async ({
     ...(discount ? [`/admin/descuentos/${discount}`] : []),
     `/admin/mensajes/${conversation.id}`,
     `/admin/mensajes/plantillas/${conversation.templateId}`,
+    `/admin/clientes/${conversation.customerKey}`,
   ];
   const { reports, violations } = await auditAll(page, routes, AUDIT_WIDTHS);
   await conversation.cleanup();

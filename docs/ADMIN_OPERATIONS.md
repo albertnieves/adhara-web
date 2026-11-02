@@ -99,6 +99,16 @@ Web → Mensajes (con `messages.view`). Cada consulta de un cliente es una conve
 - **Plantillas** (Mensajes → Plantillas): título, idioma y texto de las respuestas frecuentes (envíos, devoluciones de perfumes precintados, disponibilidad). Una apagada no aparece al responder.
 - **Permisos:** el encargado ve las conversaciones y los mensajes, pero no el nombre ni el email del cliente, ni puede responder. Responder, anotar, asignar y las plantillas exigen `messages.reply` con MFA. Si otra persona cambió la conversación a la vez, el panel pide recargar.
 
+## Clientes
+
+Web → Clientes (con `customers.view` y MFA): una ficha por email con todo lo que la tienda sabe de esa persona: pedidos web, mensajes, el Club L’Atelier y su cuenta, si la tiene. Aparecen quienes compran en la web, escriben, se unen al Club o crean una cuenta; las ventas del mostrador no llevan cliente y quien solo envió spam no sale (DECISIONS §184).
+
+- **Buscar** por nombre o parte del email. La búsqueda no se guarda en la dirección de la página, para que los emails no queden en los registros.
+- **Ficha:** datos de contacto sin repetir y de dónde sale cada uno (la cuenta, un pedido o una consulta), Club (alta, texto del consentimiento y baja), cuenta (creación y último acceso), pedidos con lo devuelto y mensajes, con enlaces a cada uno. Desde un pedido o una consulta, «Ficha del cliente» lleva a ella. La dirección de la ficha lleva una clave, nunca el email.
+- **Descargar sus datos** (con `customers.manage`): un archivo con todo lo que hay de ese email, para cuando el cliente lo pide (derecho de acceso). Incluye las notas internas de los mensajes marcadas como `note`: revisarlo antes de enviarlo. Cada descarga queda en la auditoría, sin el email.
+- **Borrar datos:** los mensajes se borran desde su consulta y la suscripción desde Suscriptores; la cuenta la borra el cliente. Los pedidos se conservan por las obligaciones fiscales y contables (el plazo lo confirma la asesoría).
+- **El encargado** no ve clientes.
+
 ## Suscriptores a promociones
 
 Web → Suscriptores muestra las altas de la sección «Club L’Atelier» de la tienda (con `customers.view`), su idioma, fecha y estado: pendiente, en Sender o baja. «Exportar CSV» descarga la lista para importarla en Sender o abrirla en Excel. Con `customers.manage` (MFA) se puede dar de baja o borrar (derecho de supresión); si Sender está conectado, el cambio se hace también allí.
