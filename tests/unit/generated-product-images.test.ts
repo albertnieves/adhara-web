@@ -45,11 +45,15 @@ const product: StorefrontProduct = {
 
 describe('imágenes generadas de la PR #59', () => {
   it('cada asociación tiene su WebP público y no hay archivos sin asociar', () => {
-    const directory = 'public/media/generated-products/2026-11-02';
-    expect(GENERATED_PRODUCT_SLUGS).toHaveLength(45);
-    expect(new Set(GENERATED_PRODUCT_SLUGS).size).toBe(45);
-    expect(readdirSync(directory).sort()).toEqual(
-      GENERATED_PRODUCT_SLUGS.map((slug) => `${slug}.webp`).sort(),
+    const root = 'public/media/generated-products';
+    const files = readdirSync(root).flatMap((directory) =>
+      readdirSync(`${root}/${directory}`).map((file) => `${directory}/${file}`),
+    );
+    const urls = GENERATED_PRODUCT_SLUGS.map(
+      (slug) => heroMedia(withGeneratedProductImage({ ...product, slug }))?.url,
+    );
+    expect(urls.sort()).toEqual(
+      files.map((file) => `/media/generated-products/${file}`).sort(),
     );
     expect(
       existsSync('assets/generated-products/2026-11-02/miss-sakura.webp'),
@@ -70,7 +74,7 @@ describe('imágenes generadas de la PR #59', () => {
   });
 
   it('no asigna imágenes a Miss Sakura ni a un perfume fuera de la selección', () => {
-    for (const slug of ['miss-sakura', 'asad', 'toString']) {
+    for (const slug of ['miss-sakura', 'perfume-desconocido', 'toString']) {
       const other = { ...product, slug };
       expect(withGeneratedProductImage(other)).toBe(other);
     }

@@ -6,7 +6,7 @@ Procedencia: [PR #59](https://github.com/albertnieves/adhara-web/pull/59), commi
 
 - 45 WebP en `public/media/generated-products/2026-11-02/`, asociados por slug en `src/modules/catalog/domain/generated-product-images.ts`.
 - Solo se añaden a productos que ya devuelve la lectura autorizada del catálogo. No crean productos ni cambian publicación, formatos, precios o existencias.
-- Se muestran como principal en tarjetas y galerías, con origen `generated_draft`, `provisional: true` y la indicación «Imagen generada» traducida a es/ca/en. Conservan su color original, sin la corrección de brillo de las fotos de catálogo.
+- Se muestran como principal en tarjetas y galerías, con origen `generated_draft`, `provisional: true`. La procedencia queda registrada internamente, sin etiqueta en la tienda. Conservan su color original, sin la corrección de brillo de las fotos de catálogo.
 - Se conservan todas las fotos originales. Una foto propia marcada como principal desde el panel tiene prioridad sobre la recreación. La integración reside en el código, no en `product_media`; el panel sigue gestionando las fotografías originales.
 - El feed de Google y Meta lee las imágenes originales. Las recreaciones tampoco se añaden al JSON-LD ni a las imágenes de las tarjetas sociales.
 - No cambia la selección de escenas 3D del piloto.

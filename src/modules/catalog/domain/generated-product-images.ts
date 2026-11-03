@@ -4,7 +4,7 @@ import type { StorefrontProduct } from './product';
  * Miss Sakura queda fuera hasta confirmar variante y formato.
  * Solo se enriquecen productos ya leídos con RLS; no se crea catálogo.
  */
-export const GENERATED_PRODUCT_SLUGS = [
+const originalSlugs = [
   'asad-bourbon',
   'asad-elixir',
   'bharara-double-bleu',
@@ -52,8 +52,26 @@ export const GENERATED_PRODUCT_SLUGS = [
   'yara-tous-aceite-concentrado',
 ] as const;
 
-const slugs = new Set<string>(GENERATED_PRODUCT_SLUGS);
-const basePath = '/media/generated-products/2026-11-02';
+const additionalSlugs = [
+  'abaq-oud-for-love',
+  'aether-extrait',
+  'afeef',
+  'affection-love',
+  'ajwad-pink-to-pink',
+  'ajwad',
+  'al-areeq-gold',
+  'al-qasr-rouge',
+  'al-qiam-gold',
+  'amber-oud-aqua-dubai',
+  'amber-oud-dubai-night',
+] as const;
+
+export const GENERATED_PRODUCT_SLUGS = [...originalSlugs, ...additionalSlugs];
+
+const directories = new Map<string, string>([
+  ...originalSlugs.map((slug) => [slug, '2026-11-02'] as const),
+  ...additionalSlugs.map((slug) => [slug, '2026-11-03'] as const),
+]);
 
 /** Conserva las fuentes originales y permite sustituir la propuesta desde el panel
  * marcando una foto propia como principal. No modifica el producto recibido.
@@ -61,8 +79,9 @@ const basePath = '/media/generated-products/2026-11-02';
 export function withGeneratedProductImage(
   product: StorefrontProduct,
 ): StorefrontProduct {
-  if (!slugs.has(product.slug)) return product;
-  const url = `${basePath}/${product.slug}.webp`;
+  const directory = directories.get(product.slug);
+  if (!directory) return product;
+  const url = `/media/generated-products/${directory}/${product.slug}.webp`;
   if (product.media.some((media) => media.url === url)) return product;
   const ownHero = product.media.find(
     (media) => media.role === 'hero' && media.origin === 'own_photo',
