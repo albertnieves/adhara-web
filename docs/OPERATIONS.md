@@ -90,6 +90,6 @@ Base de comparación del 25/10, consulta de lectura: 35 migraciones hasta `20261
 
 ## Siguiente criterio de cierre
 
-Entornos y operación se cierran cuando una Preview completa escribe solo en su base ficticia, las URLs de pruebas antiguas ya no operan sobre datos reales, Availability pasa en `main` y se registra una restauración de prueba en un entorno aislado. Después: SEO base, búsqueda/filtros móviles, Scent Journey y 3D selectivo. La integración de Sentry y los presupuestos de Lighthouse quedan para entregas específicas; no se han instalado en esta PR.
+Entornos y operación se cierran cuando una Preview completa escribe solo en su base ficticia, las URLs de pruebas antiguas ya no operan sobre datos reales, Availability pasa en `main` y se registra una restauración de prueba en un entorno aislado. Después: SEO base, búsqueda/filtros móviles, Scent Journey y 3D selectivo. La integración de Sentry queda para una entrega específica; los presupuestos de Lighthouse están en la CI desde el 03/11 (DECISIONS §187).
 
 Fuentes: [entornos de Vercel](https://vercel.com/docs/deployments/environments), [variables por destino](https://vercel.com/docs/environment-variables), [entornos de Supabase](https://supabase.com/docs/guides/deployment/managing-environments), [plazo de una consulta](https://supabase.com/docs/reference/javascript/using-modifiers-abortsignal).

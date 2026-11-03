@@ -1,4 +1,15 @@
-# Estado real — 02/11/2026
+# Estado real — 03/11/2026
+
+## 3D bajo demanda y rendimiento (03/11)
+
+Rama `claude/adoring-bardeen-3gdo0v`. Roadmap, punto 7 («3D selectivo y rendimiento»), a petición del usuario («sigue con lo pendiente del roadmap»); lo anterior depende del titular, del banco o de la asesoría. Respuesta del usuario el 03/11: foto primero y botón para el 3D, en el móvil y en el escritorio. Decisión §187. Sin migraciones ni variables.
+
+- **Ficha:** abre siempre con las fotos. Con escena y WebGL, «Abrir la caja en 3D» trae three.js y la escena en ese momento; «Ver las fotos» vuelve. Con movimiento reducido abre en el final; sin WebGL, solo fotos. La escena ya no se repinta cuando está quieta. La ficha con escena pasa de 574 a 293 KB de JavaScript y de 1,9 MB a 620 KB, y su rendimiento en escritorio de 53 a 100.
+- **Entrada sin esperar a React:** la de la portada y la de `Reveal` son CSS (mismo aspecto). En el móvil, con la red y la CPU frenadas de verdad, el LCP de la portada baja de 8,1 a 2,1–2,5 s y el del recorrido olfativo de 6,3 a 2,2 s. Sin JavaScript, el contenido ya se ve.
+- **Panel:** «Aperturas de la animación 3D» (Control → Atención) cuenta ahora cuántas veces se abre; las cifras de antes del 03/11 no son comparables.
+- **CI:** `e2e.yml` termina con Lighthouse (`scripts/lighthouse.ts` y `tests/fixtures/lighthouse.sql`) en portada, colección, ficha con 3D, búsqueda y recorrido, móvil y escritorio, con presupuestos de peso, CLS, accesibilidad, LCP y TBT; resumen en la ejecución e informes en el artefacto `auditoria-visual`. Nueva dependencia de desarrollo: `lighthouse` 13.5.0 (exacta). Límite del trabajo, de 25 a 35 minutos.
+- **Comprobado en local** (Node 24.16.0, Supabase local con Docker reiniciado con todas las migraciones, datos de la CI y configuración de `e2e.yml`): lint, tipos, 797 unitarias (2 nuevas) y build correctos; `format:check` y `scan:secrets` correctos; tienda pública 321 correctas y 51 omitidas; panel con sesión 67/67, con `scene-3d.spec.ts` (sin three.js al cargar, la escena al pulsar, el foco entre los dos botones, movimiento reducido y `?nowebgl`); axe sin infracciones en 109 pantallas; Lighthouse dentro de presupuesto en las 10 medidas tras las baterías (móvil: LCP 2,1–2,7 s, rendimiento 72–85; escritorio: LCP 0,2–1,5 s, rendimiento 95–100). Capturas de la ficha con el botón y con la escena y de la portada a 390 y 1440 px revisadas (la revisión encontró el titular sin espacios entre palabras con la entrada en CSS; corregido y medido igual que antes); modo desarrollo sin avisos de hidratación, también al navegar. pgTAP no se ha vuelto a pasar: no hay SQL nuevo.
+- **Falta:** más perfumes en 3D (medidas reales del kit de tienda, titular), el pipeline GLB con el primer modelo y, en el móvil, bajar el JavaScript que se hidrata para pasar de 72–85 a 90. La búsqueda con `?q=` sigue pintando los resultados en el navegador.
 
 ## Promociones automáticas (02/11)
 

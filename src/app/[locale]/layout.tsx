@@ -12,7 +12,12 @@ import { siteUrl } from '@/modules/i18n/seo';
 import { indexingEnabled } from '@/modules/i18n/indexing';
 import { LegalConsent } from '@/modules/legal';
 import { NewsletterSection } from '@/modules/newsletter/server';
-import { Footer, Header, PreviewBanner } from '@/modules/storefront';
+import {
+  Footer,
+  Header,
+  PreviewBanner,
+  RevealScript,
+} from '@/modules/storefront';
 import { activeVendors, TrackingTags } from '@/modules/tracking';
 import { serverTrackingConfig } from '@/modules/tracking/server';
 import { fontVariables } from '../fonts';
@@ -58,6 +63,7 @@ export default async function LocaleLayout({
   return (
     <html lang={locale} className={fontVariables}>
       <body>
+        <RevealScript />
         <NextIntlClientProvider locale={locale} messages={messages}>
           <a
             href="#contenido"

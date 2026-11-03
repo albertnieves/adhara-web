@@ -78,6 +78,9 @@
   --tracking-caps-sm: 0.12em;
   --tracking-caps: 0.18em;
   --tracking-caps-lg: 0.3em;
+  /* Solo la entrada de la portada: el lema se cierra de 0,6 a 0,32 em. */
+  --tracking-hero: 0.32em;
+  --tracking-hero-from: 0.6em;
 
   /* Retícula, radios y movimiento. */
   --container-page: 80rem;
@@ -312,6 +315,69 @@
     opacity: 0.07;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   }
+
+  /*
+   * Reveal: sube y se funde al entrar en pantalla. RevealScript lo oculta
+   * antes y le pone data-revealed al verlo (DECISIONS §187).
+   */
+  [data-reveal] {
+    transition:
+      opacity 1.1s var(--ease-luxe) var(--reveal-delay, 0s),
+      transform 1.1s var(--ease-luxe) var(--reveal-delay, 0s);
+  }
+
+  /*
+   * Entrada de la portada con CSS, no con JavaScript: empieza con el primer
+   * pintado y el texto no espera a que cargue React (en el móvil eran 5 s
+   * hasta ver el titular; DECISIONS §187). Mismos tiempos y curva que antes.
+   */
+  .hero-eyebrow {
+    letter-spacing: var(--tracking-hero);
+    animation: hero-eyebrow 1.6s var(--ease-luxe) 0.2s both;
+  }
+  .hero-word {
+    animation: hero-word 1.3s var(--ease-luxe) both;
+  }
+  .hero-rule {
+    animation: hero-rule 1.4s var(--ease-luxe) 1.1s both;
+  }
+  .hero-lead {
+    animation: hero-rise 1.2s var(--ease-luxe) 1.25s both;
+  }
+  .hero-cta {
+    animation: hero-rise 1.2s var(--ease-luxe) 1.45s both;
+  }
+  .hero-star {
+    animation: hero-star 2.4s var(--ease-luxe) both;
+  }
+  @keyframes hero-eyebrow {
+    from {
+      opacity: 0;
+      letter-spacing: var(--tracking-hero-from);
+    }
+  }
+  @keyframes hero-word {
+    from {
+      transform: translateY(110%);
+    }
+  }
+  @keyframes hero-rule {
+    from {
+      transform: scaleX(0);
+    }
+  }
+  @keyframes hero-rise {
+    from {
+      opacity: 0;
+      transform: translateY(16px);
+    }
+  }
+  @keyframes hero-star {
+    from {
+      opacity: 0;
+      transform: scale(0.6);
+    }
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -319,6 +385,8 @@
   *::before,
   *::after {
     animation-duration: 0.01ms !important;
+    /* Sin esperar: lo que entra con retraso (la portada) se ve ya en su sitio. */
+    animation-delay: 0s !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;

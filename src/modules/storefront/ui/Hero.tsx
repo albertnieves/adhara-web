@@ -6,13 +6,11 @@ import {
   useScroll,
   useTransform,
 } from 'motion/react';
-import { useRef } from 'react';
+import { Fragment, useRef } from 'react';
 import Image from 'next/image';
 import { Heading, buttonClass } from '@/components/ui';
 import { Star } from '@/modules/brand';
 import { Link } from '@/modules/i18n';
-
-const EASE = [0.22, 1, 0.36, 1] as const;
 
 /** Cielo determinista (mismo en servidor y cliente: sin desajustes de hidratación). */
 const STARS = (() => {
@@ -120,80 +118,57 @@ export function Hero({
         aria-hidden
         className="text-accent/10 absolute -z-10"
         style={reduced ? undefined : { rotate: starRotate, scale: starScale }}
-        initial={reduced ? false : { opacity: 0, scale: 0.6 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 2.4, ease: EASE }}
       >
-        <Star className="size-[min(120vw,64rem)]" />
+        <Star className="hero-star size-[min(120vw,64rem)]" />
       </motion.div>
 
       <motion.div
         className="relative mx-auto max-w-5xl px-6 text-center"
         style={reduced ? undefined : { y: contentY, opacity: contentOpacity }}
       >
-        <motion.p
-          // El espaciado lo anima motion; el resto, como Eyebrow en dorado.
-          className="text-2xs text-accent-fg font-sans font-normal uppercase"
-          initial={reduced ? false : { opacity: 0, letterSpacing: '0.6em' }}
-          animate={{ opacity: 1, letterSpacing: '0.32em' }}
-          transition={{ duration: 1.6, delay: 0.2, ease: EASE }}
-        >
+        {/*
+          La entrada (clases hero-* de globals.css) es CSS: empieza con el
+          primer pintado, sin esperar a React. motion solo mueve el bloque al
+          hacer scroll.
+        */}
+        <p className="hero-eyebrow text-2xs text-accent-fg font-sans font-normal uppercase">
           {eyebrow}
-        </motion.p>
+        </p>
 
         <Heading level={1} size="display" className="mt-8">
           {words.map((word, index) => (
-            <span
-              key={`${word}-${index}`}
-              className="inline-block overflow-hidden pb-[0.12em] align-bottom"
-            >
-              <motion.span
-                className="inline-block"
-                initial={reduced ? false : { y: '110%' }}
-                animate={{ y: '0%' }}
-                transition={{
-                  duration: 1.3,
-                  delay: 0.45 + index * 0.09,
-                  ease: EASE,
-                }}
-              >
-                {word}
-                {index < words.length - 1 ? ' ' : ''}
-              </motion.span>
-            </span>
+            <Fragment key={`${word}-${index}`}>
+              <span className="inline-block overflow-hidden pb-[0.12em] align-bottom">
+                <span
+                  className="hero-word inline-block"
+                  style={{ animationDelay: `${0.45 + index * 0.09}s` }}
+                >
+                  {word}
+                </span>
+              </span>
+              {/* El espacio, fuera del bloque: dentro, el navegador lo quita. */}
+              {index < words.length - 1 && ' '}
+            </Fragment>
           ))}
         </Heading>
 
-        <motion.div
+        <div
           aria-hidden
-          className="bg-accent-fg/60 mx-auto mt-10 h-px w-24 origin-center"
-          initial={reduced ? false : { scaleX: 0 }}
-          animate={{ scaleX: 1 }}
-          transition={{ duration: 1.4, delay: 1.1, ease: EASE }}
+          className="hero-rule bg-accent-fg/60 mx-auto mt-10 h-px w-24 origin-center"
         />
 
-        <motion.p
-          className="text-fg-muted mx-auto mt-10 max-w-xl text-base leading-relaxed sm:text-lg"
-          initial={reduced ? false : { opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.2, delay: 1.25, ease: EASE }}
-        >
+        <p className="hero-lead text-fg-muted mx-auto mt-10 max-w-xl text-base leading-relaxed sm:text-lg">
           {lead}
-        </motion.p>
+        </p>
 
-        <motion.div
-          className="mt-12"
-          initial={reduced ? false : { opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.2, delay: 1.45, ease: EASE }}
-        >
+        <div className="hero-cta mt-12">
           <Link
             href="/catalogo"
             className={buttonClass('outline', 'lg', 'sheen')}
           >
             {cta}
           </Link>
-        </motion.div>
+        </div>
       </motion.div>
 
       <div
