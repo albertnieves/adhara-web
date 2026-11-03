@@ -105,6 +105,10 @@
     "scene": "Animación 3D de {name}",
     "sceneReplay": "Repetir",
     "sceneDrag": "Arrastra para girar",
+    "sceneOpen": "Abrir la caja en 3D",
+    "sceneLoading": "Cargando la caja…",
+    "sceneClose": "Ver las fotos",
+    "sceneFailed": "No se ha podido cargar la vista 3D. Las fotos siguen aquí.",
     "related": "También de {brand}"
   },
   "newsletter": {

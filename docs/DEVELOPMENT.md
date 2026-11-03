@@ -16,7 +16,7 @@ Apertura de la venta online ([ROADMAP.md](ROADMAP.md), punto 1); entornos y oper
 
 ## Verificación
 
-`pnpm check`, `pnpm format:check` y `pnpm scan:secrets` tras cambios funcionales. Con rutas o navegación, build y `pnpm test:e2e`. Con SQL, también Supabase local, pgTAP, `node scripts/check-db-types.ts`, `node scripts/check-db-lint.ts` y concurrencia. La CI repite calidad, base y E2E; Availability vigila la web de producción tras fusionar su workflow.
+`pnpm check`, `pnpm format:check` y `pnpm scan:secrets` tras cambios funcionales. Con rutas o navegación, build y `pnpm test:e2e`. Si cambia lo que carga la tienda (dependencias, imágenes, animaciones, 3D), `node scripts/lighthouse.ts` con la web en marcha (`pnpm build:local` y `node scripts/local-env.ts pnpm start`, tras cargar `tests/fixtures/lighthouse.sql` en el Supabase local): mide cinco páginas con sus presupuestos (§187). Con SQL, también Supabase local, pgTAP, `node scripts/check-db-types.ts`, `node scripts/check-db-lint.ts` y concurrencia. La CI repite calidad, base y E2E; Availability vigila la web de producción tras fusionar su workflow.
 
 No registrar como ejecutado lo que solo hará la CI. No ejecutar scripts de dependencias con credenciales reales. Mantener secretos fuera del chat, logs y artefactos.
 

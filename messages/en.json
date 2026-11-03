@@ -105,6 +105,10 @@
     "scene": "3D animation of {name}",
     "sceneReplay": "Replay",
     "sceneDrag": "Drag to rotate",
+    "sceneOpen": "Open the box in 3D",
+    "sceneLoading": "Loading the box…",
+    "sceneClose": "See the photos",
+    "sceneFailed": "The 3D view couldn’t be loaded. The photos are still here.",
     "related": "More from {brand}"
   },
   "newsletter": {

@@ -9,7 +9,7 @@ export { ProductImage } from './ui/ProductImage';
 export { PreviewBanner } from './ui/PreviewBanner';
 export { ProductStage } from './ui/ProductStage';
 export { PurchasePanel } from './ui/PurchasePanel';
-export { Reveal } from './ui/Reveal';
+export { Reveal, RevealScript } from './ui/Reveal';
 export { ScentCard, ScentCatalogBrowser } from './ui/ScentCatalogBrowser';
 export { ScentJourney } from './ui/ScentJourney';
 export { SiteSearch } from './ui/SiteSearch';
