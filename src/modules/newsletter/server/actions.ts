@@ -1,6 +1,7 @@
 'use server';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
+import { withinRateLimit } from '@/lib/rate-limit';
 import { createSupabasePublicClient } from '@/lib/supabase/public';
 import type { ActionState } from '@/modules/admin';
 import { describeDbError, fail, ok } from '@/modules/admin';
@@ -37,6 +38,9 @@ export async function subscribeNewsletter(
     if (email) return { status: 'invalidEmail' };
     return { status: consent ? 'consentRequired' : 'error' };
   }
+  // Freno por cliente (DECISIONS §187): la base solo tiene uno global.
+  if (!(await withinRateLimit('newsletter_subscribe')))
+    return { status: 'busy' };
   const supabase = createSupabasePublicClient();
   if (!supabase) return { status: 'error' };
   const { error } = await supabase.rpc('newsletter_subscribe', {

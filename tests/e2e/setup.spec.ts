@@ -62,8 +62,13 @@ for (const path of ['/es', '/es/catalogo', '/admin/acceso']) {
     const headers = (await request.get(path)).headers();
     expect(headers['x-content-type-options']).toBe('nosniff');
     expect(headers['x-frame-options']).toBe('DENY');
-    expect(headers['content-security-policy']).toContain(
-      "frame-ancestors 'none'",
+    const csp = headers['content-security-policy'] ?? '';
+    expect(csp).toContain("frame-ancestors 'none'");
+    expect(csp).toContain("script-src 'self'");
+    expect(csp).toContain("form-action 'self'");
+    expect(csp).not.toContain("'unsafe-eval'");
+    expect(headers['cross-origin-opener-policy']).toBe(
+      'same-origin-allow-popups',
     );
     expect(headers['strict-transport-security']).toContain('max-age=');
     expect(headers['referrer-policy']).toBe('strict-origin-when-cross-origin');

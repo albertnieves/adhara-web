@@ -671,6 +671,11 @@
       "disabled": "El compte de client no està disponible.",
       "generic": "Alguna cosa ha fallat. Torna-ho a provar d'aquí a uns minuts.",
       "review": "Revisa els camps marcats."
+    },
+    "confirmLink": {
+      "title": "Confirma per continuar",
+      "body": "Per seguretat, prem el botó per acabar d’obrir l’enllaç.",
+      "submit": "Continua"
     }
   },
   "search": {

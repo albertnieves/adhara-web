@@ -15,6 +15,11 @@ export const PERMANENT_COLOR_EXCEPTIONS: Readonly<
     reason:
       'Fondo de la escena 3D: three.js no lee variables CSS (refleja --color-stage).',
   },
+  'src/app/auth/confirm/route.ts': {
+    count: 8,
+    reason:
+      'Página del botón de los enlaces de Auth: HTML suelto sin la hoja de estilos de la tienda ni etiquetas de terceros (refleja marfil, tinta, humo y oro profundo; en oscuro, noche, marfil, niebla y oro suave).',
+  },
   'src/modules/mail/domain/order-email.ts': {
     count: 5,
     reason:

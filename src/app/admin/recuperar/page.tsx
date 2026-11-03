@@ -19,7 +19,9 @@ export default async function Recovery({
         <AuthError>
           {params.error === 'email'
             ? 'Escribe un email válido.'
-            : 'El acceso no está disponible en este momento.'}
+            : params.error === 'espera'
+              ? 'Demasiadas peticiones. Espera un rato antes de pedir otro enlace.'
+              : 'El acceso no está disponible en este momento.'}
         </AuthError>
       )}
       {params.enviado ? (

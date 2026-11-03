@@ -15,6 +15,11 @@ export default async function AdminMfa({
       {error === 'codigo' && (
         <AuthError>El código no es válido o ha caducado.</AuthError>
       )}
+      {error === 'espera' && (
+        <AuthError>
+          Demasiados intentos. Espera unos minutos antes de volver a probar.
+        </AuthError>
+      )}
       {step === 'enroll_mfa' ? (
         <>
           <p className="text-fg-muted mb-6 text-sm leading-relaxed">

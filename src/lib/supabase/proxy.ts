@@ -1,7 +1,7 @@
 import { createServerClient } from '@supabase/ssr';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
-import { getSupabaseConfig } from './config';
+import { getSupabaseConfig, SUPABASE_COOKIE_OPTIONS } from './config';
 
 /** Refresca la sesión de Supabase en el proxy y reescribe sus cookies. */
 export async function refreshSupabaseSession(request: NextRequest) {
@@ -10,6 +10,7 @@ export async function refreshSupabaseSession(request: NextRequest) {
   if (!config) return { response, hasSession: false };
 
   const supabase = createServerClient(config.url, config.publishableKey, {
+    cookieOptions: SUPABASE_COOKIE_OPTIONS,
     cookies: {
       getAll: () => request.cookies.getAll(),
       setAll(cookiesToSet, headers) {
@@ -41,6 +42,7 @@ export async function refreshSupabaseSessionInto(
   const config = getSupabaseConfig();
   if (!config) return response;
   const supabase = createServerClient(config.url, config.publishableKey, {
+    cookieOptions: SUPABASE_COOKIE_OPTIONS,
     cookies: {
       getAll: () => request.cookies.getAll(),
       setAll(cookiesToSet, headers) {

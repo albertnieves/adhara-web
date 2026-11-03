@@ -7,6 +7,7 @@ const ERRORS: Record<string, string> = {
   credenciales: 'Email o contraseña incorrectos.',
   servicio: 'El acceso no está disponible en este momento.',
   enlace: 'El enlace ha caducado o no es válido. Pide uno nuevo.',
+  espera: 'Demasiados intentos. Espera unos minutos antes de volver a probar.',
 };
 
 export default async function AdminLogin({

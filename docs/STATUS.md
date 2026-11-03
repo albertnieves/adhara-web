@@ -1,4 +1,17 @@
-# Estado real — 02/11/2026
+# Estado real — 03/11/2026
+
+## Revisión de seguridad (03/11)
+
+Rama `claude/seguridad-endurecimiento`. A petición del usuario: proteger las consultas, el XSS y cualquier mejora para que no entren intrusos ni se lleven datos. Decisión §187; informe en [SECURITY_REVIEW_2026-11.md](SECURITY_REVIEW_2026-11.md). Sin migraciones ni variables nuevas: se puede desplegar sin tocar `atelier-dev`.
+
+- **Dependencias:** Next.js 16.4.4 (la 16.3.8 tenía dos fallos críticos de ejecución remota de código y una denegación de servicio) y zod 4.6.7; en las pruebas, Vitest 5.0.5 y Vite 8.3.5. `pnpm audit --prod` sin avisos.
+- **Sesión:** las cookies de Supabase pasan a `httpOnly`; un script inyectado no puede llevarse la sesión de nadie, tampoco del personal.
+- **Accesos:** freno por visitante al entrar en el panel, el segundo factor, la recuperación de contraseña, la cuenta de cliente y el Club.
+- **CSP:** scripts solo de la tienda y de Google, Meta y TikTok, sin `eval`; formularios solo a la tienda, al banco y al acceso con Google; más cabeceras (`Cross-Origin-Opener-Policy`, `Permissions-Policy` ampliada).
+- **Enlaces de los correos de Auth:** abrirlos enseña «Confirma para continuar» y la sesión se abre con el botón (sin inicio de sesión forzado ni enlaces gastados por los antivirus del correo).
+- **Subidas del panel:** solo imágenes JPG, PNG, WebP o AVIF de verdad (se miran sus primeros bytes).
+- **Comprobado en local** (Node 24.22.1, Supabase local con Docker, datos de la CI y configuración de `e2e.yml`): `pnpm check` correcto (lint, tipos, 805 unitarias, 10 nuevas, y build); `format:check`, `scan:secrets` y `pnpm audit --prod` correctos; tienda pública 321 correctas y 51 omitidas, más las 2 nuevas de `/auth/confirm` tras corregir su cabecera (`admin-auth` y `setup`, 78/78); panel con sesión 63/65 en la vuelta completa: las 2 de invitación y recuperación del personal esperaban entrar al abrir el enlace, actualizadas para pulsar el botón, y `admin` y `account` pasan después (20/20). A mano, con el freno encendido: 10 intentos de acceso al panel y el 11.º «Demasiados intentos»; la cookie de la sesión es `httpOnly` y no aparece en `document.cookie`. Sin migraciones, pgTAP no se ha vuelto a pasar (la CI lo repite). Asesor de seguridad de `atelier-dev` leído el 03/11: sin tipos de aviso nuevos.
+- **Pendiente del titular:** límites del Firewall de Vercel antes de abrir la venta, proteger `main` en GitHub, MFA del administrador de la tienda y `atelier-prod` (lista en el informe).
 
 ## Promociones automáticas (02/11)
 

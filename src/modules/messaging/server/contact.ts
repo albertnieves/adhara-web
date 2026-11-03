@@ -2,7 +2,7 @@
 
 import { getTranslations } from 'next-intl/server';
 import { createMessagesClient } from '@/lib/supabase/privileged';
-import { withinRateLimit } from '@/modules/checkout/server/rate-limit';
+import { withinRateLimit } from '@/lib/rate-limit';
 import type { ContactState } from '../domain/contact';
 import { contactFieldErrors, contactInput } from '../domain/contact';
 import { contactEnabled } from './config';

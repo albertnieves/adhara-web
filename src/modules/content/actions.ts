@@ -1,6 +1,7 @@
 'use server';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
+import { isGenuineImage } from '@/lib/image-signature';
 import { requirePermission } from '@/modules/auth/server';
 import type { ActionState } from '@/modules/admin';
 import { fail, ok, describeDbError } from '@/modules/admin';
@@ -67,7 +68,11 @@ export async function editContent(
         'image/avif': 'avif',
       };
       const extension = types[file.type];
-      if (!extension || file.size > 3 * 1024 * 1024)
+      if (
+        !extension ||
+        file.size > 3 * 1024 * 1024 ||
+        !(await isGenuineImage(file))
+      )
         return fail('Usa una imagen JPG, PNG, WebP o AVIF de hasta 3 MB.');
       if (!raw.imageAlt?.trim() || !raw.imageSource?.trim())
         return fail('Indica descripción y procedencia de la imagen.');

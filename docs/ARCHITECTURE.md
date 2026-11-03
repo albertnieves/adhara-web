@@ -9,16 +9,16 @@ Monolito Next.js con módulos de dominio (ADR-001), desplegado en Vercel, con Su
 | Pieza          | Versión instalada (exacta)                                                        |
 | -------------- | --------------------------------------------------------------------------------- |
 | Node / pnpm    | 24.16.0 (`.nvmrc`) / 11.19.0                                                      |
-| Next.js        | 16.3.8, App Router, compilado con webpack (DECISIONS §11)                         |
+| Next.js        | 16.4.4, App Router, compilado con webpack (DECISIONS §11 y §187)                  |
 | React          | 19.3.0                                                                            |
 | TypeScript     | 6.0.3, estricto                                                                   |
 | Tailwind CSS   | 4.3.3                                                                             |
 | next-intl      | 4.14.7                                                                            |
 | Supabase       | `@supabase/supabase-js` 2.117.2, `@supabase/ssr` 0.12.7, CLI 2.118.0, Postgres 17 |
-| zod            | 4.6.5                                                                             |
+| zod            | 4.6.7                                                                             |
 | 3D y animación | three 0.186.1, @react-three/fiber 9.8.1, @react-three/drei 10.7.9, motion 13.4.4  |
 | Asistente      | `@anthropic-ai/sdk` 0.130.0                                                       |
-| Pruebas        | Vitest 5.0.2, Playwright 1.63.0, pgTAP                                            |
+| Pruebas        | Vitest 5.0.5, Playwright 1.63.0, pgTAP                                            |
 
 ```mermaid
 flowchart LR

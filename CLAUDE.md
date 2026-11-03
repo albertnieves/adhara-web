@@ -4,7 +4,7 @@ Ecommerce de perfumería árabe con tienda en es/ca/en y panel de administració
 
 ## Stack (versiones exactas en package.json)
 
-Node 24.16.0 (`.nvmrc`), pnpm 11.19.0, Next.js 16.3.8 (App Router, webpack), React 19.3.0, TypeScript 6.0.3 estricto, Tailwind 4.3.3, next-intl 4.14.7, Supabase (supabase-js 2.117.2, ssr 0.12.7, CLI 2.118.0, Postgres 17), zod 4.6.5, three 0.186.1 con React Three Fiber, motion 13.4.4, `@anthropic-ai/sdk` 0.130.0, Vitest 5.0.2 y Playwright 1.63.0. Versiones exactas y lockfile; no se instalan librerías por anticipación (pagos y email llegan en su fase).
+Node 24.16.0 (`.nvmrc`), pnpm 11.19.0, Next.js 16.4.4 (App Router, webpack), React 19.3.0, TypeScript 6.0.3 estricto, Tailwind 4.3.3, next-intl 4.14.7, Supabase (supabase-js 2.117.2, ssr 0.12.7, CLI 2.118.0, Postgres 17), zod 4.6.7, three 0.186.1 con React Three Fiber, motion 13.4.4, `@anthropic-ai/sdk` 0.130.0, Vitest 5.0.5 y Playwright 1.63.0. Versiones exactas y lockfile; no se instalan librerías por anticipación (pagos y email llegan en su fase).
 
 ## Arquitectura
 
@@ -18,7 +18,7 @@ Node 24.16.0 (`.nvmrc`), pnpm 11.19.0, Next.js 16.3.8 (App Router, webpack), Rea
 - Dinero en céntimos enteros y porcentajes en puntos básicos; precio y stock se calculan y validan en servidor.
 - Costes, proveedores y pedidos de compra en el esquema `internal`, no expuesto. Nunca en props, HTML, RSC ni respuestas públicas; solo mediante funciones `admin_*` con permiso y MFA.
 - Toda tabla de `public` tiene RLS y pruebas pgTAP de autorización. Una redirección no sustituye la autorización en servidor: `requireStaff` / `requirePermission` en cada página, acción y Route Handler del panel.
-- La clave privilegiada (`SUPABASE_SECRET_KEY`) solo para invitaciones de Auth, el informe diario, la copia diaria de la consola (DECISIONS §128) y, desde P03–P04, las funciones `web_order_*` de los pedidos web (DECISIONS §131) las de la bandeja de mensajes `web_contact_*`, `web_inbound_*` y `web_message_*` (DECISIONS §154) y, para los avisos de seguimiento firmados de la plataforma de envíos, `web_shipment_event` (DECISIONS §175). Nunca se piden claves por chat ni se suben secretos; `.env.example` solo lleva valores públicos y nombres.
+- La clave privilegiada (`SUPABASE_SECRET_KEY`) solo para invitaciones de Auth, el informe diario, la copia diaria de la consola (DECISIONS §128) y, desde P03–P04, las funciones `web_order_*` de los pedidos web (DECISIONS §131; `web_order_rate_limit` también frena los accesos y el Club, §187) las de la bandeja de mensajes `web_contact_*`, `web_inbound_*` y `web_message_*` (DECISIONS §154) y, para los avisos de seguimiento firmados de la plataforma de envíos, `web_shipment_event` (DECISIONS §175). Nunca se piden claves por chat ni se suben secretos; `.env.example` solo lleva valores públicos y nombres.
 - Detalle en [docs/SECURITY.md](docs/SECURITY.md) y [docs/PRICING.md](docs/PRICING.md).
 
 ## Idiomas

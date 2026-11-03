@@ -671,6 +671,11 @@
       "disabled": "Customer accounts aren't available.",
       "generic": "Something went wrong. Please try again in a few minutes.",
       "review": "Check the highlighted fields."
+    },
+    "confirmLink": {
+      "title": "Confirm to continue",
+      "body": "For your security, press the button to finish opening the link.",
+      "submit": "Continue"
     }
   },
   "search": {
