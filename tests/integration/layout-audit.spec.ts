@@ -52,6 +52,7 @@ const ROUTES = [
   '/admin/descuentos/nuevo',
   '/admin/descuentos/lotes/nuevo',
   '/admin/descuentos/promociones/nueva',
+  '/admin/descuentos/envio-gratis/nuevo',
   '/admin/configuracion',
   '/admin/equipo',
   '/admin/asistente',
@@ -124,6 +125,15 @@ async function anyDiscountBatchId() {
 async function anyPromotionId() {
   const { data: promotion } = await admin
     .from('promotions')
+    .select('id')
+    .limit(1)
+    .maybeSingle();
+  return promotion ? String(promotion.id) : undefined;
+}
+
+async function anyShippingPromotionId() {
+  const { data: promotion } = await admin
+    .from('shipping_promotions')
     .select('id')
     .limit(1)
     .maybeSingle();
@@ -218,15 +228,23 @@ test('panel: diseño sin solapes ni desbordes en todas sus pantallas', async ({
   makeControlOwner(email);
   await login(page, email);
 
-  const [product, order, discount, batch, promotion, conversation] =
-    await Promise.all([
-      anyProductId(),
-      anyOrderId(),
-      anyDiscountCodeId(),
-      anyDiscountBatchId(),
-      anyPromotionId(),
-      auditConversation(),
-    ]);
+  const [
+    product,
+    order,
+    discount,
+    batch,
+    promotion,
+    shippingPromotion,
+    conversation,
+  ] = await Promise.all([
+    anyProductId(),
+    anyOrderId(),
+    anyDiscountCodeId(),
+    anyDiscountBatchId(),
+    anyPromotionId(),
+    anyShippingPromotionId(),
+    auditConversation(),
+  ]);
   const routes = [
     ...ROUTES,
     ...(product ? [`/admin/catalogo/${product}`] : []),
@@ -234,6 +252,9 @@ test('panel: diseño sin solapes ni desbordes en todas sus pantallas', async ({
     ...(discount ? [`/admin/descuentos/${discount}`] : []),
     ...(batch ? [`/admin/descuentos/lotes/${batch}`] : []),
     ...(promotion ? [`/admin/descuentos/promociones/${promotion}`] : []),
+    ...(shippingPromotion
+      ? [`/admin/descuentos/envio-gratis/${shippingPromotion}`]
+      : []),
     `/admin/mensajes/${conversation.id}`,
     `/admin/mensajes/plantillas/${conversation.templateId}`,
     `/admin/clientes/${conversation.customerKey}`,

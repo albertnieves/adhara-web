@@ -63,11 +63,15 @@ export {
 } from './domain/price';
 export {
   EMPTY_SHIPPING_QUOTE,
+  freeShippingFrom,
+  freeShippingOffers,
   parseShippingQuote,
   zoneOptions,
 } from './domain/quote';
 export type {
+  FreeShippingOffer,
   ShippingOption,
+  ShippingPromotionOffer,
   ShippingQuote,
   ZoneOptions,
 } from './domain/quote';

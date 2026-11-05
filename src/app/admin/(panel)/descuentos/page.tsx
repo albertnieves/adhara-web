@@ -24,11 +24,13 @@ import {
   discountStatus,
   formatDiscountValue,
   promotionStatus,
+  shippingPromotionZonesText,
 } from '@/modules/promotions';
 import {
   listDiscountBatches,
   listDiscountCodes,
   listPromotions,
+  listShippingPromotions,
 } from '@/modules/promotions/server';
 
 export const metadata: Metadata = { title: 'Descuentos y promociones' };
@@ -84,14 +86,16 @@ function validity(code: Pick<DiscountCode, 'startsAt' | 'endsAt'>) {
 
 /**
  * Descuentos de la tienda: promociones automáticas (DECISIONS §186), que la
- * tienda aplica sola desde un importe, y códigos para las campañas del club
- * (§149–152, lotes §185), que el cliente escribe en «Finalizar compra». No se
- * suman: cada pedido lleva el que más descuenta.
+ * tienda aplica sola desde un importe, envío gratis temporal (§189) y códigos
+ * para las campañas del club (§149–152, lotes §185), que el cliente escribe en
+ * «Finalizar compra». Los descuentos no se suman: cada pedido lleva el que
+ * más descuenta; el envío gratis sí se suma a ellos.
  */
 export default async function DiscountCodes() {
   const { supabase } = await requirePermission('promotions.manage');
-  const [promotions, codes, batches] = await Promise.all([
+  const [promotions, shippingPromotions, codes, batches] = await Promise.all([
     listPromotions(supabase),
+    listShippingPromotions(supabase),
     listDiscountCodes(supabase),
     listDiscountBatches(supabase),
   ]);
@@ -110,6 +114,12 @@ export default async function DiscountCodes() {
           Nuevo código
         </Link>
         <Link
+          href="/admin/descuentos/envio-gratis/nuevo"
+          className={buttonClass('outline')}
+        >
+          Nuevo envío gratis
+        </Link>
+        <Link
           href="/admin/descuentos/promociones/nueva"
           className={buttonClass()}
         >
@@ -126,6 +136,12 @@ export default async function DiscountCodes() {
             casa. La cesta avisa de cuánto falta para conseguirla.
           </p>
           <p>
+            <strong className="font-semibold">Envío gratis temporal:</strong>{' '}
+            regala el envío hasta una fecha, desde un importe o en todos los
+            pedidos, en la península, en Baleares o en las dos. Se suma a los
+            códigos y a las promociones de descuento.
+          </p>
+          <p>
             <strong className="font-semibold">Códigos:</strong> crea el código
             aquí y escríbelo en la campaña de Sender con sus condiciones:
             descuento, fechas, compra mínima y si es de un uso por email. El
@@ -136,10 +152,11 @@ export default async function DiscountCodes() {
             No se suman: cada pedido lleva un solo descuento, el que más
             descuenta (si empatan, la promoción, y el código queda sin gastar).
             El descuento es sobre los artículos, nunca sobre el envío, y el
-            envío gratis se calcula con el descuento ya aplicado. Un código
-            compartido vale para quien lo tenga: limita los usos o las fechas si
-            no debe circular, o crea un lote de códigos únicos (uno por
-            suscriptor del Club, de un solo uso) para importarlo en Sender.
+            envío gratis (el de la zona o el temporal) se calcula con el
+            descuento ya aplicado. Un código compartido vale para quien lo
+            tenga: limita los usos o las fechas si no debe circular, o crea un
+            lote de códigos únicos (uno por suscriptor del Club, de un solo uso)
+            para importarlo en Sender.
           </p>
           {!checkout && (
             <p className="text-warning">
@@ -211,6 +228,88 @@ export default async function DiscountCodes() {
                         )}
                       </td>
                       <td>
+                        <Badge tone={status.tone}>{status.label}</Badge>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </Table>
+          </div>
+        )}
+      </section>
+
+      <section aria-labelledby="envio-gratis" className="mb-14">
+        <h2 id="envio-gratis" className="mb-6 text-2xl font-light">
+          Envío gratis temporal
+        </h2>
+        {shippingPromotions.length === 0 ? (
+          <p className="text-fg-muted text-sm">
+            Todavía no hay ninguno. Un envío gratis temporal regala el envío
+            hasta una fecha, desde un importe o en todos los pedidos.
+          </p>
+        ) : (
+          <div className="overflow-x-auto">
+            <Table caption="Envío gratis temporal" className="md:min-w-[56rem]">
+              <thead>
+                <tr>
+                  <th>Promoción</th>
+                  <th>Condición</th>
+                  <th>Vigencia</th>
+                  <th className="text-right">Pedidos</th>
+                  <th className="text-right">Cobrados</th>
+                  <th>Estado</th>
+                </tr>
+              </thead>
+              <tbody>
+                {shippingPromotions.map((promotion) => {
+                  const status = PROMOTION_STATUS[promotionStatus(promotion)];
+                  return (
+                    <tr key={promotion.id}>
+                      <td data-primary>
+                        <TextLink
+                          href={`/admin/descuentos/envio-gratis/${promotion.id}`}
+                        >
+                          {promotion.name}
+                        </TextLink>
+                      </td>
+                      <td data-label="Condición" className="text-sm">
+                        <div>
+                          {promotion.minItemsCents === 0
+                            ? 'Todos los pedidos'
+                            : `Desde ${formatEuros(promotion.minItemsCents, 'es')}`}
+                          <p className="text-fg-muted text-xs">
+                            {shippingPromotionZonesText(promotion.zones)}
+                          </p>
+                        </div>
+                      </td>
+                      <td
+                        data-label="Vigencia"
+                        className="text-sm tabular-nums"
+                      >
+                        {validity(promotion)}
+                      </td>
+                      <td
+                        data-label="Pedidos"
+                        className="text-right text-sm tabular-nums"
+                      >
+                        {promotion.uses}
+                      </td>
+                      <td
+                        data-label="Cobrados"
+                        className="text-right text-sm tabular-nums"
+                      >
+                        <div>
+                          {promotion.paidUses}
+                          {promotion.paidWaivedCents > 0 && (
+                            <p className="text-fg-muted text-xs">
+                              {formatEuros(promotion.paidWaivedCents, 'es')} de
+                              envío
+                            </p>
+                          )}
+                        </div>
+                      </td>
+                      <td data-label="Estado">
                         <Badge tone={status.tone}>{status.label}</Badge>
                       </td>
                     </tr>

@@ -29,6 +29,7 @@ export const CHECKOUT_ERRORS = [
   'unavailable',
   'discount',
   'discountChanged',
+  'shippingChanged',
   'disabled',
   'busy',
   'generic',
@@ -74,6 +75,17 @@ export const checkoutInput = z
       .transform((value) => {
         const cents = Number(value || 0);
         return Number.isSafeInteger(cents) && cents >= 0 ? cents : 0;
+      }),
+    // Envío que enseñó el resumen (§189): la base no crea el pedido si el suyo
+    // sale mayor. Vacío (recogida o sin elegir), no se comprueba.
+    expectedShipping: z
+      .string()
+      .trim()
+      .optional()
+      .transform((value) => {
+        if (!value) return null;
+        const cents = Number(value);
+        return Number.isSafeInteger(cents) && cents >= 0 ? cents : null;
       }),
     // Código ya aplicado en el resumen; la base lo vuelve a comprobar todo.
     discountCode: z

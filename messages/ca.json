@@ -335,6 +335,8 @@
     "total": "Total",
     "vat": "IVA inclòs",
     "freeFrom": "Enviament gratuït a partir de {amount} en articles.",
+    "freeFromUntil": "Enviament gratuït a partir de {amount} en articles fins al {date}.",
+    "freeAllUntil": "Enviament gratuït en totes les comandes fins al {date}.",
     "terms": "He llegit i accepto les <link>condicions de venda</link>.",
     "privacy": "Farem servir les teves dades només per gestionar la comanda. Més informació a la <link>política de privacitat</link>.",
     "withdrawal": "Tens 14 dies per desistir de la compra: <link>enviaments i devolucions</link>.",
@@ -368,7 +370,8 @@
       "shippingServiceRequired": "Tria un transportista per a l’enviament.",
       "shippingServiceUnavailable": "Aquest transportista ja no està disponible per a aquesta comanda. Tria’n un altre.",
       "shippingWeightUnknown": "Algun perfum de la cistella encara no es pot enviar. Pots recollir-lo a la botiga.",
-      "discountChanged": "El descompte ha canviat mentre compraves (per exemple, ha acabat una promoció). Revisa el total al resum i torna a confirmar."
+      "discountChanged": "El descompte ha canviat mentre compraves (per exemple, ha acabat una promoció). Revisa el total al resum i torna a confirmar.",
+      "shippingChanged": "El preu de l’enviament ha canviat mentre compraves (per exemple, ha acabat una promoció d’enviament gratuït). Revisa el total al resum i torna a confirmar."
     },
     "accountSignedIn": "Compres amb el teu compte ({email}). La comanda quedarà a «Les meves comandes».",
     "accountSignIn": "Tens compte? <link>Entra</link> per fer servir les teves dades desades i veure després la comanda al teu compte.",
@@ -391,7 +394,19 @@
     "line": "Promoció",
     "better": "La promoció descompta el mateix o més que el teu codi: s’aplica la promoció i el codi queda sense fer servir.",
     "codeBetter": "El teu codi descompta més que la promoció: s’aplica el codi. No se sumen.",
-    "codeUnused": "Codi {code}: no s’aplica"
+    "codeUnused": "Codi {code}: no s’aplica",
+    "freeShippingTitle": "Enviament gratuït",
+    "freeShipping": "Enviament gratuït en comandes des de {minimum}.",
+    "freeShippingZone": "Enviament gratuït a {zone} en comandes des de {minimum}.",
+    "freeShippingAll": "Enviament gratuït en totes les comandes.",
+    "freeShippingAllZone": "Enviament gratuït a {zone} en totes les comandes.",
+    "freeShippingOptions": "Amb les opcions d’enviament que ho indiquen en pagar.",
+    "freeShippingHave": "Ja el tens: l’enviament et surt gratis.",
+    "freeShippingMissing": "Et falten {amount} per aconseguir-lo.",
+    "zones": {
+      "peninsula": "la península",
+      "baleares": "les Balears"
+    }
   },
   "order": {
     "title": "La teva comanda",

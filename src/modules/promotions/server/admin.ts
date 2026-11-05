@@ -7,7 +7,10 @@ import type {
   DiscountCode,
   DiscountKind,
   Promotion,
+  ShippingPromotion,
+  ShippingPromotionZone,
 } from '../domain';
+import { SHIPPING_PROMOTION_ZONES } from '../domain';
 
 type Supabase = StaffContext['supabase'];
 
@@ -205,4 +208,46 @@ export async function listPromotionBrands(
     return [];
   }
   return data;
+}
+
+/**
+ * Envío gratis temporal con sus usos (admin_list_shipping_promotions:
+ * promotions.manage con MFA, DECISIONS §189), lo más reciente primero. Sin
+ * datos de clientes.
+ */
+export async function listShippingPromotions(
+  supabase: Supabase,
+): Promise<ShippingPromotion[]> {
+  const { data, error } = await supabase.rpc('admin_list_shipping_promotions');
+  if (error) {
+    console.error(
+      '[promociones] no se pudo leer el envío gratis',
+      error.message,
+    );
+    return [];
+  }
+  return data.map((row) => ({
+    id: row.id,
+    name: row.name,
+    minItemsCents: row.min_items_cents,
+    zones: row.zones.filter((zone): zone is ShippingPromotionZone =>
+      (SHIPPING_PROMOTION_ZONES as readonly string[]).includes(zone),
+    ),
+    startsAt: row.starts_at,
+    endsAt: row.ends_at,
+    active: row.active,
+    createdAt: row.created_at,
+    uses: row.uses,
+    paidUses: row.paid_uses,
+    paidWaivedCents: Number(row.paid_waived_cents),
+  }));
+}
+
+/** Una promoción de envío gratis con sus usos, o null si no existe o no hay permiso. */
+export async function getShippingPromotion(
+  supabase: Supabase,
+  id: string,
+): Promise<ShippingPromotion | null> {
+  const promotions = await listShippingPromotions(supabase);
+  return promotions.find((promotion) => promotion.id === id) ?? null;
 }

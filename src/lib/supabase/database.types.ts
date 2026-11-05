@@ -1054,6 +1054,9 @@ export type Database = {
           reserved_until: string;
           revision: number;
           shipping_cents: number;
+          shipping_promotion_cents: number | null;
+          shipping_promotion_id: string | null;
+          shipping_promotion_name: string | null;
           shipping_service_id: string | null;
           shipping_service_label: string | null;
           shipping_weight_g: number | null;
@@ -1086,6 +1089,9 @@ export type Database = {
           reserved_until: string;
           revision?: number;
           shipping_cents?: number;
+          shipping_promotion_cents?: number | null;
+          shipping_promotion_id?: string | null;
+          shipping_promotion_name?: string | null;
           shipping_service_id?: string | null;
           shipping_service_label?: string | null;
           shipping_weight_g?: number | null;
@@ -1118,6 +1124,9 @@ export type Database = {
           reserved_until?: string;
           revision?: number;
           shipping_cents?: number;
+          shipping_promotion_cents?: number | null;
+          shipping_promotion_id?: string | null;
+          shipping_promotion_name?: string | null;
           shipping_service_id?: string | null;
           shipping_service_label?: string | null;
           shipping_weight_g?: number | null;
@@ -1147,6 +1156,13 @@ export type Database = {
             columns: ['promotion_id'];
             isOneToOne: false;
             referencedRelation: 'promotions';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'orders_shipping_promotion_id_fkey';
+            columns: ['shipping_promotion_id'];
+            isOneToOne: false;
+            referencedRelation: 'shipping_promotions';
             referencedColumns: ['id'];
           },
           {
@@ -1722,6 +1738,48 @@ export type Database = {
             referencedColumns: ['id'];
           },
         ];
+      };
+      shipping_promotions: {
+        Row: {
+          active: boolean;
+          created_at: string;
+          created_by: string | null;
+          ends_at: string;
+          id: string;
+          min_items_cents: number;
+          name: string;
+          starts_at: string | null;
+          updated_at: string;
+          updated_by: string | null;
+          zones: string[];
+        };
+        Insert: {
+          active?: boolean;
+          created_at?: string;
+          created_by?: string | null;
+          ends_at: string;
+          id?: string;
+          min_items_cents?: number;
+          name: string;
+          starts_at?: string | null;
+          updated_at?: string;
+          updated_by?: string | null;
+          zones: string[];
+        };
+        Update: {
+          active?: boolean;
+          created_at?: string;
+          created_by?: string | null;
+          ends_at?: string;
+          id?: string;
+          min_items_cents?: number;
+          name?: string;
+          starts_at?: string | null;
+          updated_at?: string;
+          updated_by?: string | null;
+          zones?: string[];
+        };
+        Relationships: [];
       };
       shipping_rates: {
         Row: {
@@ -2609,6 +2667,22 @@ export type Database = {
           units_received: number;
         }[];
       };
+      admin_list_shipping_promotions: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          active: boolean;
+          created_at: string;
+          ends_at: string;
+          id: string;
+          min_items_cents: number;
+          name: string;
+          paid_uses: number;
+          paid_waived_cents: number;
+          starts_at: string;
+          uses: number;
+          zones: string[];
+        }[];
+      };
       admin_list_staff: {
         Args: Record<PropertyKey, never>;
         Returns: {
@@ -2731,6 +2805,9 @@ export type Database = {
           reserved_until: string;
           revision: number;
           shipping_cents: number;
+          shipping_promotion_cents: number | null;
+          shipping_promotion_id: string | null;
+          shipping_promotion_name: string | null;
           shipping_service_id: string | null;
           shipping_service_label: string | null;
           shipping_weight_g: number | null;
@@ -2926,6 +3003,9 @@ export type Database = {
           reserved_until: string;
           revision: number;
           shipping_cents: number;
+          shipping_promotion_cents: number | null;
+          shipping_promotion_id: string | null;
+          shipping_promotion_name: string | null;
           shipping_service_id: string | null;
           shipping_service_label: string | null;
           shipping_weight_g: number | null;
@@ -3158,6 +3238,36 @@ export type Database = {
         SetofOptions: {
           from: '*';
           to: 'promotions';
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
+      admin_save_shipping_promotion: {
+        Args: {
+          p_active: boolean;
+          p_ends_at: string;
+          p_id: string;
+          p_min_items_cents: number;
+          p_name: string;
+          p_starts_at: string;
+          p_zones: string[];
+        };
+        Returns: {
+          active: boolean;
+          created_at: string;
+          created_by: string | null;
+          ends_at: string;
+          id: string;
+          min_items_cents: number;
+          name: string;
+          starts_at: string | null;
+          updated_at: string;
+          updated_by: string | null;
+          zones: string[];
+        };
+        SetofOptions: {
+          from: '*';
+          to: 'shipping_promotions';
           isOneToOne: true;
           isSetofReturn: false;
         };
@@ -3412,6 +3522,9 @@ export type Database = {
           reserved_until: string;
           revision: number;
           shipping_cents: number;
+          shipping_promotion_cents: number | null;
+          shipping_promotion_id: string | null;
+          shipping_promotion_name: string | null;
           shipping_service_id: string | null;
           shipping_service_label: string | null;
           shipping_weight_g: number | null;
@@ -3554,6 +3667,7 @@ export type Database = {
           p_customer_id?: string;
           p_discount_code?: string;
           p_expected_discount_cents?: number;
+          p_expected_shipping_cents?: number;
           p_fulfillment: string;
           p_hold_minutes?: number;
           p_items: Json;

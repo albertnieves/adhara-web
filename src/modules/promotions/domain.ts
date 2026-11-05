@@ -689,3 +689,135 @@ export function chooseDiscount(
     return { source: 'promotion', discountCents: promotionCents };
   return { source: null, discountCents: 0 };
 }
+
+/*
+ * Envío gratis temporal (DECISIONS §189): regala el envío entre dos fechas,
+ * desde un importe pagado por los artículos (ya con el descuento) o en
+ * cualquier pedido, en las zonas que se elijan. Se suma a los códigos y a
+ * las promociones de descuento. La base decide qué pedido lo lleva
+ * (web_order_create); aquí, el formulario y lo que enseña el panel.
+ */
+
+export const SHIPPING_PROMOTION_ZONES = ['peninsula', 'baleares'] as const;
+export type ShippingPromotionZone = (typeof SHIPPING_PROMOTION_ZONES)[number];
+
+export const SHIPPING_PROMOTION_ZONE_LABELS: Record<
+  ShippingPromotionZone,
+  string
+> = { peninsula: 'la península', baleares: 'Baleares' };
+
+/** Una promoción de envío gratis del panel con sus usos (admin_list_shipping_promotions). */
+export type ShippingPromotion = {
+  id: string;
+  name: string;
+  /** 0: cualquier pedido. */
+  minItemsCents: Cents;
+  zones: ShippingPromotionZone[];
+  startsAt: string | null;
+  endsAt: string;
+  active: boolean;
+  createdAt: string;
+  /** Pedidos vivos o cobrados con el envío regalado por ella. */
+  uses: number;
+  paidUses: number;
+  /** Envío que se dejó de cobrar en los cobrados (con IVA). */
+  paidWaivedCents: Cents;
+};
+
+/** «península y Baleares» o «solo Baleares». */
+export function shippingPromotionZonesText(
+  zones: readonly ShippingPromotionZone[],
+): string {
+  const names = SHIPPING_PROMOTION_ZONES.filter((zone) =>
+    zones.includes(zone),
+  ).map((zone) => SHIPPING_PROMOTION_ZONE_LABELS[zone]);
+  return names.length === SHIPPING_PROMOTION_ZONES.length
+    ? names.join(' y ')
+    : `solo ${names.join(' y ')}`;
+}
+
+/** «Envío gratis desde 30 € · la península y Baleares», para el panel. */
+export function shippingPromotionSummary(
+  promotion: Pick<ShippingPromotion, 'minItemsCents' | 'zones'>,
+): string {
+  return [
+    promotion.minItemsCents === 0
+      ? 'Envío gratis en todos los pedidos'
+      : `Envío gratis desde ${formatEuros(promotion.minItemsCents, 'es')}`,
+    shippingPromotionZonesText(promotion.zones),
+  ].join(' · ');
+}
+
+/**
+ * Cómo la describe la tienda en español (messages/es.json →
+ * promotion.freeShipping…), con la zona solo si no vale en todas.
+ */
+export function shippingPromotionStoreText(
+  promotion: Pick<ShippingPromotion, 'minItemsCents' | 'zones'>,
+): string {
+  const zone =
+    promotion.zones.length < SHIPPING_PROMOTION_ZONES.length
+      ? promotion.zones.map((z) => SHIPPING_PROMOTION_ZONE_LABELS[z]).join(', ')
+      : null;
+  if (promotion.minItemsCents === 0)
+    return zone
+      ? `Envío gratis a ${zone} en todos los pedidos.`
+      : 'Envío gratis en todos los pedidos.';
+  const minimum = formatEuros(promotion.minItemsCents, 'es');
+  return zone
+    ? `Envío gratis a ${zone} en pedidos desde ${minimum}.`
+    : `Envío gratis en pedidos desde ${minimum}.`;
+}
+
+/** Datos del formulario de alta o cambio, ya en céntimos e ISO. */
+export const shippingPromotionInput = z
+  .object({
+    id: z.union([z.uuid(), z.literal('').transform(() => null)]),
+    name: z
+      .string()
+      .trim()
+      .min(1, 'Ponle un nombre (lo ve solo el equipo).')
+      .max(80, 'Como mucho 80 caracteres.'),
+    minItems: z.string().trim(),
+    zones: z
+      .array(z.enum(SHIPPING_PROMOTION_ZONES))
+      .min(1, 'Elige al menos una zona.'),
+    startsAt: optionalDate,
+    endsAt: optionalDate,
+    active: z.boolean(),
+  })
+  .transform((input, ctx) => {
+    const issue = (path: string, message: string) => {
+      ctx.addIssue({ code: 'custom', path: [path], message });
+      return z.NEVER;
+    };
+    let minItemsCents: Cents = 0;
+    if (input.minItems) {
+      const parsed = parseEuros(input.minItems);
+      if (parsed === null || parsed < 0 || parsed > 10_000_000)
+        return issue(
+          'minItems',
+          'Escribe desde cuánto vale, por ejemplo 30 o 49,90, o déjalo vacío para todos los pedidos.',
+        );
+      minItemsCents = parsed;
+    }
+    if (!input.endsAt)
+      return issue(
+        'endsAt',
+        'Pon cuándo termina: el envío gratis permanente se configura en Envíos → Remitente y zonas.',
+      );
+    if (input.startsAt && new Date(input.endsAt) <= new Date(input.startsAt))
+      return issue('endsAt', 'El final tiene que ir después del inicio.');
+    return {
+      id: input.id,
+      name: input.name,
+      minItemsCents,
+      zones: SHIPPING_PROMOTION_ZONES.filter((zone) =>
+        input.zones.includes(zone),
+      ),
+      startsAt: input.startsAt,
+      endsAt: input.endsAt,
+      active: input.active,
+    };
+  });
+export type ShippingPromotionInput = z.infer<typeof shippingPromotionInput>;

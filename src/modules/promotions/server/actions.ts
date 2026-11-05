@@ -10,6 +10,7 @@ import {
   discountBatchInput,
   discountCodeInput,
   promotionInput,
+  shippingPromotionInput,
 } from '../domain';
 
 /*
@@ -217,5 +218,56 @@ export async function savePromotion(
   revalidatePath('/admin/descuentos');
   if (!input.id) redirect(`/admin/descuentos/promociones/${data.id}?creada=1`);
   revalidatePath(`/admin/descuentos/promociones/${input.id}`);
+  return ok(`${input.name}: cambios guardados.`);
+}
+
+const SHIPPING_PROMOTION_MESSAGES: Record<string, string> = {
+  invalid_shipping_promotion:
+    'Revisa el envío gratis: un nombre, al menos una zona, un importe mínimo de 0 € o más y el final después del inicio.',
+  not_found: 'Esa promoción de envío gratis ya no existe.',
+};
+
+/**
+ * Alta o cambio de un envío gratis temporal (DECISIONS §189).
+ * promotions.manage (con MFA) aquí y otra vez en
+ * admin_save_shipping_promotion, que valida y deja la auditoría. Una nueva
+ * lleva a su ficha.
+ */
+export async function saveShippingPromotion(
+  _: ActionState,
+  form: FormData,
+): Promise<ActionState> {
+  const { supabase } = await requirePermission('promotions.manage');
+  const text = (name: string) => String(form.get(name) ?? '');
+  const parsed = shippingPromotionInput.safeParse({
+    id: text('id'),
+    name: text('name'),
+    minItems: text('minItems'),
+    zones: form.getAll('zones').map(String),
+    startsAt: text('startsAt'),
+    endsAt: text('endsAt'),
+    active: form.get('active') === 'on',
+  });
+  if (!parsed.success)
+    return fail(parsed.error.issues[0]?.message ?? 'Revisa los datos.');
+  const input = parsed.data;
+  // Los tipos generados no admiten null en los parámetros opcionales; la
+  // función trata el inicio vacío como «ya».
+  const { data, error } = await supabase.rpc('admin_save_shipping_promotion', {
+    p_id: input.id as string,
+    p_name: input.name,
+    p_min_items_cents: input.minItemsCents,
+    p_zones: input.zones,
+    p_starts_at: input.startsAt as string,
+    p_ends_at: input.endsAt,
+    p_active: input.active,
+  });
+  if (error)
+    return fail(
+      SHIPPING_PROMOTION_MESSAGES[error.message] ?? describeDbError(error),
+    );
+  revalidatePath('/admin/descuentos');
+  if (!input.id) redirect(`/admin/descuentos/envio-gratis/${data.id}?creada=1`);
+  revalidatePath(`/admin/descuentos/envio-gratis/${input.id}`);
   return ok(`${input.name}: cambios guardados.`);
 }

@@ -47,6 +47,7 @@ export const REPO_MIGRATIONS: readonly (readonly [
   ['20261102120000', 'customer_records'],
   ['20261102150000', 'discount_batches'],
   ['20261102180000', 'promotions'],
+  ['20261105120000', 'shipping_promotions'],
 ];
 
 /** Última migración que espera este código. */

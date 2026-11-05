@@ -5,4 +5,7 @@ export type { CheckoutAccount, CheckoutLine } from './CheckoutForm';
 export { AwaitingConfirmation } from './AwaitingConfirmation';
 export { PaymentRedirectForm } from './PaymentRedirectForm';
 export { RetryPaymentButton } from './RetryPaymentButton';
-export { PromotionOfferText } from './PromotionOfferText';
+export {
+  FreeShippingOfferText,
+  PromotionOfferText,
+} from './PromotionOfferText';

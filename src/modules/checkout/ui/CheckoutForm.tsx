@@ -28,12 +28,12 @@ import type {
 } from '@/modules/promotions';
 import { bestOffer, chooseDiscount } from '@/modules/promotions';
 import type { ShippingQuote } from '@/modules/shipping';
-import { optionCost, zoneOptions } from '@/modules/shipping';
+import { freeShippingFrom, optionCost, zoneOptions } from '@/modules/shipping';
 import type { CheckoutField, CheckoutState } from '../domain/input';
 import { isPostalCode, shippingZone } from '../domain/shipping';
 import { applyDiscountCode, placeOrder } from '../server/actions';
 import { PaymentRedirectForm } from './PaymentRedirectForm';
-import { PromotionOfferText } from './PromotionOfferText';
+import { PromotionOfferText, promotionDate } from './PromotionOfferText';
 
 const IDLE: CheckoutState = { status: 'idle' };
 
@@ -116,8 +116,9 @@ export type CheckoutLine = {
  * y Baleares con el transportista que elija el cliente, al precio de su peso,
  * DECISIONS §172) y resumen. Los importes que se ven aquí
  * son orientativos; los que cuentan los calcula la base al crear el pedido,
- * que no sale si su descuento es menor que el enseñado (§186). La mejor
- * promoción viva y el código no se suman: va el que más descuenta.
+ * que no sale si su descuento es menor o su envío mayor que los enseñados
+ * (§186, §189). La mejor promoción viva y el código no se suman: va el que más
+ * descuenta; el envío gratis temporal sí se suma a los dos.
  * Se mantiene montado tras el pedido (la cesta queda vacía): con el TPV
  * configurado lleva al banco a pagar (P04); sin él, enseña la confirmación.
  * Con la cuenta de cliente encendida, `account` rellena los datos guardados
@@ -166,9 +167,13 @@ export function CheckoutForm({
           minimumCents: result.minimumCents,
         });
       }
-      // El descuento cambió (una promoción terminó…): la página vuelve a
-      // pedir las promociones y el resumen enseña el total nuevo.
-      if (result.status === 'error' && result.error === 'discountChanged')
+      // El descuento o el envío cambiaron (una promoción terminó…): la página
+      // vuelve a pedir las promociones y el resumen enseña el total nuevo.
+      if (
+        result.status === 'error' &&
+        (result.error === 'discountChanged' ||
+          result.error === 'shippingChanged')
+      )
         router.refresh();
       return result;
     },
@@ -268,13 +273,28 @@ export function CheckoutForm({
   const applied = chooseDiscount(discount, promotion);
   const discountCents = applied.discountCents;
   // Envío gratis según lo que se paga por los artículos (con el descuento),
-  // en los servicios que cuentan para él.
+  // en los servicios que cuentan para él: desde el mínimo de la zona o, si es
+  // más bajo, el de su envío gratis temporal (§189).
+  const freeFrom = freeShippingFrom(zoneData);
   const costOf = (option: (typeof options)[number]) =>
-    optionCost(
-      option,
-      itemsCents - discountCents,
-      zoneData?.freeFromCents ?? null,
-    );
+    optionCost(option, itemsCents - discountCents, freeFrom);
+  const promotionFree =
+    zoneData?.promotion && zoneData.promotion.minItemsCents === freeFrom
+      ? zoneData.promotion
+      : null;
+  const freeNote =
+    freeFrom === null
+      ? null
+      : promotionFree
+        ? freeFrom === 0
+          ? t('freeAllUntil', {
+              date: promotionDate(promotionFree.endsAt, locale),
+            })
+          : t('freeFromUntil', {
+              amount: euros(freeFrom),
+              date: promotionDate(promotionFree.endsAt, locale),
+            })
+        : t('freeFrom', { amount: euros(freeFrom) });
   const shippingCents =
     fulfillment === 'click_collect' ? 0 : selected ? costOf(selected) : null;
   const problemMessage = problem
@@ -306,6 +326,15 @@ export function CheckoutForm({
         value={applied.source === 'code' ? (discount?.code ?? '') : ''}
       />
       <input type="hidden" name="expectedDiscount" value={discountCents} />
+      <input
+        type="hidden"
+        name="expectedShipping"
+        value={
+          fulfillment === 'shipping' && shippingCents !== null
+            ? shippingCents
+            : ''
+        }
+      />
       <input
         type="hidden"
         name="shippingServiceId"
@@ -616,10 +645,8 @@ export function CheckoutForm({
         </dl>
         <p className="text-fg-muted text-xs">
           {t('vat')}
-          {fulfillment === 'shipping' &&
-          zoneData?.freeFromCents &&
-          selected?.freeEligible
-            ? ` · ${t('freeFrom', { amount: euros(zoneData.freeFromCents) })}`
+          {fulfillment === 'shipping' && freeNote && selected?.freeEligible
+            ? ` · ${freeNote}`
             : ''}
         </p>
 

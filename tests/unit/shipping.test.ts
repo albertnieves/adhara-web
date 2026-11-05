@@ -4,6 +4,8 @@ import {
   SHIPMENT_STATUSES,
   bracketsFromLimits,
   decimalToCents,
+  freeShippingFrom,
+  freeShippingOffers,
   gramsFrom,
   kilosText,
   madridInstant,
@@ -287,6 +289,7 @@ describe('opciones de la cesta', () => {
         {
           zone: 'peninsula',
           freeFromCents: 6000,
+          promotion: null,
           options: [
             {
               serviceId: '00000000-0000-4000-8000-0000000024e1',
@@ -304,6 +307,175 @@ describe('opciones de la cesta', () => {
       weightG: null,
       zones: [],
     });
+  });
+});
+
+describe('envío gratis temporal (§189)', () => {
+  const option = (priceCents: number, freeEligible = true) => ({
+    service_id: '00000000-0000-4000-8000-0000000024e1',
+    label: 'Correos · Paq Estándar',
+    carrier_name: 'Correos',
+    transit_days: 2,
+    price_cents: priceCents,
+    free_eligible: freeEligible,
+  });
+  const ends = '2026-12-01T22:59:00+00:00';
+
+  it('lee la promoción de cada zona; 0 es «cualquier pedido»', () => {
+    const quote = parseShippingQuote({
+      weight_g: 400,
+      zones: [
+        {
+          zone: 'peninsula',
+          free_from_cents: 6000,
+          promotion: { min_items_cents: 3000, ends_at: ends },
+          options: [option(484)],
+        },
+        {
+          zone: 'baleares',
+          free_from_cents: null,
+          promotion: { min_items_cents: 0, ends_at: ends },
+          options: [option(995)],
+        },
+      ],
+    });
+    expect(quote.zones.map((zone) => zone.promotion)).toEqual([
+      { minItemsCents: 3000, endsAt: ends },
+      { minItemsCents: 0, endsAt: ends },
+    ]);
+    expect(
+      parseShippingQuote({
+        weight_g: 400,
+        zones: [
+          {
+            zone: 'peninsula',
+            free_from_cents: 6000,
+            promotion: { min_items_cents: -1, ends_at: ends },
+            options: [],
+          },
+        ],
+      }).zones,
+    ).toEqual([]);
+  });
+
+  it('el mínimo que vale es el más bajo de la zona y de la promoción', () => {
+    const zone = {
+      zone: 'peninsula' as const,
+      freeFromCents: 6000,
+      promotion: null,
+      options: [],
+    };
+    expect(freeShippingFrom(null)).toBeNull();
+    expect(freeShippingFrom(zone)).toBe(6000);
+    expect(
+      freeShippingFrom({
+        ...zone,
+        promotion: { minItemsCents: 3000, endsAt: ends },
+      }),
+    ).toBe(3000);
+    expect(
+      freeShippingFrom({
+        ...zone,
+        freeFromCents: null,
+        promotion: { minItemsCents: 0, endsAt: ends },
+      }),
+    ).toBe(0);
+    expect(
+      freeShippingFrom({
+        ...zone,
+        promotion: { minItemsCents: 9000, endsAt: ends },
+      }),
+    ).toBe(6000);
+    // Con 0, cualquier pedido sale gratis en un servicio que cuenta.
+    expect(optionCost({ priceCents: 484, freeEligible: true }, 1500, 0)).toBe(
+      0,
+    );
+    expect(optionCost({ priceCents: 484, freeEligible: false }, 1500, 0)).toBe(
+      484,
+    );
+  });
+
+  it('la cesta agrupa las zonas con la misma promoción y solo anuncia envíos posibles', () => {
+    const quote = parseShippingQuote({
+      weight_g: 400,
+      zones: [
+        {
+          zone: 'peninsula',
+          free_from_cents: 6000,
+          promotion: { min_items_cents: 3000, ends_at: ends },
+          options: [option(484)],
+        },
+        {
+          zone: 'baleares',
+          free_from_cents: null,
+          promotion: { min_items_cents: 3000, ends_at: ends },
+          options: [option(995)],
+        },
+      ],
+    });
+    expect(freeShippingOffers(quote)).toEqual([
+      {
+        minItemsCents: 3000,
+        endsAt: ends,
+        zones: ['peninsula', 'baleares'],
+        everywhere: true,
+        allServices: true,
+      },
+    ]);
+    // Solo en Baleares: lo dice.
+    const balearic = {
+      ...quote,
+      zones: quote.zones.map((zone) =>
+        zone.zone === 'peninsula' ? { ...zone, promotion: null } : zone,
+      ),
+    };
+    expect(freeShippingOffers(balearic)).toEqual([
+      {
+        minItemsCents: 3000,
+        endsAt: ends,
+        zones: ['baleares'],
+        everywhere: false,
+        allServices: true,
+      },
+    ]);
+    // Con un urgente que no cuenta, la cesta lo avisa.
+    const withUrgent = parseShippingQuote({
+      weight_g: 400,
+      zones: [
+        {
+          zone: 'peninsula',
+          free_from_cents: null,
+          promotion: { min_items_cents: 0, ends_at: ends },
+          options: [option(484), option(895, false)],
+        },
+      ],
+    });
+    expect(freeShippingOffers(withUrgent)[0]?.allServices).toBe(false);
+    // Sin servicios que cuenten para el envío gratis, o sin envío posible.
+    const urgentOnly = parseShippingQuote({
+      weight_g: 400,
+      zones: [
+        {
+          zone: 'peninsula',
+          free_from_cents: null,
+          promotion: { min_items_cents: 0, ends_at: ends },
+          options: [option(895, false)],
+        },
+      ],
+    });
+    expect(freeShippingOffers(urgentOnly)).toEqual([]);
+    const noWeight = parseShippingQuote({
+      weight_g: null,
+      zones: [
+        {
+          zone: 'peninsula',
+          free_from_cents: null,
+          promotion: { min_items_cents: 0, ends_at: ends },
+          options: [],
+        },
+      ],
+    });
+    expect(freeShippingOffers(noWeight)).toEqual([]);
   });
 });
 

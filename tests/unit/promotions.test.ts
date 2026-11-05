@@ -22,6 +22,10 @@ import {
   madridLocalToIso,
   normalizeDiscountCode,
   parsePercent,
+  shippingPromotionInput,
+  shippingPromotionStoreText,
+  shippingPromotionSummary,
+  shippingPromotionZonesText,
 } from '@/modules/promotions';
 
 describe('códigos de descuento', () => {
@@ -553,5 +557,104 @@ describe('descuento enseñado en «Finalizar compra»', () => {
       checkoutInput.parse({ ...order, expectedDiscount: '12.5' })
         .expectedDiscount,
     ).toBe(0);
+  });
+});
+
+describe('envío enseñado en «Finalizar compra» (§189)', () => {
+  const order = {
+    requestId: '0b7c8f5e-6a5d-4c4e-9f0e-1d2c3b4a5f60',
+    locale: 'es',
+    fulfillment: 'click_collect',
+    fullName: 'Ana',
+    email: 'ana@test.invalid',
+    phone: '',
+    addressLine1: '',
+    addressLine2: '',
+    postalCode: '',
+    city: '',
+    province: '',
+    acceptTerms: 'on',
+  };
+  it('llega en céntimos; vacío o raro, no se comprueba', () => {
+    expect(
+      checkoutInput.parse({ ...order, expectedShipping: '0' }).expectedShipping,
+    ).toBe(0);
+    expect(
+      checkoutInput.parse({ ...order, expectedShipping: '495' })
+        .expectedShipping,
+    ).toBe(495);
+    expect(checkoutInput.parse(order).expectedShipping).toBeNull();
+    expect(
+      checkoutInput.parse({ ...order, expectedShipping: '-1' })
+        .expectedShipping,
+    ).toBeNull();
+    expect(
+      checkoutInput.parse({ ...order, expectedShipping: '4.95' })
+        .expectedShipping,
+    ).toBeNull();
+  });
+});
+
+describe('envío gratis temporal en el panel (§189)', () => {
+  const form = {
+    id: '',
+    name: ' Navidad ',
+    minItems: '',
+    zones: ['baleares', 'peninsula'],
+    startsAt: '',
+    endsAt: '2026-12-24T23:59',
+    active: true,
+  };
+
+  it('sin importe vale en todos los pedidos; las zonas, la península primero', () => {
+    expect(shippingPromotionInput.parse(form)).toEqual({
+      id: null,
+      name: 'Navidad',
+      minItemsCents: 0,
+      zones: ['peninsula', 'baleares'],
+      startsAt: null,
+      endsAt: '2026-12-24T22:59:00.000Z',
+      active: true,
+    });
+    expect(
+      shippingPromotionInput.parse({ ...form, minItems: '49,90' })
+        .minItemsCents,
+    ).toBe(4990);
+  });
+
+  it('pide fin, zona, un importe válido y el final después del inicio', () => {
+    const message = (input: Record<string, unknown>) =>
+      shippingPromotionInput.safeParse({ ...form, ...input }).error?.issues[0]
+        ?.message;
+    expect(message({ endsAt: '' })).toMatch(/Pon cuándo termina/);
+    expect(message({ zones: [] })).toBe('Elige al menos una zona.');
+    expect(message({ zones: ['canarias'] })).toBeDefined();
+    expect(message({ minItems: 'mucho' })).toMatch(/desde cuánto/);
+    expect(message({ startsAt: '2026-12-25T00:00' })).toBe(
+      'El final tiene que ir después del inicio.',
+    );
+    expect(message({ name: '' })).toMatch(/nombre/);
+  });
+
+  it('el panel y la vista previa lo describen igual que la tienda', () => {
+    expect(
+      shippingPromotionSummary({
+        minItemsCents: 3000,
+        zones: ['peninsula', 'baleares'],
+      }),
+    ).toMatch(/^Envío gratis desde 30\s€ · la península y Baleares$/);
+    expect(
+      shippingPromotionSummary({ minItemsCents: 0, zones: ['baleares'] }),
+    ).toBe('Envío gratis en todos los pedidos · solo Baleares');
+    expect(shippingPromotionZonesText(['peninsula'])).toBe('solo la península');
+    expect(
+      shippingPromotionStoreText({
+        minItemsCents: 3000,
+        zones: ['peninsula', 'baleares'],
+      }),
+    ).toMatch(/^Envío gratis en pedidos desde 30\s€\.$/);
+    expect(
+      shippingPromotionStoreText({ minItemsCents: 0, zones: ['baleares'] }),
+    ).toBe('Envío gratis a Baleares en todos los pedidos.');
   });
 });

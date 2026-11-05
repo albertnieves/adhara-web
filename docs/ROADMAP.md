@@ -1,4 +1,4 @@
-# Roadmap vigente — 02/11/2026
+# Roadmap vigente — 05/11/2026
 
 Orden de trabajo. [STATUS.md](STATUS.md) contiene el estado verificado y sus entradas fechadas; [OPERATIONS.md](OPERATIONS.md), los pasos técnicos; [PLAN_APERTURA.md](PLAN_APERTURA.md), los pasos del banco y del negocio; [PLAN_ENVIOS.md](PLAN_ENVIOS.md), los de los transportistas. El plan original de 17 fases se conserva en `docs/source/FASE_0_ARQUITECTURA.md` y los informes de fase; su estado resumido está al final.
 
@@ -9,7 +9,8 @@ Orden de trabajo. [STATUS.md](STATUS.md) contiene el estado verificado y sus ent
 - **Venta online hecha y apagada** (`WEB_CHECKOUT`): cesta y checkout con recogida en Castelldefels o envío por peso y transportista, Redsys con tarjeta y Bizum (probados con el entorno de pruebas de BBVA el 23 y el 25/10), correos, devoluciones, Sendcloud (claves en Production y tarifas sincronizadas el 26/10), cuenta de cliente y formulario de contacto, estos dos tras sus propios interruptores.
 - **Fusionadas** desde el roadmap anterior: #47 (cierre de la apertura), #50 y #51 (envíos), #48 (entornos y vigilancia), #49 (cabeceras SEO) y #53 (sección Envíos del panel, 28/10).
 - **Analítica, publicidad y feed de productos** (29/10, §179–180, [MEDICION_Y_PUBLICIDAD.md](MEDICION_Y_PUBLICIDAD.md)): hechos y apagados hasta poner los IDs; el feed sale con la venta.
-- **Búsqueda global, filtros en el móvil y recorrido olfativo** (29/10, §181–182): hechos; se publican al fusionar su PR. Puntos 5 y 6 de este roadmap.
+- **Búsqueda global, filtros en el móvil y recorrido olfativo** (29/10, §181–182): hechos y fusionados el 02/11. Puntos 5 y 6 de este roadmap.
+- **Abiertas sin fusionar** (03/11): la PR #61 (3D bajo demanda y Lighthouse en la CI, punto 7) y la #62 (revisión de seguridad: dependencias, sesión `httpOnly`, frenos de acceso y CSP). Las dos usan la decisión §187.
 
 Lo que falta para vender es sobre todo configuración y trámites del titular, del banco y de la asesoría, no código.
 
@@ -50,7 +51,8 @@ Lo que falta para vender es sobre todo configuración y trámites del titular, d
 - **Códigos únicos por suscriptor hechos** (02/11, §185, PR #58): lotes de códigos de un solo uso, uno por suscriptor del Club o un número fijo, con CSV para Sender. Su migración está aplicada en `atelier-dev` desde el 02/11.
 - **Promociones automáticas hechas** (02/11, §186): descuento sin código desde un importe (porcentaje o euros), con fechas y de todas las casas o de una; la cesta dice cuánto falta, no se suma a un código (va el que más descuenta) y nunca se cobra más de lo enseñado si termina mientras se compra. Panel: Web → Descuentos y promociones. Su migración está aplicada en `atelier-dev` desde el 02/11.
 - **Decidido el 02/11:** un código personal de un lote sigue valiendo con cualquier email (es de un solo uso, §185).
-- **Más adelante, si se quieren:** las otras promociones que se propusieron (rebaja temporal por casa con precio tachado, regalo desde un importe y envío gratis temporal).
+- **Envío gratis temporal hecho** (05/11, §189): envío gratis entre dos fechas, desde un importe o en todos los pedidos, por zona; se suma a los códigos y promociones, la cesta dice cuánto falta y nunca se cobra un envío que no se enseñó. Panel: Web → Descuentos y promociones. **Su migración falta por aplicar en `atelier-dev`** (se aplica antes de fusionar, con autorización).
+- **Más adelante, si se quieren:** las otras promociones que se propusieron (rebaja temporal por casa con precio tachado y regalo desde un importe).
 
 **Cierre:** un cliente escribe, compra y consulta sus pedidos, y el personal lo ve todo en su ficha sin ver más de lo que su permiso permite.
 
@@ -69,6 +71,8 @@ Lo que falta para vender es sobre todo configuración y trámites del titular, d
 ## 7. 3D selectivo y rendimiento
 
 Ampliar los cuatro pilotos a productos destacados con medidas reales. Pipeline GLB y presupuestos de peso y carga; Lighthouse CI en una entrega propia. Fotos reales o con derechos y alternativa accesible sin WebGL.
+
+**En curso:** PR #61 (03/11, sin fusionar): la escena 3D se carga al pulsar «Abrir la caja en 3D», entradas de la tienda en CSS y Lighthouse con presupuestos en `e2e.yml`. Quedan más perfumes en 3D (medidas reales del kit) y el pipeline GLB.
 
 **Cierre:** comparación móvil y escritorio con carga bajo demanda, movimiento reducido y presupuestos comprobados.
 
@@ -96,7 +100,7 @@ Ampliar los cuatro pilotos a productos destacados con medidas reales. Pipeline G
 | 8   | 3D                       | En parte                              | Más perfumes, pipeline GLB y presupuestos en CI                                                   |
 | 9   | Inventario               | Hecha                                 | — (las reservas del checkout llegaron con la F10)                                                 |
 | 10  | Carrito y checkout       | Hecha, apagada                        | Pase a producción del TPV y `WEB_CHECKOUT=1`                                                      |
-| 11  | Admin operativo          | En parte                              | WhatsApp y borradores del asistente (A6.2–A6.3); fichas, §184; lotes, §185; promociones, §186     |
+| 11  | Admin operativo          | En parte                              | WhatsApp y borradores del asistente (A6.2–A6.3); hechos: §184–186 y envío gratis temporal, §189   |
 | 12  | Click & Collect          | Hecha, apagada                        | Se enciende con la venta (recogida en Castelldefels)                                              |
 | 13  | Homepage                 | En parte                              | Colecciones editoriales y contenido de campaña                                                    |
 | 14  | Cuenta de cliente        | Hecha, apagada                        | Google, correo de Auth y `CUSTOMER_ACCOUNTS=1`                                                    |

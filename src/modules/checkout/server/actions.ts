@@ -168,6 +168,7 @@ export async function placeOrder(
     acceptTerms: form.get('acceptTerms') ?? undefined,
     discountCode: text('discountCode'),
     expectedDiscount: text('expectedDiscount'),
+    expectedShipping: text('expectedShipping'),
   });
   if (!parsed.success) {
     const fields = fieldErrors(parsed.error.issues);
@@ -216,6 +217,12 @@ export async function placeOrder(
     // Lo que enseñó el resumen: si la base calcula menos (una promoción que
     // terminó…), no crea el pedido y la página vuelve a calcularlo (§186).
     p_expected_discount_cents: input.expectedDiscount,
+    // Y el envío: si sale más caro (terminó un envío gratis temporal…), no
+    // hay pedido y la página vuelve a calcularlo (§189).
+    ...(shipping &&
+      input.expectedShipping !== null && {
+        p_expected_shipping_cents: input.expectedShipping,
+      }),
     ...(input.discountCode && { p_discount_code: input.discountCode }),
     ...(customerId && { p_customer_id: customerId }),
     ...(shipping &&
@@ -235,6 +242,8 @@ export async function placeOrder(
       };
     if (error.message === 'discount_changed')
       return { status: 'error', error: 'discountChanged' };
+    if (error.message === 'shipping_changed')
+      return { status: 'error', error: 'shippingChanged' };
     if (error.message === 'insufficient_stock') {
       const line = quote.lines.find((l) => l.variantId === error.details);
       return {

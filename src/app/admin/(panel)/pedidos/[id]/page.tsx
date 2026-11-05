@@ -378,6 +378,12 @@ export default async function WebOrderPage({
             {euros(order.totalCents)}
           </dd>
         </dl>
+        {order.shippingPromotionName && order.shippingPromotionCents && (
+          <p className="mt-3 text-right text-sm">
+            Envío regalado por el envío gratis «{order.shippingPromotionName}»:
+            sin él, {euros(order.shippingPromotionCents)}.
+          </p>
+        )}
         <p className="text-fg-muted mt-3 text-right text-xs">
           Precios del momento de la compra; un cambio posterior del catálogo no
           los modifica.

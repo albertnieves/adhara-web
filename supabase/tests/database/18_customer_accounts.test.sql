@@ -136,7 +136,8 @@ select is_empty(
   'ninguna función sin guarda de permiso fuera de las públicas por diseño');
 -- Detrás de los códigos de descuento (DECISIONS §152): una sola versión, con
 -- los parámetros opcionales (también el servicio de envío, 20261025120000, y
--- el descuento que se enseñó, 20261102180000).
+-- el descuento que se enseñó, 20261102180000, y el envío que se enseñó,
+-- 20261105120000).
 select is(
   (select array_agg(pg_get_function_identity_arguments(p.oid)) from pg_proc p
    join pg_namespace n on n.oid = p.pronamespace
@@ -144,8 +145,8 @@ select is(
   array['p_request_id uuid, p_locale text, p_fulfillment text, p_location_id uuid, '
         'p_items jsonb, p_contact jsonb, p_provider text, p_hold_minutes integer, '
         'p_discount_code text, p_customer_id uuid, p_shipping_service_id uuid, '
-        'p_expected_discount_cents integer'],
-  'una sola web_order_create, con el código, la cuenta, el servicio de envío y el descuento enseñado');
+        'p_expected_discount_cents integer, p_expected_shipping_cents integer'],
+  'una sola web_order_create, con el código, la cuenta, el servicio de envío y el descuento y el envío enseñados');
 
 -- ---------------------------------------------------------------------------
 -- Pedidos de prueba (servidor)

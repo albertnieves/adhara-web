@@ -335,6 +335,8 @@
     "total": "Total",
     "vat": "VAT included",
     "freeFrom": "Free shipping on items from {amount}.",
+    "freeFromUntil": "Free shipping on items from {amount} until {date}.",
+    "freeAllUntil": "Free shipping on every order until {date}.",
     "terms": "I have read and accept the <link>terms of sale</link>.",
     "privacy": "We will only use your details to manage your order. More information in the <link>privacy policy</link>.",
     "withdrawal": "You have 14 days to withdraw from the purchase: <link>shipping and returns</link>.",
@@ -368,7 +370,8 @@
       "shippingServiceRequired": "Choose a carrier for delivery.",
       "shippingServiceUnavailable": "That carrier is no longer available for this order. Choose another one.",
       "shippingWeightUnknown": "Some fragrances in your basket can’t be shipped yet. You can collect them in store.",
-      "discountChanged": "The discount changed while you were shopping (for example, a promotion ended). Check the total in the summary and confirm again."
+      "discountChanged": "The discount changed while you were shopping (for example, a promotion ended). Check the total in the summary and confirm again.",
+      "shippingChanged": "The shipping price changed while you were shopping (for example, a free shipping promotion ended). Check the total in the summary and confirm again."
     },
     "accountSignedIn": "You're buying with your account ({email}). The order will appear in “My orders”.",
     "accountSignIn": "Have an account? <link>Sign in</link> to use your saved details and see the order in your account later.",
@@ -391,7 +394,19 @@
     "line": "Promotion",
     "better": "The promotion takes off as much as or more than your code: the promotion applies and your code stays unused.",
     "codeBetter": "Your code takes off more than the promotion: the code applies. They do not add up.",
-    "codeUnused": "Code {code}: not applied"
+    "codeUnused": "Code {code}: not applied",
+    "freeShippingTitle": "Free shipping",
+    "freeShipping": "Free shipping on orders of {minimum} or more.",
+    "freeShippingZone": "Free shipping to {zone} on orders of {minimum} or more.",
+    "freeShippingAll": "Free shipping on every order.",
+    "freeShippingAllZone": "Free shipping to {zone} on every order.",
+    "freeShippingOptions": "With the shipping options that say so at checkout.",
+    "freeShippingHave": "You have it: your shipping is free.",
+    "freeShippingMissing": "Add {amount} more to get it.",
+    "zones": {
+      "peninsula": "mainland Spain",
+      "baleares": "the Balearic Islands"
+    }
   },
   "order": {
     "title": "Your order",

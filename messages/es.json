@@ -335,6 +335,8 @@
     "total": "Total",
     "vat": "IVA incluido",
     "freeFrom": "Envío gratis a partir de {amount} en artículos.",
+    "freeFromUntil": "Envío gratis a partir de {amount} en artículos hasta el {date}.",
+    "freeAllUntil": "Envío gratis en todos los pedidos hasta el {date}.",
     "terms": "He leído y acepto las <link>condiciones de venta</link>.",
     "privacy": "Usaremos tus datos solo para gestionar tu pedido. Más información en la <link>política de privacidad</link>.",
     "withdrawal": "Tienes 14 días para desistir de la compra: <link>envíos y devoluciones</link>.",
@@ -368,7 +370,8 @@
       "shippingServiceRequired": "Elige un transportista para el envío.",
       "shippingServiceUnavailable": "Ese transportista ya no está disponible para este pedido. Elige otro.",
       "shippingWeightUnknown": "Algún perfume de la cesta aún no se puede enviar. Puedes recogerlo en la tienda.",
-      "discountChanged": "El descuento ha cambiado mientras comprabas (por ejemplo, ha terminado una promoción). Revisa el total en el resumen y vuelve a confirmar."
+      "discountChanged": "El descuento ha cambiado mientras comprabas (por ejemplo, ha terminado una promoción). Revisa el total en el resumen y vuelve a confirmar.",
+      "shippingChanged": "El precio del envío ha cambiado mientras comprabas (por ejemplo, ha terminado una promoción de envío gratis). Revisa el total en el resumen y vuelve a confirmar."
     },
     "accountSignedIn": "Compras con tu cuenta ({email}). El pedido quedará en «Mis pedidos».",
     "accountSignIn": "¿Tienes cuenta? <link>Entra</link> para usar tus datos guardados y ver luego el pedido en tu cuenta.",
@@ -391,7 +394,19 @@
     "line": "Promoción",
     "better": "La promoción descuenta lo mismo o más que tu código: se aplica la promoción y el código queda sin usar.",
     "codeBetter": "Tu código descuenta más que la promoción: se aplica el código. No se suman.",
-    "codeUnused": "Código {code}: no se aplica"
+    "codeUnused": "Código {code}: no se aplica",
+    "freeShippingTitle": "Envío gratis",
+    "freeShipping": "Envío gratis en pedidos desde {minimum}.",
+    "freeShippingZone": "Envío gratis a {zone} en pedidos desde {minimum}.",
+    "freeShippingAll": "Envío gratis en todos los pedidos.",
+    "freeShippingAllZone": "Envío gratis a {zone} en todos los pedidos.",
+    "freeShippingOptions": "Con las opciones de envío que lo indican al pagar.",
+    "freeShippingHave": "Ya lo tienes: el envío te sale gratis.",
+    "freeShippingMissing": "Te faltan {amount} para conseguirlo.",
+    "zones": {
+      "peninsula": "la península",
+      "baleares": "Baleares"
+    }
   },
   "order": {
     "title": "Tu pedido",

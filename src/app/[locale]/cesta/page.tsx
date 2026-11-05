@@ -10,7 +10,10 @@ import {
 } from '@/components/ui';
 import { formatEuros } from '@/lib/money';
 import { MAX_LINE_QUANTITY } from '@/modules/checkout';
-import { PromotionOfferText } from '@/modules/checkout/ui';
+import {
+  FreeShippingOfferText,
+  PromotionOfferText,
+} from '@/modules/checkout/ui';
 import {
   checkoutEnabled,
   quoteCart,
@@ -20,12 +23,14 @@ import { updateCartLine } from '@/modules/checkout/server/actions';
 import { Link } from '@/modules/i18n';
 import { requireLocale } from '@/modules/i18n/server';
 import { bestOffer, missingCents, nextOffer } from '@/modules/promotions';
+import { freeShippingOffers } from '@/modules/shipping';
 import { ProductImage } from '@/modules/storefront/ui/ProductImage';
 
 /**
  * Cesta (P03): se lee de la cookie en cada visita y los precios salen del
  * catálogo publicado. Cada botón es un formulario: funciona sin JavaScript.
- * Con una promoción viva (§186) dice si ya se consigue o cuánto falta.
+ * Con una promoción viva (§186) o un envío gratis temporal (§189) dice si ya
+ * se consigue o cuánto falta.
  */
 export const dynamic = 'force-dynamic';
 
@@ -83,6 +88,10 @@ export default async function CartPage({ params }: { params: Params }) {
   const euros = (cents: number) => formatEuros(cents, lang);
   const best = bestOffer(quote.promotions);
   const next = nextOffer(quote.promotions);
+  // El envío gratis mira lo que se paga por los artículos, ya con la
+  // promoción; un código, si descuenta más, se ve en «Finalizar compra».
+  const freeShipping = freeShippingOffers(quote.shipping);
+  const paidItemsCents = quote.itemsCents - (best?.discountCents ?? 0);
 
   return (
     <main className="mx-auto max-w-[90rem] px-5 pt-32 pb-20 sm:px-10">
@@ -229,6 +238,30 @@ export default async function CartPage({ params }: { params: Params }) {
                     </strong>
                   </p>
                 )}
+              </div>
+            )}
+            {freeShipping.length > 0 && (
+              <div className="border-accent space-y-2 border-l-2 pl-4 text-sm leading-relaxed">
+                <Eyebrow>{tp('freeShippingTitle')}</Eyebrow>
+                {freeShipping.map((offer) => (
+                  <p key={`${offer.minItemsCents}-${offer.endsAt}`}>
+                    <FreeShippingOfferText offer={offer} locale={lang} />
+                    {offer.minItemsCents > 0 && (
+                      <>
+                        {' '}
+                        <strong className="font-semibold">
+                          {paidItemsCents >= offer.minItemsCents
+                            ? tp('freeShippingHave')
+                            : tp('freeShippingMissing', {
+                                amount: euros(
+                                  offer.minItemsCents - paidItemsCents,
+                                ),
+                              })}
+                        </strong>
+                      </>
+                    )}
+                  </p>
+                ))}
               </div>
             )}
             <p className="text-fg-muted text-sm leading-relaxed">

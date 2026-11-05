@@ -26,6 +26,12 @@ export {
   promotionInput,
   promotionStatus,
   promotionSummary,
+  SHIPPING_PROMOTION_ZONE_LABELS,
+  SHIPPING_PROMOTION_ZONES,
+  shippingPromotionInput,
+  shippingPromotionStoreText,
+  shippingPromotionSummary,
+  shippingPromotionZonesText,
 } from './domain';
 export type {
   AppliedDiscount,
@@ -44,4 +50,7 @@ export type {
   PromotionInput,
   PromotionOffer,
   PromotionStatus,
+  ShippingPromotion,
+  ShippingPromotionInput,
+  ShippingPromotionZone,
 } from './domain';

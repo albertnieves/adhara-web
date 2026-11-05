@@ -117,6 +117,12 @@ export type WebOrderDetail = {
     /** Nombre interno de la promoción aplicada, tal y como era entonces. */
     promotionName: string | null;
     shippingCents: number;
+    /**
+     * Envío gratis temporal que regaló el envío (§189), tal y como se llamaba,
+     * y lo que habría costado sin él; null si no lo llevó.
+     */
+    shippingPromotionName: string | null;
+    shippingPromotionCents: number | null;
     totalCents: number;
     currency: string;
     paidAt: string | null;
@@ -335,6 +341,8 @@ export async function getWebOrder(
       discountCode: order.discount_code,
       promotionName: order.promotion_name,
       shippingCents: order.shipping_cents,
+      shippingPromotionName: order.shipping_promotion_name,
+      shippingPromotionCents: order.shipping_promotion_cents,
       totalCents: order.total_cents,
       currency: order.currency,
       paidAt: order.paid_at,
