@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
+import { withinRateLimit } from '@/lib/rate-limit';
 import { createAuthAdminClient } from '@/lib/supabase/privileged';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 import { siteUrl } from '@/modules/i18n/seo';
@@ -27,6 +28,11 @@ import { accountsEnabled, getCustomerSession, isStaffAccount } from './session';
 
 const DISABLED: AccountFormState = { status: 'error', error: 'disabled' };
 const GENERIC: AccountFormState = { status: 'error', error: 'generic' };
+/** Freno por cliente antes de Supabase, que ve la IP de Vercel (DECISIONS §187). */
+const RATE_LIMITED: AccountFormState = {
+  status: 'error',
+  error: 'rateLimited',
+};
 
 function formLocale(form: FormData): AccountLocale {
   const value = form.get('locale');
@@ -54,6 +60,7 @@ export async function signUpAction(
     password: text(form, 'password'),
   });
   if (!parsed.success) return invalid(parsed.error.issues);
+  if (!(await withinRateLimit('account_sign_up'))) return RATE_LIMITED;
   const supabase = await createSupabaseServerClient();
   if (!supabase) return GENERIC;
   const next = safeNextPath(form.get('next')) ?? accountPath(locale, '/cuenta');
@@ -94,6 +101,7 @@ export async function signInAction(
     password: text(form, 'password'),
   });
   if (!parsed.success) return { status: 'error', error: 'credentials' };
+  if (!(await withinRateLimit('account_sign_in'))) return RATE_LIMITED;
   const supabase = await createSupabaseServerClient();
   if (!supabase) return GENERIC;
   const { error } = await supabase.auth.signInWithPassword(parsed.data);
@@ -142,6 +150,7 @@ export async function recoveryAction(
   const locale = formLocale(form);
   const parsed = recoveryInput.safeParse({ email: text(form, 'email') });
   if (!parsed.success) return invalid(parsed.error.issues);
+  if (!(await withinRateLimit('account_recovery'))) return RATE_LIMITED;
   const supabase = await createSupabaseServerClient();
   if (!supabase) return GENERIC;
   const { error } = await supabase.auth.resetPasswordForEmail(

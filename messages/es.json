@@ -671,6 +671,11 @@
       "disabled": "La cuenta de cliente no está disponible.",
       "generic": "Algo ha fallado. Inténtalo de nuevo en unos minutos.",
       "review": "Revisa los campos marcados."
+    },
+    "confirmLink": {
+      "title": "Confirma para continuar",
+      "body": "Por seguridad, pulsa el botón para terminar de abrir el enlace.",
+      "submit": "Continuar"
     }
   },
   "search": {

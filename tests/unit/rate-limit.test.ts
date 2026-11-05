@@ -6,7 +6,7 @@ vi.mock('next/headers', () => ({ headers: vi.fn() }));
 vi.mock('@/lib/supabase/privileged', () => ({ createOrdersClient: vi.fn() }));
 
 const { RATE_LIMITS, clientIp, clientKey, rateLimitsOff } =
-  await import('@/modules/checkout/server/rate-limit');
+  await import('@/lib/rate-limit');
 
 /*
  * Freno de las acciones públicas del checkout (DECISIONS §160): la huella que
@@ -78,5 +78,37 @@ describe('freno de peticiones del checkout', () => {
     const brake = source.indexOf("withinRateLimit('contact_message')");
     expect(brake).toBeGreaterThan(0);
     expect(brake).toBeLessThan(source.indexOf("'web_contact_submit'"));
+  });
+
+  it('los accesos, la recuperación y el Club frenan antes de Supabase (§187)', () => {
+    const cases: [string, string, string][] = [
+      ['auth/server/actions.ts', 'staff_sign_in', 'signInWithPassword('],
+      ['auth/server/actions.ts', 'staff_mfa', 'challengeAndVerify('],
+      ['auth/server/recovery.ts', 'staff_recovery', 'resetPasswordForEmail('],
+      ['account/server/actions.ts', 'account_sign_up', 'auth.signUp('],
+      ['account/server/actions.ts', 'account_sign_in', 'signInWithPassword('],
+      [
+        'account/server/actions.ts',
+        'account_recovery',
+        'resetPasswordForEmail(',
+      ],
+      [
+        'newsletter/server/actions.ts',
+        'newsletter_subscribe',
+        "'newsletter_subscribe'",
+      ],
+    ];
+    for (const [file, bucket, call] of cases) {
+      expect(RATE_LIMITS).toHaveProperty(bucket);
+      const source = readFileSync(
+        new URL(`../../src/modules/${file}`, import.meta.url),
+        'utf8',
+      );
+      const brake = source.indexOf(`withinRateLimit('${bucket}')`);
+      expect(brake, `${file}: ${bucket}`).toBeGreaterThan(0);
+      expect(source.indexOf(call, brake), `${file}: ${call}`).toBeGreaterThan(
+        brake,
+      );
+    }
   });
 });

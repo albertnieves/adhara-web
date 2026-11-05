@@ -161,7 +161,12 @@ test('alta con email: confirmar, entrar, salir y volver a entrar', async ({
   ).toBeVisible();
 
   const link = await authLink(email, 'email');
+  // Abrir el enlace no abre sesión: hace falta el botón (DECISIONS §187).
   await page.goto(link);
+  await expect(
+    page.getByRole('heading', { name: 'Confirma para continuar' }),
+  ).toBeVisible();
+  await page.getByRole('button', { name: 'Continuar', exact: true }).click();
   await expect(page).toHaveURL(/\/es\/cuenta\?bienvenida=1$/);
   await expect(page.getByText('Tu cuenta está lista.')).toBeVisible();
   await expect(
@@ -179,6 +184,7 @@ test('alta con email: confirmar, entrar, salir y volver a entrar', async ({
   await expect(page).toHaveURL(/\/es$/);
   // El enlace del correo no sirve dos veces.
   await page.goto(link);
+  await page.getByRole('button', { name: 'Continuar', exact: true }).click();
   await expect(page).toHaveURL(/\/es\/cuenta\/acceso\?error=enlace$/);
   await expect(
     page.getByText('El enlace ha caducado o ya se usó.', { exact: false }),
@@ -348,6 +354,7 @@ test('recuperar la contraseña desde la tienda', async ({ page }) => {
 
   const link = await authLink(customer.email, 'recovery');
   await page.goto(link);
+  await page.getByRole('button', { name: 'Continue', exact: true }).click();
   await expect(page).toHaveURL(/\/en\/account\/new-password$/);
   const fresh = `${password}-nueva`;
   await page.getByLabel('New password').fill(fresh);

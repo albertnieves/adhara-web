@@ -1,6 +1,7 @@
 'use server';
 import { redirect } from 'next/navigation';
 import { z } from 'zod';
+import { withinRateLimit } from '@/lib/rate-limit';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 import { BRAND_NAME } from '@/modules/brand';
 import {
@@ -33,6 +34,9 @@ export async function signIn(formData: FormData) {
     password: formData.get('password'),
   });
   if (!parsed.success) redirect(`${ADMIN_LOGIN}?error=credenciales`);
+  // Antes de llegar a Supabase, que ve la IP de Vercel (DECISIONS §187).
+  if (!(await withinRateLimit('staff_sign_in')))
+    redirect(`${ADMIN_LOGIN}?error=espera`);
   const supabase = await createSupabaseServerClient();
   if (!supabase) redirect(`${ADMIN_LOGIN}?error=servicio`);
   const { error } = await supabase.auth.signInWithPassword(parsed.data);
@@ -104,6 +108,8 @@ export async function verifyTotp(formData: FormData) {
       ? '/admin/mfa?error=codigo&next=contrasena'
       : '/admin/mfa?error=codigo';
   if (!parsed.success) redirect(retry);
+  if (!(await withinRateLimit('staff_mfa')))
+    redirect(retry.replace('error=codigo', 'error=espera'));
   const { error } = await supabase.auth.mfa.challengeAndVerify(parsed.data);
   if (error) redirect(retry);
   await audit(

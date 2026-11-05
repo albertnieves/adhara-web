@@ -1,5 +1,6 @@
 'use server';
 
+import { withinRateLimit } from '@/lib/rate-limit';
 import { createOrdersClient } from '@/lib/supabase/privileged';
 import { orderCustomerId } from '@/modules/account/server';
 import { REDSYS_PROVIDER } from '@/modules/payments/domain/redsys';
@@ -21,7 +22,6 @@ import { readCart, writeCart } from './cart';
 import { checkoutEnabled } from './flag';
 import { paymentFormFor, rememberOrder, rememberedOrderId } from './order';
 import { quoteCart } from './quote';
-import { withinRateLimit } from './rate-limit';
 
 /*
  * Cesta y pedido de la tienda (P03). Todo se comprueba aquí y otra vez en la

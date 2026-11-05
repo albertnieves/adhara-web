@@ -4,10 +4,14 @@ import { headers } from 'next/headers';
 import { createOrdersClient } from '@/lib/supabase/privileged';
 
 /*
- * Freno de las acciones públicas de la tienda: las del checkout (DECISIONS
- * §160) y el formulario de contacto (§168). Sin él, un
+ * Freno de las acciones públicas: las del checkout (DECISIONS §160), el
+ * formulario de contacto (§168) y, desde §187, los accesos (panel y cuenta de
+ * cliente), la recuperación de contraseña y el alta del Club. Sin él, un
  * script podía crear pedidos sin pagar que reservan el stock 30 minutos (la
- * tienda física también lo ve agotado) o probar códigos de descuento sin fin.
+ * tienda física también lo ve agotado), probar códigos de descuento o
+ * contraseñas sin fin, o mandar correos de recuperación a cualquiera.
+ * Supabase Auth ve la IP de Vercel, no la del visitante, así que sus límites
+ * no distinguen a un atacante de los demás.
  * Cuenta por acción y cliente en la base (web_order_rate_limit, solo el
  * servidor); a la base llega una huella de la IP que cambia cada día, nunca la
  * IP. Las Server Actions se pueden llamar desde cualquier página, así que el
@@ -25,6 +29,20 @@ export const RATE_LIMITS = {
   // total (30 cada 10 minutos); esto frena a quien cambia de email para
   // agotar el total y dejar sin formulario a los demás.
   contact_message: { limit: 5, windowSeconds: 600 },
+  // Accesos (§187). El personal entra con contraseña y segundo factor: con
+  // 10 intentos cada 10 minutos por cliente, probar contraseñas o códigos
+  // de 6 cifras deja de ser viable, y alguien del equipo que se equivoque
+  // sigue teniendo margen.
+  staff_sign_in: { limit: 10, windowSeconds: 600 },
+  staff_mfa: { limit: 10, windowSeconds: 600 },
+  // Cada petición manda un correo: frena el envío masivo a terceros.
+  staff_recovery: { limit: 5, windowSeconds: 3600 },
+  account_sign_in: { limit: 10, windowSeconds: 600 },
+  account_sign_up: { limit: 5, windowSeconds: 3600 },
+  account_recovery: { limit: 5, windowSeconds: 3600 },
+  // Alta del Club: newsletter_subscribe solo tiene un freno global, que un
+  // script con emails distintos agotaba para todos.
+  newsletter_subscribe: { limit: 5, windowSeconds: 600 },
 } as const;
 export type RateLimitBucket = keyof typeof RATE_LIMITS;
 
@@ -75,7 +93,7 @@ export async function withinRateLimit(
     p_window_seconds: windowSeconds,
   });
   if (error) {
-    console.error('[checkout] freno de peticiones', error.code, error.message);
+    console.error('[freno] no se pudo comprobar', error.code, error.message);
     return true;
   }
   return data === true;
