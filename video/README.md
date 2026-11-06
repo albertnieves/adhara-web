@@ -1,6 +1,6 @@
 # Clips de vídeo de L’Atelier du Désert
 
-Flujo reproducible que convierte un tema (`briefs/<slug>.md`) en clips MP4 de 1080×1920 y 1920×1080 con el sistema de diseño de la marca. Es un subproyecto aislado de la tienda: tiene su `package.json`, su `tsconfig.json` y su `build/`, y la tienda no importa nada de aquí.
+Flujo reproducible que convierte un tema (`briefs/<slug>.md`) en clips MP4 de 1080×1920 y 1920×1080 con el sistema de diseño de la marca. Es un subproyecto aislado de la tienda: tiene su `package.json` y su workspace de pnpm, su `tsconfig.json` y su `build/`, y la tienda no importa nada de aquí.
 
 **Estado:** etapas 0–2 en propuesta, pendientes de aprobación. El resto aún no existe (`make clip` se para en la primera etapa pendiente). Lo que falta del entorno está en [docs/setup-status.md](docs/setup-status.md).
 
@@ -8,6 +8,7 @@ Flujo reproducible que convierte un tema (`briefs/<slug>.md`) en clips MP4 de 10
 
 ```bash
 cd video
+pnpm install --frozen-lockfile    # librerías de las etapas, con versión exacta
 npm run doctor                     # inventario de herramientas y claves
 npm run tokens                     # valida design-system/tokens.json (contraste AA, movimiento, escala)
 npm run storyboard -- --slug ejemplo   # valida storyboard/ejemplo.json y genera el .excalidraw
@@ -15,7 +16,7 @@ make clip SLUG=ejemplo             # todas las etapas en orden
 npm test && npm run typecheck      # pruebas y tipos de los scripts
 ```
 
-Los scripts son TypeScript que Node ejecuta directamente (≥ 22.18) y por ahora solo usan módulos de Node. Cada librería (Fontsource, Lucide, SVGO, GSAP, Remotion…) se instalará con versión exacta en su etapa.
+Los scripts son TypeScript que Node ejecuta directamente (≥ 22.18). Las librerías de las etapas (Fontsource, Lucide, SVGO, GSAP, Three.js y Remotion) ya están instaladas con versión exacta; sox, Audacity y xvfb se instalan con apt (ver [docs/setup-status.md](docs/setup-status.md)).
 
 ## Etapas
 

@@ -4,6 +4,7 @@
   "private": true,
   "description": "Flujo reproducible tema → clips de vídeo con el sistema de diseño de L’Atelier du Désert.",
   "type": "module",
+  "packageManager": "pnpm@11.19.0",
   "engines": {
     "node": ">=22.18 <25"
   },
@@ -24,5 +25,23 @@
     "review": "node scripts/pending.ts review",
     "test": "node --test scripts/*.test.ts",
     "typecheck": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@fontsource/cormorant-garamond": "5.3.0",
+    "@fontsource/manrope": "5.3.0",
+    "@remotion/cli": "4.0.541",
+    "gsap": "3.15.1",
+    "lucide-static": "1.69.0",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "remotion": "4.0.541",
+    "three": "0.186.1"
+  },
+  "devDependencies": {
+    "@types/node": "24.19.0",
+    "@types/react": "19.3.0",
+    "@types/three": "0.186.0",
+    "svgo": "4.1.0",
+    "typescript": "6.0.3"
   }
 }
