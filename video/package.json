@@ -1,0 +1,28 @@
+{
+  "name": "atelier-video",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Flujo reproducible tema → clips de vídeo con el sistema de diseño de L’Atelier du Désert.",
+  "type": "module",
+  "engines": {
+    "node": ">=22.18 <25"
+  },
+  "scripts": {
+    "doctor": "node scripts/doctor.ts",
+    "tokens": "node scripts/check-tokens.ts",
+    "storyboard": "node scripts/storyboard.ts",
+    "fonts": "node scripts/pending.ts fonts",
+    "icons": "node scripts/pending.ts icons",
+    "prompts": "node scripts/pending.ts prompts",
+    "comfy": "node scripts/pending.ts comfy",
+    "ltx": "node scripts/pending.ts ltx",
+    "svg": "node scripts/pending.ts svg",
+    "motion": "node scripts/pending.ts motion",
+    "three": "node scripts/pending.ts three",
+    "remotion": "node scripts/pending.ts remotion",
+    "audio": "node scripts/pending.ts audio",
+    "review": "node scripts/pending.ts review",
+    "test": "node --test scripts/*.test.ts",
+    "typecheck": "tsc -p tsconfig.json"
+  }
+}
