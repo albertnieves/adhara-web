@@ -1,4 +1,12 @@
-# Estado real — 03/11/2026
+# Estado real — 06/11/2026
+
+## Clips de vídeo (06/11, propuesta)
+
+Rama `claude/kind-dijkstra-u1e7yb`. Flujo reproducible tema → clips MP4 en `video/`, aislado de la tienda (decisión §188; detalle en [video/README.md](../video/README.md)).
+
+- **Hecho:** estructura, inventario (`npm run doctor`, [video/docs/setup-status.md](../video/docs/setup-status.md)), tokens y anti-patrones (`npm run tokens`), y brief y storyboard de 3 escenas con su `.excalidraw` (`npm run storyboard -- --slug ejemplo`); 28 pruebas con `node:test`. Librerías de las etapas instaladas a petición del usuario; sox, Audacity y xvfb, con apt.
+- **En propuesta:** los tokens y el storyboard esperan la aprobación del usuario; el tema del ejemplo es propuesto (el encargo llegó sin tema).
+- **Pendiente:** etapas 3–13 (`make clip` se para en la primera pendiente), fuentes de las tres cifras, claves de imagen, una GPU para ComfyUI y LTX, y música con licencia.
 
 ## Revisión de seguridad (03/11)
 
