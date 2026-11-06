@@ -1,0 +1,201 @@
+{
+  "slug": "ejemplo",
+  "status": "propuesta",
+  "title": "La pirámide olfativa en tres tiempos",
+  "brief": "briefs/ejemplo.md",
+  "locale": "es",
+  "spine": {
+    "job": "Que quien lo vea entienda que un perfume cambia en la piel en tres tiempos y quiera ver la pirámide de cada perfume en la tienda.",
+    "audience": "Quien compra o descubre perfumería árabe en redes, en España.",
+    "cta": "El dominio en el cierre, sin texto de venta."
+  },
+  "fps": 30,
+  "formats": [
+    { "id": "vertical", "width": 1080, "height": 1920 },
+    { "id": "horizontal", "width": 1920, "height": 1080 }
+  ],
+  "voiceover": null,
+  "scenes": [
+    {
+      "id": "s1-salida",
+      "title": "Salida",
+      "objective": "Presentar el primer tiempo: lo que se huele al aplicar el perfume es lo más volátil y lo primero que desaparece.",
+      "durationSeconds": 6,
+      "onScreen": {
+        "label": "Salida",
+        "figure": "≈15 min",
+        "statement": "Lo primero que hueles, lo primero que se va.",
+        "align": "start"
+      },
+      "claims": [
+        {
+          "id": "salida-duracion",
+          "text": "Las notas de salida se perciben durante unos 15 minutos.",
+          "appliesTo": "figure",
+          "status": "needs_source",
+          "source": null
+        }
+      ],
+      "visual": {
+        "source": "image-to-video",
+        "reference": "Media bergamota recién cortada sobre piedra caliza, con gotas de aceite esencial en la piel. Luz de ventana alta, desde la izquierda (mañana). Espacio negativo a la izquierda para el texto.",
+        "camera": "Macro de 100 mm, cámara fija a la altura del fruto, sujeto en el tercio derecho. En LTX: empuje lento de un 2 % y el brillo del aceite; nada más.",
+        "prompt": "prompts/s1-salida.md"
+      },
+      "layout": {
+        "vertical": { "text": [1, 8], "focal": "end" },
+        "horizontal": { "text": [1, 5], "focal": "end" }
+      },
+      "icon": "hourglass",
+      "signoff": null,
+      "motion": [
+        {
+          "target": "figure",
+          "type": "rise",
+          "duration": "{motion.duration.slow}",
+          "easing": "{motion.easing.luxe}",
+          "purpose": "La tarjeta de datos (etiqueta, icono y cifra) entra primero, como un bloque: es el dato."
+        },
+        {
+          "target": "statement",
+          "type": "rise",
+          "duration": "{motion.duration.base}",
+          "easing": "{motion.easing.luxe}",
+          "purpose": "La idea llega cuando ya se ha leído la cifra."
+        }
+      ],
+      "transitionOut": {
+        "type": "dissolve",
+        "duration": "{motion.duration.scene}",
+        "easing": "{motion.easing.inout}"
+      },
+      "audio": {
+        "music": "Entra la pista: una nota grave sostenida y un pulso lento, sin percusión.",
+        "sfx": "La piel del cítrico al presionarla, muy baja, al empezar."
+      }
+    },
+    {
+      "id": "s2-corazon",
+      "title": "Corazón",
+      "objective": "Mostrar el segundo tiempo: cuando la salida se apaga, aparece el carácter del perfume.",
+      "durationSeconds": 6,
+      "onScreen": {
+        "label": "Corazón",
+        "figure": "2–4 h",
+        "statement": "Cuando la salida se apaga, aparece el carácter.",
+        "align": "end"
+      },
+      "claims": [
+        {
+          "id": "corazon-duracion",
+          "text": "Las notas de corazón dominan entre dos y cuatro horas.",
+          "appliesTo": "figure",
+          "status": "needs_source",
+          "source": null
+        }
+      ],
+      "visual": {
+        "source": "image-to-video",
+        "reference": "Pétalos de rosa damascena y unas hebras de azafrán sobre lino crudo. La misma luz de ventana, ahora a media altura (mediodía). Espacio negativo a la derecha para el texto.",
+        "camera": "Macro de 100 mm, cámara fija, sujeto en el tercio izquierdo. En LTX: un pétalo se asienta despacio; la luz no cambia.",
+        "prompt": "prompts/s2-corazon.md"
+      },
+      "layout": {
+        "vertical": { "text": [4, 11], "focal": "start" },
+        "horizontal": { "text": [8, 12], "focal": "start" }
+      },
+      "icon": "hourglass",
+      "signoff": null,
+      "motion": [
+        {
+          "target": "figure",
+          "type": "rise",
+          "duration": "{motion.duration.slow}",
+          "easing": "{motion.easing.luxe}",
+          "purpose": "La tarjeta de datos entra como en la escena anterior: el mismo gesto encadena los tres tiempos."
+        },
+        {
+          "target": "statement",
+          "type": "rise",
+          "duration": "{motion.duration.base}",
+          "easing": "{motion.easing.luxe}",
+          "purpose": "La idea, tras la cifra."
+        }
+      ],
+      "transitionOut": {
+        "type": "dissolve",
+        "duration": "{motion.duration.scene}",
+        "easing": "{motion.easing.inout}"
+      },
+      "audio": {
+        "music": "Se suma una segunda voz, más cálida; el pulso sigue igual.",
+        "sfx": null
+      }
+    },
+    {
+      "id": "s3-fondo",
+      "title": "Fondo",
+      "objective": "Cerrar con el tercer tiempo: lo que queda horas después es el fondo, lo que fija el perfume. Firma de la marca.",
+      "durationSeconds": 7,
+      "onScreen": {
+        "label": "Fondo",
+        "figure": "+6 h",
+        "statement": "Lo que queda al final es el fondo.",
+        "align": "start"
+      },
+      "claims": [
+        {
+          "id": "fondo-duracion",
+          "text": "Las notas de fondo pueden durar más de seis horas.",
+          "appliesTo": "figure",
+          "status": "needs_source",
+          "source": null
+        }
+      ],
+      "visual": {
+        "source": "image-to-video",
+        "reference": "Astillas de madera de oud y lágrimas de resina de ámbar sobre piedra oscura. La misma luz, baja y rasante (tarde), que alarga las sombras. Espacio negativo a la izquierda.",
+        "camera": "Macro de 100 mm, cámara fija, sujeto en el tercio derecho. En LTX: la luz rasante avanza muy despacio sobre la resina.",
+        "prompt": "prompts/s3-fondo.md"
+      },
+      "layout": {
+        "vertical": { "text": [1, 8], "focal": "end" },
+        "horizontal": { "text": [1, 5], "focal": "end" }
+      },
+      "icon": "hourglass",
+      "signoff": { "logo": true, "caption": "latelierdudesert.com" },
+      "motion": [
+        {
+          "target": "figure",
+          "type": "rise",
+          "duration": "{motion.duration.slow}",
+          "easing": "{motion.easing.luxe}",
+          "purpose": "La última tarjeta de datos, con la cifra más larga."
+        },
+        {
+          "target": "statement",
+          "type": "rise",
+          "duration": "{motion.duration.base}",
+          "easing": "{motion.easing.luxe}",
+          "purpose": "Cierra la idea de los tres tiempos."
+        },
+        {
+          "target": "logo",
+          "type": "fade",
+          "duration": "{motion.duration.slow}",
+          "easing": "{motion.easing.luxe}",
+          "purpose": "La firma (logo y dominio) en el último segundo y medio, cuando el texto ya se ha leído."
+        }
+      ],
+      "transitionOut": {
+        "type": "fade-to-background",
+        "duration": "{motion.duration.scene}",
+        "easing": "{motion.easing.exit}"
+      },
+      "audio": {
+        "music": "La pista se resuelve en la nota grave y se apaga con el logo.",
+        "sfx": null
+      }
+    }
+  ]
+}
