@@ -122,6 +122,20 @@ export function variantLabel(variant: ProductVariant): string {
   return variant.sizeMl ? `${variant.sizeMl} ml` : '—';
 }
 
+/**
+ * «Eau de Parfum · 100 ml»: concentración y formatos de la ficha, para la
+ * descripción de buscadores. Solo datos del perfume; vacío si no hay ninguno.
+ */
+export function productDetails(
+  product: Pick<StorefrontProduct, 'variants'>,
+  concentrationLabel: string | null,
+): string {
+  const sizes = product.variants.map(variantLabel).filter((s) => s !== '—');
+  return [concentrationLabel?.trim() || null, ...new Set(sizes)]
+    .filter((part): part is string => Boolean(part))
+    .join(' · ');
+}
+
 export function isConcentration(value: unknown): value is Concentration {
   return CONCENTRATIONS.includes(value as Concentration);
 }

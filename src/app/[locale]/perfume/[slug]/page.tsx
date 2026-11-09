@@ -5,6 +5,7 @@ import { draftMode } from 'next/headers';
 import { notFound } from 'next/navigation';
 import {
   heroMedia,
+  productDetails,
   productStructuredData,
   serializeJsonLd,
   variantLabel,
@@ -54,16 +55,30 @@ export async function generateMetadata({
     }),
     siteUrl(),
   ).href;
+  // Sin frase propia, la descripción se compone solo con datos de la ficha
+  // (nombre, casa, concentración y formatos): nada inventado y distinta en
+  // cada perfume, en vez de la genérica de la portada.
+  const t = await getTranslations({ locale });
+  const details = productDetails(
+    product,
+    product.concentration ? t(`concentration.${product.concentration}`) : null,
+  );
+  const names = { name: product.name, brand: product.brand.name };
+  const description =
+    product.tagline ??
+    (details
+      ? t('product.metaDescription', { ...names, details })
+      : t('product.metaDescriptionPlain', names));
   // El español es la base (nombre, marca, precio); ca y en cuentan como
   // publicados cuando tienen texto propio.
   return {
     title: `${product.name} · ${product.brand.name}`,
-    description: product.tagline ?? undefined,
+    description,
     openGraph: {
       type: 'website',
       url,
       title: `${product.name} · ${product.brand.name}`,
-      description: product.tagline ?? undefined,
+      description,
       ...(image
         ? { images: [{ url: image.url, alt: image.alt ?? product.name }] }
         : {}),
@@ -71,7 +86,7 @@ export async function generateMetadata({
     twitter: {
       card: image ? 'summary_large_image' : 'summary',
       title: `${product.name} · ${product.brand.name}`,
-      description: product.tagline ?? undefined,
+      description,
       ...(image ? { images: [image.url] } : {}),
     },
     ...alternatesMetadata(

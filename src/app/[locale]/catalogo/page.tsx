@@ -15,7 +15,11 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'catalog' });
-  return { title: t('title'), ...alternatesMetadata('/catalogo', locale) };
+  return {
+    title: t('title'),
+    description: t('metaDescription'),
+    ...alternatesMetadata('/catalogo', locale),
+  };
 }
 
 export default async function Catalog({

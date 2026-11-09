@@ -38,6 +38,7 @@ export {
   isConcentration,
   lowestPrice,
   slugify,
+  productDetails,
   variantLabel,
 } from './domain/product';
 export type {

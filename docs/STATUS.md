@@ -1,4 +1,19 @@
-# Estado real — 03/11/2026
+# Estado real — 09/11/2026
+
+## Revisión para la puesta en producción (09/11)
+
+Rama `claude/nifty-clarke-o2pl14`. A petición del usuario: revisar todo el contenido de la web, integrar las mejoras necesarias para abrir cuanto antes y presentar lo pendiente. Decisión §188. Sin migraciones ni variables nuevas.
+
+- **Mejora integrada:** las 50 fichas publicadas compartían la descripción de buscadores de la portada (ninguna tiene frase propia) y la colección tampoco tenía la suya. Ahora cada ficha la compone con sus datos («Asad de Lattafa (Eau de Parfum · 100 ml) en L’Atelier du Désert…», es/ca/en) y la colección tiene una propia; si el perfume tiene frase, sigue mandando la frase. Nada inventado.
+- **Leído en producción el 09/11 (solo lectura):** `main` cad6354 desplegado y «Ready»; salud 200; 39 migraciones, las mismas que el repositorio; asesor de seguridad solo con los avisos intencionados. Tienda en es/ca/en sin errores de consola ni respuestas 4xx en portada, colección, ficha, catálogo olfativo, casas, búsqueda, recorrido y envíos.
+- **Bloqueos de la apertura que siguen (titular):** en Production faltan `REDSYS_*` reales y `WEB_CHECKOUT`; **ningún formato publicado tiene peso (0 de 50)** y los 8 servicios de Sendcloud están apagados, así que hoy solo se podría recoger en la tienda; Firewall de Vercel sin configuración; una de las dos administradoras de la tienda no ha entrado nunca ni tiene MFA; siguen en Vercel las variables de Preview de las dos ramas de prueba del TPV; textos legales sin revisar por la asesoría.
+- **Ya hecho desde el 25/10:** el código `PRUEBATPV` está desactivado.
+- **Visto en los datos (decide el titular):** 46 de 50 formatos con existencias (Asad, el de la portada y la experiencia 3D, agotado); 6 publicados sin foto; las 75 fotos siguen provisionales (el feed de Google y Meta saldría vacío); ninguna ficha tiene descripción ni frase; ningún EAN; precios sin redondear (66,05 €, 44,02 €) y tres a 49,50 € junto a hermanos de 124–175 € (Pharaoh Ramesses II, Game of Spades Blind Bid, Yara Aceite Concentrado), a confirmar.
+- **Nuevo en Vercel:** la integración de Supabase añadió el 26/10 a Production variables que el código no usa (`POSTGRES_*`, `SUPABASE_SERVICE_ROLE_KEY`, `SUPABASE_JWT_SECRET`…). Son secretos de más en el entorno: conviene desconectar la integración o borrarlas.
+- **PR abiertas:** #61 (3D bajo demanda y Lighthouse en la CI), #59 (45 imágenes generadas) y #39 (presentación al cliente).
+- **Comprobado en local** (Node 22.23.4: el contenedor no tiene la 24; sin Docker): `pnpm check` correcto (lint, tipos, 806 unitarias, 1 nueva, y build); `format:check` y `scan:secrets` correctos. Sin Supabase local, pgTAP y E2E quedan para la CI.
+
+# Estado del 03/11/2026
 
 ## Revisión de seguridad (03/11)
 
