@@ -68,7 +68,9 @@ Lo que falta para vender es sobre todo configuración y trámites del titular, d
 
 ## 7. 3D selectivo y rendimiento
 
-Ampliar los cuatro pilotos a productos destacados con medidas reales. Pipeline GLB y presupuestos de peso y carga; Lighthouse CI en una entrega propia. Fotos reales o con derechos y alternativa accesible sin WebGL.
+**Portada con carrusel 3D — hecho (09/11, §188):** los perfumes con escena giran en la primera pantalla, con fotos en los navegadores sin GPU.
+
+Ampliar los cuatro pilotos a productos destacados con medidas reales (cada escena nueva entra sola en el carrusel de la portada). Pipeline GLB y presupuestos de peso y carga; Lighthouse CI en una entrega propia. Fotos reales o con derechos y alternativa accesible sin WebGL.
 
 **Cierre:** comparación móvil y escritorio con carga bajo demanda, movimiento reducido y presupuestos comprobados.
 

@@ -73,6 +73,7 @@ Una combinación que no está en la matriz no está permitida. Para añadir una,
 
 - Duraciones `--duration-fast` (200 ms, controles), `--duration-base` (400 ms, paneles) y `--duration-slow` (600 ms, revelados), con la curva `ease-luxe`. En la consola, 120, 200 y 300 ms.
 - Bucles decorativos (`animate-twinkle`, `sweep`, `marquee`, `scroll-cue`) solo como adorno.
+- **Carrusel 3D de la portada** (DECISIONS §188): el único movimiento con contenido que sigue solo. Lleva siempre pausa visible (iconos `pause` y `play`), se para con el cursor encima o el foco del teclado dentro y, con «reducir movimiento», no gira solo y la escena salta sin animar.
 - Con `prefers-reduced-motion` todo pasa al estado final: lo garantiza la regla global de `globals.css` y lo comprueba el E2E.
 
 ### 2.7 Consola del titular

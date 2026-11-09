@@ -19,3 +19,13 @@ export function findSceneSlug(
     ? (slug as UnboxingSceneSlug)
     : null;
 }
+
+/** Cuentas del carrusel de la portada (sin three.js: la escena va aparte). */
+export {
+  createRingControl,
+  nearestIndex,
+  releaseSteps,
+  ringStep,
+  shortestTarget,
+} from './carousel/ring';
+export type { RingControl } from './carousel/ring';

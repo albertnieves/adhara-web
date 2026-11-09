@@ -1,4 +1,14 @@
-# Estado real — 03/11/2026
+# Estado real — 09/11/2026
+
+## Portada con carrusel 3D (09/11)
+
+Rama `claude/blissful-ramanujan-t2e9bs`. A petición del usuario: una primera pantalla más premium y visual, con un carrusel 3D que gire entre los cuatro perfumes, en una rama independiente. Decisión §188 (amplía ADR-007). Sin migraciones ni variables; en el panel, solo la ayuda de la imagen de portada.
+
+- **Portada:** escenario de noche a pantalla completa con los frascos de los perfumes con escena 3D (hoy Asad, Yara, Club de Nuit Intense Man Limited Edition y Khamrah) en una peana giratoria con filo dorado; foco cálido sobre el del frente, los demás en penumbra, cielo de estrellas, polvo dorado y un halo del color de cada perfume. Debajo, casa, nombre, formato, precio y «Ver el perfume». Titular, texto y «Descubrir la colección» siguen siendo los del panel (el titular, a tamaño `h1`).
+- **Controles:** anterior y siguiente, una raya por perfume que se llena mientras gira, pausa y reanudar, flechas del teclado, arrastrar con el dedo o el ratón y tocar los lados o el centro. Gira solo cada 6,5 s; se para con el cursor encima, con el foco del teclado, fuera de pantalla y, con «reducir movimiento», no gira solo.
+- **Sin GPU** (WebGL por software), sin WebGL o si la escena falla: la foto del perfume del frente con los mismos controles. Sin perfumes con escena, la portada de antes.
+- **Comprobado en local** (Node 24.16.0, Supabase local con Docker, datos de la CI más los cuatro pilotos con sus PVP y fotos de `supabase/data/`, solo en la base local, y la configuración de `e2e.yml`): `pnpm check` correcto (lint, tipos, 819 unitarias, 12 nuevas, y build); `format:check` y `scan:secrets` correctos; tienda pública con los cuatro pilotos 335 correctas y 51 omitidas (12 nuevas en `home-carousel.spec.ts`, y la auditoría de maquetación y axe de la portada en es, ca y en a 390, 768, 1280 y 1440 px con el carrusel en fotos, como en un navegador sin GPU); sin pilotos, como en la CI, 323 correctas y 63 omitidas (las 12 del carrusel se omiten); panel con sesión 7/7 en lo que toca el cambio (referencia de diseño con los iconos nuevos, edición de la portada y auditoría de todas sus pantallas). Escena forzada con `?3d` en la compilación de producción: sin errores en la consola ni bloqueos de la CSP. Capturas de los cuatro perfumes a 390 y 1440 px revisadas (la escena con SwiftShader, sin GPU, a un fotograma por segundo: la fluidez real se ve en un navegador con GPU).
+- **Para verlo:** las Preview de Vercel compilan sin la base (28/10), así que allí sale la portada fija; el carrusel se ve con los datos reales al fusionar, o en local. **Siguiente:** que el titular lo revise en un móvil y un ordenador reales; con más escenas 3D (roadmap, punto 7), entran solas.
 
 ## Revisión de seguridad (03/11)
 

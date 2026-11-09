@@ -129,7 +129,7 @@ export function ContentEditor({
             />
             <Field
               label="Imagen editorial opcional"
-              hint="Hasta 3 MB. Queda privada hasta publicar."
+              hint="Hasta 3 MB. Queda privada hasta publicar. No se ve mientras la portada muestre el carrusel 3D (perfumes publicados con escena 3D)."
             >
               <input
                 type="file"
