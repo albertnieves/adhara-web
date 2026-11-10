@@ -24,3 +24,32 @@ export function detectWebGL() {
     return false;
   }
 }
+
+/**
+ * WebGL con tarjeta gráfica. Sin ella (SwiftShader, llvmpipe…: navegadores sin
+ * GPU, GPU bloqueada o navegadores de pruebas) una escena a pantalla completa
+ * va a saltos, así que el carrusel de la portada enseña las fotos.
+ * `?nowebgl` fuerza las fotos y `?3d` fuerza la escena (pruebas y capturas).
+ */
+export function detectHardwareWebGL() {
+  const params = new URLSearchParams(window.location.search);
+  if (params.has('nowebgl')) return false;
+  try {
+    const canvas = document.createElement('canvas');
+    const gl = (canvas.getContext('webgl2') ??
+      canvas.getContext('webgl')) as WebGLRenderingContext | null;
+    if (!gl) return false;
+    const info = gl.getExtension('WEBGL_debug_renderer_info');
+    const renderer = String(
+      gl.getParameter(info ? info.UNMASKED_RENDERER_WEBGL : gl.RENDERER),
+    );
+    // Libera el contexto de la prueba: el navegador limita cuántos hay.
+    gl.getExtension('WEBGL_lose_context')?.loseContext();
+    if (params.has('3d')) return true;
+    return !/swiftshader|llvmpipe|softpipe|software|basic render/i.test(
+      renderer,
+    );
+  } catch {
+    return false;
+  }
+}

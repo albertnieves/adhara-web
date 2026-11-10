@@ -12,7 +12,7 @@ Introducir email y contraseña. En el primer acceso, configurar la app de autent
 
 ## Editar la tienda
 
-Inicio → Editar portada permite modificar los textos en español, catalán o inglés. Guardar borrador conserva el contenido público. «Vista previa del borrador» muestra los cambios a la sesión autorizada. «Publicar revisión guardada» los hace visibles al público. Si se sigue escribiendo, primero hay que guardar. El historial restaura una revisión como un borrador nuevo que requiere publicar después.
+Inicio → Editar portada permite modificar los textos en español, catalán o inglés. La portada abre con el carrusel 3D de los perfumes publicados con escena 3D (hoy los cuatro del piloto, DECISIONS §188): el antetítulo, el título, el texto y el botón son los de aquí; el nombre, el formato y el precio de cada perfume salen de su ficha. Mientras haya carrusel, la imagen editorial no se usa. Guardar borrador conserva el contenido público. «Vista previa del borrador» muestra los cambios a la sesión autorizada. «Publicar revisión guardada» los hace visibles al público. Si se sigue escribiendo, primero hay que guardar. El historial restaura una revisión como un borrador nuevo que requiere publicar después.
 
 La imagen editorial es opcional, admite hasta 3 MB y exige descripción y procedencia. Es privada mientras solo esté en borradores. Las revisiones conservan sus archivos; una URL firmada de una imagen publicada puede seguir funcionando hasta diez minutos después de retirarla.
 

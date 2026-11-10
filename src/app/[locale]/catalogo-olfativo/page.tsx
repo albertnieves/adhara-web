@@ -9,7 +9,12 @@ import {
 import { Link } from '@/modules/i18n';
 import { alternatesMetadata } from '@/modules/i18n/metadata';
 import { requireLocale } from '@/modules/i18n/server';
-import { Reveal, ScentCatalogBrowser } from '@/modules/storefront';
+import {
+  Reveal,
+  RisingWords,
+  ScentCatalogBrowser,
+  ScentTiers,
+} from '@/modules/storefront';
 
 export const revalidate = 300;
 
@@ -55,44 +60,35 @@ export default async function ScentCatalog({
         data-tone="oud"
         className="bg-surface text-fg grain relative overflow-hidden"
       >
-        <div className="relative mx-auto max-w-[90rem] px-5 pt-40 pb-20 sm:px-10 sm:pt-48 sm:pb-28">
-          <Reveal className="max-w-4xl">
+        <div className="relative mx-auto grid max-w-[90rem] gap-x-12 gap-y-10 px-5 pt-40 pb-20 sm:px-10 sm:pt-48 sm:pb-28 xl:grid-cols-[minmax(0,1fr)_minmax(0,37rem)] xl:items-center">
+          <div className="max-w-4xl">
             <Star className="text-accent-fg size-4" />
             <Eyebrow tone="accent" className="mt-8">
               {t('eyebrow')}
             </Eyebrow>
             <Heading level={1} size="display" className="mt-4">
-              {t('title')}
+              <RisingWords text={t('title')} delay={0.1} />
             </Heading>
-            <p className="text-fg-muted mt-8 max-w-2xl text-lg leading-relaxed">
-              {t('lead')}
-            </p>
-            <Link
-              href="/recorrido-olfativo"
-              className={buttonClass('outline', 'md', 'mt-8')}
-            >
-              {tJourney('cta')}
-            </Link>
-          </Reveal>
-          <Reveal delay={0.15}>
-            <ol className="border-border mt-16 grid gap-8 border-t pt-10 sm:grid-cols-3">
-              {(['top', 'heart', 'base'] as const).map((tier, index) => (
-                <li key={tier} className="flex gap-5">
-                  <span
-                    aria-hidden
-                    className="font-display text-accent-fg text-4xl font-light"
-                  >
-                    {['I', 'II', 'III'][index]}
-                  </span>
-                  <div>
-                    <Eyebrow as="h2">{t(tier)}</Eyebrow>
-                    <p className="text-fg-muted mt-2 text-sm leading-relaxed">
-                      {t(`${tier}Hint`)}
-                    </p>
-                  </div>
-                </li>
-              ))}
-            </ol>
+            <Reveal delay={0.45}>
+              <p className="text-fg-muted mt-8 max-w-2xl text-lg leading-relaxed">
+                {t('lead')}
+              </p>
+              <Link
+                href="/recorrido-olfativo"
+                className={buttonClass('outline', 'md', 'mt-8')}
+              >
+                {tJourney('cta')}
+              </Link>
+            </Reveal>
+          </div>
+          <Reveal delay={0.3}>
+            <ScentTiers
+              tiers={(['top', 'heart', 'base'] as const).map((tier) => ({
+                key: tier,
+                label: t(tier),
+                hint: t(`${tier}Hint`),
+              }))}
+            />
           </Reveal>
         </div>
       </section>

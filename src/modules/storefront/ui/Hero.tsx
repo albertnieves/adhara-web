@@ -12,7 +12,35 @@ import { Heading, buttonClass } from '@/components/ui';
 import { Star } from '@/modules/brand';
 import { Link } from '@/modules/i18n';
 
-const EASE = [0.22, 1, 0.36, 1] as const;
+export const EASE = [0.22, 1, 0.36, 1] as const;
+
+/** Titular que sube palabra a palabra al cargar (sin movimiento, ya está). */
+export function RisingWords({
+  text,
+  delay = 0.45,
+}: {
+  text: string;
+  delay?: number;
+}) {
+  const reduced = useReducedMotion();
+  const words = text.split(' ');
+  return words.map((word, index) => (
+    <span
+      key={`${word}-${index}`}
+      className="inline-block overflow-hidden pb-[0.12em] align-bottom"
+    >
+      <motion.span
+        className="inline-block"
+        initial={reduced ? false : { y: '110%' }}
+        animate={{ y: '0%' }}
+        transition={{ duration: 1.3, delay: delay + index * 0.09, ease: EASE }}
+      >
+        {word}
+        {index < words.length - 1 ? '\u00a0' : ''}
+      </motion.span>
+    </span>
+  ));
+}
 
 /** Cielo determinista (mismo en servidor y cliente: sin desajustes de hidratación). */
 const STARS = (() => {
@@ -57,7 +85,6 @@ export function Hero({
   const contentOpacity = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
   const starRotate = useTransform(scrollYProgress, [0, 1], [0, 45]);
   const starScale = useTransform(scrollYProgress, [0, 1], [1, 1.25]);
-  const words = title.split(' ');
 
   return (
     <section
@@ -142,26 +169,7 @@ export function Hero({
         </motion.p>
 
         <Heading level={1} size="display" className="mt-8">
-          {words.map((word, index) => (
-            <span
-              key={`${word}-${index}`}
-              className="inline-block overflow-hidden pb-[0.12em] align-bottom"
-            >
-              <motion.span
-                className="inline-block"
-                initial={reduced ? false : { y: '110%' }}
-                animate={{ y: '0%' }}
-                transition={{
-                  duration: 1.3,
-                  delay: 0.45 + index * 0.09,
-                  ease: EASE,
-                }}
-              >
-                {word}
-                {index < words.length - 1 ? ' ' : ''}
-              </motion.span>
-            </span>
-          ))}
+          <RisingWords text={title} />
         </Heading>
 
         <motion.div

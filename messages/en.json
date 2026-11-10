@@ -25,6 +25,16 @@
     "heroLead": "A selection of fragrances from the perfume houses of the Middle East, presented with the calm they deserve.",
     "heroCta": "Discover the collection",
     "scroll": "Scroll",
+    "carouselLabel": "Fragrances from the collection in 3D",
+    "carouselRole": "carousel",
+    "carouselSlide": "fragrance",
+    "carouselPosition": "{index} of {total}",
+    "carouselPrevious": "Previous fragrance",
+    "carouselNext": "Next fragrance",
+    "carouselShow": "Show {name}",
+    "carouselPause": "Pause rotation",
+    "carouselPlay": "Resume rotation",
+    "carouselCta": "View the fragrance",
     "featuredEyebrow": "Selection",
     "featuredTitle": "Featured fragrances",
     "featuredCta": "View the full collection",
@@ -42,6 +52,8 @@
   "catalog": {
     "eyebrow": "Collection",
     "title": "All fragrances",
+    "summary": "{count, plural, one {# fragrance} other {# fragrances}} from {brands, plural, one {# house} other {# houses}}.",
+    "deckLabel": "One fragrance from each house",
     "count": "{count, plural, =0 {No fragrances} one {# fragrance} other {# fragrances}}",
     "search": "Search by name or house",
     "brand": "House",
@@ -105,6 +117,7 @@
     "scene": "3D animation of {name}",
     "sceneReplay": "Replay",
     "sceneDrag": "Drag to rotate",
+    "scene3d": "3D view",
     "related": "More from {brand}"
   },
   "newsletter": {

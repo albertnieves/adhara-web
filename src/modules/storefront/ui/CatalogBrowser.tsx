@@ -9,10 +9,11 @@ import {
   Eyebrow,
   SearchField,
   Select,
-  buttonClass,
 } from '@/components/ui';
 import type { Audience, StorefrontProduct } from '@/modules/catalog';
 import { AUDIENCES, lowestPrice } from '@/modules/catalog';
+import { CountLabel } from './CountLabel';
+import { FilterChip } from './FilterChip';
 import { ProductCard } from './ProductCard';
 import { ViewToggle } from './ViewToggle';
 import { productGridClass, useCatalogView } from './catalogView';
@@ -42,28 +43,6 @@ function compare(sort: Sort) {
     if (pb === null) return -1;
     return sort === 'priceAsc' ? pa - pb : pb - pa;
   };
-}
-
-function Chip({
-  active,
-  onClick,
-  children,
-}: {
-  active: boolean;
-  onClick: () => void;
-  children: React.ReactNode;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      aria-pressed={active}
-      // Filtro activo como botón principal; el resto, de contorno.
-      className={buttonClass(active ? 'primary' : 'outline', 'sm')}
-    >
-      {children}
-    </button>
-  );
 }
 
 export function CatalogBrowser({
@@ -130,28 +109,34 @@ export function CatalogBrowser({
           </Select>
         </label>
         <div className="hidden flex-wrap items-center gap-2 sm:flex">
-          <Chip active={brand === null} onClick={() => setBrand(null)}>
+          <FilterChip
+            group="brand"
+            active={brand === null}
+            onClick={() => setBrand(null)}
+          >
             {t('allBrands')}
-          </Chip>
+          </FilterChip>
           {brands.map(([slug, name]) => (
-            <Chip
+            <FilterChip
               key={slug}
+              group="brand"
               active={brand === slug}
               onClick={() => setBrand(brand === slug ? null : slug)}
             >
               {name}
-            </Chip>
+            </FilterChip>
           ))}
         </div>
         <div className="flex flex-wrap items-center gap-2">
           {audiences.map((value) => (
-            <Chip
+            <FilterChip
               key={value}
+              group="audience"
               active={audience === value}
               onClick={() => setAudience(audience === value ? null : value)}
             >
               {tAudience(value)}
-            </Chip>
+            </FilterChip>
           ))}
         </div>
       </div>
@@ -167,7 +152,9 @@ export function CatalogBrowser({
         {/* En el móvil: recuento y vista en una línea, orden debajo. */}
         <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-3 sm:justify-start">
           <p className="text-fg-muted tracking-caps text-xs whitespace-nowrap uppercase tabular-nums">
-            {t('count', { count: visible.length })}
+            <CountLabel value={visible.length}>
+              {t('count', { count: visible.length })}
+            </CountLabel>
           </p>
           <ViewToggle view={view} onChange={setView} />
           <label className="flex basis-full items-center gap-3 sm:basis-auto">
@@ -227,11 +214,14 @@ export function CatalogBrowser({
                   ease: [0.22, 1, 0.36, 1],
                 }}
               >
-                <ProductCard
-                  product={product}
-                  priority={index < 4}
-                  compact={view === 'grid'}
-                />
+                {/* La entrada con el scroll va dentro: el <li> lo mueve motion. */}
+                <div className="scroll-rise">
+                  <ProductCard
+                    product={product}
+                    priority={index < 4}
+                    compact={view === 'grid'}
+                  />
+                </div>
               </motion.li>
             ))}
           </AnimatePresence>

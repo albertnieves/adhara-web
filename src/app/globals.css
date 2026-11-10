@@ -312,6 +312,51 @@
     opacity: 0.07;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   }
+
+  /*
+   * Movimiento ligado al scroll de las rejillas de perfumes (DECISIONS §189).
+   * Lo hace el navegador, sin JavaScript, donde existe `animation-timeline`;
+   * en el resto y con «reducir movimiento» se ve el estado final.
+   * `scroll-rise`: la tarjeta se levanta en perspectiva al entrar en pantalla.
+   * `scroll-drift`: la foto se desplaza un poco dentro de su vitrina mientras
+   * cruza la pantalla.
+   */
+  @media (prefers-reduced-motion: no-preference) {
+    @supports (animation-timeline: view()) {
+      .scroll-rise {
+        transform-origin: 50% 100%;
+        animation: scroll-rise linear both;
+        animation-timeline: view();
+        animation-range: entry 0% entry 70%;
+      }
+      .scroll-drift {
+        animation: scroll-drift linear both;
+        animation-timeline: view();
+        animation-range: cover 0% cover 100%;
+      }
+    }
+  }
+  @keyframes scroll-rise {
+    from {
+      opacity: 0;
+      transform: perspective(900px) translateY(3rem) rotateX(14deg) scale(0.96);
+    }
+    45% {
+      opacity: 1;
+    }
+    to {
+      opacity: 1;
+      transform: perspective(900px) translateY(0) rotateX(0deg) scale(1);
+    }
+  }
+  @keyframes scroll-drift {
+    from {
+      transform: translateY(4%);
+    }
+    to {
+      transform: translateY(-4%);
+    }
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
