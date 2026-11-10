@@ -1,6 +1,7 @@
 /**
  * Escena de unboxing (piloto, enfoque C). La vista es de cliente y pesa
- * (three.js): se carga con next/dynamic desde la ficha, nunca en el servidor.
+ * (three.js): la ficha la importa solo cuando el cliente pide verla
+ * (`loadUnboxingViewer`), nunca en el servidor ni en la carga de la página.
  */
 export const UNBOXING_SCENES = [
   'asad',
@@ -9,7 +10,8 @@ export const UNBOXING_SCENES = [
   'khamrah',
 ] as const;
 export type UnboxingSceneSlug = (typeof UNBOXING_SCENES)[number];
-export type { UnboxingLabels } from './UnboxingViewer';
+export type { UnboxingLabels, UnboxingViewerProps } from './UnboxingViewer';
+export { loadUnboxingViewer, useWebGL } from './client';
 
 /** Slug de escena válido o null (products.unboxing_scene puede ser cualquier texto). */
 export function findSceneSlug(

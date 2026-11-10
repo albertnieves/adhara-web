@@ -6,7 +6,9 @@ export type TimelineEventName = 'opened' | 'risen' | 'rotated' | 'done';
 export type TimelineMessage =
   | { type: 'event'; name: TimelineEventName }
   | { type: 'phase'; phase: Phase }
-  | { type: 'reset' };
+  | { type: 'reset' }
+  /** Empieza o deja de avanzar: la escena solo se repinta sin parar mientras avanza. */
+  | { type: 'playing'; playing: boolean };
 
 /** Instantes (s) en los que termina cada escena, contados desde el inicio de S1. */
 export function phaseEnds(spec: MotionSpec) {
@@ -98,22 +100,22 @@ export class Timeline {
 
   play() {
     if (this.t >= this.total) return;
-    this.playing = true;
+    this.setPlaying(true);
   }
 
   pause() {
-    this.playing = false;
+    this.setPlaying(false);
   }
 
   /** Vuelve a S0 y reproduce desde el principio. */
   restart() {
     this.reset();
-    this.playing = true;
+    this.setPlaying(true);
   }
 
   reset() {
     this.t = 0;
-    this.playing = false;
+    this.setPlaying(false);
     this.fired.clear();
     this.emit({ type: 'reset' });
     this.sync();
@@ -122,15 +124,21 @@ export class Timeline {
   /** Salta al estado final (S5) disparando los eventos pendientes en orden. */
   skipToEnd() {
     this.t = this.total;
-    this.playing = false;
+    this.setPlaying(false);
     this.sync();
   }
 
   advance(dt: number) {
     if (!this.playing) return;
     this.t = Math.min(this.total, this.t + dt * this.speed);
-    if (this.t >= this.total) this.playing = false;
+    if (this.t >= this.total) this.setPlaying(false);
     this.sync();
+  }
+
+  private setPlaying(playing: boolean) {
+    if (this.playing === playing) return;
+    this.playing = playing;
+    this.emit({ type: 'playing', playing });
   }
 
   private sync() {

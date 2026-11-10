@@ -118,6 +118,10 @@
     "sceneReplay": "Replay",
     "sceneDrag": "Drag to rotate",
     "scene3d": "3D view",
+    "sceneOpen": "Open the box in 3D",
+    "sceneLoading": "Loading the box…",
+    "sceneClose": "See the photos",
+    "sceneFailed": "The 3D view couldn’t be loaded. The photos are still here.",
     "related": "More from {brand}"
   },
   "newsletter": {

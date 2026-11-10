@@ -118,6 +118,10 @@
     "sceneReplay": "Repetir",
     "sceneDrag": "Arrastra para girar",
     "scene3d": "Vista 3D",
+    "sceneOpen": "Abrir la caja en 3D",
+    "sceneLoading": "Cargando la caja…",
+    "sceneClose": "Ver las fotos",
+    "sceneFailed": "No se ha podido cargar la vista 3D. Las fotos siguen aquí.",
     "related": "También de {brand}"
   },
   "newsletter": {
