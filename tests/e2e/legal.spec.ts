@@ -121,6 +121,10 @@ test.describe('aviso de entrada', () => {
   });
 
   test('sin infracciones de accesibilidad', async ({ page }) => {
+    // El aviso entra con un fundido: a medias, axe mide un contraste que no
+    // es el final (falló una vez con la batería completa). Como la auditoría
+    // de diseño, se mide el estado final.
+    await page.emulateMedia({ reducedMotion: 'reduce' });
     await page.goto('/es');
     await expect(page.getByRole('dialog')).toBeVisible();
     const { default: AxeBuilder } = await import('@axe-core/playwright');

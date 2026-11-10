@@ -73,6 +73,7 @@ Una combinación que no está en la matriz no está permitida. Para añadir una,
 
 - Duraciones `--duration-fast` (200 ms, controles), `--duration-base` (400 ms, paneles) y `--duration-slow` (600 ms, revelados), con la curva `ease-luxe`. En la consola, 120, 200 y 300 ms.
 - Bucles decorativos (`animate-twinkle`, `sweep`, `marquee`, `scroll-cue`) solo como adorno.
+- **Profundidad en las rejillas** (DECISIONS §189): las tarjetas de perfume van en una vitrina (`CardStage`) que se inclina hacia el cursor, y `scroll-rise` y `scroll-drift` las mueven con el scroll donde el navegador lo hace solo (`animation-timeline`). Los filtros de las rejillas usan `FilterChip` (pastilla que se desliza). Con «reducir movimiento», nada de esto. Sin WebGL: el 3D con three.js queda en la ficha y en la portada.
 - **Carrusel 3D de la portada** (DECISIONS §188): el único movimiento con contenido que sigue solo. Lleva siempre pausa visible (iconos `pause` y `play`), se para con el cursor encima o el foco del teclado dentro y, con «reducir movimiento», no gira solo y la escena salta sin animar.
 - Con `prefers-reduced-motion` todo pasa al estado final: lo garantiza la regla global de `globals.css` y lo comprueba el E2E.
 

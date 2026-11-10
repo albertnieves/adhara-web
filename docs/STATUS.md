@@ -1,4 +1,18 @@
-# Estado real — 09/11/2026
+# Estado real — 10/11/2026
+
+## Colección y catálogo olfativo con movimiento y 3D (10/11)
+
+Misma rama que el carrusel, `claude/blissful-ramanujan-t2e9bs`. A petición del usuario: mejorar el diseño de la colección y del catálogo olfativo con más movimiento y 3D, y un roadmap de mejoras para autorizar. Decisión §189. Sin migraciones, variables ni cambios en el panel.
+
+- **Tarjetas-vitrina** en toda la tienda (colección, catálogo olfativo, portada, casas, búsqueda): la foto se inclina hacia el cursor con un reflejo y sombra; al bajar, cada tarjeta se levanta en perspectiva y la foto deriva dentro de su vitrina. Los perfumes con escena llevan «Vista 3D».
+- **Colección:** titular animado, «N fragancias de M casas» y, desde 1280 px, un abanico 3D con una fragancia de cada casa que se hojea con el cursor o el teclado.
+- **Catálogo olfativo:** la pirámide de notas es una figura 3D de tres discos; la luz baja de la salida al fondo y se queda en el piso que se señala.
+- **Filtros** con una pastilla que se desliza entre opciones; el recuento se actualiza con un fundido.
+- **Sin WebGL** en estas páginas (transformaciones 3D del navegador): no carga three.js ni depende de la tarjeta gráfica. Con «reducir movimiento», todo quieto.
+- **Roadmap para autorizar:** [ROADMAP_DISENO.md](ROADMAP_DISENO.md), con 18 propuestas en cuatro bloques. Nada de esa lista está hecho.
+- **Comprobado en local** (Node 24.16.0, Supabase local con Docker y la configuración de `e2e.yml`): `pnpm check` correcto (lint, tipos, 831 unitarias, 12 nuevas, y build); `format:check` y `scan:secrets` correctos; tienda pública como en la CI (solo el perfume de prueba) 330 correctas y 68 omitidas; con el catálogo real copiado a la base local (50 perfumes, solo datos públicos), 32 correctas y 10 omitidas en `catalog-motion`, `home-carousel`, navegación móvil y la auditoría de maquetación y axe de la portada, la colección y el catálogo olfativo a 390, 768, 1280 y 1440 px. En la primera vuelta completa falló una prueba de accesibilidad del aviso de entrada (medía el contraste a mitad del fundido); pasa 20 de 20 repetida y ahora mide el estado final. El panel no cambia y no se ha vuelto a pasar su batería (la CI la repite). Capturas a 390, 768, 1280 y 1440 px revisadas, y la compilación de producción sin errores en la consola.
+- **Límites:** la entrada y la deriva con el scroll usan `animation-timeline`, que hoy tienen Chrome, Edge y Safari recientes; en Firefox las tarjetas se ven quietas. La inclinación es solo con ratón. No se ha medido el rendimiento (propuesta D1 del roadmap). Las Preview de Vercel siguen sin catálogo.
+- **Siguiente:** que el titular autorice lo que quiera de [ROADMAP_DISENO.md](ROADMAP_DISENO.md).
 
 ## Portada con carrusel 3D (09/11)
 
