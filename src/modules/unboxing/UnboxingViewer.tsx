@@ -1,13 +1,7 @@
 'use client';
 
-import {
-  useCallback,
-  useEffect,
-  useEffectEvent,
-  useRef,
-  useState,
-} from 'react';
-import { detectWebGL, usePrefersReducedMotion } from './env';
+import { useEffect, useEffectEvent, useState } from 'react';
+import { usePrefersReducedMotion } from './env';
 import { storefrontMotionSpec } from './motion/storefront';
 import type { Phase } from './motion/timeline';
 import { Timeline } from './motion/timeline';
@@ -19,113 +13,100 @@ export type UnboxingLabels = {
   scene: string;
   replay: string;
   dragHint: string;
+  /** Volver a las fotos (cierra la escena y libera la tarjeta gráfica). */
+  close: string;
 };
 
-type Props = {
+export type UnboxingViewerProps = {
   scene: string;
   /** Color del contenedor (token --color-stage). */
   background: string;
   labels: UnboxingLabels;
-  /** Imagen mostrada sin WebGL o si la escena falla: la compra nunca depende del 3D. */
-  fallback: React.ReactNode;
-  /**
-   * Se llama una vez, la primera vez que la escena (con WebGL y sin fallo) se
-   * ve en pantalla: la medición anónima de interés de la tienda.
-   */
+  onClose: () => void;
+  /** La escena no se pudo pintar: la ficha vuelve a las fotos (la compra nunca depende del 3D). */
+  onFailed: () => void;
+  /** Se llama una vez al abrirla: la medición anónima de interés de la tienda. */
   onSeen?: () => void;
 };
 
 /**
- * Escena de unboxing del piloto en la ficha: se reproduce una vez al entrar
- * en pantalla; con prefers-reduced-motion se muestra directamente el final.
+ * Escena de unboxing del piloto en la ficha. Solo existe cuando el cliente
+ * la pide («Abrir la caja en 3D»): se reproduce al abrirla y, con
+ * prefers-reduced-motion, muestra directamente el final. La ficha comprueba
+ * antes que hay WebGL.
  */
 export default function UnboxingViewer({
   scene,
   background,
   labels,
-  fallback,
+  onClose,
+  onFailed,
   onSeen,
-}: Props) {
+}: UnboxingViewerProps) {
   const product = findScene(scene);
   const [timeline] = useState(() => new Timeline(storefrontMotionSpec));
-  const [webgl] = useState(detectWebGL);
-  const [failed, setFailed] = useState(false);
   const [phase, setPhase] = useState<Phase>('S0');
+  const [playing, setPlaying] = useState(false);
   const reduced = usePrefersReducedMotion();
-  const container = useRef<HTMLDivElement>(null);
-  const started = useRef(false);
-  const seen = useRef(false);
   const notifySeen = useEffectEvent(() => onSeen?.());
+  const fail = useEffectEvent(() => onFailed());
 
   useEffect(
     () =>
       timeline.subscribe((message) => {
         if (message.type === 'phase') setPhase(message.phase);
+        if (message.type === 'playing') setPlaying(message.playing);
       }),
     [timeline],
   );
 
   useEffect(() => {
-    const node = container.current;
-    if (!node || !product) return;
+    if (!product) {
+      fail();
+      return;
+    }
+    notifySeen();
+  }, [product]);
+
+  useEffect(() => {
+    if (!product) return;
     if (reduced) {
       timeline.skipToEnd();
       return;
     }
-    let timer: number | undefined;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (!entry?.isIntersecting || started.current) return;
-        started.current = true;
-        timer = window.setTimeout(
-          () => timeline.play(),
-          timeline.spec.s0Rest.autoplayDelay * 1000,
-        );
-      },
-      { threshold: 0.4 },
+    // Un instante con la caja cerrada antes de abrirla, como en la tienda.
+    const timer = window.setTimeout(
+      () => timeline.play(),
+      timeline.spec.s0Rest.autoplayDelay * 1000,
     );
-    observer.observe(node);
-    return () => {
-      observer.disconnect();
-      window.clearTimeout(timer);
-    };
+    return () => window.clearTimeout(timer);
   }, [timeline, reduced, product]);
 
-  // onSeen va aparte de la reproducción: con movimiento reducido también cuenta.
-  useEffect(() => {
-    const node = container.current;
-    if (!node || !product || seen.current) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (!entry?.isIntersecting || seen.current) return;
-        seen.current = true;
-        observer.disconnect();
-        notifySeen();
-      },
-      { threshold: 0.4 },
-    );
-    observer.observe(node);
-    return () => observer.disconnect();
-  }, [product]);
-
-  const replay = useCallback(() => {
-    if (reduced) timeline.skipToEnd();
-    else timeline.restart();
-  }, [timeline, reduced]);
-
-  if (!product || !webgl || failed) return <>{fallback}</>;
+  if (!product) return null;
 
   return (
-    <div ref={container} className="relative h-full w-full">
-      <SceneErrorBoundary fallback={fallback} onError={() => setFailed(true)}>
+    <div className="relative h-full w-full">
+      <SceneErrorBoundary fallback={null} onError={onFailed}>
         <UnboxingScene
           product={product}
           timeline={timeline}
           background={background}
           free={phase === 'S5'}
+          // Solo se repinta sin parar mientras se mueve la caja; quieta, al
+          // girarla con el dedo o el ratón (ahorra batería en el móvil).
+          animating={playing}
           label={labels.scene}
         />
       </SceneErrorBoundary>
+      <button
+        type="button"
+        onClick={onClose}
+        // El foco pasa aquí al abrir la escena: el botón que la abrió desaparece.
+        autoFocus
+        className="text-ink tracking-caps absolute top-3 right-3 inline-flex min-h-11 items-center px-2 text-xs uppercase underline-offset-4 hover:underline"
+      >
+        {labels.close}
+      </button>
       {phase === 'S5' && (
         <div className="text-smoke tracking-caps absolute inset-x-0 bottom-5 flex items-center justify-center gap-6 text-xs uppercase">
           <span aria-hidden className="hidden sm:inline">
@@ -133,7 +114,9 @@ export default function UnboxingViewer({
           </span>
           <button
             type="button"
-            onClick={replay}
+            onClick={() =>
+              reduced ? timeline.skipToEnd() : timeline.restart()
+            }
             className="link-underline text-ink"
           >
             {labels.replay}

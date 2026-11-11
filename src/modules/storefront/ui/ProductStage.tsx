@@ -8,18 +8,18 @@ import {
   useSpring,
   useTransform,
 } from 'motion/react';
-import dynamic from 'next/dynamic';
 import { useTranslations } from 'next-intl';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import type { ComponentType, ReactNode } from 'react';
+import { Button } from '@/components/ui';
 import type { ProductMedia } from '@/modules/catalog';
+import {
+  loadUnboxingViewer,
+  useWebGL,
+  type UnboxingViewerProps,
+} from '@/modules/unboxing';
 import { ProductImage } from './ProductImage';
 import { trackProductEvent } from './TrackEvent';
-
-/** three.js solo en el cliente y solo en las fichas con escena. */
-const UnboxingViewer = dynamic(
-  () => import('@/modules/unboxing/UnboxingViewer'),
-  { ssr: false },
-);
 
 /** Mismo valor que --color-stage (el canvas necesita el color literal). */
 const STAGE_COLOR = '#efe9df';
@@ -107,6 +107,17 @@ function Gallery({
   );
 }
 
+type Mode = 'photos' | 'loading' | 'scene' | 'failed';
+
+/** Descarga anticipada del visor; si falla, ya lo dirá el clic. */
+const prefetch = () => void loadUnboxingViewer().catch(() => {});
+
+/**
+ * Escenario de la ficha: siempre abre con las fotos (lo primero que se pinta).
+ * Si el perfume tiene escena 3D y el navegador tiene WebGL, «Abrir la caja en
+ * 3D» trae three.js y la escena solo entonces (DECISIONS §190); sin WebGL o si
+ * falla, se quedan las fotos.
+ */
 export function ProductStage({
   scene,
   media,
@@ -119,34 +130,99 @@ export function ProductStage({
   name: string;
   brand: string;
   /**
-   * Slug del perfume para contar (anónimo) que su escena 3D se ha visto; null
-   * en la vista previa del personal, que no se mide.
+   * Slug del perfume para contar (anónimo) que se ha abierto su escena 3D;
+   * null en la vista previa del personal, que no se mide.
    */
   trackSlug?: string | null;
 }) {
   const t = useTranslations('product');
-  const gallery = <Gallery media={media} name={name} brand={brand} />;
-  return (
-    <div className="bg-stage relative h-[72svh] min-h-[26rem] w-full lg:h-[calc(100svh-4.5rem)]">
-      {scene ? (
-        <UnboxingViewer
+  const webgl = useWebGL();
+  const [mode, setMode] = useState<Mode>('photos');
+  const [Viewer, setViewer] =
+    useState<ComponentType<UnboxingViewerProps> | null>(null);
+  const openArea = useRef<HTMLDivElement>(null);
+  const returnFocus = useRef(false);
+
+  // Al volver a las fotos con el teclado, el foco vuelve al botón que abrió la escena.
+  useEffect(() => {
+    if (mode !== 'photos' || !returnFocus.current) return;
+    returnFocus.current = false;
+    openArea.current?.querySelector('button')?.focus();
+  }, [mode]);
+
+  const open = () => {
+    setMode('loading');
+    loadUnboxingViewer().then(
+      (module) => {
+        setViewer(() => module.default);
+        setMode('scene');
+      },
+      () => setMode('failed'),
+    );
+  };
+
+  if (scene && Viewer && mode === 'scene')
+    return (
+      <Frame>
+        <Viewer
           scene={scene}
           background={STAGE_COLOR}
           labels={{
             scene: t('scene', { name }),
             replay: t('sceneReplay'),
             dragHint: t('sceneDrag'),
+            close: t('sceneClose'),
           }}
-          fallback={gallery}
+          onClose={() => {
+            returnFocus.current = true;
+            setMode('photos');
+          }}
+          onFailed={() => setMode('failed')}
           onSeen={
             trackSlug
               ? () => trackProductEvent(trackSlug, 'unboxing')
               : undefined
           }
         />
-      ) : (
-        gallery
+      </Frame>
+    );
+
+  return (
+    <Frame>
+      <Gallery media={media} name={name} brand={brand} />
+      {scene && webgl && (
+        <div
+          ref={openArea}
+          // Encima de la foto y de los puntos de la galería, sin mover nada al aparecer.
+          className={`absolute inset-x-0 flex flex-col items-center gap-2 px-5 ${media.length > 1 ? 'bottom-16' : 'bottom-6'}`}
+        >
+          {mode === 'failed' ? (
+            <p role="status" className="text-fg-muted text-sm">
+              {t('sceneFailed')}
+            </p>
+          ) : (
+            <Button
+              size="sm"
+              loading={mode === 'loading'}
+              loadingLabel={t('sceneLoading')}
+              onClick={open}
+              // Al acercarse al botón ya se empieza a descargar.
+              onPointerEnter={prefetch}
+              onFocus={prefetch}
+            >
+              {t('sceneOpen')}
+            </Button>
+          )}
+        </div>
       )}
+    </Frame>
+  );
+}
+
+function Frame({ children }: { children: ReactNode }) {
+  return (
+    <div className="bg-stage relative h-[72svh] min-h-[26rem] w-full lg:h-[calc(100svh-4.5rem)]">
+      {children}
     </div>
   );
 }

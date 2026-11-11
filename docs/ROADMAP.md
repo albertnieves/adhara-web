@@ -1,4 +1,4 @@
-# Roadmap vigente — 02/11/2026
+# Roadmap vigente — 03/11/2026
 
 Orden de trabajo. [STATUS.md](STATUS.md) contiene el estado verificado y sus entradas fechadas; [OPERATIONS.md](OPERATIONS.md), los pasos técnicos; [PLAN_APERTURA.md](PLAN_APERTURA.md), los pasos del banco y del negocio; [PLAN_ENVIOS.md](PLAN_ENVIOS.md), los de los transportistas. El plan original de 17 fases se conserva en `docs/source/FASE_0_ARQUITECTURA.md` y los informes de fase; su estado resumido está al final.
 
@@ -10,6 +10,7 @@ Orden de trabajo. [STATUS.md](STATUS.md) contiene el estado verificado y sus ent
 - **Fusionadas** desde el roadmap anterior: #47 (cierre de la apertura), #50 y #51 (envíos), #48 (entornos y vigilancia), #49 (cabeceras SEO) y #53 (sección Envíos del panel, 28/10).
 - **Analítica, publicidad y feed de productos** (29/10, §179–180, [MEDICION_Y_PUBLICIDAD.md](MEDICION_Y_PUBLICIDAD.md)): hechos y apagados hasta poner los IDs; el feed sale con la venta.
 - **Búsqueda global, filtros en el móvil y recorrido olfativo** (29/10, §181–182): hechos; se publican al fusionar su PR. Puntos 5 y 6 de este roadmap.
+- **3D bajo demanda y Lighthouse en la CI** (03/11, integrado el 10/11, §190): la ficha abre con la foto y la escena llega al pulsar «Abrir la caja en 3D»; la entrada de la tienda ya no espera a React, y la CI mide cinco páginas en móvil y escritorio con presupuestos. Punto 7.
 
 Lo que falta para vender es sobre todo configuración y trámites del titular, del banco y de la asesoría, no código.
 
@@ -66,17 +67,19 @@ Lo que falta para vender es sobre todo configuración y trámites del titular, d
 
 **Pendiente:** más perfiles olfativos con fuente (hoy 47 de 50 publicados) para que el recorrido cubra todo lo que se publique; una versión con IA, solo si se decide.
 
-## 7. 3D selectivo y rendimiento
+## 7. 3D selectivo y rendimiento — en parte (§188–191)
 
 **Propuestas de diseño, movimiento y 3D pendientes de autorizar:** [ROADMAP_DISENO.md](ROADMAP_DISENO.md) (10/11).
 
 **Colección y catálogo olfativo con movimiento y 3D — hecho (10/11, §189):** tarjetas-vitrina, entrada con el scroll, abanico 3D en la colección y pirámide olfativa 3D en el catálogo olfativo, sin WebGL.
 
-**Portada con carrusel 3D — hecho (09/11, §188):** los perfumes con escena giran en la primera pantalla, con fotos en los navegadores sin GPU.
+**Portada con carrusel 3D — hecho (09/11, §188):** los perfumes con escena giran en la primera pantalla, con fotos en los navegadores sin GPU. Desde §191, three.js solo se descarga con tarjeta gráfica y con la portada ya cargada, y la foto del perfume del frente se ve mientras llega.
 
-Ampliar los cuatro pilotos a productos destacados con medidas reales (cada escena nueva entra sola en el carrusel de la portada). Pipeline GLB y presupuestos de peso y carga; Lighthouse CI en una entrega propia. Fotos reales o con derechos y alternativa accesible sin WebGL.
+**3D bajo demanda y Lighthouse en la CI — hecho (03/11, integrado el 10/11, §190):** la ficha abre con la foto y three.js solo llega al pulsar «Abrir la caja en 3D» (antes, 574 KB de JavaScript y 1,9 MB en la ficha con escena; ahora, 293 KB y 620 KB, como el resto); con movimiento reducido abre en el final y sin WebGL quedan las fotos. La escena solo se repinta mientras se mueve. La entrada de la portada y `Reveal` pasan a CSS: en el móvil, el LCP de la portada baja de 8,1 a 2,1–2,5 s. Lighthouse en `e2e.yml` con presupuestos de peso, CLS, accesibilidad, LCP y TBT para portada, colección, ficha con 3D, búsqueda y recorrido, en móvil y escritorio.
 
-**Cierre:** comparación móvil y escritorio con carga bajo demanda, movimiento reducido y presupuestos comprobados.
+**Falta:** más perfumes en 3D (cada escena nueva entra sola en el carrusel de la portada) con las medidas reales del kit de tienda (titular) y, con el primer modelo, el pipeline GLB y su presupuesto; fotos propias o con derechos. En el móvil, el rendimiento queda en 72–85 por el JavaScript que se hidrata (TBT 0,4–0,8 s): revisar qué carga cada página para llegar a 90.
+
+**Cierre:** comparación móvil y escritorio con carga bajo demanda, movimiento reducido y presupuestos comprobados (hecho para los cuatro pilotos); más perfumes cuando haya medidas.
 
 ## Pendientes que continúan
 
@@ -96,10 +99,10 @@ Ampliar los cuatro pilotos a productos destacados con medidas reales (cada escen
 | 2   | Design System            | Cerrada a falta de la revisión visual | Revisión visual del titular (criterio 13)                                                         |
 | 3   | Importación del catálogo | En parte                              | CSV de costes, revisión y publicación por tandas; informe de importación                          |
 | 4   | Research                 | En parte                              | Perfiles con fuente del resto del catálogo (47 de los 50 publicados los tienen)                   |
-| 5   | Catálogo (tienda)        | En parte                              | Colecciones editoriales y objetivos de Lighthouse (búsqueda global hecha, §181)                   |
+| 5   | Catálogo (tienda)        | En parte                              | Colecciones editoriales; Lighthouse móvil de 72–85 a 90 (medido en la CI, §190)                   |
 | 6   | Ficha y Scent Journey    | Hecha                                 | — (recorrido olfativo, §182; ficha olfativa y JSON-LD ya existían)                                |
 | 7   | Media                    | En parte                              | Biblioteca, flujo de aprobación y derechos de las fotos                                           |
-| 8   | 3D                       | En parte                              | Más perfumes, pipeline GLB y presupuestos en CI                                                   |
+| 8   | 3D                       | En parte                              | Más perfumes con medidas reales y pipeline GLB con el primer modelo (bajo demanda y CI, §190)     |
 | 9   | Inventario               | Hecha                                 | — (las reservas del checkout llegaron con la F10)                                                 |
 | 10  | Carrito y checkout       | Hecha, apagada                        | Pase a producción del TPV y `WEB_CHECKOUT=1`                                                      |
 | 11  | Admin operativo          | En parte                              | WhatsApp y borradores del asistente (A6.2–A6.3); fichas, §184; lotes, §185; promociones, §186     |

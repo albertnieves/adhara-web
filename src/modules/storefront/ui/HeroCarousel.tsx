@@ -28,11 +28,15 @@ import {
   releaseSteps,
   ringStep,
   shortestTarget,
+  useHardwareWebGL,
 } from '@/modules/unboxing';
 import { EASE, RisingWords } from './Hero';
 import { ProductImage } from './ProductImage';
 
-/** three.js solo en el cliente y después de pintar la portada. */
+/**
+ * three.js solo en el cliente, con tarjeta gráfica y cuando la portada ya ha
+ * cargado (DECISIONS §191): hasta entonces se ve la foto del perfume del frente.
+ */
 const CarouselScene = dynamic(
   () => import('@/modules/unboxing/carousel/CarouselScene'),
   { ssr: false },
@@ -99,6 +103,9 @@ export function HeroCarousel({
   const control = useRef<RingControl>(createRingControl());
   const [index, setIndex] = useState(0);
   const [mode, setMode] = useState<Mode>('loading');
+  // Sin tarjeta gráfica no se descarga la escena: se quedan las fotos.
+  const gpu = useHardwareWebGL();
+  const [load3d, setLoad3d] = useState(false);
   // null: lo decide el sistema (con «reducir movimiento» no gira solo).
   const [paused, setPaused] = useState<boolean | null>(null);
   const playing = paused === null ? !still : !paused;
@@ -115,6 +122,28 @@ export function HeroCarousel({
     velocity: number;
     moved: boolean;
   } | null>(null);
+
+  // La escena llega cuando la portada ya se ve y el navegador está libre:
+  // three.js no compite con el titular ni con la foto del frente.
+  useEffect(() => {
+    if (!gpu) return;
+    let idle = 0;
+    let timer = 0;
+    const start = () => {
+      if (typeof window.requestIdleCallback === 'function')
+        idle = window.requestIdleCallback(() => setLoad3d(true), {
+          timeout: 2500,
+        });
+      else timer = window.setTimeout(() => setLoad3d(true), 300);
+    };
+    if (document.readyState === 'complete') start();
+    else window.addEventListener('load', start, { once: true });
+    return () => {
+      window.removeEventListener('load', start);
+      if (idle) window.cancelIdleCallback(idle);
+      window.clearTimeout(timer);
+    };
+  }, [gpu]);
 
   // Fuera de pantalla ni gira ni se pinta.
   useEffect(() => {
@@ -286,7 +315,7 @@ export function HeroCarousel({
         aria-hidden
         className={`absolute inset-0 -z-10 transition-opacity duration-[1.8s] ease-(--ease-luxe) ${mode === 'ready' ? 'opacity-100' : 'opacity-0'}`}
       >
-        {mode !== 'fallback' && (
+        {gpu && load3d && mode !== 'fallback' && (
           <CarouselScene
             scenes={slides.map((s) => s.unboxingScene ?? '')}
             control={control}
@@ -307,14 +336,10 @@ export function HeroCarousel({
 
       <div className="max-w-page relative mx-auto grid min-h-svh grid-cols-1 px-5 pt-24 pb-10 sm:px-10 lg:grid-cols-12 lg:grid-rows-[1fr_auto_auto_1fr] lg:gap-x-10 lg:pt-28 lg:pb-12">
         <div className="lg:col-span-5 lg:row-start-2">
-          <motion.p
-            className="text-2xs text-accent-fg font-sans font-normal uppercase"
-            initial={reduced ? false : { opacity: 0, letterSpacing: '0.6em' }}
-            animate={{ opacity: 1, letterSpacing: '0.32em' }}
-            transition={{ duration: 1.6, delay: 0.2, ease: EASE }}
-          >
+          {/* Entrada con CSS (clases hero-*): no espera a React (§190). */}
+          <p className="hero-eyebrow text-2xs text-accent-fg font-sans font-normal uppercase">
             {eyebrow}
-          </motion.p>
+          </p>
           <Heading level={1} size="h1" className="mt-6 lg:mt-8">
             <RisingWords text={title} />
           </Heading>
@@ -335,26 +360,40 @@ export function HeroCarousel({
             }}
             onPointerLeave={() => setHeld((h) => ({ ...h, hover: false }))}
           >
-            {mode === 'fallback' && (
-              <AnimatePresence mode="wait" initial={false}>
+            {/*
+              Foto del perfume del frente mientras llega la escena y, sin
+              tarjeta gráfica o si la escena falla, en su lugar. Con la escena
+              lista se funde y se retira (no descarga más fotos detrás).
+            */}
+            <AnimatePresence initial={false}>
+              {mode !== 'ready' && (
                 <motion.div
-                  key={slide.id}
-                  className="bg-stage absolute inset-y-6 left-1/2 aspect-[4/5] -translate-x-1/2"
-                  initial={reduced ? false : { opacity: 0, scale: 0.98 }}
-                  animate={{ opacity: 1, scale: 1 }}
+                  key="photos"
+                  className="absolute inset-0"
                   exit={{ opacity: 0 }}
-                  transition={{ duration: 0.8, ease: EASE }}
+                  transition={{ duration: reduced ? 0 : 1.2, ease: EASE }}
                 >
-                  <ProductImage
-                    media={heroMedia(slide)}
-                    alt=""
-                    brand={slide.brand.name}
-                    sizes="(min-width: 1024px) 30vw, 70vw"
-                    priority
-                  />
+                  <AnimatePresence mode="wait" initial={false}>
+                    <motion.div
+                      key={slide.id}
+                      className="bg-stage absolute inset-y-6 left-1/2 aspect-[4/5] -translate-x-1/2"
+                      initial={reduced ? false : { opacity: 0, scale: 0.98 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.8, ease: EASE }}
+                    >
+                      <ProductImage
+                        media={heroMedia(slide)}
+                        alt=""
+                        brand={slide.brand.name}
+                        sizes="(min-width: 1024px) 30vw, 70vw"
+                        priority
+                      />
+                    </motion.div>
+                  </AnimatePresence>
                 </motion.div>
-              </AnimatePresence>
-            )}
+              )}
+            </AnimatePresence>
           </div>
 
           <div
@@ -489,34 +528,21 @@ export function HeroCarousel({
         </div>
 
         <div className="mt-12 lg:col-span-5 lg:row-start-3 lg:mt-10">
-          <motion.div
+          <div
             aria-hidden
-            className="bg-accent-fg/60 h-px w-24 origin-left"
-            initial={reduced ? false : { scaleX: 0 }}
-            animate={{ scaleX: 1 }}
-            transition={{ duration: 1.4, delay: 1.1, ease: EASE }}
+            className="hero-rule bg-accent-fg/60 h-px w-24 origin-left"
           />
-          <motion.p
-            className="text-fg-muted mt-8 max-w-md text-base leading-relaxed sm:text-lg"
-            initial={reduced ? false : { opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1.2, delay: 1.25, ease: EASE }}
-          >
+          <p className="hero-lead text-fg-muted mt-8 max-w-md text-base leading-relaxed sm:text-lg">
             {lead}
-          </motion.p>
-          <motion.div
-            className="mt-10"
-            initial={reduced ? false : { opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1.2, delay: 1.45, ease: EASE }}
-          >
+          </p>
+          <div className="hero-cta mt-10">
             <Link
               href="/catalogo"
               className={buttonClass('outline', 'lg', 'sheen')}
             >
               {cta}
             </Link>
-          </motion.div>
+          </div>
         </div>
       </div>
     </section>

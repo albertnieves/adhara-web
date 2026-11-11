@@ -10,7 +10,7 @@ permissions:
 jobs:
   e2e:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 35
     # Cesta y checkout encendidos (P03) con un TPV simulado (P04): en
     # producción siguen apagados hasta conectar el TPV (DECISIONS §136–137).
     # 999008881 es el comercio de pruebas público de Redsys; el banco lo hacen
@@ -64,6 +64,24 @@ jobs:
         run: pnpm test:e2e:local
         env:
           AUDIT_SCREENSHOTS: '1'
+      # Presupuestos de peso y carga de la tienda (DECISIONS §190), al final
+      # para no cambiar los datos de las pruebas: un perfume con escena 3D.
+      - name: Datos de Lighthouse (un perfume con escena 3D)
+        run: >-
+          docker exec -i supabase_db_adhara-admin-delivery
+          psql -U postgres -d postgres -v ON_ERROR_STOP=1
+          < tests/fixtures/lighthouse.sql
+      - name: Lighthouse de la tienda (móvil y escritorio)
+        run: |
+          node scripts/local-env.ts pnpm start > lighthouse-server.log 2>&1 &
+          for _ in $(seq 1 60); do
+            curl -sf http://localhost:3000/api/health > /dev/null && break
+            sleep 1
+          done
+          status=0
+          node scripts/lighthouse.ts > lighthouse.md || status=$?
+          cat lighthouse.md >> "$GITHUB_STEP_SUMMARY"
+          exit "$status"
       - name: Accesibilidad (línea base de axe)
         if: always()
         run: node scripts/axe-report.ts >> "$GITHUB_STEP_SUMMARY"
