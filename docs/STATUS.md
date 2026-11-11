@@ -1,5 +1,16 @@
 # Estado real — 10/11/2026
 
+## Carrusel 3D sin descargas de más y la #61 integrada (10/11)
+
+Rama `claude/awesome-brahmagupta-xqykyz`. A petición del usuario, tras la revisión de la #63: fusionar la #63 (hecho el 10/11) e integrar la #61 encima, con los arreglos de la revisión. Decisiones §190 (la de la #61, antes numerada §187) y §191. Sin migraciones ni variables.
+
+- **Integrada la #61:** la ficha abre con las fotos y el 3D llega al pulsar «Abrir la caja en 3D»; la entrada de la tienda es CSS y no espera a React; Lighthouse en la CI con presupuestos. La #61 queda cubierta por esta rama.
+- **Portada:** el carrusel solo descarga three.js con tarjeta gráfica y cuando la página ya ha cargado; hasta entonces, y sin tarjeta gráfica, se ve la foto del perfume del frente (antes, el escenario vacío, y los móviles sin tarjeta gráfica bajaban la escena para nada). Los titulares de la portada, la colección y el catálogo olfativo, y los textos del carrusel, entran con CSS.
+- **Colección:** el abanico ya no precarga fotos en el móvil, donde no sale.
+- **Lighthouse:** mide la portada con el carrusel (como sin tarjeta gráfica) y una medida nueva, «Portada con 3D», solo de peso: hasta 650 KB de JavaScript y 1,8 MB en total. La textura de prueba de Asad pesa 710 KB (PNG): las definitivas (B4) deberían ser más ligeras.
+- **Comprobado en local** (Node 24.16.0, sin Docker, así que sin Supabase local): lint, tipos, 834 unitarias (1 nueva) y build correctos; `format:check` correcto. **No ejecutado aquí:** E2E, panel con sesión, pgTAP y Lighthouse, que necesitan el Supabase local; los repite la CI de la PR.
+- **Siguiente:** ver la portada en un móvil y un ordenador reales; que el titular autorice lo que quiera de [ROADMAP_DISENO.md](ROADMAP_DISENO.md) (D1 ya está hecho).
+
 ## Colección y catálogo olfativo con movimiento y 3D (10/11)
 
 Misma rama que el carrusel, `claude/blissful-ramanujan-t2e9bs`. A petición del usuario: mejorar el diseño de la colección y del catálogo olfativo con más movimiento y 3D, y un roadmap de mejoras para autorizar. Decisión §189. Sin migraciones, variables ni cambios en el panel.

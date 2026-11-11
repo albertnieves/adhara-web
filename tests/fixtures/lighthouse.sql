@@ -4,6 +4,8 @@
 -- Un perfume publicado con la escena 3D del piloto de Asad y su foto, para
 -- medir la ficha con 3D (scripts/lighthouse.ts): la foto se ve primero y
 -- three.js no se descarga hasta pulsar «Abrir la caja en 3D».
+-- Con él, la portada es el carrusel 3D (§188): se mide con las fotos (sin
+-- tarjeta gráfica, sin three.js) y con `?3d`, solo el peso (§191).
 begin;
 
 insert into public.products (id, brand_id, slug, name, unboxing_scene) values

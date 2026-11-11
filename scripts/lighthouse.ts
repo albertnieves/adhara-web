@@ -24,9 +24,31 @@ const base = (process.argv[2] ?? 'http://localhost:3000').replace(/\/$/, '');
 const out = join(process.env.AUDIT_OUTPUT_DIR ?? 'audit-output', 'lighthouse');
 const port = 9333;
 
+type Page = {
+  name: string;
+  path: string;
+  /** Solo se comprueban los pesos y el CLS (los tiempos se anotan). */
+  weightOnly?: Partial<Pick<Budget, 'scriptKB' | 'totalKB'>>;
+  /** Solo en estos dispositivos (por defecto, los dos). */
+  factors?: Factor[];
+};
+
 /** Una página de cada plantilla de la tienda. */
-const PAGES = [
+const PAGES: Page[] = [
+  // Con un perfume con escena (lighthouse.sql) la portada es el carrusel 3D.
+  // El navegador de la CI no tiene tarjeta gráfica: se ven las fotos y
+  // three.js no se descarga (§191).
   { name: 'Portada', path: '/es' },
+  // La misma portada como la ve un visitante con tarjeta gráfica (`?3d`):
+  // three.js y las texturas llegan después de cargar. Los tiempos no valen
+  // aquí (la escena se pinta sin GPU, a saltos), así que solo cuentan los
+  // pesos y el CLS: que el lienzo no mueva nada al aparecer.
+  {
+    name: 'Portada con 3D',
+    path: '/es?3d',
+    weightOnly: { scriptKB: 650, totalKB: 1800 },
+    factors: ['móvil'],
+  },
   { name: 'Colección', path: '/es/catalogo' },
   // Perfume con escena 3D (tests/fixtures/lighthouse.sql): three.js no se
   // descarga hasta pulsar «Abrir la caja en 3D».
@@ -181,11 +203,13 @@ try {
     };
   };
 
-  for (const { name, path } of PAGES)
+  for (const { name, path, weightOnly, factors } of PAGES)
     for (const factor of FACTORS) {
-      const budget = BUDGETS[factor.name];
+      if (factors && !factors.includes(factor.name)) continue;
+      const budget = { ...BUDGETS[factor.name], ...weightOnly };
       let m = await measure(path, factor.config);
       let over = overBudget(m, budget);
+      if (weightOnly) over.timing = [];
       // Los tiempos varían de una vez a otra: si solo fallan ellos, se repite
       // una vez y vale la mejor.
       if (over.fixed.length === 0 && over.timing.length > 0) {

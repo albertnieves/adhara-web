@@ -129,11 +129,26 @@ test('sin GPU enseña fotos y con ?3d arranca la escena sin errores', async ({
   const errors: string[] = [];
   page.on('pageerror', (error) => errors.push(error.message));
   await openHome(page);
-  // Navegador de pruebas sin GPU: fotos, sin lienzo.
+  // Navegador de pruebas sin GPU: fotos, sin lienzo y sin descargar three.js
+  // (§191). La escena llegaría después de cargar, con el navegador libre: se
+  // espera a ese momento antes de comprobarlo.
   await expect(page.locator('main img').first()).toBeVisible();
+  await page.waitForLoadState('load');
+  await page.evaluate(
+    () =>
+      new Promise<void>((resolve) =>
+        requestIdleCallback(() => setTimeout(resolve, 1000), {
+          timeout: 3000,
+        }),
+      ),
+  );
   await expect(page.locator('main canvas')).toHaveCount(0);
+  // three.js se anuncia en window.__THREE__ al cargarse.
+  expect(await page.evaluate(() => '__THREE__' in window)).toBe(false);
 
   await page.goto('/es?3d');
+  // Mientras llega la escena, la foto del perfume del frente.
+  await expect(page.locator('main img').first()).toBeVisible();
   await expect(page.locator('main canvas')).toHaveCount(1, { timeout: 20_000 });
   // La escena es decorativa: el lienzo va dentro de un contenedor oculto.
   await expect(

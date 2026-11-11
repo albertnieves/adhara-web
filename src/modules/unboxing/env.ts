@@ -72,3 +72,18 @@ export function useWebGL() {
     () => false,
   );
 }
+
+let hardware: boolean | undefined;
+
+/**
+ * WebGL con tarjeta gráfica (`detectHardwareWebGL`), comprobado una vez en el
+ * navegador. En el servidor y al hidratar vale false: el carrusel de la
+ * portada decide si trae three.js después, sin desajustes.
+ */
+export function useHardwareWebGL() {
+  return useSyncExternalStore(
+    noSubscribe,
+    () => (hardware ??= detectHardwareWebGL()),
+    () => false,
+  );
+}

@@ -1,10 +1,11 @@
 'use client';
 
 /*
- * Lo que la ficha usa en el navegador antes de tener la escena: saber si hay
- * WebGL y traer el visor. Va aparte de index.ts, que también lee el servidor.
+ * Lo que la ficha y la portada usan en el navegador antes de tener la escena:
+ * saber si hay WebGL (o tarjeta gráfica) y traer el visor. Va aparte de
+ * index.ts, que también lee el servidor.
  */
-export { useWebGL } from './env';
+export { useHardwareWebGL, useWebGL } from './env';
 
 /**
  * Trae el visor 3D (three.js y la escena, en su propio trozo de JavaScript).

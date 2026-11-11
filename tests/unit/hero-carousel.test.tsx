@@ -182,8 +182,19 @@ describe('heroSlides', () => {
 });
 
 describe('HeroCarousel (HTML del servidor)', () => {
+  const asad = product('asad', 10, 'asad');
+  asad.media = [
+    {
+      url: '/media/pilot/asad/official_asad-2.jpg',
+      alt: null,
+      role: 'hero',
+      origin: 'brand_official',
+      provisional: true,
+      position: 0,
+    },
+  ];
   const slides = heroSlides([
-    product('asad', 10, 'asad'),
+    asad,
     product('yara', 20, 'yara', 2999),
     product('club-de-nuit-intense-man-le', 30, 'club-de-nuit-intense-man-le'),
     product('khamrah', 40, 'khamrah', null),
@@ -205,7 +216,10 @@ describe('HeroCarousel (HTML del servidor)', () => {
   );
 
   it('es una sección oscura con el titular h1 y el enlace a la colección', () => {
-    expect(html).toMatch(/^<section data-tone="dark"/);
+    // Delante, la precarga de la foto del frente (React la sube al <head>).
+    expect(html).toMatch(
+      /^(<link rel="preload"[^>]*>)*<section data-tone="dark"/,
+    );
     expect(html).toMatch(/<h1[^>]*>.*lenguaje.*<\/h1>/);
     expect(html).toContain('href="/catalogo"');
     expect(html).toContain('Descubrir la colección');
@@ -221,6 +235,18 @@ describe('HeroCarousel (HTML del servidor)', () => {
     expect(html).toMatch(/39,62\s€/);
     expect(html).toContain('href="/perfume/asad"');
     expect(html).toMatch(/Ver el perfume<span class="sr-only"> asad<\/span>/);
+  });
+
+  it('trae ya la foto del perfume del frente y la entrada en CSS (§190–191)', () => {
+    // La escena llega después de cargar (y solo con tarjeta gráfica): hasta
+    // entonces, y sin ella, se ve la foto, que ya viene del servidor.
+    expect(html).toContain('official_asad-2.jpg');
+    expect(html).not.toContain('<canvas');
+    // El titular y el texto no esperan a React para verse.
+    expect(html).toContain('hero-word');
+    expect(html).toContain('hero-eyebrow');
+    expect(html).toContain('hero-lead');
+    expect(html).not.toMatch(/translateY\(110%\)/);
   });
 
   it('cada control tiene nombre y el perfume del frente está marcado', () => {

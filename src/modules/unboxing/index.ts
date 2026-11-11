@@ -11,7 +11,7 @@ export const UNBOXING_SCENES = [
 ] as const;
 export type UnboxingSceneSlug = (typeof UNBOXING_SCENES)[number];
 export type { UnboxingLabels, UnboxingViewerProps } from './UnboxingViewer';
-export { loadUnboxingViewer, useWebGL } from './client';
+export { loadUnboxingViewer, useHardwareWebGL, useWebGL } from './client';
 
 /** Slug de escena válido o null (products.unboxing_scene puede ser cualquier texto). */
 export function findSceneSlug(
