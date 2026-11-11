@@ -1,10 +1,10 @@
-# Imágenes generadas de producto — 02/11/2026
+# Imágenes generadas de producto — 02–03/11/2026
 
 Procedencia: [PR #59](https://github.com/albertnieves/adhara-web/pull/59), commit original `7f14e061135370e770fe27ffa4ed6076abf67bb8`. Son recreaciones generadas con fondo marfil y luz de estudio, no fotografías verificadas de las unidades físicas. No se han regenerado ni retocado sus bytes durante esta integración.
 
 ## Integración
 
-- 45 WebP en `public/media/generated-products/2026-11-02/`, asociados por slug en `src/modules/catalog/domain/generated-product-images.ts`.
+- 56 WebP asociados por slug en `src/modules/catalog/domain/generated-product-images.ts`: 45 en `public/media/generated-products/2026-11-02/` y 11 en `public/media/generated-products/2026-11-03/`.
 - Solo se añaden a productos que ya devuelve la lectura autorizada del catálogo. No crean productos ni cambian publicación, formatos, precios o existencias.
 - Se muestran como principal en tarjetas y galerías, con origen `generated_draft`, `provisional: true`. La procedencia queda registrada internamente, sin etiqueta en la tienda. Conservan su color original, sin la corrección de brillo de las fotos de catálogo.
 - Se conservan todas las fotos originales. Una foto propia marcada como principal desde el panel tiene prioridad sobre la recreación. La integración reside en el código, no en `product_media`; el panel sigue gestionando las fotografías originales.
@@ -19,4 +19,4 @@ La comparación con las unidades físicas y el contenido de los estuches sigue p
 
 ## Verificación
 
-Pruebas unitarias: correspondencia entre archivos y asociaciones, conservación de datos y originales, exclusión de Miss Sakura y perfumes ajenos al lote, prioridad de foto propia, idempotencia y exclusión de recreaciones en feed y JSON-LD. Validación local con Node 24.16.0 y pnpm 11.19.0: `pnpm check` correcto (lint, tipado, 790 unitarias y build), formato y escaneo de secretos correctos. `pnpm test:e2e`: 244 correctas y 118 omitidas por falta de base de datos configurada. Los 45 WebP se decodifican y miden 1254 × 1254 px. Revisión visual adicional con catálogo simulado local, sin datos comerciales: tarjetas y ficha, móvil a 390 px y escritorio a 1440 px, imagen cargada y sin desbordamiento horizontal; etiqueta comprobada en es/ca/en. No se ha verificado contra la base real ni se ha desplegado a producción.
+Pruebas unitarias: correspondencia entre archivos y asociaciones, conservación de datos y originales, exclusión de Miss Sakura y perfumes ajenos al lote, prioridad de foto propia, idempotencia y exclusión de recreaciones en feed y JSON-LD. Se revisaron visualmente los 56 archivos de los dos lotes y todos se decodificaron como WebP. El componente compartido conserva las proporciones de los archivos cuadrados y verticales.

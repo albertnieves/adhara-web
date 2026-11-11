@@ -14,7 +14,6 @@ import {
   Eyebrow,
   Heading,
   SearchField,
-  buttonClass,
 } from '@/components/ui';
 import type {
   ScentFamily,
@@ -33,7 +32,9 @@ import {
   profileMatchesNote,
 } from '@/modules/catalog';
 import { Link } from '@/modules/i18n';
-import { ProductImage } from './ProductImage';
+import { CardStage } from './CardStage';
+import { CountLabel } from './CountLabel';
+import { FilterChip } from './FilterChip';
 import { ScentGlyph } from './ScentGlyphs';
 import { ScentMoments } from './ScentProfileView';
 import { ViewToggle } from './ViewToggle';
@@ -51,27 +52,6 @@ export type ScentEntry = {
   product: StorefrontProduct;
   profile: ScentProfile | null;
 };
-
-function Chip({
-  active,
-  onClick,
-  children,
-}: {
-  active: boolean;
-  onClick: () => void;
-  children: React.ReactNode;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      aria-pressed={active}
-      className={buttonClass(active ? 'primary' : 'outline', 'sm')}
-    >
-      {children}
-    </button>
-  );
-}
 
 /**
  * Tarjeta del catálogo olfativo: sin precio ni compra, con su perfil.
@@ -105,23 +85,14 @@ export function ScentCard({
       }}
       className="group block min-w-0"
     >
-      <div className="bg-stage relative aspect-[4/5] overflow-hidden">
-        <div
-          className={`bg-stage absolute ${compact ? 'inset-3 sm:inset-8' : 'inset-8'} transition-transform duration-[1.6s] ease-(--ease-luxe) group-hover:scale-[1.05]`}
-        >
-          <ProductImage
-            media={media}
-            alt={`${product.brand.name} ${product.name}`}
-            brand={product.brand.name}
-            sizes={`(min-width: 1280px) 22vw, (min-width: 1024px) 30vw, (min-width: 640px) 45vw, ${compact ? '45vw' : '90vw'}`}
-            priority={priority}
-          />
-        </div>
-        <span
-          aria-hidden
-          className="bg-accent absolute inset-x-0 bottom-0 h-px origin-left scale-x-0 transition-transform duration-700 ease-(--ease-luxe) group-hover:scale-x-100"
-        />
-      </div>
+      <CardStage
+        media={media}
+        alt={`${product.brand.name} ${product.name}`}
+        brand={product.brand.name}
+        sizes={`(min-width: 1280px) 22vw, (min-width: 1024px) 30vw, (min-width: 640px) 45vw, ${compact ? '45vw' : '90vw'}`}
+        priority={priority}
+        inset={compact ? 'inset-3 sm:inset-8' : 'inset-8'}
+      />
       <div className={`min-w-0 ${compact ? 'mt-3 sm:mt-5' : 'mt-5'}`}>
         <Eyebrow>{product.brand.name}</Eyebrow>
         <Heading level={3} size="h3" className="mt-1.5 line-clamp-2">
@@ -210,13 +181,14 @@ export function ScentCatalogBrowser({ entries }: { entries: ScentEntry[] }) {
           </Eyebrow>
           <div className="flex flex-wrap gap-2">
             {families.map((value) => (
-              <Chip
+              <FilterChip
                 key={value}
+                group="family"
                 active={family === value}
                 onClick={() => setFamily(family === value ? null : value)}
               >
                 {t(`family.${value}`)}
-              </Chip>
+              </FilterChip>
             ))}
           </div>
         </fieldset>
@@ -227,14 +199,15 @@ export function ScentCatalogBrowser({ entries }: { entries: ScentEntry[] }) {
             </Eyebrow>
             <div className="flex flex-wrap gap-2">
               {SEASONS.map((value) => (
-                <Chip
+                <FilterChip
                   key={value}
+                  group="season"
                   active={season === value}
                   onClick={() => setSeason(season === value ? null : value)}
                 >
                   <ScentGlyph name={value} className="size-4" />
                   {t(`season.${value}`)}
-                </Chip>
+                </FilterChip>
               ))}
             </div>
           </fieldset>
@@ -244,14 +217,15 @@ export function ScentCatalogBrowser({ entries }: { entries: ScentEntry[] }) {
             </Eyebrow>
             <div className="flex flex-wrap gap-2">
               {TIMES_OF_DAY.map((value) => (
-                <Chip
+                <FilterChip
                   key={value}
+                  group="time"
                   active={time === value}
                   onClick={() => setTime(time === value ? null : value)}
                 >
                   <ScentGlyph name={value} className="size-4" />
                   {t(`timeOfDay.${value}`)}
-                </Chip>
+                </FilterChip>
               ))}
             </div>
           </fieldset>
@@ -271,7 +245,9 @@ export function ScentCatalogBrowser({ entries }: { entries: ScentEntry[] }) {
             className="text-fg-muted tracking-caps text-xs whitespace-nowrap uppercase tabular-nums"
             aria-live="polite"
           >
-            {t('scent.count', { count: visible.length })}
+            <CountLabel value={visible.length}>
+              {t('scent.count', { count: visible.length })}
+            </CountLabel>
           </p>
           {filtered && (
             <Button variant="subtle" size="sm" onClick={clear}>
@@ -312,11 +288,14 @@ export function ScentCatalogBrowser({ entries }: { entries: ScentEntry[] }) {
                   ease: [0.22, 1, 0.36, 1],
                 }}
               >
-                <ScentCard
-                  entry={entry}
-                  priority={index < 4}
-                  compact={view === 'grid'}
-                />
+                {/* La entrada con el scroll va dentro: el <li> lo mueve motion. */}
+                <div className="scroll-rise">
+                  <ScentCard
+                    entry={entry}
+                    priority={index < 4}
+                    compact={view === 'grid'}
+                  />
+                </div>
               </motion.li>
             ))}
           </AnimatePresence>

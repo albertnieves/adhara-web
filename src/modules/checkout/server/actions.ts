@@ -1,5 +1,6 @@
 'use server';
 
+import { withinRateLimit } from '@/lib/rate-limit';
 import { createOrdersClient } from '@/lib/supabase/privileged';
 import { orderCustomerId } from '@/modules/account/server';
 import { REDSYS_PROVIDER } from '@/modules/payments/domain/redsys';
@@ -21,7 +22,6 @@ import { readCart, writeCart } from './cart';
 import { checkoutEnabled } from './flag';
 import { paymentFormFor, rememberOrder, rememberedOrderId } from './order';
 import { quoteCart } from './quote';
-import { withinRateLimit } from './rate-limit';
 
 /*
  * Cesta y pedido de la tienda (P03). Todo se comprueba aquí y otra vez en la
@@ -167,6 +167,7 @@ export async function placeOrder(
     shippingServiceId: text('shippingServiceId'),
     acceptTerms: form.get('acceptTerms') ?? undefined,
     discountCode: text('discountCode'),
+    expectedDiscount: text('expectedDiscount'),
   });
   if (!parsed.success) {
     const fields = fieldErrors(parsed.error.issues);
@@ -212,6 +213,9 @@ export async function placeOrder(
       }),
     },
     p_provider: PAYMENT_PROVIDER,
+    // Lo que enseñó el resumen: si la base calcula menos (una promoción que
+    // terminó…), no crea el pedido y la página vuelve a calcularlo (§186).
+    p_expected_discount_cents: input.expectedDiscount,
     ...(input.discountCode && { p_discount_code: input.discountCode }),
     ...(customerId && { p_customer_id: customerId }),
     ...(shipping &&
@@ -229,6 +233,8 @@ export async function placeOrder(
         minimumCents:
           discount === 'minimum' ? minimumFrom(error.details) : undefined,
       };
+    if (error.message === 'discount_changed')
+      return { status: 'error', error: 'discountChanged' };
     if (error.message === 'insufficient_stock') {
       const line = quote.lines.find((l) => l.variantId === error.details);
       return {

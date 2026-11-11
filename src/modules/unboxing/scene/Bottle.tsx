@@ -37,10 +37,6 @@ export function Bottle({ product, dims, timeline, grey }: Props) {
     g.rotation.set(lerp(startPitch, 0, s.rise), s.spin, 0);
   });
 
-  const m = grey ? GREY : product.materials;
-  const front = grey ? null : product.frontTexture;
-  const shape = product.bottle;
-
   return (
     <group
       ref={ref}
@@ -49,16 +45,37 @@ export function Bottle({ product, dims, timeline, grey }: Props) {
       name="bottle"
     >
       <group scale={dims.k}>
-        {shape.archetype === 'lathe-shoulder' && (
-          <LatheBottle shape={shape} m={m} front={front} />
-        )}
-        {shape.archetype === 'rect-prism' && (
-          <RectPrismBottle shape={shape} m={m} front={front} />
-        )}
-        {shape.archetype === 'square-glass' && (
-          <SquareGlassBottle shape={shape} m={m} grey={grey} />
-        )}
+        <BottleShape product={product} grey={grey} />
       </group>
     </group>
+  );
+}
+
+/**
+ * Geometría y materiales del frasco en milímetros, de pie y con la base en el
+ * origen. La comparten la escena de la ficha y el carrusel de la portada.
+ */
+export function BottleShape({
+  product,
+  grey = false,
+}: {
+  product: ProductConfig;
+  grey?: boolean;
+}) {
+  const m = grey ? GREY : product.materials;
+  const front = grey ? null : product.frontTexture;
+  const shape = product.bottle;
+  return (
+    <>
+      {shape.archetype === 'lathe-shoulder' && (
+        <LatheBottle shape={shape} m={m} front={front} />
+      )}
+      {shape.archetype === 'rect-prism' && (
+        <RectPrismBottle shape={shape} m={m} front={front} />
+      )}
+      {shape.archetype === 'square-glass' && (
+        <SquareGlassBottle shape={shape} m={m} grey={grey} />
+      )}
+    </>
   );
 }

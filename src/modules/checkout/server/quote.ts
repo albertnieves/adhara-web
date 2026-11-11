@@ -1,6 +1,8 @@
 import 'server-only';
 import { createSupabasePublicClient } from '@/lib/supabase/public';
 import type { Availability, ProductMedia } from '@/modules/catalog';
+import type { PromotionOffer } from '@/modules/promotions/domain';
+import { parsePromotionOffers } from '@/modules/promotions/domain';
 import type { ShippingQuote } from '@/modules/shipping';
 import { EMPTY_SHIPPING_QUOTE } from '@/modules/shipping';
 import { quoteCartShipping } from '@/modules/shipping/server/quote';
@@ -10,9 +12,10 @@ import type { CartLine } from '../domain/cart';
  * Presupuesto de la cesta con datos públicos (cliente anónimo, nunca la
  * vista previa del personal): solo formatos activos con PVP de perfumes
  * publicados, su disponibilidad (sin unidades exactas) y las opciones de envío
- * de cada zona activa para el peso de la cesta (web_shipping_quote, §172). Es
- * lo que se enseña antes de pagar; el importe que cuenta lo calcula la base al
- * crear el pedido.
+ * de cada zona activa para el peso de la cesta (web_shipping_quote, §172) y
+ * las promociones vivas con lo que descuentan en ella (web_promotions_quote,
+ * §186). Es lo que se enseña antes de pagar; el importe que cuenta lo calcula
+ * la base al crear el pedido.
  */
 
 export type QuoteLine = {
@@ -37,6 +40,8 @@ export type CartQuote = {
   /** Todo lo de la cesta se puede comprar ahora mismo. */
   purchasable: boolean;
   shipping: ShippingQuote;
+  /** Promociones vivas, la que más descuenta primero; [] si no hay. */
+  promotions: PromotionOffer[];
 };
 
 const VARIANT_SELECT =
@@ -71,10 +76,11 @@ export async function quoteCart(
     itemsCents: 0,
     purchasable: false,
     shipping: EMPTY_SHIPPING_QUOTE,
+    promotions: [],
   };
   if (!supabase) return empty;
 
-  const [variants, shipping] = await Promise.all([
+  const [variants, shipping, promotions] = await Promise.all([
     lines.length > 0
       ? supabase
           .from('product_variants')
@@ -87,6 +93,7 @@ export async function quoteCart(
           .eq('product.status', 'published')
       : Promise.resolve({ data: [], error: null }),
     quoteCartShipping(lines),
+    quotePromotions(supabase, lines),
   ]);
   if (variants.error) {
     console.error(
@@ -145,5 +152,28 @@ export async function quoteCart(
         (line) => line.product && line.product.availability !== 'out_of_stock',
       ),
     shipping,
+    promotions,
   };
+}
+
+/**
+ * Promociones vivas para esta cesta (también vacía: la cesta puede decir que
+ * hay una). Si la lectura falla, ninguna: el pedido la aplica igualmente si
+ * toca, y nunca cobra más de lo enseñado.
+ */
+async function quotePromotions(
+  supabase: NonNullable<ReturnType<typeof createSupabasePublicClient>>,
+  lines: readonly CartLine[],
+): Promise<PromotionOffer[]> {
+  const { data, error } = await supabase.rpc('web_promotions_quote', {
+    p_items: lines.map((line) => ({
+      variant_id: line.variantId,
+      quantity: line.quantity,
+    })),
+  });
+  if (error) {
+    console.error('[checkout] promociones', error.message);
+    return [];
+  }
+  return parsePromotionOffers(data);
 }

@@ -13,9 +13,11 @@ import {
   BrandMarquee,
   Faq,
   Hero,
+  HeroCarousel,
   ProductCard,
   ProductImage,
   Reveal,
+  heroSlides,
 } from '@/modules/storefront';
 
 /** La tienda se regenera cada 5 minutos o al publicar desde el panel. */
@@ -53,18 +55,27 @@ export default async function Home({
   const brands = [...new Set(products.map((p) => p.brand.name))];
   const showcase = products.find((p) => p.unboxingScene);
   const showcaseImage = showcase ? heroMedia(showcase) : null;
+  // Carrusel 3D con los perfumes que tienen escena; sin ellos, la portada fija.
+  const slides = heroSlides(products);
+  const hero = {
+    eyebrow: content?.heroEyebrow ?? t('heroEyebrow'),
+    title: content?.heroTitle ?? t('heroTitle'),
+    lead: content?.heroLead ?? t('heroLead'),
+    cta: content?.heroCta ?? t('heroCta'),
+  };
 
   return (
     <main>
-      <Hero
-        eyebrow={content?.heroEyebrow ?? t('heroEyebrow')}
-        title={content?.heroTitle ?? t('heroTitle')}
-        lead={content?.heroLead ?? t('heroLead')}
-        cta={content?.heroCta ?? t('heroCta')}
-        scroll={t('scroll')}
-        imageUrl={editorial?.imageUrl ?? undefined}
-        imageAlt={content?.imageAlt ?? ''}
-      />
+      {slides.length > 0 ? (
+        <HeroCarousel {...hero} slides={slides} />
+      ) : (
+        <Hero
+          {...hero}
+          scroll={t('scroll')}
+          imageUrl={editorial?.imageUrl ?? undefined}
+          imageAlt={content?.imageAlt ?? ''}
+        />
+      )}
 
       <section className="mx-auto max-w-[90rem] px-5 py-28 sm:px-10 sm:py-36">
         <Reveal className="mb-16 flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">

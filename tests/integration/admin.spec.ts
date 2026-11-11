@@ -112,6 +112,7 @@ test('viewer no accede al editor y recuperación no enumera usuarios', async ({
   await page.getByRole('button', { name: /enviar/i }).click();
   await expect(page).toHaveURL(/enviado=1/);
   await page.goto('/auth/confirm?type=recovery&token_hash=invalid-token-local');
+  await page.getByRole('button', { name: 'Continuar', exact: true }).click();
   await expect(page).toHaveURL(/error=enlace/);
 });
 
@@ -185,7 +186,9 @@ test('invitación local asigna rol, acepta una sola vez y permite fijar contrase
   const link = await mailLink(email);
   const context = await browser.newContext();
   const guest = await context.newPage();
+  // Abrir el enlace no abre sesión: hace falta el botón (DECISIONS §187).
   await guest.goto(link);
+  await guest.getByRole('button', { name: 'Continuar', exact: true }).click();
   await expect(
     guest.getByRole('heading', { name: 'Elige tu contraseña' }),
   ).toBeVisible();
@@ -194,6 +197,7 @@ test('invitación local asigna rol, acepta una sola vez y permite fijar contrase
   await guest.getByRole('button', { name: 'Guardar', exact: true }).click();
   await expect(guest).toHaveURL(/\/admin\/mfa/);
   await guest.goto(link);
+  await guest.getByRole('button', { name: 'Continuar', exact: true }).click();
   await expect(guest).toHaveURL(/error=enlace/);
   const users = await admin.auth.admin.listUsers();
   const invited = users.data.users.find((u) => u.email === email);
@@ -221,6 +225,9 @@ test('recuperación local exige el segundo factor existente y rechaza enlace reu
   await expect(recovered).toHaveURL(/enviado=1/);
   const link = await mailLink(email);
   await recovered.goto(link);
+  await recovered
+    .getByRole('button', { name: 'Continuar', exact: true })
+    .click();
   await expect(recovered).toHaveURL(/\/admin\/mfa\?next=contrasena/);
   if (Math.floor(Date.now() / 30000) === firstStep)
     await new Promise((resolve) =>
@@ -253,6 +260,9 @@ test('recuperación local exige el segundo factor existente y rechaza enlace reu
   await recovered.getByRole('button', { name: 'Guardar', exact: true }).click();
   await expect(recovered).toHaveURL(/\/admin$/);
   await recovered.goto(link);
+  await recovered
+    .getByRole('button', { name: 'Continuar', exact: true })
+    .click();
   await expect(recovered).toHaveURL(/error=enlace/);
   await context.close();
 });

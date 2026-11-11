@@ -20,14 +20,20 @@ import {
 } from '@/components/ui';
 import type { FieldControlProps } from '@/components/ui';
 import { formatEuros } from '@/lib/money';
-import { Link } from '@/modules/i18n';
-import type { AppliedDiscount, DiscountError } from '@/modules/promotions';
+import { Link, useRouter } from '@/modules/i18n';
+import type {
+  AppliedDiscount,
+  DiscountError,
+  PromotionOffer,
+} from '@/modules/promotions';
+import { bestOffer, chooseDiscount } from '@/modules/promotions';
 import type { ShippingQuote } from '@/modules/shipping';
 import { optionCost, zoneOptions } from '@/modules/shipping';
 import type { CheckoutField, CheckoutState } from '../domain/input';
 import { isPostalCode, shippingZone } from '../domain/shipping';
 import { applyDiscountCode, placeOrder } from '../server/actions';
 import { PaymentRedirectForm } from './PaymentRedirectForm';
+import { PromotionOfferText } from './PromotionOfferText';
 
 const IDLE: CheckoutState = { status: 'idle' };
 
@@ -109,7 +115,9 @@ export type CheckoutLine = {
  * «Finalizar compra»: datos, entrega (recogida gratis o envío a la península
  * y Baleares con el transportista que elija el cliente, al precio de su peso,
  * DECISIONS §172) y resumen. Los importes que se ven aquí
- * son orientativos; los que cuentan los calcula la base al crear el pedido.
+ * son orientativos; los que cuentan los calcula la base al crear el pedido,
+ * que no sale si su descuento es menor que el enseñado (§186). La mejor
+ * promoción viva y el código no se suman: va el que más descuenta.
  * Se mantiene montado tras el pedido (la cesta queda vacía): con el TPV
  * configurado lleva al banco a pagar (P04); sin él, enseña la confirmación.
  * Con la cuenta de cliente encendida, `account` rellena los datos guardados
@@ -122,6 +130,7 @@ export function CheckoutForm({
   itemsCents,
   purchasable,
   shipping,
+  promotions = [],
   store,
   account = null,
   signInNext = null,
@@ -131,11 +140,15 @@ export function CheckoutForm({
   itemsCents: number;
   purchasable: boolean;
   shipping: ShippingQuote;
+  /** Promociones vivas para esta cesta (web_promotions_quote). */
+  promotions?: PromotionOffer[];
   store: { address: string; city: string };
   account?: CheckoutAccount | null;
   signInNext?: string | null;
 }) {
   const t = useTranslations('checkout');
+  const tp = useTranslations('promotion');
+  const router = useRouter();
   // Código aplicado en el resumen (DECISIONS §150): lo calcula la base y se
   // vuelve a comprobar al crear el pedido.
   const [discount, setDiscount] = useState<AppliedDiscount | null>(null);
@@ -153,6 +166,10 @@ export function CheckoutForm({
           minimumCents: result.minimumCents,
         });
       }
+      // El descuento cambió (una promoción terminó…): la página vuelve a
+      // pedir las promociones y el resumen enseña el total nuevo.
+      if (result.status === 'error' && result.error === 'discountChanged')
+        router.refresh();
       return result;
     },
     IDLE,
@@ -246,7 +263,10 @@ export function CheckoutForm({
   const options = zoneData?.options ?? [];
   const selected =
     options.find((o) => o.serviceId === serviceId) ?? options[0] ?? null;
-  const discountCents = discount?.discountCents ?? 0;
+  // Un solo descuento: el código si descuenta más; si no, la promoción.
+  const promotion = bestOffer(promotions);
+  const applied = chooseDiscount(discount, promotion);
+  const discountCents = applied.discountCents;
   // Envío gratis según lo que se paga por los artículos (con el descuento),
   // en los servicios que cuentan para él.
   const costOf = (option: (typeof options)[number]) =>
@@ -280,7 +300,12 @@ export function CheckoutForm({
     >
       <input type="hidden" name="requestId" value={requestId} />
       <input type="hidden" name="locale" value={locale} />
-      <input type="hidden" name="discountCode" value={discount?.code ?? ''} />
+      <input
+        type="hidden"
+        name="discountCode"
+        value={applied.source === 'code' ? (discount?.code ?? '') : ''}
+      />
+      <input type="hidden" name="expectedDiscount" value={discountCents} />
       <input
         type="hidden"
         name="shippingServiceId"
@@ -504,11 +529,21 @@ export function CheckoutForm({
             </li>
           ))}
         </ul>
+        {applied.source === 'promotion' && promotion && (
+          <div className="space-y-1 text-sm">
+            <p className="font-semibold">{tp('appliedCheckout')}</p>
+            <p className="text-fg-muted text-xs leading-relaxed">
+              <PromotionOfferText offer={promotion} locale={locale} />
+            </p>
+          </div>
+        )}
         {discount ? (
           <div className="space-y-1">
             <div className="flex items-center justify-between gap-4 text-sm">
               <p role="status">
-                {t('discount.applied', { code: discount.code })}
+                {applied.source === 'promotion'
+                  ? tp('codeUnused', { code: discount.code })
+                  : t('discount.applied', { code: discount.code })}
               </p>
               <Button
                 type="button"
@@ -523,6 +558,13 @@ export function CheckoutForm({
               <p className="text-fg-muted text-xs">
                 {t('discount.excludesSale')}
               </p>
+            )}
+            {applied.source === 'promotion' ? (
+              <p className="text-fg-muted text-xs">{tp('better')}</p>
+            ) : (
+              promotion && (
+                <p className="text-fg-muted text-xs">{tp('codeBetter')}</p>
+              )
             )}
           </div>
         ) : (
@@ -545,13 +587,15 @@ export function CheckoutForm({
         <dl className="grid grid-cols-[1fr_auto] gap-x-6 gap-y-2 text-sm">
           <dt className="text-fg-muted">{t('items')}</dt>
           <dd className="text-right tabular-nums">{euros(itemsCents)}</dd>
-          {discount && (
+          {applied.source !== null && (
             <>
               <dt className="text-fg-muted">
-                {t('discount.line', { code: discount.code })}
+                {applied.source === 'code' && discount
+                  ? t('discount.line', { code: discount.code })
+                  : tp('line')}
               </dt>
               <dd className="text-right tabular-nums">
-                −{euros(discount.discountCents)}
+                −{euros(discountCents)}
               </dd>
             </>
           )}

@@ -10,6 +10,7 @@ import {
 } from '@/components/ui';
 import { formatEuros } from '@/lib/money';
 import { MAX_LINE_QUANTITY } from '@/modules/checkout';
+import { PromotionOfferText } from '@/modules/checkout/ui';
 import {
   checkoutEnabled,
   quoteCart,
@@ -18,11 +19,13 @@ import {
 import { updateCartLine } from '@/modules/checkout/server/actions';
 import { Link } from '@/modules/i18n';
 import { requireLocale } from '@/modules/i18n/server';
+import { bestOffer, missingCents, nextOffer } from '@/modules/promotions';
 import { ProductImage } from '@/modules/storefront/ui/ProductImage';
 
 /**
  * Cesta (P03): se lee de la cookie en cada visita y los precios salen del
  * catálogo publicado. Cada botón es un formulario: funciona sin JavaScript.
+ * Con una promoción viva (§186) dice si ya se consigue o cuánto falta.
  */
 export const dynamic = 'force-dynamic';
 
@@ -71,9 +74,15 @@ export default async function CartPage({ params }: { params: Params }) {
   const { locale } = await params;
   const lang = requireLocale(locale);
   if (!checkoutEnabled()) notFound();
-  const [t, lines] = await Promise.all([getTranslations('cart'), readCart()]);
+  const [t, tp, lines] = await Promise.all([
+    getTranslations('cart'),
+    getTranslations('promotion'),
+    readCart(),
+  ]);
   const quote = await quoteCart(lines);
   const euros = (cents: number) => formatEuros(cents, lang);
+  const best = bestOffer(quote.promotions);
+  const next = nextOffer(quote.promotions);
 
   return (
     <main className="mx-auto max-w-[90rem] px-5 pt-32 pb-20 sm:px-10">
@@ -201,6 +210,27 @@ export default async function CartPage({ params }: { params: Params }) {
             <p className="text-fg-muted text-xs">
               {t('vat')} · {t('maxNote', { max: MAX_LINE_QUANTITY })}
             </p>
+            {(best || next) && (
+              <div className="border-accent space-y-2 border-l-2 pl-4 text-sm leading-relaxed">
+                <Eyebrow>{tp('title')}</Eyebrow>
+                {best && (
+                  <p>
+                    <PromotionOfferText offer={best} locale={lang} />{' '}
+                    <strong className="font-semibold">
+                      {tp('applied', { amount: euros(best.discountCents) })}
+                    </strong>
+                  </p>
+                )}
+                {next && (
+                  <p>
+                    <PromotionOfferText offer={next} locale={lang} />{' '}
+                    <strong className="font-semibold">
+                      {tp('missing', { amount: euros(missingCents(next)) })}
+                    </strong>
+                  </p>
+                )}
+              </div>
+            )}
             <p className="text-fg-muted text-sm leading-relaxed">
               {t('shippingNext')} {t('discountNote')}
             </p>

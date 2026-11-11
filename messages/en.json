@@ -25,6 +25,16 @@
     "heroLead": "A selection of fragrances from the perfume houses of the Middle East, presented with the calm they deserve.",
     "heroCta": "Discover the collection",
     "scroll": "Scroll",
+    "carouselLabel": "Fragrances from the collection in 3D",
+    "carouselRole": "carousel",
+    "carouselSlide": "fragrance",
+    "carouselPosition": "{index} of {total}",
+    "carouselPrevious": "Previous fragrance",
+    "carouselNext": "Next fragrance",
+    "carouselShow": "Show {name}",
+    "carouselPause": "Pause rotation",
+    "carouselPlay": "Resume rotation",
+    "carouselCta": "View the fragrance",
     "featuredEyebrow": "Selection",
     "featuredTitle": "Featured fragrances",
     "featuredCta": "View the full collection",
@@ -42,6 +52,8 @@
   "catalog": {
     "eyebrow": "Collection",
     "title": "All fragrances",
+    "summary": "{count, plural, one {# fragrance} other {# fragrances}} from {brands, plural, one {# house} other {# houses}}.",
+    "deckLabel": "One fragrance from each house",
     "count": "{count, plural, =0 {No fragrances} one {# fragrance} other {# fragrances}}",
     "search": "Search by name or house",
     "brand": "House",
@@ -105,6 +117,7 @@
     "scene": "3D animation of {name}",
     "sceneReplay": "Replay",
     "sceneDrag": "Drag to rotate",
+    "scene3d": "3D view",
     "related": "More from {brand}"
   },
   "newsletter": {
@@ -367,7 +380,8 @@
       "review": "Please check the highlighted fields.",
       "shippingServiceRequired": "Choose a carrier for delivery.",
       "shippingServiceUnavailable": "That carrier is no longer available for this order. Choose another one.",
-      "shippingWeightUnknown": "Some fragrances in your basket can’t be shipped yet. You can collect them in store."
+      "shippingWeightUnknown": "Some fragrances in your basket can’t be shipped yet. You can collect them in store.",
+      "discountChanged": "The discount changed while you were shopping (for example, a promotion ended). Check the total in the summary and confirm again."
     },
     "accountSignedIn": "You're buying with your account ({email}). The order will appear in “My orders”.",
     "accountSignIn": "Have an account? <link>Sign in</link> to use your saved details and see the order in your account later.",
@@ -377,6 +391,20 @@
     "transitDays": "{days, plural, one {Delivery in # working day} other {Delivery in # working days}}",
     "carrierFree": "Free with this order",
     "shippingWeightMissing": "Some fragrances in your basket can’t be shipped yet. You can collect them in store."
+  },
+  "promotion": {
+    "title": "Promotion",
+    "offer": "{value} off orders of {minimum} or more.",
+    "offerBrand": "{value} off {brand} when you spend {minimum} or more on that house.",
+    "noSale": "Reduced perfumes do not count.",
+    "until": "Until {date}.",
+    "applied": "You have it: {amount} off, taken off at checkout.",
+    "missing": "Add {amount} more to get it.",
+    "appliedCheckout": "Promotion applied",
+    "line": "Promotion",
+    "better": "The promotion takes off as much as or more than your code: the promotion applies and your code stays unused.",
+    "codeBetter": "Your code takes off more than the promotion: the code applies. They do not add up.",
+    "codeUnused": "Code {code}: not applied"
   },
   "order": {
     "title": "Your order",
@@ -451,7 +479,8 @@
     "attachment": "terms-of-sale.txt",
     "signature": "L’Atelier du Désert · Arabian perfumery in Castelldefels",
     "carrier": "Delivered by {carrier}.",
-    "trackingLink": "Tracking: {url}"
+    "trackingLink": "Tracking: {url}",
+    "promotion": "Promotion"
   },
   "contact": {
     "title": "Contact",
@@ -655,6 +684,11 @@
       "disabled": "Customer accounts aren't available.",
       "generic": "Something went wrong. Please try again in a few minutes.",
       "review": "Check the highlighted fields."
+    },
+    "confirmLink": {
+      "title": "Confirm to continue",
+      "body": "For your security, press the button to finish opening the link.",
+      "submit": "Continue"
     }
   },
   "search": {

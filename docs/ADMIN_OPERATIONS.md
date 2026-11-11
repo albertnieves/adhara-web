@@ -12,7 +12,7 @@ Introducir email y contraseña. En el primer acceso, configurar la app de autent
 
 ## Editar la tienda
 
-Inicio → Editar portada permite modificar los textos en español, catalán o inglés. Guardar borrador conserva el contenido público. «Vista previa del borrador» muestra los cambios a la sesión autorizada. «Publicar revisión guardada» los hace visibles al público. Si se sigue escribiendo, primero hay que guardar. El historial restaura una revisión como un borrador nuevo que requiere publicar después.
+Inicio → Editar portada permite modificar los textos en español, catalán o inglés. La portada abre con el carrusel 3D de los perfumes publicados con escena 3D (hoy los cuatro del piloto, DECISIONS §188): el antetítulo, el título, el texto y el botón son los de aquí; el nombre, el formato y el precio de cada perfume salen de su ficha. Mientras haya carrusel, la imagen editorial no se usa. Guardar borrador conserva el contenido público. «Vista previa del borrador» muestra los cambios a la sesión autorizada. «Publicar revisión guardada» los hace visibles al público. Si se sigue escribiendo, primero hay que guardar. El historial restaura una revisión como un borrador nuevo que requiere publicar después.
 
 La imagen editorial es opcional, admite hasta 3 MB y exige descripción y procedencia. Es privada mientras solo esté en borradores. Las revisiones conservan sus archivos; una URL firmada de una imagen publicada puede seguir funcionando hasta diez minutos después de retirarla.
 
@@ -115,19 +115,29 @@ Web → Suscriptores muestra las altas de la sección «Club L’Atelier» de la
 
 Para conectar Sender: crear en Sender un token de API (Settings → API access tokens) y, si se quiere, un grupo «Web»; en Vercel, solo servidor, `SENDER_API_TOKEN` y `SENDER_GROUP_ID` (el id del grupo). Desde entonces cada alta se envía a Sender al momento; las que fallen quedan pendientes y se envían con «Enviar pendientes a Sender». Las campañas se preparan y envían en Sender; los códigos de descuento que llevan se crean en [Códigos de descuento](#códigos-de-descuento). Las bajas que la gente haga desde el enlace de los correos quedan en Sender. No pegar el token en el chat.
 
+## Promociones automáticas
+
+Web → Descuentos y promociones → «Nueva promoción» (administradores, `promotions.manage` con MFA; DECISIONS §186). Una promoción descuenta sola cuando los artículos llegan a un importe, sin que el cliente escriba nada: por ejemplo, −10 % desde 100 € en Black Friday.
+
+1. **Crear:** un nombre para el equipo (la tienda no lo enseña), el descuento (porcentaje del 1 al 90 % o importe fijo de 1 € a 1.000 €), desde cuánto vale (obligatorio; con importe fijo, mayor que el descuento), la casa («Todas las casas» o una: entonces solo sus perfumes cuentan para el mínimo y se descuentan), «No aplicar a perfumes rebajados», inicio y fin (hora de Madrid) y «Activa». Debajo, «Así la verá el cliente» enseña el texto de la tienda.
+2. **En la tienda:** la cesta dice «Ya la tienes: X menos» o «Te faltan X para conseguirla»; «Finalizar compra» la aplica y enseña la línea «Promoción». El banco cobra el total con el descuento y la ficha del pedido dice qué promoción llevó.
+3. **Seguimiento y retirada:** la lista enseña los pedidos vivos o cobrados con la promoción y lo descontado. Para retirarla antes de su fin, desmarca «Activa»: deja de aplicarse al momento y los pedidos hechos no cambian. Si alguien estaba a punto de pagar, la tienda le avisa de que el descuento ha cambiado y no le cobra más de lo que vio sin que lo confirme.
+
+Reglas: un solo descuento por pedido. Con varias promociones vivas va la que más descuenta. **No se suma a un código:** si el cliente escribe uno, va el que más descuenta y, si empatan, la promoción (el código queda sin gastar). Como los códigos, descuenta los artículos, nunca el envío, y el envío gratis se calcula con el descuento ya aplicado. Sin importe mínimo no hay promoción: una rebaja de todo se hace con el precio tachado, que sigue la regla Ómnibus.
+
 ## Códigos de descuento
 
-Web → Códigos de descuento (administradores, `promotions.manage` con MFA). Sirven para dar descuentos exclusivos en las campañas del club de Sender:
+Web → Descuentos y promociones (administradores, `promotions.manage` con MFA). Sirven para dar descuentos exclusivos en las campañas del club de Sender:
 
 1. **Nuevo código:** el texto (letras, números y guiones; «Sugerir uno» propone uno difícil de adivinar, como `CLUB-7K3Q9M`), una nota interna, el descuento (porcentaje del 1 al 90 % o importe fijo de 1 € a 1.000 €) y, si se quieren, compra mínima, fechas (hora de Madrid), usos máximos, «Un uso por email» (marcado por defecto) y «No aplicar a perfumes rebajados».
 2. **En Sender:** escribe el código en la campaña con sus condiciones (descuento, hasta cuándo, compra mínima y si es de un uso por persona). Es lo que exigen las condiciones de venta.
 3. **En la tienda:** el cliente lo escribe en «Finalizar compra» → «Aplicar» y ve el descuento en el resumen antes de pagar. El banco cobra el total con descuento. La ficha del pedido enseña el código y lo descontado.
 
-Reglas: un código por pedido; el descuento es sobre los artículos, nunca sobre el envío; el envío gratis «desde» se calcula con el descuento ya aplicado; un importe fijo exige un pedido de más de ese importe. Cuentan como usos los pedidos pendientes de pago y los cobrados; un pedido que caduca sin pagar, se cancela o se devuelve entero devuelve su uso. La lista enseña los usos, los pedidos cobrados y lo descontado en ellos.
+Reglas: un código por pedido, que no se suma a una promoción (va el que más descuenta, ver [Promociones automáticas](#promociones-automáticas)); el descuento es sobre los artículos, nunca sobre el envío; el envío gratis «desde» se calcula con el descuento ya aplicado; un importe fijo exige un pedido de más de ese importe. Cuentan como usos los pedidos pendientes de pago y los cobrados; un pedido que caduca sin pagar, se cancela o se devuelve entero devuelve su uso. La lista enseña los usos, los pedidos cobrados y lo descontado en ellos.
 
 El texto de un código no cambia una vez creado (los pedidos lo guardan): para otra campaña, crea otro. Para retirarlo, desmarca «Activo»; los pedidos ya hechos no cambian. Un código compartido vale para cualquiera que lo tenga: si no debe circular, limita los usos o las fechas.
 
-**Lotes de códigos únicos** (Web → Códigos de descuento → «Nuevo lote de códigos únicos», DECISIONS §185): un código distinto y de un solo uso para cada persona, con las mismas condiciones. A diferencia de un código de campaña, no circula: el primero que lo usa lo gasta.
+**Lotes de códigos únicos** (Web → Descuentos y promociones → «Nuevo lote de códigos únicos», DECISIONS §185): un código distinto y de un solo uso para cada persona, con las mismas condiciones. A diferencia de un código de campaña, no circula: el primero que lo usa lo gasta.
 
 1. **Crear el lote:** nombre de la campaña, prefijo (de 2 a 10 letras o números: `CLUB` da códigos como `CLUB-7KQ4MZ9X`), descuento, compra mínima y fechas como en un código, y para quién: uno para cada suscriptor activo del Club (hace falta también el permiso de clientes) o un número de códigos sin destinatario (de 1 a 5.000), para repartir en la tienda o en un evento.
 2. **Descargar CSV:** en la ficha del lote, con las columnas `email`, `codigo`, `usado` y `activo`. Cada descarga queda en la auditoría; el archivo lleva datos personales, así que se guarda solo el tiempo necesario.

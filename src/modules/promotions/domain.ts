@@ -446,3 +446,246 @@ export function discountBatchCsvRows(codes: readonly DiscountBatchCode[]) {
 export function discountBatchFileName(prefix: string, now: Date): string {
   return `codigos-${prefix.toLowerCase()}-${now.toISOString().slice(0, 10)}.csv`;
 }
+
+/*
+ * Promociones automáticas (DECISIONS §186): un descuento sin código desde un
+ * importe de artículos, con fechas y, si se quiere, de una sola casa. La base
+ * calcula lo que cuenta y lo que descuenta (web_promotions_quote para la
+ * tienda, web_order_create para el pedido); aquí, el formulario del panel, lo
+ * que enseña la tienda y la regla con los códigos: no se suman, va el que más
+ * descuenta y, si empatan, la promoción.
+ */
+
+/** Una promoción del panel con sus usos (admin_list_promotions). */
+export type Promotion = {
+  id: string;
+  name: string;
+  kind: DiscountKind;
+  percentBp: BasisPoints | null;
+  amountCents: Cents | null;
+  minItemsCents: Cents;
+  brandId: string | null;
+  brandName: string | null;
+  excludeSaleItems: boolean;
+  startsAt: string | null;
+  endsAt: string | null;
+  active: boolean;
+  createdAt: string;
+  /** Pedidos vivos o cobrados con la promoción. */
+  uses: number;
+  paidUses: number;
+  paidDiscountCents: Cents;
+};
+
+export type PromotionStatus = 'active' | 'scheduled' | 'expired' | 'inactive';
+
+/** Estado de la promoción para el panel, en este momento. */
+export function promotionStatus(
+  promotion: Pick<Promotion, 'active' | 'startsAt' | 'endsAt'>,
+  now: Date = new Date(),
+): PromotionStatus {
+  if (!promotion.active) return 'inactive';
+  if (promotion.endsAt && new Date(promotion.endsAt) <= now) return 'expired';
+  if (promotion.startsAt && new Date(promotion.startsAt) > now)
+    return 'scheduled';
+  return 'active';
+}
+
+/** «−10 % desde 100 € · Casa A · sin rebajados», para el panel. */
+export function promotionSummary(
+  promotion: Pick<
+    Promotion,
+    | 'kind'
+    | 'percentBp'
+    | 'amountCents'
+    | 'minItemsCents'
+    | 'brandName'
+    | 'excludeSaleItems'
+  >,
+): string {
+  return [
+    `−${formatDiscountValue(promotion)} desde ${formatEuros(promotion.minItemsCents, 'es')}`,
+    promotion.brandName ? `solo ${promotion.brandName}` : 'todas las casas',
+    promotion.excludeSaleItems && 'sin rebajados',
+  ]
+    .filter(Boolean)
+    .join(' · ');
+}
+
+/** Datos del formulario de alta o cambio, ya en céntimos, puntos básicos e ISO. */
+export const promotionInput = z
+  .object({
+    id: z.union([z.uuid(), z.literal('').transform(() => null)]),
+    name: z
+      .string()
+      .trim()
+      .min(1, 'Ponle un nombre (lo ve solo el equipo).')
+      .max(80, 'Como mucho 80 caracteres.'),
+    kind: z.enum(DISCOUNT_KINDS),
+    value: z.string().trim(),
+    minItems: z.string().trim(),
+    brandId: z.union([z.uuid(), z.literal('').transform(() => null)]),
+    excludeSaleItems: z.boolean(),
+    startsAt: optionalDate,
+    endsAt: optionalDate,
+    active: z.boolean(),
+  })
+  .transform((input, ctx) => {
+    const issue = (path: string, message: string) => {
+      ctx.addIssue({ code: 'custom', path: [path], message });
+      return z.NEVER;
+    };
+    let percentBp: BasisPoints | null = null;
+    let amountCents: Cents | null = null;
+    if (input.kind === 'percent') {
+      percentBp = parsePercent(input.value);
+      if (percentBp === null || percentBp < 100 || percentBp > 9000)
+        return issue('value', 'Entre el 1 % y el 90 %.');
+    } else {
+      amountCents = parseEuros(input.value);
+      if (amountCents === null || amountCents < 100 || amountCents > 100_000)
+        return issue('value', 'Entre 1 € y 1.000 €.');
+    }
+    const minItemsCents = parseEuros(input.minItems);
+    if (
+      minItemsCents === null ||
+      minItemsCents < 100 ||
+      minItemsCents > 10_000_000
+    )
+      return issue(
+        'minItems',
+        'Escribe desde cuánto vale, por ejemplo 100 o 49,90 (mínimo 1 €).',
+      );
+    if (amountCents !== null && minItemsCents <= amountCents)
+      return issue(
+        'minItems',
+        'El importe mínimo tiene que ser mayor que el descuento.',
+      );
+    if (
+      input.startsAt &&
+      input.endsAt &&
+      new Date(input.endsAt) <= new Date(input.startsAt)
+    )
+      return issue('endsAt', 'El final tiene que ir después del inicio.');
+    return {
+      id: input.id,
+      name: input.name,
+      kind: input.kind,
+      percentBp,
+      amountCents,
+      minItemsCents,
+      brandId: input.brandId,
+      excludeSaleItems: input.excludeSaleItems,
+      startsAt: input.startsAt,
+      endsAt: input.endsAt,
+      active: input.active,
+    };
+  });
+export type PromotionInput = z.infer<typeof promotionInput>;
+
+/** Una promoción viva para una cesta, tal y como la calculó la base. */
+export type PromotionOffer = {
+  id: string;
+  kind: DiscountKind;
+  percentBp: BasisPoints | null;
+  amountCents: Cents | null;
+  minItemsCents: Cents;
+  /** null: cuentan todas las casas. */
+  brandName: string | null;
+  excludeSaleItems: boolean;
+  endsAt: string | null;
+  /** Lo que cuenta de la cesta para llegar al mínimo. */
+  eligibleCents: Cents;
+  /** 0 si aún no llega al mínimo. */
+  discountCents: Cents;
+};
+
+const offerRow = z.object({
+  id: z.uuid(),
+  kind: z.enum(DISCOUNT_KINDS),
+  percent_bp: z.number().int().nullable(),
+  amount_cents: z.number().int().nullable(),
+  min_items_cents: z.number().int(),
+  brand_name: z.string().nullable(),
+  exclude_sale_items: z.boolean(),
+  ends_at: z.string().nullable(),
+  eligible_cents: z.number().int(),
+  discount_cents: z.number().int(),
+});
+
+/** Respuesta de web_promotions_quote → promociones; [] si no se entiende. */
+export function parsePromotionOffers(data: unknown): PromotionOffer[] {
+  const parsed = z.array(offerRow).safeParse(data);
+  if (!parsed.success) return [];
+  return parsed.data.map((row) => ({
+    id: row.id,
+    kind: row.kind,
+    percentBp: row.percent_bp,
+    amountCents: row.amount_cents,
+    minItemsCents: row.min_items_cents,
+    brandName: row.brand_name,
+    excludeSaleItems: row.exclude_sale_items,
+    endsAt: row.ends_at,
+    eligibleCents: row.eligible_cents,
+    discountCents: row.discount_cents,
+  }));
+}
+
+/** Lo que falta en artículos que cuentan para llegar al mínimo (0 si llega). */
+export function missingCents(offer: PromotionOffer): Cents {
+  return Math.max(offer.minItemsCents - offer.eligibleCents, 0);
+}
+
+/** La que más descuenta en esta cesta (empate: la primera), o null. */
+export function bestOffer(
+  offers: readonly PromotionOffer[],
+): PromotionOffer | null {
+  return offers.reduce<PromotionOffer | null>(
+    (best, offer) =>
+      offer.discountCents > 0 &&
+      (!best || offer.discountCents > best.discountCents)
+        ? offer
+        : best,
+    null,
+  );
+}
+
+/**
+ * La que aún no se alcanza con lo que menos falta, solo si en esta cesta
+ * descontaría más que la que ya se aplica (para «te faltan…»); null si no hay.
+ */
+export function nextOffer(
+  offers: readonly PromotionOffer[],
+): PromotionOffer | null {
+  const best = bestOffer(offers);
+  return offers.reduce<PromotionOffer | null>((next, offer) => {
+    if (offer.discountCents > 0 || offer.eligibleCents <= 0) return next;
+    // Lo que descontaría justo al llegar al mínimo.
+    const atMinimum =
+      offer.kind === 'percent'
+        ? Math.round((offer.minItemsCents * (offer.percentBp ?? 0)) / 10_000)
+        : (offer.amountCents ?? 0);
+    if (best && atMinimum <= best.discountCents) return next;
+    return !next || missingCents(offer) < missingCents(next) ? offer : next;
+  }, null);
+}
+
+/**
+ * Qué descuento lleva el pedido: el código si descuenta más que la mejor
+ * promoción; si empatan, la promoción (el código queda sin gastar). Igual que
+ * web_order_create.
+ */
+export function chooseDiscount(
+  code: AppliedDiscount | null,
+  promotion: PromotionOffer | null,
+):
+  | { source: 'code'; discountCents: Cents }
+  | { source: 'promotion'; discountCents: Cents }
+  | { source: null; discountCents: 0 } {
+  const promotionCents = promotion?.discountCents ?? 0;
+  if (code && code.discountCents > promotionCents)
+    return { source: 'code', discountCents: code.discountCents };
+  if (promotion && promotionCents > 0)
+    return { source: 'promotion', discountCents: promotionCents };
+  return { source: null, discountCents: 0 };
+}

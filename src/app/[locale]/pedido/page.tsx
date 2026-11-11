@@ -71,9 +71,10 @@ export default async function OrderPage({
   const lang = requireLocale(locale);
   if (!checkoutEnabled()) notFound();
   const orderId = await rememberedOrderId();
-  const [t, tc, order, storeData] = await Promise.all([
+  const [t, tc, tp, order, storeData] = await Promise.all([
     getTranslations('order'),
     getTranslations('checkout'),
+    getTranslations('promotion'),
     orderId ? getOrderStatus(orderId) : null,
     readStoreContent('store', 'es'),
   ]);
@@ -109,7 +110,9 @@ export default async function OrderPage({
       {order.discountCents > 0 && (
         <>
           <dt className="text-fg-muted">
-            {tc('discount.line', { code: order.discountCode ?? '' })}
+            {order.discountCode
+              ? tc('discount.line', { code: order.discountCode })
+              : tp('line')}
           </dt>
           <dd className="text-right tabular-nums">
             −{euros(order.discountCents)}

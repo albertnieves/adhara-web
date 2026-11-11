@@ -56,6 +56,7 @@ Una migración por tema, aplicadas en `atelier-dev` con el conector de Supabase 
 | `20261025120000` | Envíos multitransportista: peso de los formatos, ajustes, servicios y tramos de coste (internal), servicio elegido y peso en `orders`, `web_shipping_quote`, envíos, recogidas y seguimiento (§171–176) |
 | `20261102120000` | Ficha de cliente (A7): `admin_customers`, `admin_customer` y `admin_customer_export` sobre las tablas que ya existen, con clave opaca por email (§184)                                                  |
 | `20261102150000` | Códigos únicos por suscriptor: `discount_batches`, `discount_codes.batch_id`, `discount_code_recipients`, funciones `admin_*_discount_batch*` y la exportación del cliente con sus códigos (§185)       |
+| `20261102180000` | Promociones automáticas: `promotions`, `orders.promotion_id` y `promotion_name`, `web_promotions_quote`, `web_order_create` con la mejor promoción y el descuento enseñado, `admin_*_promotion*` (§186) |
 
 No hay `seed.sql`: los datos de referencia (permisos, matriz de roles, ubicación de la tienda, parámetros del vigilante) viven en las migraciones. Las cargas de datos reales están en `supabase/data/` y se aplicaron una vez en `atelier-dev`; no forman parte de `db reset`.
 

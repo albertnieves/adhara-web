@@ -25,6 +25,16 @@
     "heroLead": "Una selecció de fragàncies de les cases de l’Orient Mitjà, presentada amb la calma que es mereixen.",
     "heroCta": "Descobreix la col·lecció",
     "scroll": "Desplaça’t",
+    "carouselLabel": "Perfums de la col·lecció en 3D",
+    "carouselRole": "carrusel",
+    "carouselSlide": "perfum",
+    "carouselPosition": "{index} de {total}",
+    "carouselPrevious": "Perfum anterior",
+    "carouselNext": "Perfum següent",
+    "carouselShow": "Mostra {name}",
+    "carouselPause": "Atura el gir",
+    "carouselPlay": "Reprèn el gir",
+    "carouselCta": "Veure el perfum",
     "featuredEyebrow": "Selecció",
     "featuredTitle": "Fragàncies destacades",
     "featuredCta": "Veure tota la col·lecció",
@@ -42,6 +52,8 @@
   "catalog": {
     "eyebrow": "Col·lecció",
     "title": "Totes les fragàncies",
+    "summary": "{count, plural, one {# fragància} other {# fragàncies}} de {brands, plural, one {# casa} other {# cases}}.",
+    "deckLabel": "Una fragància de cada casa",
     "count": "{count, plural, =0 {Cap perfum} one {# perfum} other {# perfums}}",
     "search": "Cerca per nom o casa",
     "brand": "Casa",
@@ -105,6 +117,7 @@
     "scene": "Animació 3D de {name}",
     "sceneReplay": "Repeteix",
     "sceneDrag": "Arrossega per girar",
+    "scene3d": "Vista 3D",
     "related": "També de {brand}"
   },
   "newsletter": {
@@ -367,7 +380,8 @@
       "review": "Revisa les dades marcades.",
       "shippingServiceRequired": "Tria un transportista per a l’enviament.",
       "shippingServiceUnavailable": "Aquest transportista ja no està disponible per a aquesta comanda. Tria’n un altre.",
-      "shippingWeightUnknown": "Algun perfum de la cistella encara no es pot enviar. Pots recollir-lo a la botiga."
+      "shippingWeightUnknown": "Algun perfum de la cistella encara no es pot enviar. Pots recollir-lo a la botiga.",
+      "discountChanged": "El descompte ha canviat mentre compraves (per exemple, ha acabat una promoció). Revisa el total al resum i torna a confirmar."
     },
     "accountSignedIn": "Compres amb el teu compte ({email}). La comanda quedarà a «Les meves comandes».",
     "accountSignIn": "Tens compte? <link>Entra</link> per fer servir les teves dades desades i veure després la comanda al teu compte.",
@@ -377,6 +391,20 @@
     "transitDays": "{days, plural, one {Lliurament en # dia laborable} other {Lliurament en # dies laborables}}",
     "carrierFree": "Gratis amb aquesta comanda",
     "shippingWeightMissing": "Algun perfum de la cistella encara no es pot enviar. Pots recollir-lo a la botiga."
+  },
+  "promotion": {
+    "title": "Promoció",
+    "offer": "{value} de descompte en comandes des de {minimum}.",
+    "offerBrand": "{value} de descompte en {brand} si en portes {minimum} o més d’aquesta casa.",
+    "noSale": "Sense comptar els perfums rebaixats.",
+    "until": "Fins al {date}.",
+    "applied": "Ja la tens: {amount} menys, que es descompten en finalitzar la compra.",
+    "missing": "Et falten {amount} per aconseguir-la.",
+    "appliedCheckout": "Promoció aplicada",
+    "line": "Promoció",
+    "better": "La promoció descompta el mateix o més que el teu codi: s’aplica la promoció i el codi queda sense fer servir.",
+    "codeBetter": "El teu codi descompta més que la promoció: s’aplica el codi. No se sumen.",
+    "codeUnused": "Codi {code}: no s’aplica"
   },
   "order": {
     "title": "La teva comanda",
@@ -451,7 +479,8 @@
     "attachment": "condicions-de-venda.txt",
     "signature": "L’Atelier du Désert · Perfumeria àrab a Castelldefels",
     "carrier": "El porta {carrier}.",
-    "trackingLink": "Seguiment: {url}"
+    "trackingLink": "Seguiment: {url}",
+    "promotion": "Promoció"
   },
   "contact": {
     "title": "Contacte",
@@ -655,6 +684,11 @@
       "disabled": "El compte de client no està disponible.",
       "generic": "Alguna cosa ha fallat. Torna-ho a provar d'aquí a uns minuts.",
       "review": "Revisa els camps marcats."
+    },
+    "confirmLink": {
+      "title": "Confirma per continuar",
+      "body": "Per seguretat, prem el botó per acabar d’obrir l’enllaç.",
+      "submit": "Continua"
     }
   },
   "search": {

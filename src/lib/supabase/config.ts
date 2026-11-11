@@ -24,3 +24,15 @@ export function getSupabaseConfig(
   });
   return parsed.success ? parsed.data : null;
 }
+
+/**
+ * Cookies de la sesión de Supabase. La sesión solo se usa en el servidor (no
+ * hay cliente de Supabase en el navegador), así que van httpOnly: un script
+ * inyectado no puede leer ni robar los tokens de acceso y de refresco.
+ */
+export const SUPABASE_COOKIE_OPTIONS = {
+  path: '/',
+  sameSite: 'lax',
+  httpOnly: true,
+  secure: process.env.NODE_ENV === 'production',
+} as const;

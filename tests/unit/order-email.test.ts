@@ -142,6 +142,15 @@ describe('correo de confirmación del pago', () => {
     expect(email.text).not.toContain('Descuento');
   });
 
+  it('con una promoción (sin código), la línea dice «Promoción»', () => {
+    const text = renderOrderEmail(
+      { ...job, discount_cents: 1200, discount_code: null, total_cents: 8780 },
+      context,
+    ).text;
+    expect(text).toMatch(/Promoción: −12\s€/);
+    expect(text).not.toContain('Descuento (');
+  });
+
   it('sin datos del vendedor, no inventa la línea', () => {
     expect(
       renderOrderEmail(job, { ...context, seller: null }).text,

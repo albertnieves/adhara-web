@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { z } from 'zod';
+import { isGenuineImage } from '@/lib/image-signature';
 import { parseEuros } from '@/lib/money';
 import type { ActionState } from '@/modules/admin';
 import { describeDbError, fail, ok } from '@/modules/admin';
@@ -693,6 +694,8 @@ export async function uploadMedia(
     return fail('Formato no admitido: usa JPG, PNG, WebP o AVIF.');
   if (file.size > MAX_IMAGE_BYTES)
     return fail('La imagen supera los 4 MB: redúcela antes de subirla.');
+  if (!(await isGenuineImage(file)))
+    return fail('El archivo no es una imagen JPG, PNG, WebP o AVIF válida.');
   const m = parsed.data;
   if (m.origin !== 'own_photo' && !m.source) {
     return fail('Indica la procedencia (URL o página del catálogo).');
