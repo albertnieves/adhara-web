@@ -50,7 +50,7 @@ Rama `claude/vigilant-shannon-n14a9g`. Roadmap, punto 4: lo siguiente del roadma
 
 ## Integración de imágenes generadas (02/11)
 
-PR #59, rama `codex/imagenes-perfumes-stock`, decisión §190. Se conectan 56 recreaciones a los productos existentes en la tienda y se conservan las fotografías originales. Miss Sakura mantiene su imagen hasta confirmar variante y formato. Las recreaciones quedan fuera del feed, JSON-LD y tarjetas sociales. Detalles, procedencia y verificaciones en [GENERATED_PRODUCT_IMAGES](GENERATED_PRODUCT_IMAGES.md).
+PR #59, rama `codex/imagenes-perfumes-stock`, decisión §190. Se conectan 57 recreaciones a los productos existentes en la tienda y se conservan las fotografías originales. Desde el 11/11, también Miss Sakura (a petición del usuario; era el único publicado sin ninguna foto). Con ello los 50 perfumes publicados tienen imagen. Las recreaciones quedan fuera del feed, JSON-LD y tarjetas sociales. Detalles, procedencia y verificaciones en [GENERATED_PRODUCT_IMAGES](GENERATED_PRODUCT_IMAGES.md).
 
 ## Códigos únicos por suscriptor (02/11)
 

@@ -1001,4 +1001,4 @@ A petición del usuario («mejora el diseño del catálogo y el catálogo olfati
 
 ## Imágenes de catálogo — PR #59
 
-190. **Se integran 56 recreaciones WebP con fondo marfil y luz de estudio.** Se añaden al catálogo después de la lectura pública y conservan su origen `generated_draft`. Una foto propia marcada como principal tiene prioridad. Miss Sakura conserva su imagen hasta confirmar la variante y el formato. Feed, JSON-LD y tarjetas sociales usan las fotografías originales. Procedencia y mantenimiento en [GENERATED_PRODUCT_IMAGES](GENERATED_PRODUCT_IMAGES.md).
+190. **Se integran 57 recreaciones WebP con fondo marfil y luz de estudio.** Se añaden al catálogo después de la lectura pública y conservan su origen `generated_draft`. Una foto propia marcada como principal tiene prioridad. Miss Sakura, apartada al principio hasta confirmar variante y formato, se incorpora el 11/11/2026 a petición del usuario: no tenía ninguna foto y mostraba la imagen de reserva. Feed, JSON-LD y tarjetas sociales usan las fotografías originales. Procedencia y mantenimiento en [GENERATED_PRODUCT_IMAGES](GENERATED_PRODUCT_IMAGES.md).

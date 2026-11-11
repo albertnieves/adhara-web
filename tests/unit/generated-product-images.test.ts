@@ -1,4 +1,4 @@
-import { existsSync, readdirSync } from 'node:fs';
+import { readdirSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import {
   GENERATED_PRODUCT_SLUGS,
@@ -55,9 +55,7 @@ describe('imágenes generadas de la PR #59', () => {
     expect(urls.sort()).toEqual(
       files.map((file) => `/media/generated-products/${file}`).sort(),
     );
-    expect(
-      existsSync('assets/generated-products/2026-11-02/miss-sakura.webp'),
-    ).toBe(true);
+    expect(GENERATED_PRODUCT_SLUGS).toContain('miss-sakura');
   });
 
   it('añade la recreación como principal sin perder originales ni cambiar datos comerciales', () => {
@@ -73,8 +71,19 @@ describe('imágenes generadas de la PR #59', () => {
     expect(withGeneratedProductImage(result)).toBe(result);
   });
 
-  it('no asigna imágenes a Miss Sakura ni a un perfume fuera de la selección', () => {
-    for (const slug of ['miss-sakura', 'perfume-desconocido', 'toString']) {
+  it('ilustra Miss Sakura con su recreación', () => {
+    const result = withGeneratedProductImage({
+      ...product,
+      slug: 'miss-sakura',
+      media: [],
+    });
+    expect(heroMedia(result)?.url).toBe(
+      '/media/generated-products/2026-11-02/miss-sakura.webp',
+    );
+  });
+
+  it('no asigna imágenes a un perfume fuera de la selección', () => {
+    for (const slug of ['perfume-desconocido', 'toString']) {
       const other = { ...product, slug };
       expect(withGeneratedProductImage(other)).toBe(other);
     }

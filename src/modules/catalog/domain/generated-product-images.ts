@@ -1,7 +1,7 @@
 import type { StorefrontProduct } from './product';
 
 /** PR #59, 02/11/2026. Recreaciones, no fotografías verificadas.
- * Miss Sakura queda fuera hasta confirmar variante y formato.
+ * Miss Sakura se incorpora el 11/11/2026 a petición del usuario.
  * Solo se enriquecen productos ya leídos con RLS; no se crea catálogo.
  */
 const originalSlugs = [
@@ -27,6 +27,7 @@ const originalSlugs = [
   'glitch',
   'little-garden',
   'miss-arrogate',
+  'miss-sakura',
   'odyssey-artisto',
   'odyssey-candee',
   'odyssey-limoni',
