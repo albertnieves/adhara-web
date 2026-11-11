@@ -41,7 +41,7 @@ export function ProductImage({
       fill
       sizes={sizes}
       priority={priority}
-      className={`object-contain mix-blend-multiply brightness-[1.04] ${className}`}
+      className={`object-contain ${media.origin === 'generated_draft' ? '' : 'mix-blend-multiply brightness-[1.04]'} ${className}`}
     />
   );
 }

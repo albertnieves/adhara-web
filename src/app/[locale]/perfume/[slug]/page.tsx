@@ -46,7 +46,10 @@ export async function generateMetadata({
   requireLocale(locale);
   const product = await getStorefrontProduct(slug, locale);
   if (!product) return {};
-  const image = heroMedia(product);
+  const image = heroMedia({
+    ...product,
+    media: product.media.filter((media) => media.origin !== 'generated_draft'),
+  });
   const url = new URL(
     getPathname({
       locale,

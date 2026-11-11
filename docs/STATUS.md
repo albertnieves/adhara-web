@@ -48,6 +48,10 @@ Rama `claude/vigilant-shannon-n14a9g`. Roadmap, punto 4: lo siguiente del roadma
 - **Comprobado en local** (Node 24.16.0, Supabase local con Docker reiniciado con todas las migraciones, datos de la CI y configuración de `e2e.yml`): pgTAP 1182/1182 en 28 archivos (59 nuevas en `27_promotions`; `18_customer_accounts` con la firma nueva); tipos generados iguales; `db lint` sin errores; concurrencia correcta; `pnpm check` correcto (lint, tipos, 795 unitarias, 11 nuevas, y build); `format:check` y `scan:secrets` correctos; tienda pública 321 correctas y 51 omitidas; panel con sesión 65/65, con `promotions.spec.ts` (la cesta dice cuánto falta y cuándo ya se tiene; el resumen la aplica y gana a un código del 5 %, que no se gasta; el banco cobra 89,82 €; apagada mientras se compra, avisa, recalcula y cobra 49,90 €; el equipo la crea con su casa y la apaga) y la auditoría de diseño y axe de la lista, el alta y la ficha a 390, 768, 1280 y 1440 px. Capturas de la cesta, «Finalizar compra» (es, ca y en) y el panel a 390 y 1440 px revisadas.
 - **Siguiente:** si se quieren, las otras promociones propuestas (rebaja temporal por casa, regalo o envío gratis temporal). La PR #59 (imágenes generadas) no toca estos archivos.
 
+## Integración de imágenes generadas (02/11)
+
+PR #59, rama `codex/imagenes-perfumes-stock`, decisión §190. Se conectan 57 recreaciones a los productos existentes en la tienda y se conservan las fotografías originales. Desde el 11/11, también Miss Sakura (a petición del usuario; era el único publicado sin ninguna foto). Con ello los 50 perfumes publicados tienen imagen. Las recreaciones quedan fuera del feed, JSON-LD y tarjetas sociales. Detalles, procedencia y verificaciones en [GENERATED_PRODUCT_IMAGES](GENERATED_PRODUCT_IMAGES.md).
+
 ## Códigos únicos por suscriptor (02/11)
 
 Rama `claude/codigos-unicos` (PR #58). Roadmap, punto 4: lo siguiente del roadmap, a petición del usuario. Decisión §185; guía en [ADMIN_OPERATIONS](ADMIN_OPERATIONS.md#códigos-de-descuento).

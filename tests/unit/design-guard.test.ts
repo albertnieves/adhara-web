@@ -19,7 +19,9 @@ function sourceFiles(dir: string): string[] {
   return readdirSync(dir).flatMap((name) => {
     const path = join(dir, name);
     if (statSync(path).isDirectory()) return sourceFiles(path);
-    return /\.tsx?$/.test(name) ? [relative(ROOT, path)] : [];
+    return /\.tsx?$/.test(name)
+      ? [relative(ROOT, path).replaceAll('\\', '/')]
+      : [];
   });
 }
 
@@ -36,7 +38,7 @@ const RULES = {
     /#[0-9a-fA-F]{6}(?:[0-9a-fA-F]{2})?\b/g,
     /\b(?:rgba?|hsla?)\(/g,
     new RegExp(
-      `\\b(?:bg|text|border|ring|fill|stroke|from|to|via|outline|decoration|divide|placeholder|shadow)-(?:${PALETTE})(?:-\\d+)?\\b`,
+      `(?<![\\w-])(?:bg|text|border|ring|fill|stroke|from|to|via|outline|decoration|divide|placeholder|shadow)-(?:${PALETTE})(?:-\\d+)?(?![\\w-])`,
       'g',
     ),
     /-\[#/g,
