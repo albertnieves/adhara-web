@@ -74,7 +74,9 @@ Lo que falta para vender es sobre todo configuración y trámites del titular, d
 
 **Portada con carrusel 3D — hecho (09/11, §188):** los perfumes con escena giran en la primera pantalla, con fotos en los navegadores sin GPU.
 
-Ampliar los cuatro pilotos a productos destacados con medidas reales (cada escena nueva entra sola en el carrusel de la portada). Pipeline GLB y presupuestos de peso y carga; Lighthouse CI en una entrega propia. Fotos reales o con derechos y alternativa accesible sin WebGL.
+**Seis escenas más — hecho (11/11, §190):** Asad Bourbon, Asad Elixir, Yara Elixir, Yara Moi, Club de Nuit Intense e Iconic, sobre los moldes del piloto y con la foto oficial como frente (pendientes de activar en los datos).
+
+Ampliar a más productos destacados (los que quedan necesitan moldes nuevos: Odyssey, Bharara, Reef…) y pasar todas a medidas reales con el kit de tienda (cada escena nueva entra sola en el carrusel de la portada). Pipeline GLB y presupuestos de peso y carga; Lighthouse CI en una entrega propia. Fotos reales o con derechos y alternativa accesible sin WebGL.
 
 **Cierre:** comparación móvil y escritorio con carga bajo demanda, movimiento reducido y presupuestos comprobados.
 

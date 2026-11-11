@@ -7,6 +7,12 @@ export const UNBOXING_SCENES = [
   'yara',
   'club-de-nuit-intense-man-le',
   'khamrah',
+  'asad-bourbon',
+  'asad-elixir',
+  'yara-elixir',
+  'yara-moi',
+  'club-de-nuit-intense',
+  'club-de-nuit-iconic',
 ] as const;
 export type UnboxingSceneSlug = (typeof UNBOXING_SCENES)[number];
 export type { UnboxingLabels } from './UnboxingViewer';

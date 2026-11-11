@@ -5,8 +5,8 @@ import { findSceneSlug } from '@/modules/unboxing';
 export const MAX_HERO_SLIDES = 6;
 
 /**
- * Perfumes del carrusel 3D de la portada: los publicados con escena 3D (hoy
- * los cuatro del piloto), en el orden de la colección. Solo entran los que la
+ * Perfumes del carrusel 3D de la portada: los publicados con escena 3D, en el
+ * orden de la colección (como mucho MAX_HERO_SLIDES). Solo entran los que la
  * tienda ve, así que uno archivado o en borrador desaparece solo.
  */
 export function heroSlides(products: StorefrontProduct[]): StorefrontProduct[] {

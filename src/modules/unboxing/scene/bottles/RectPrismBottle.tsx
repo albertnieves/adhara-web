@@ -81,9 +81,10 @@ function build(s: Shape) {
   if (s.pendant) {
     const p = s.pendant;
     const z = b.depthMm / 2 + p.depthMm / 2 + 1.2;
+    const dx = p.offsetXMm ?? 0;
     pendant = new CylinderGeometry(p.radiusMm, p.radiusMm, p.depthMm, 64);
     pendant.rotateX(Math.PI / 2);
-    pendant.translate(0, p.centerFromBaseMm, z);
+    pendant.translate(dx, p.centerFromBaseMm, z);
     const top = collarY;
     const bottom = p.centerFromBaseMm + p.radiusMm;
     const z0 = s.collar.radiusMm + p.linkRadiusMm;
@@ -97,7 +98,11 @@ function build(s: Shape) {
       const k = p.links === 1 ? 0 : i / (p.links - 1);
       links.push({
         geo: linkGeo,
-        pos: [0, top + (bottom - top) * k, z0 + (z - z0) * Math.min(1, k * 3)],
+        pos: [
+          dx * k,
+          top + (bottom - top) * k,
+          z0 + (z - z0) * Math.min(1, k * 3),
+        ],
         rotY: i % 2 === 0 ? 0 : Math.PI / 2,
       });
     }
@@ -111,7 +116,7 @@ interface Props {
   front: FrontProjection | null;
 }
 
-/** Club de Nuit Intense Man LE: prisma gunmetal, tapón cuadrado, cadena y medallón simplificados. */
+/** Molde de Club de Nuit (Intense, Iconic, LE): prisma, tapón cuadrado, cadena y medallón simplificados. */
 export function RectPrismBottle({ shape, m, front }: Props) {
   const geo = useMemo(() => build(shape), [shape]);
   const textured = useMemo(() => {
