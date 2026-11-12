@@ -39,6 +39,14 @@ export const FrontProjectionSchema = DraftFile.extend({
   centerXPx: Px,
   baseYPx: Px,
   pxPerMm: z.number().positive(),
+  /**
+   * Procedencia de la imagen: GENERATED = draft de IA (pilotos); OFFICIAL = foto
+   * oficial de la marca, recortada (y enderezada si venía girada), provisional
+   * como las de la galería (DECISIONS §55). Sin valor, GENERATED.
+   */
+  origin: z.enum(['OFFICIAL', 'GENERATED']).optional(),
+  /** URL de origen de una imagen OFFICIAL. */
+  sourceUrl: z.string().optional(),
 });
 export type FrontProjection = z.infer<typeof FrontProjectionSchema>;
 
@@ -89,6 +97,8 @@ const RectPrism = z.object({
       centerFromBaseMm: Mm,
       links: z.number().int().min(0).max(40),
       linkRadiusMm: Mm,
+      /** Desplazamiento lateral del medallón (+X), alineado con la foto. */
+      offsetXMm: z.number().optional(),
     })
     .nullable(),
 });

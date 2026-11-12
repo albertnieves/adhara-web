@@ -1,4 +1,16 @@
-# Estado real — 10/11/2026
+# Estado real — 11/11/2026
+
+## Seis escenas 3D más para la ficha (11/11)
+
+Rama `claude/fervent-goodall-7ytiqa`. A petición del usuario: seguir con los modelos 3D de la ficha. Decisión §191. Sin migraciones ni variables.
+
+- **Escenas nuevas** (caja que se abre, frasco que sube y gira): Asad Bourbon, Asad Elixir, Yara Elixir y Yara Moi sobre el molde de Asad/Yara; Club de Nuit Intense y Club de Nuit Iconic sobre el del LE. Ya son 10.
+- **Frente del frasco con la foto oficial** (la misma que la galería, provisional), no con un draft de IA: el texto es el real. Medidas estimadas en las fotos, como en los pilotos.
+- **Cajas:** frontal oficial en Asad Elixir, Yara Elixir, Yara Moi (también lateral) y Club de Nuit Intense. Asad Bourbon e Iconic, en color liso: no hay foto de su caja de 100/105 ml.
+- **Activadas en `atelier-dev` (11/11)** con `supabase/data/20261111_escenas_3d.sql`, a petición del usuario: 6 filas, solo `unboxing_scene` de perfumes que no tenían escena. Se ven al desplegar este código (el desplegado ignora los slugs que no conoce). El carrusel de la portada pasa a Asad, Yara, Club de Nuit Intense Man LE, Khamrah, Yara Moi y Asad Bourbon (los seis primeros con escena en el orden de la colección).
+- **Comprobado en local** (Node 24.16.0): `pnpm check` correcto (lint, tipos, 835 unitarias, 4 nuevas, y build); `format:check` y `scan:secrets` correctos. Capturas de las seis escenas con WebGL por software en una página local temporal (no subida): caja cerrada, frasco girando y final de frente, revisadas a ojo contra las fotos oficiales. Sin E2E: no cambian rutas ni navegación, y en la base de la CI no hay perfumes con escena.
+- **Límites:** medidas, fondos de caja y colores de las caras que no se ven siguen estimados; fluidez sin medir en un móvil real (aquí no hay GPU).
+- **Siguiente:** fusionar y revisar las seis escenas en un móvil real; para el resto del catálogo (Odyssey, Bharara, Reef…) hacen falta moldes nuevos.
 
 ## Colección y catálogo olfativo con movimiento y 3D (10/11)
 

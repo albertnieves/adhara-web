@@ -12,7 +12,7 @@ interface Props {
   front: FrontProjection | null;
 }
 
-/** Asad y Yara: mismo arquetipo, cambian medidas, materiales y textura. */
+/** Molde cilíndrico de Lattafa (Asad, Yara y sus variantes): cambian medidas, materiales y textura. */
 export function LatheBottle({ shape, m, front }: Props) {
   const geo = useMemo(() => buildLatheShoulder(shape), [shape]);
   const textured = useMemo(() => {

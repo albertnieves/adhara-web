@@ -48,3 +48,43 @@ proporciones medidas sobre estas imágenes respecto al frasco y siguen siendo ES
 | Yara     | Cartón rosa con flores plateadas y sello circular                                                 | No se ve; se supone solapa superior                                                   | Frontal y trasera (en plano) |
 | Khamrah  | Tapa negra con marco dorado sobre una base con acabado de madera (≈81 % / 19 % de la altura)      | Tapa que se levanta de la base                                                        | Frontal y lateral derecho    |
 | CDN LE   | Funda exterior negra + estuche rígido negro con tapa de bisagra, terciopelo negro, gemelos y paño | Estuche horizontal: la tapa se abate hacia atrás y el frasco está tumbado boca arriba | Tapa (motivo del frasco)     |
+
+## Seis escenas nuevas sobre los moldes del piloto (11/11/2026, DECISIONS §191)
+
+Descargadas el **11/11/2026** de las tiendas oficiales. **© de sus marcas (Lattafa, Armaf).**
+Provisionales como las fotos de la galería (DECISIONS §55): se sustituyen por las del kit de
+tienda. Aquí la textura frontal del frasco **es la foto oficial** (no un draft de IA): se recorta
+al frasco y, si venía en 3/4, se endereza con 4 esquinas. Nada se dibuja ni se completa.
+
+- `<producto>/bottle_front.jpg`: foto frontal oficial del frasco, recortada y reducida a 1100 px
+  de alto (Iconic: frontal y cara del tapón enderezados y pegados a 10 px/mm sobre las medidas del
+  molde, con el resto del lienzo en el azul medio del frasco).
+- `<producto>/box_*.jpg`: cara de la caja enderezada y recortada (o recortada si ya venía en plano).
+- `<producto>/box_*_foil.png`: mapa de estampación por color, como los del piloto (plateado en
+  Asad Elixir; dorado en Yara Elixir y Yara Moi). Club de Nuit Intense sin mapa: no se sabe si
+  su impresión es estampada.
+
+| Archivo                               | URL de origen                                                                                                                                                                         |
+| ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| asad-bourbon/bottle_front.jpg         | Foto de la galería de la tienda (product_media, `source` https://lattafa.com/product/asad-bourbon/)                                                                                   |
+| asad-elixir/bottle_front.jpg          | https://cdn.shopify.com/s/files/1/0754/4936/8799/files/ASADELIXIRBOTTLE.png (ficha https://www.lattafa-usa.com/products/asad-elixir)                                                  |
+| asad-elixir/box_front.jpg             | https://cdn.shopify.com/s/files/1/0754/4936/8799/files/AsadElixirBox.png (frontal en plano, recortado)                                                                                |
+| yara-elixir/bottle_front.jpg          | https://cdn.shopify.com/s/files/1/0754/4936/8799/files/YaraElixirBottle.png (ficha https://www.lattafa-usa.com/products/yara-elixir)                                                  |
+| yara-elixir/box_front.jpg             | https://cdn.shopify.com/s/files/1/0754/4936/8799/files/YaraElixirBox.png (frontal en plano, recortado)                                                                                |
+| yara-moi/bottle_front.jpg             | https://cdn.shopify.com/s/files/1/0754/4936/8799/files/Yara-Moi-1_81ec2a74-066f-45ef-b35a-465dfda22eac.png (ficha https://www.lattafa-usa.com/products/yara-moi)                      |
+| yara-moi/box_front.jpg, box_left.jpg  | https://cdn.shopify.com/s/files/1/0754/4936/8799/files/Yara-Moi-3_6c37b36d-c2d5-4f3c-8d8e-13f4a01f1d1b.png (vista 3/4, enderezadas)                                                   |
+| club-de-nuit-intense/bottle_front.jpg | https://cdn.shopify.com/s/files/1/0875/1513/6299/files/Intense_Man_Bottle-2_copy.jpg (ficha https://armaf.com/products/club-de-nuit-intense-man-4)                                    |
+| club-de-nuit-intense/box_front.jpg    | https://cdn.shopify.com/s/files/1/0875/1513/6299/files/Intense_Group-1_copy.jpg (frontal en plano, recortado)                                                                         |
+| club-de-nuit-iconic/bottle_front.jpg  | https://cdn.shopify.com/s/files/1/0875/1513/6299/files/35721_6.png (imagen del formato de 105 ml en https://armaf.com/products/club-de-nuit-blue-iconic-200ml; vista 3/4, enderezada) |
+
+**Lo que no hay (y no se inventa):**
+
+- **Asad Bourbon:** ninguna imagen oficial del estuche de 100 ml (solo del estuche de regalo, que es
+  otra caja). Caja sin caras, en el marrón de ese estuche y con las medidas de la de Asad.
+- **Club de Nuit Iconic:** la única caja fotografiada es la de 200 ml (pone «200ML»); se vende el de
+  105 ml. Caja sin caras, en el azul de ese frontal y con las medidas de la de Intense.
+- **Yara Moi:** el lateral derecho no aparece; es copia del izquierdo (`simulated`).
+- **Laterales, traseras y tapas** que no aparecen: color liso muestreado de la propia caja.
+- **Medidas:** ninguna fuente las publica. Proporciones medidas en las fotos sobre una altura supuesta
+  de 140 mm, como en los pilotos. El fondo de los Club de Nuit (42 mm) coincide con el que da la
+  vista 3/4 de Iconic (≈43 mm). Todo sigue ESTIMADO (`measurements.estimated`).

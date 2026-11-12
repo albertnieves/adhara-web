@@ -4,9 +4,9 @@ import { SRGBColorSpace } from 'three';
 import type { MaterialConfig } from '../products/schema';
 
 /**
- * Material con una imagen GENERATED/DRAFT como textura de prueba.
- * La iluminación de la escena se suma a la del draft (lleva sombreado horneado):
- * es aceptable para un prototipo, no para producción.
+ * Material con la imagen frontal proyectada: un draft GENERATED (pilotos) o una
+ * foto oficial provisional. La iluminación de la escena se suma a la de la imagen
+ * (lleva sombreado horneado): aceptable mientras no haya fotos propias del kit.
  */
 export function DraftMaterial({
   src,
