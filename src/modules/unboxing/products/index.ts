@@ -12,7 +12,7 @@ import type { ProductConfig } from './schema';
 
 /*
  * Escenas disponibles: las cuatro del piloto y seis más que reutilizan sus moldes
- * (DECISIONS §190). La ficha de un perfume usa la escena indicada en
+ * (DECISIONS §191). La ficha de un perfume usa la escena indicada en
  * products.unboxing_scene.
  * Odyssey Mandarin Sky: NO se incluye (bloqueado por C-02 edición y C-05 fuera de catálogo).
  */

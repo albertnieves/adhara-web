@@ -6,7 +6,7 @@ import { findScene, scenes } from '@/modules/unboxing/products';
 import type { ProductConfig } from '@/modules/unboxing/products';
 
 /*
- * Escenas 3D de la ficha (ADR-007, DECISIONS §190): cada slug que el panel deja
+ * Escenas 3D de la ficha (ADR-007, DECISIONS §191): cada slug que el panel deja
  * elegir tiene su configuración, y la textura frontal de cada frasco cae dentro
  * de su imagen, es decir, la calibración en px/mm no se sale de la foto.
  */

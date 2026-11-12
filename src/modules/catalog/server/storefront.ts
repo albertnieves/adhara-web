@@ -6,6 +6,7 @@ import { fetchAll } from '@/lib/supabase/paginate';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 import type { Availability, StorefrontProduct } from '../domain/product';
 import { AVAILABILITY, isAudience, isConcentration } from '../domain/product';
+import { withGeneratedProductImage } from '../domain/generated-product-images';
 import type { ScentProfile } from '../domain/scent';
 import { toScentProfile } from '../domain/scent';
 
@@ -131,7 +132,9 @@ export const listStorefrontProducts = cache(
           .order('id')
           .range(from, to),
       );
-      return data.map((row) => toProduct(row, locale)).sort(byCollectionOrder);
+      return data
+        .map((row) => withGeneratedProductImage(toProduct(row, locale)))
+        .sort(byCollectionOrder);
     } catch (error) {
       console.error('[catalog] no se pudo leer la colección', error);
       return [];
@@ -176,7 +179,7 @@ export const getStorefrontProduct = cache(
       console.error('[catalog] no se pudo leer el perfume', error.message);
       return null;
     }
-    return data ? toProduct(data, locale) : null;
+    return data ? withGeneratedProductImage(toProduct(data, locale)) : null;
   },
 );
 

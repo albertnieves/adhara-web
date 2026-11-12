@@ -1,4 +1,4 @@
--- Carga de datos (no migración): activa las seis escenas 3D nuevas (DECISIONS §190)
+-- Carga de datos (no migración): activa las seis escenas 3D nuevas (DECISIONS §191)
 -- en sus perfumes. Solo cambia products.unboxing_scene, y solo si estaba vacío, para no
 -- pisar una escena elegida en el panel. Un slug que el código desplegado aún no conoce
 -- se ignora (findSceneSlug), así que se puede aplicar antes o después de desplegar.

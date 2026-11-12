@@ -49,7 +49,7 @@ proporciones medidas sobre estas imágenes respecto al frasco y siguen siendo ES
 | Khamrah  | Tapa negra con marco dorado sobre una base con acabado de madera (≈81 % / 19 % de la altura)      | Tapa que se levanta de la base                                                        | Frontal y lateral derecho    |
 | CDN LE   | Funda exterior negra + estuche rígido negro con tapa de bisagra, terciopelo negro, gemelos y paño | Estuche horizontal: la tapa se abate hacia atrás y el frasco está tumbado boca arriba | Tapa (motivo del frasco)     |
 
-## Seis escenas nuevas sobre los moldes del piloto (11/11/2026, DECISIONS §190)
+## Seis escenas nuevas sobre los moldes del piloto (11/11/2026, DECISIONS §191)
 
 Descargadas el **11/11/2026** de las tiendas oficiales. **© de sus marcas (Lattafa, Armaf).**
 Provisionales como las fotos de la galería (DECISIONS §55): se sustituyen por las del kit de
