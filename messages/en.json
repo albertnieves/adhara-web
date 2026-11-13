@@ -44,6 +44,11 @@
     "experienceBody": "Each fragrance is presented as it is in store: the box opens, the bottle rises and turns before you. Then it is yours to explore from any angle.",
     "experienceCta": "Experience it with {name}",
     "brandsEyebrow": "Houses",
+    "brandsTitle": "The houses of the collection",
+    "brandsLead": "Each house has its own character. Step into the one that calls you.",
+    "brandsPrev": "Previous houses",
+    "brandsNext": "Next houses",
+    "brandsRail": "Perfume houses",
     "brandsCta": "View all houses",
     "storeEyebrow": "The boutique",
     "storeTitle": "Castelldefels",
@@ -139,6 +144,7 @@
     "privacyMore": "More information in our <link>privacy policy</link>."
   },
   "footer": {
+    "club": "Club L’Atelier",
     "tagline": "Arabian perfumery in Castelldefels.",
     "shop": "Shop",
     "info": "Information",
@@ -299,6 +305,8 @@
     "discountNote": "Have a discount code? You can apply it at checkout."
   },
   "checkout": {
+    "testNoticeTitle": "Shop in test mode.",
+    "testNotice": "Payments go to the bank’s test environment: nothing is charged and orders are not prepared or shipped. Real sales open very soon.",
     "title": "Checkout",
     "back": "Back to basket",
     "contact": "Your details",

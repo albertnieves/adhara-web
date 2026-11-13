@@ -127,8 +127,8 @@ export async function GET(request: NextRequest) {
 <meta name="referrer" content="no-referrer">
 <title>${escapeHtml(text.title)} · ${escapeHtml(BRAND_NAME)}</title>
 <style>
-:root{color-scheme:light dark;--bg:#f5f1ea;--fg:#151311;--muted:#6b645b;--accent:#7a5d33}
-@media (prefers-color-scheme:dark){:root{--bg:#0d0c0b;--fg:#f5f1ea;--muted:#a8a095;--accent:#d6bf98}}
+:root{color-scheme:light dark;--bg:#ece2d1;--fg:#151311;--muted:#5d554b;--accent:#6f5229}
+@media (prefers-color-scheme:dark){:root{--bg:#0d0c0b;--fg:#ece2d1;--muted:#a8a095;--accent:#d6bf98}}
 *{box-sizing:border-box}
 body{margin:0;min-height:100vh;display:grid;place-items:center;padding:24px 16px;background:var(--bg);color:var(--fg);font:16px/1.5 Georgia,'Times New Roman',serif}
 main{width:100%;max-width:28rem;text-align:center}

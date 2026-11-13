@@ -69,6 +69,14 @@ export async function Footer() {
             </li>
             <li>
               <Link
+                href={{ pathname: '/', hash: 'club' }}
+                className="link-underline"
+              >
+                {t('club')}
+              </Link>
+            </li>
+            <li>
+              <Link
                 href={{ pathname: '/', hash: FAQ_ANCHOR }}
                 className="link-underline"
               >

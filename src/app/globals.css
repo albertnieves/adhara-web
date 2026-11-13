@@ -9,24 +9,28 @@
  * publica todos los tokens aunque ningún componente los use todavía.
  */
 @theme static {
-  /* Paleta de marca. Solo para definir los semánticos y casos de marca. */
-  --color-ivory: #f5f1ea;
-  --color-paper: #fdfcf9;
-  --color-sand: #ebe4d8;
-  --color-stage: #efe9df;
+  /*
+   * Paleta de marca. Solo para definir los semánticos y casos de marca.
+   * Desde el 13/11/2026 los claros son beige de desierto (DECISIONS §192):
+   * «marfil» es arena clara y el escenario se funde con el fondo de las fotos.
+   */
+  --color-ivory: #ece2d1;
+  --color-paper: #f6efe2;
+  --color-sand: #e1d3bc;
+  --color-stage: #e8dbc7;
   --color-ink: #151311;
   --color-ink-soft: #2e2925;
   --color-night: #0d0c0b;
   --color-night-raised: #1b1916;
-  --color-smoke: #6b645b;
-  /* Niebla: solo adornos o texto sobre tonos oscuros (2,3:1 sobre marfil). */
+  --color-smoke: #5d554b;
+  /* Niebla: solo adornos o texto sobre tonos oscuros (no llega a 3:1 en claro). */
   --color-mist: #a8a095;
-  --color-line: #ddd5c8;
-  --color-line-strong: #8a8073;
+  --color-line: #d3c5ad;
+  --color-line-strong: #7a6f60;
   --color-line-dark: #2b2824;
   --color-line-strong-dark: #7b746b;
-  --color-gold: #a8844f;
-  --color-gold-deep: #7a5d33;
+  --color-gold: #9c7841;
+  --color-gold-deep: #6f5229;
   --color-gold-soft: #d6bf98;
   /* Oscuros de colección (D3): momentos editoriales, no tema global. */
   --color-oud: #2a1d15;
@@ -58,12 +62,12 @@
   --color-accent: var(--color-gold);
   --color-accent-fg: var(--color-gold-deep);
   --color-focus: var(--color-gold-deep);
-  --color-danger: #9b2c2c;
-  --color-danger-soft: #f4e3e0;
-  --color-success: #3d6647;
-  --color-success-soft: #e4ede4;
-  --color-warning: #865816;
-  --color-warning-soft: #f5ead3;
+  --color-danger: #8f2424;
+  --color-danger-soft: #f0d9d3;
+  --color-success: #33583c;
+  --color-success-soft: #d9e3d3;
+  --color-warning: #774c0f;
+  --color-warning-soft: #efdfc0;
 
   /*
    * Tipografía: tamaño mínimo de 11 px, titular fluido de portada y
@@ -94,7 +98,6 @@
 
   --animate-twinkle: twinkle 4.8s ease-in-out infinite;
   --animate-sweep: sweep 6s var(--ease-luxe) infinite;
-  --animate-marquee: marquee 42s linear infinite;
   --animate-scroll-cue: scroll-cue 2.4s var(--ease-luxe) infinite;
 
   @keyframes twinkle {
@@ -115,14 +118,6 @@
     60%,
     100% {
       transform: translateX(220%) skewX(-18deg);
-    }
-  }
-  @keyframes marquee {
-    from {
-      transform: translateX(0);
-    }
-    to {
-      transform: translateX(-50%);
     }
   }
   @keyframes scroll-cue {

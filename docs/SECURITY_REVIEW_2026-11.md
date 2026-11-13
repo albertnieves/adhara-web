@@ -43,3 +43,33 @@ A petición del usuario: «securiza la página, protégeme las consultas y del X
 ## Verificación
 
 Ver el estado del 03/11 en [STATUS.md](STATUS.md).
+
+## Pruebas desde fuera (13/11)
+
+A petición del titular («pruebas de seguridad y pentesting para identificar posibles agujeros»). Pruebas **no destructivas**, sin sesión, contra `latelierdudesert.com` y la API de datos de `atelier-dev`, con la clave pública que la propia web entrega a cualquier visitante. No se llamó a ninguna función que escriba (altas del Club, contadores de visitas, pedidos).
+
+**Resultado: ninguna vía de entrada ni de fuga de datos.** Hallazgos menores y propuestas en [PROPUESTAS_2026-11-13.md](PROPUESTAS_2026-11-13.md#s-seguridad-pruebas-del-1311).
+
+| Prueba                                                                             | Resultado                                                                                                                                                               |
+| ---------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Cabeceras de la tienda                                                             | HSTS de 2 años con subdominios, `X-Frame-Options: DENY`, `nosniff`, `Referrer-Policy`, `Permissions-Policy`, COOP y CSP con `object-src 'none'` y `form-action` cerrado |
+| Panel sin sesión (`/admin`, `/admin/pedidos`, `/admin/control`, exportaciones CSV) | Todo redirige a `/admin/acceso`; ninguna exportación responde                                                                                                           |
+| Tareas programadas sin clave (4 rutas)                                             | 401                                                                                                                                                                     |
+| Aviso del banco con firma falsa; Sendcloud y correo entrante sin firma             | 503 (TPV sin conectar), 401 y 503: nada se procesa                                                                                                                      |
+| Archivos sensibles (`/.env`, `/.git/config`, `/package.json`, mapas de código)     | 404 y 403                                                                                                                                                               |
+| Redirección abierta en `/auth/confirm?next=//evil…` y `/auth/callback`             | Vuelve siempre al propio dominio                                                                                                                                        |
+| Borradores por URL (`/es/perfume/vulcan-feu`, un producto nuevo de hoy)            | 404                                                                                                                                                                     |
+| Cesta, pago, cuenta y feed con sus interruptores apagados                          | 404                                                                                                                                                                     |
+| Lectura anónima de 30 tablas por la API                                            | Solo catálogo publicado, marcas, fotos y contenido publicado. Pedidos, contactos, clientes, suscriptores, personal, auditoría, inventario, mensajes y envíos: denegado  |
+| Borradores y formatos sin precio por la API                                        | 0 filas (los 487 borradores y sus EAN no se ven)                                                                                                                        |
+| Esquema `internal` (costes, proveedores)                                           | No expuesto                                                                                                                                                             |
+| Escritura anónima en `products` y `brands`                                         | Denegada                                                                                                                                                                |
+| Funciones `admin_*` sin sesión                                                     | Denegadas. Solo 5 funciones públicas, todas previstas: alta del Club, disponibilidad, visita, promoción vigente y precio del envío                                      |
+| Almacenamiento: listar cubos, copias (`system-backups`) y fotos                    | Vacío: no se puede listar nada                                                                                                                                          |
+| Descripción de la API (OpenAPI) con la clave pública                               | 401                                                                                                                                                                     |
+| `pnpm audit --prod` y `scan:secrets`                                               | Sin vulnerabilidades conocidas; sin secretos en 1040 archivos                                                                                                           |
+| Asesor de seguridad de Supabase                                                    | Los tres tipos de aviso de siempre (tablas internas sin política y funciones `security definer` ejecutables); ninguno nuevo                                             |
+
+**Lo que estas pruebas no cubren:** el panel con una sesión robada o un empleado malintencionado, ataques de volumen (para eso es el Firewall de Vercel, pendiente), la página de pago del banco y el correo. No sustituyen a una auditoría externa.
+
+**Nuevo riesgo, aceptado (§193):** con la venta en pruebas la firma del TPV usa la clave pública de Redsys. No expone datos, pero un pedido «pagado» no prueba ningún cobro mientras dure.

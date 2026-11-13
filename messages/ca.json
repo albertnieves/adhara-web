@@ -44,6 +44,11 @@
     "experienceBody": "Cada fragància es presenta com a la botiga: la capsa s’obre, el flascó s’eleva i gira davant teu. Després, és teu per mirar-lo des de qualsevol angle.",
     "experienceCta": "Viu-ho amb {name}",
     "brandsEyebrow": "Cases",
+    "brandsTitle": "Les cases de la col·lecció",
+    "brandsLead": "Cada casa, amb el seu caràcter. Entra a la que et cridi.",
+    "brandsPrev": "Cases anteriors",
+    "brandsNext": "Cases següents",
+    "brandsRail": "Cases de perfumeria",
     "brandsCta": "Veure totes les cases",
     "storeEyebrow": "La botiga",
     "storeTitle": "Castelldefels",
@@ -139,6 +144,7 @@
     "privacyMore": "Més informació a la <link>política de privacitat</link>."
   },
   "footer": {
+    "club": "Club L’Atelier",
     "tagline": "Perfumeria àrab a Castelldefels.",
     "shop": "Botiga",
     "info": "Informació",
@@ -299,6 +305,8 @@
     "discountNote": "Tens un codi de descompte? L’apliques en finalitzar la compra."
   },
   "checkout": {
+    "testNoticeTitle": "Botiga en proves.",
+    "testNotice": "Els pagaments van a l’entorn de proves del banc: no es cobra res i les comandes no es preparen ni s’envien. La venda real obrirà ben aviat.",
     "title": "Finalitza la compra",
     "back": "Torna a la cistella",
     "contact": "Les teves dades",
