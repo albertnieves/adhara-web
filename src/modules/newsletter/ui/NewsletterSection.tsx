@@ -7,7 +7,11 @@ import { Link } from '@/modules/i18n';
 import { LEGAL_CONTACT_EMAIL } from '@/modules/legal';
 import { NewsletterSignup } from './NewsletterSignup';
 
-/** Sección de suscripción a las promociones, justo antes del pie. */
+/**
+ * Sección de suscripción a las promociones. Solo en la portada, la colección,
+ * las casas y el catálogo olfativo (DECISIONS §192): no acompaña a la ficha,
+ * la cesta, el pago, la cuenta ni los textos legales. El pie enlaza a `#club`.
+ */
 export async function NewsletterSection() {
   const [t, data] = await Promise.all([
     getTranslations('newsletter'),
@@ -17,8 +21,9 @@ export async function NewsletterSection() {
   const email = store.email || LEGAL_CONTACT_EMAIL;
   return (
     <section
+      id="club"
       aria-labelledby="newsletter-title"
-      className="bg-surface-sunken grain relative overflow-hidden"
+      className="bg-surface-sunken grain relative scroll-mt-18 overflow-hidden"
     >
       <div className="relative mx-auto grid max-w-[90rem] gap-12 px-5 py-24 sm:px-10 sm:py-28 lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] lg:items-center lg:gap-20">
         <div>

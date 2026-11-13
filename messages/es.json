@@ -44,6 +44,11 @@
     "experienceBody": "Cada fragancia se presenta como en la tienda: la caja se abre, el frasco se eleva y gira ante ti. Después, es tuyo para mirarlo desde cualquier ángulo.",
     "experienceCta": "Vivirlo con {name}",
     "brandsEyebrow": "Casas",
+    "brandsTitle": "Las casas de la colección",
+    "brandsLead": "Cada casa, con su carácter. Entra en la que te llame.",
+    "brandsPrev": "Casas anteriores",
+    "brandsNext": "Casas siguientes",
+    "brandsRail": "Casas de perfumería",
     "brandsCta": "Ver todas las casas",
     "storeEyebrow": "La tienda",
     "storeTitle": "Castelldefels",
@@ -139,6 +144,7 @@
     "privacyMore": "Más información en la <link>política de privacidad</link>."
   },
   "footer": {
+    "club": "Club L’Atelier",
     "tagline": "Perfumería árabe en Castelldefels.",
     "shop": "Tienda",
     "info": "Información",
@@ -299,6 +305,8 @@
     "discountNote": "¿Tienes un código de descuento? Lo aplicas al finalizar la compra."
   },
   "checkout": {
+    "testNoticeTitle": "Tienda en pruebas.",
+    "testNotice": "Los pagos van al entorno de pruebas del banco: no se cobra nada y los pedidos no se preparan ni se envían. La venta real abrirá muy pronto.",
     "title": "Finalizar compra",
     "back": "Volver a la cesta",
     "contact": "Tus datos",

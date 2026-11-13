@@ -3,17 +3,18 @@ import { homeContent, storeContent, STORE_DEFAULTS } from '@/modules/content';
 import { EmptyState, Eyebrow, Heading, buttonClass } from '@/components/ui';
 import { getTranslations } from 'next-intl/server';
 import { Star } from '@/modules/brand';
-import { heroMedia } from '@/modules/catalog';
+import { groupByBrand, heroMedia } from '@/modules/catalog';
 import { listStorefrontProducts } from '@/modules/catalog/server';
 import type { Metadata } from 'next';
 import { Link } from '@/modules/i18n';
 import { alternatesMetadata } from '@/modules/i18n/metadata';
 import { requireLocale } from '@/modules/i18n/server';
+import { NewsletterSection } from '@/modules/newsletter/server';
 import {
-  BrandMarquee,
   Faq,
   Hero,
   HeroCarousel,
+  HouseGallery,
   ProductCard,
   ProductImage,
   Reveal,
@@ -39,8 +40,9 @@ export default async function Home({
 }) {
   const { locale } = await params;
   requireLocale(locale);
-  const [t, products, editorial, store] = await Promise.all([
+  const [t, tCatalog, products, editorial, store] = await Promise.all([
     getTranslations('home'),
+    getTranslations('catalog'),
     listStorefrontProducts(locale),
     readStoreContent('home', locale),
     readStoreContent('store', 'es'),
@@ -52,7 +54,14 @@ export default async function Home({
       ? products.filter((p) => p.featured)
       : products
   ).slice(0, 4);
-  const brands = [...new Set(products.map((p) => p.brand.name))];
+  // Un nicho por casa, con el primero de sus perfumes que tenga imagen.
+  const houses = groupByBrand(products).map((brand) => ({
+    slug: brand.slug,
+    name: brand.name,
+    count: tCatalog('count', { count: brand.products.length }),
+    media:
+      brand.products.map((product) => heroMedia(product)).find(Boolean) ?? null,
+  }));
   const showcase = products.find((p) => p.unboxingScene);
   const showcaseImage = showcase ? heroMedia(showcase) : null;
   // Carrusel 3D con los perfumes que tienen escena; sin ellos, la portada fija.
@@ -65,145 +74,163 @@ export default async function Home({
   };
 
   return (
-    <main>
-      {slides.length > 0 ? (
-        <HeroCarousel {...hero} slides={slides} />
-      ) : (
-        <Hero
-          {...hero}
-          scroll={t('scroll')}
-          imageUrl={editorial?.imageUrl ?? undefined}
-          imageAlt={content?.imageAlt ?? ''}
-        />
-      )}
-
-      <section className="mx-auto max-w-[90rem] px-5 py-28 sm:px-10 sm:py-36">
-        <Reveal className="mb-16 flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <Eyebrow>{t('featuredEyebrow')}</Eyebrow>
-            <Heading level={2} size="h1" className="mt-4">
-              {t('featuredTitle')}
-            </Heading>
-          </div>
-          <Link
-            href="/catalogo"
-            className="link-underline text-2xs tracking-caps-lg self-start uppercase sm:self-auto"
-          >
-            {t('featuredCta')}
-          </Link>
-        </Reveal>
-        {featured.length === 0 ? (
-          <Reveal>
-            <EmptyState title={t('featuredEmpty')} />
-          </Reveal>
+    <>
+      <main>
+        {slides.length > 0 ? (
+          <HeroCarousel {...hero} slides={slides} />
         ) : (
-          <ul className="grid grid-cols-2 gap-x-3 gap-y-10 sm:gap-x-6 sm:gap-y-16 lg:grid-cols-4">
-            {featured.map((product, index) => (
-              <Reveal
-                as="li"
-                key={product.id}
-                delay={index * 0.12}
-                className="min-w-0"
-              >
-                <ProductCard product={product} compact />
-              </Reveal>
-            ))}
-          </ul>
+          <Hero
+            {...hero}
+            scroll={t('scroll')}
+            imageUrl={editorial?.imageUrl ?? undefined}
+            imageAlt={content?.imageAlt ?? ''}
+          />
         )}
-      </section>
 
-      <section
-        id="experiencia"
-        className="bg-surface-sunken grain relative scroll-mt-18 overflow-hidden"
-      >
-        <div className="mx-auto grid max-w-[90rem] items-center gap-16 px-5 py-28 sm:px-10 sm:py-36 lg:grid-cols-2">
-          <Reveal className="relative order-2 lg:order-1">
-            <div className="bg-stage relative mx-auto aspect-square max-w-lg overflow-hidden">
-              <div
-                aria-hidden
-                className="border-accent/30 absolute inset-10 rounded-full border"
-              />
-              <div
-                aria-hidden
-                className="border-accent/20 absolute inset-20 rounded-full border"
-              />
-              {showcaseImage ? (
-                <div className="absolute inset-16">
-                  <ProductImage
-                    media={showcaseImage}
-                    brand={showcase?.brand.name ?? ''}
-                    alt=""
-                    sizes="(min-width: 1024px) 30vw, 70vw"
-                  />
-                </div>
-              ) : (
-                <Star className="text-accent/40 absolute inset-0 m-auto size-24" />
-              )}
+        <section className="mx-auto max-w-[90rem] px-5 py-28 sm:px-10 sm:py-36">
+          <Reveal className="mb-16 flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <Eyebrow>{t('featuredEyebrow')}</Eyebrow>
+              <Heading level={2} size="h1" className="mt-4">
+                {t('featuredTitle')}
+              </Heading>
             </div>
-          </Reveal>
-          <Reveal delay={0.15} className="order-1 max-w-xl lg:order-2">
-            <Eyebrow>{t('experienceEyebrow')}</Eyebrow>
-            <Heading level={2} size="h1" className="mt-4">
-              {t('experienceTitle')}
-            </Heading>
-            <p className="text-fg-muted mt-8 text-lg leading-relaxed">
-              {t('experienceBody')}
-            </p>
-            {showcase && (
-              <Link
-                href={{
-                  pathname: '/perfume/[slug]',
-                  params: { slug: showcase.slug },
-                }}
-                className={buttonClass('primary', 'lg', 'mt-10')}
-              >
-                {t('experienceCta', { name: showcase.name })}
-              </Link>
-            )}
-          </Reveal>
-        </div>
-      </section>
-
-      {brands.length > 0 && (
-        <section className="py-24">
-          <Reveal className="mb-10 px-5 text-center sm:px-10">
-            <Eyebrow>{t('brandsEyebrow')}</Eyebrow>
-          </Reveal>
-          <BrandMarquee brands={brands} />
-          <div className="mt-10 px-5 text-center sm:px-10">
             <Link
-              href="/casas"
-              className="link-underline text-2xs tracking-caps-lg uppercase"
+              href="/catalogo"
+              className="link-underline text-2xs tracking-caps-lg self-start uppercase sm:self-auto"
             >
-              {t('brandsCta')}
+              {t('featuredCta')}
             </Link>
+          </Reveal>
+          {featured.length === 0 ? (
+            <Reveal>
+              <EmptyState title={t('featuredEmpty')} />
+            </Reveal>
+          ) : (
+            <ul className="grid grid-cols-2 gap-x-3 gap-y-10 sm:gap-x-6 sm:gap-y-16 lg:grid-cols-4">
+              {featured.map((product, index) => (
+                <Reveal
+                  as="li"
+                  key={product.id}
+                  delay={index * 0.12}
+                  className="min-w-0"
+                >
+                  <ProductCard product={product} compact />
+                </Reveal>
+              ))}
+            </ul>
+          )}
+        </section>
+
+        <section
+          id="experiencia"
+          className="bg-surface-sunken grain relative scroll-mt-18 overflow-hidden"
+        >
+          <div className="mx-auto grid max-w-[90rem] items-center gap-16 px-5 py-28 sm:px-10 sm:py-36 lg:grid-cols-2">
+            <Reveal className="relative order-2 lg:order-1">
+              <div className="bg-stage relative mx-auto aspect-square max-w-lg overflow-hidden">
+                <div
+                  aria-hidden
+                  className="border-accent/30 absolute inset-10 rounded-full border"
+                />
+                <div
+                  aria-hidden
+                  className="border-accent/20 absolute inset-20 rounded-full border"
+                />
+                {showcaseImage ? (
+                  <div className="absolute inset-16">
+                    <ProductImage
+                      media={showcaseImage}
+                      brand={showcase?.brand.name ?? ''}
+                      alt=""
+                      sizes="(min-width: 1024px) 30vw, 70vw"
+                    />
+                  </div>
+                ) : (
+                  <Star className="text-accent/40 absolute inset-0 m-auto size-24" />
+                )}
+              </div>
+            </Reveal>
+            <Reveal delay={0.15} className="order-1 max-w-xl lg:order-2">
+              <Eyebrow>{t('experienceEyebrow')}</Eyebrow>
+              <Heading level={2} size="h1" className="mt-4">
+                {t('experienceTitle')}
+              </Heading>
+              <p className="text-fg-muted mt-8 text-lg leading-relaxed">
+                {t('experienceBody')}
+              </p>
+              {showcase && (
+                <Link
+                  href={{
+                    pathname: '/perfume/[slug]',
+                    params: { slug: showcase.slug },
+                  }}
+                  className={buttonClass('primary', 'lg', 'mt-10')}
+                >
+                  {t('experienceCta', { name: showcase.name })}
+                </Link>
+              )}
+            </Reveal>
           </div>
         </section>
-      )}
 
-      <section
-        data-tone="dark"
-        className="bg-surface text-fg relative overflow-hidden"
-      >
-        <Reveal className="mx-auto max-w-3xl px-5 py-32 text-center sm:px-10">
-          <Star className="text-accent-fg mx-auto size-4" />
-          <Eyebrow className="mt-8">{t('storeEyebrow')}</Eyebrow>
-          <Heading level={2} size="h1" className="mt-4">
-            {t('storeTitle')}
-          </Heading>
-          <p className="text-fg-muted mx-auto mt-8 max-w-md text-lg leading-relaxed">
-            {content?.storeBody ?? t('storeBody')}
-          </p>
-          <address className="mt-6 not-italic">
-            {details.address} · {details.city}
-          </address>
-          {details.hours && (
-            <p className="mt-4 whitespace-pre-line">{details.hours}</p>
-          )}
-        </Reveal>
-      </section>
+        {houses.length > 0 && (
+          <section className="py-28 sm:py-36">
+            <Reveal className="mx-auto mb-14 flex max-w-[90rem] flex-col gap-6 px-5 sm:flex-row sm:items-end sm:justify-between sm:px-10">
+              <div className="max-w-xl">
+                <Eyebrow>{t('brandsEyebrow')}</Eyebrow>
+                <Heading level={2} size="h1" className="mt-4">
+                  {t('brandsTitle')}
+                </Heading>
+                <p className="text-fg-muted mt-6 text-lg leading-relaxed">
+                  {t('brandsLead')}
+                </p>
+              </div>
+              <Link
+                href="/casas"
+                className="link-underline text-2xs tracking-caps-lg self-start uppercase sm:self-auto"
+              >
+                {t('brandsCta')}
+              </Link>
+            </Reveal>
+            <div className="mx-auto max-w-[90rem]">
+              <HouseGallery
+                houses={houses}
+                labels={{
+                  rail: t('brandsRail'),
+                  previous: t('brandsPrev'),
+                  next: t('brandsNext'),
+                }}
+              />
+            </div>
+          </section>
+        )}
 
-      <Faq store={details} />
-    </main>
+        <section
+          data-tone="dark"
+          className="bg-surface text-fg relative overflow-hidden"
+        >
+          <Reveal className="mx-auto max-w-3xl px-5 py-32 text-center sm:px-10">
+            <Star className="text-accent-fg mx-auto size-4" />
+            <Eyebrow className="mt-8">{t('storeEyebrow')}</Eyebrow>
+            <Heading level={2} size="h1" className="mt-4">
+              {t('storeTitle')}
+            </Heading>
+            <p className="text-fg-muted mx-auto mt-8 max-w-md text-lg leading-relaxed">
+              {content?.storeBody ?? t('storeBody')}
+            </p>
+            <address className="mt-6 not-italic">
+              {details.address} · {details.city}
+            </address>
+            {details.hours && (
+              <p className="mt-4 whitespace-pre-line">{details.hours}</p>
+            )}
+          </Reveal>
+        </section>
+
+        <Faq store={details} />
+      </main>
+      <NewsletterSection />
+    </>
   );
 }

@@ -13,6 +13,7 @@ export function ProductImage({
   brand,
   sizes,
   priority = false,
+  fit = 'contain',
   className = '',
 }: {
   media: ProductMedia | null;
@@ -20,6 +21,8 @@ export function ProductImage({
   brand: string;
   sizes: string;
   priority?: boolean;
+  /** `cover` llena el marco (nichos de las casas); por defecto, entera. */
+  fit?: 'contain' | 'cover';
   className?: string;
 }) {
   if (!media) {
@@ -41,7 +44,7 @@ export function ProductImage({
       fill
       sizes={sizes}
       priority={priority}
-      className={`object-contain ${media.origin === 'generated_draft' ? '' : 'mix-blend-multiply brightness-[1.04]'} ${className}`}
+      className={`${fit === 'cover' ? 'object-cover' : 'object-contain'} ${media.origin === 'generated_draft' ? '' : 'mix-blend-multiply brightness-[1.04]'} ${className}`}
     />
   );
 }

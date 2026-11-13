@@ -11,7 +11,6 @@ import { requireLocale } from '@/modules/i18n/server';
 import { siteUrl } from '@/modules/i18n/seo';
 import { indexingEnabled } from '@/modules/i18n/indexing';
 import { LegalConsent } from '@/modules/legal';
-import { NewsletterSection } from '@/modules/newsletter/server';
 import { Footer, Header, PreviewBanner } from '@/modules/storefront';
 import { activeVendors, TrackingTags } from '@/modules/tracking';
 import { serverTrackingConfig } from '@/modules/tracking/server';
@@ -67,7 +66,6 @@ export default async function LocaleLayout({
           </a>
           <Header cart={checkoutEnabled()} account={accountsEnabled()} />
           <div id="contenido">{children}</div>
-          <NewsletterSection />
           <Footer />
           <LegalConsent vendors={activeVendors(tracking)} />
           <TrackingTags config={tracking} suppressed={draft.isEnabled} />

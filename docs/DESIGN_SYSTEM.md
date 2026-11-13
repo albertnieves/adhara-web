@@ -32,6 +32,8 @@ Todos están en `src/app/globals.css` con `@theme static` (Tailwind los publica 
 **Se hace:** `text-fg-muted` para lo secundario, `border-border-strong` en controles, `text-accent-fg` para un texto dorado, `bg-accent/15` para un realce suave.
 **No se hace:** `text-smoke`, `bg-ink`, `border-gold` ni colores de Tailwind (`bg-white`, `gray-*`), hexadecimales o `rgb()` en un componente. El dorado (`accent`) nunca es fondo de texto (D4).
 
+**Beige de desierto (13/11, DECISIONS §192):** los claros dejan el marfil casi blanco: `ivory` #ece2d1, `paper` #f6efe2, `sand` #e1d3bc y `stage` #e8dbc7, que se funde con el fondo de las fotos. Textos, bordes, dorado y estados se oscurecieron lo justo para conservar el contraste. Los nombres no cambian.
+
 ### 2.2 Tonos
 
 `data-tone` redefine los semánticos dentro de su contenedor. Hay seis tonos: el claro por defecto; `dark` (momentos editoriales: portada, pie, menú móvil, menú del panel, banner de vista previa, informe del inicio y resumen del asistente); los oscuros de colección `oud`, `indigo` y `forest` (D3, para la tienda a partir de la F5); y `console`, solo para la consola del titular (`/admin/control`, §2.7). No hay tema oscuro global ni automático (D2).
@@ -66,14 +68,15 @@ Una combinación que no está en la matriz no está permitida. Para añadir una,
 ### 2.5 Espacio, retícula, radios y capas
 
 - Contenedor `max-w-page` (80 rem) y ritmo de sección `--section-y`.
-- Radios: `0` por defecto y `rounded-hairline` (2 px).
+- Radios: `0` por defecto y `rounded-hairline` (2 px). Excepción única: el arco de los nichos de la galería de casas (`rounded-t-full` en `HouseGallery`, §192) y los círculos de adorno y de los botones de flecha.
 - Capas: `--z-header`, `--z-overlay`, `--z-sheet` y `--z-toast`; nada de `z-[999]`.
 
 ### 2.6 Movimiento
 
 - Duraciones `--duration-fast` (200 ms, controles), `--duration-base` (400 ms, paneles) y `--duration-slow` (600 ms, revelados), con la curva `ease-luxe`. En la consola, 120, 200 y 300 ms.
-- Bucles decorativos (`animate-twinkle`, `sweep`, `marquee`, `scroll-cue`) solo como adorno.
+- Bucles decorativos (`animate-twinkle`, `sweep`, `scroll-cue`) solo como adorno.
 - **Profundidad en las rejillas** (DECISIONS §189): las tarjetas de perfume van en una vitrina (`CardStage`) que se inclina hacia el cursor, y `scroll-rise` y `scroll-drift` las mueven con el scroll donde el navegador lo hace solo (`animation-timeline`). Los filtros de las rejillas usan `FilterChip` (pastilla que se desliza). Con «reducir movimiento», nada de esto. Sin WebGL: el 3D con three.js queda en la ficha y en la portada.
+- **Galería de casas** (DECISIONS §192): una fila de nichos que el visitante desplaza con el dedo, el teclado o las flechas. No se mueve sola, así que no lleva pausa; la foto se acerca un poco al pasar el cursor y, con «reducir movimiento», el salto de las flechas es instantáneo.
 - **Carrusel 3D de la portada** (DECISIONS §188): el único movimiento con contenido que sigue solo. Lleva siempre pausa visible (iconos `pause` y `play`), se para con el cursor encima o el foco del teclado dentro y, con «reducir movimiento», no gira solo y la escena salta sin animar.
 - Con `prefers-reduced-motion` todo pasa al estado final: lo garantiza la regla global de `globals.css` y lo comprueba el E2E.
 

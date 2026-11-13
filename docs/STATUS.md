@@ -1,4 +1,20 @@
-# Estado real — 11/11/2026
+# Estado real — 13/11/2026
+
+## Inventario real, fondo de desierto, galería de casas y venta en pruebas (13/11)
+
+Rama `claude/inventory-visual-improvements-co80yn`. A petición del usuario: cargar el inventario real y poner a cero el de prueba, un fondo más beige, otro carrusel de casas, poder encender la venta con el Redsys de pruebas (el banco no concede el TPV definitivo sin verla abierta), propuestas, pruebas de seguridad y roadmap al día. Decisiones §192–194. Sin migraciones; una variable nueva opcional (`WEB_CHECKOUT_TEST`).
+
+- **Inventario (aplicado en `atelier-dev` el 13/11, §194):** `supabase/data/20261113_inventario_real.sql`. De 920 unidades de prueba a las **332 de la hoja**, en 137 formatos (140 movimientos de recuento). 44 de los 50 publicados tienen unidades (42, una sola); **6 quedan a cero y siguen publicados** (Asad, Yara, Club de Nuit Intense Man LE, Vulcan Sable, Pharaoh Ramesses II y Game of Spades Blind Bid). 12 borradores reciben su formato y entran **79 perfumes nuevos en borrador** de 7 casas nuevas, sin PVP ni foto. El catálogo pasa a 537 perfumes (50 publicados). Comprobado: la huella de los datos cargados coincide con la hoja y la suma final es 332.
+- **Pendiente en la base:** registrar los 99 costes netos de los presupuestos (2.428,55 €) y borrar la tabla de trabajo `internal._inv_20261113`. La herramienta pidió confirmación al titular por el borrado y caducó sin respuesta: no se registró ningún coste. La tabla no está expuesta (esquema `internal`).
+- **Fondo beige (§192):** `ivory`, `paper`, `sand` y `stage` pasan a tonos de arena medidos en las fotos; textos, bordes, dorado y estados se oscurecen para conservar AA. La matriz de contraste pasa entera.
+- **Galería de casas (§192):** nichos en arco con un frasco de cada casa, numeración romana y flechas; sustituye a la cinta de nombres. Con los datos reales: 9 casas, sin desbordes a 1440 y 390 px.
+- **Suscripción (§192):** solo en la portada, la colección, las casas y el catálogo olfativo; el pie enlaza a `/#club`. Comprobado en local que la ficha ya no la lleva.
+- **Venta en pruebas (§193):** `WEB_CHECKOUT_TEST=1` deja usar `REDSYS_ENVIRONMENT=test` en Production, con el aviso «Tienda en pruebas» en la cesta, el pago y el pedido, y otro en la lista de pedidos del panel. **No está encendida:** faltan las variables en Vercel (pasos en [PLAN_APERTURA.md](PLAN_APERTURA.md#venta-en-pruebas-para-el-banco-1311)).
+- **Seguridad:** pruebas desde fuera sin hallazgos graves ([SECURITY_REVIEW_2026-11.md](SECURITY_REVIEW_2026-11.md#pruebas-desde-fuera-1311)): RLS, panel, tareas programadas, firmas y almacenamiento responden como deben; `pnpm audit --prod` y `scan:secrets` limpios; asesor de Supabase sin tipos de aviso nuevos.
+- **Documentos nuevos:** [PROPUESTAS_2026-11-13.md](PROPUESTAS_2026-11-13.md) (mejoras, código a añadir, modificar o eliminar y seguridad, con códigos para autorizar) y [METODO_DE_TRABAJO.md](METODO_DE_TRABAJO.md) (cómo trabajan los agentes, enlazado desde AGENTS.md y CLAUDE.md).
+- **Comprobado en local** (Node 22.23.4: el entorno no tenía la 24 de `.nvmrc`; la CI usa la suya): `pnpm check` correcto (lint, tipos, 842 unitarias en 79 archivos y build) y `format:check`. Capturas de la portada y una ficha a 1440 y 390 px con la tienda construida y los datos reales en solo lectura (clave pública). E2E de la tienda pública sin base (`pnpm test:e2e`): 246 correctas, 135 omitidas y **7 fallos, todos de `catalog-motion.spec.ts`**, que buscan los filtros, el resumen y las tarjetas del perfume centinela de la base de la CI; aquí no hay Docker ni esa base, así que queda por confirmar en la CI que son solo eso. **Sin ejecutar:** pgTAP y `test:e2e:local` (no hay migraciones; la CI repite todo).
+- **Límites:** el aviso de la venta en pruebas se ha probado con unitarias, no con un pago real de pruebas en Production; el beige no se ha visto en un móvil real; la hoja está entera «Pendiente verificar».
+- **Siguiente (titular):** confirmar la carga de costes; cambiar los destacados agotados; fusionar y poner las variables de la venta en pruebas; avisar al banco.
 
 ## Seis escenas 3D más para la ficha (11/11)
 
