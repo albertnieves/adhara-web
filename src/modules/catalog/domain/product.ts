@@ -110,6 +110,39 @@ export function groupByBrand(products: StorefrontProduct[]): StorefrontBrand[] {
   );
 }
 
+/**
+ * Perfumes agotados: todos sus formatos dicen `out_of_stock`. Si falta el
+ * estado de alguno (la lectura falló o aún no hay niveles), no se da por
+ * agotado: la tienda no esconde un perfume por un fallo puntual.
+ */
+export function soldOutProductIds(
+  products: StorefrontProduct[],
+  availability: Record<string, Availability>,
+): Set<string> {
+  return new Set(
+    products
+      .filter(
+        (product) =>
+          product.variants.length > 0 &&
+          product.variants.every(
+            (variant) => availability[variant.id] === 'out_of_stock',
+          ),
+      )
+      .map((product) => product.id),
+  );
+}
+
+/** Los que tienen existencias, delante; dentro de cada grupo, el mismo orden. */
+export function availableFirst<T extends { id: string }>(
+  products: T[],
+  soldOut: ReadonlySet<string>,
+): T[] {
+  return [
+    ...products.filter((product) => !soldOut.has(product.id)),
+    ...products.filter((product) => soldOut.has(product.id)),
+  ];
+}
+
 /** Imagen principal: la marcada como «hero»; si no, la primera por posición. */
 export function heroMedia(product: StorefrontProduct): ProductMedia | null {
   const sorted = [...product.media].sort((a, b) => a.position - b.position);

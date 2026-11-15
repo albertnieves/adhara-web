@@ -11,6 +11,8 @@ A petición del usuario: mejoras para dejar la web lista, recomendaciones de có
 - Venta en pruebas con el Redsys de pruebas, lista para encender (§193).
 - Pruebas de seguridad desde fuera: sin agujeros (ver más abajo).
 
+- **15/11:** hechas **C2** (portada y destacados sin agotados) y parte de **D3** (agotados al final de la colección, con «Agotado»), §195. De V2 queda solo decidir si los 6 agotados siguen publicados.
+
 ## Mi recomendación
 
 Por este orden: **V1** (encender la venta en pruebas, es lo que pide el banco), **V2** (los tres destacados de la portada están agotados), **V3** (pesos y «Ofrecer el envío», o el banco solo verá recogida en tienda), **C1** (marcar los pedidos de prueba) y **K1** (PVP y foto de lo que más unidades tiene).

@@ -3,8 +3,17 @@ import { homeContent, storeContent, STORE_DEFAULTS } from '@/modules/content';
 import { EmptyState, Eyebrow, Heading, buttonClass } from '@/components/ui';
 import { getTranslations } from 'next-intl/server';
 import { Star } from '@/modules/brand';
-import { groupByBrand, heroMedia } from '@/modules/catalog';
-import { listStorefrontProducts } from '@/modules/catalog/server';
+import {
+  availableFirst,
+  groupByBrand,
+  heroMedia,
+  soldOutProductIds,
+} from '@/modules/catalog';
+import {
+  getAvailability,
+  listStorefrontProducts,
+} from '@/modules/catalog/server';
+import { checkoutEnabled } from '@/modules/checkout/server';
 import type { Metadata } from 'next';
 import { Link } from '@/modules/i18n';
 import { alternatesMetadata } from '@/modules/i18n/metadata';
@@ -49,10 +58,19 @@ export default async function Home({
   ]);
   const content = editorial ? homeContent.parse(editorial.payload) : null;
   const details = store ? storeContent.parse(store.payload) : STORE_DEFAULTS;
-  const featured = (
+  // Con la venta encendida, lo agotado no abre la portada (§195): los
+  // destacados y el carrusel ponen delante lo que se puede comprar.
+  const soldOut = checkoutEnabled()
+    ? soldOutProductIds(
+        products,
+        await getAvailability(products.map((product) => product.id)),
+      )
+    : new Set<string>();
+  const featured = availableFirst(
     products.some((p) => p.featured)
       ? products.filter((p) => p.featured)
-      : products
+      : products,
+    soldOut,
   ).slice(0, 4);
   // Un nicho por casa, con el primero de sus perfumes que tenga imagen.
   const houses = groupByBrand(products).map((brand) => ({
@@ -62,10 +80,12 @@ export default async function Home({
     media:
       brand.products.map((product) => heroMedia(product)).find(Boolean) ?? null,
   }));
-  const showcase = products.find((p) => p.unboxingScene);
+  const showcase = availableFirst(products, soldOut).find(
+    (p) => p.unboxingScene,
+  );
   const showcaseImage = showcase ? heroMedia(showcase) : null;
   // Carrusel 3D con los perfumes que tienen escena; sin ellos, la portada fija.
-  const slides = heroSlides(products);
+  const slides = heroSlides(products, soldOut);
   const hero = {
     eyebrow: content?.heroEyebrow ?? t('heroEyebrow'),
     title: content?.heroTitle ?? t('heroTitle'),
@@ -115,7 +135,11 @@ export default async function Home({
                   delay={index * 0.12}
                   className="min-w-0"
                 >
-                  <ProductCard product={product} compact />
+                  <ProductCard
+                    product={product}
+                    compact
+                    soldOut={soldOut.has(product.id)}
+                  />
                 </Reveal>
               ))}
             </ul>

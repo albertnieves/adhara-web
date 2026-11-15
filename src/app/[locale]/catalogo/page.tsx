@@ -1,7 +1,12 @@
 import type { Metadata } from 'next';
 import { Eyebrow, Heading } from '@/components/ui';
 import { getTranslations } from 'next-intl/server';
-import { listStorefrontProducts } from '@/modules/catalog/server';
+import { availableFirst, soldOutProductIds } from '@/modules/catalog';
+import {
+  getAvailability,
+  listStorefrontProducts,
+} from '@/modules/catalog/server';
+import { checkoutEnabled } from '@/modules/checkout/server';
 import {
   CatalogBrowser,
   CollectionDeck,
@@ -32,10 +37,18 @@ export default async function Catalog({
 }) {
   const { locale } = await params;
   requireLocale(locale);
-  const [t, products] = await Promise.all([
+  const [t, published] = await Promise.all([
     getTranslations('catalog'),
     listStorefrontProducts(locale),
   ]);
+  // Con la venta encendida, los agotados van al final y lo dicen (§195).
+  const soldOut = checkoutEnabled()
+    ? soldOutProductIds(
+        published,
+        await getAvailability(published.map((product) => product.id)),
+      )
+    : new Set<string>();
+  const products = availableFirst(published, soldOut);
   const cards = deckCards(products);
   const brands = new Set(products.map((product) => product.brand.slug)).size;
   return (
@@ -57,7 +70,7 @@ export default async function Catalog({
           </div>
           <CollectionDeck cards={cards} label={t('deckLabel')} />
         </div>
-        <CatalogBrowser products={products} />
+        <CatalogBrowser products={products} soldOut={[...soldOut]} />
       </main>
       <NewsletterSection />
     </>

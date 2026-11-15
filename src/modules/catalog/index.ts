@@ -32,12 +32,14 @@ export {
   CONCENTRATION_NAMES,
   MEDIA_ORIGINS,
   PRODUCT_STATUSES,
+  availableFirst,
   groupByBrand,
   heroMedia,
   isAudience,
   isConcentration,
   lowestPrice,
   slugify,
+  soldOutProductIds,
   variantLabel,
 } from './domain/product';
 export type {

@@ -175,6 +175,20 @@ describe('heroSlides', () => {
     expect(slides.map((p) => p.slug)).toEqual(['asad']);
   });
 
+  it('los agotados van detrás de los que se pueden comprar', () => {
+    const products = [
+      product('asad', 10, 'asad'),
+      product('yara', 20, 'yara'),
+      product('khamrah', 40, 'khamrah'),
+    ];
+    const soldOut = new Set([products[0]!.id, products[1]!.id]);
+    expect(heroSlides(products, soldOut).map((p) => p.slug)).toEqual([
+      'khamrah',
+      'asad',
+      'yara',
+    ]);
+  });
+
   it('sin perfumes con escena no hay carrusel', () => {
     expect(heroSlides([product('a', 1, null)])).toEqual([]);
     expect(MAX_HERO_SLIDES).toBeGreaterThanOrEqual(4);
