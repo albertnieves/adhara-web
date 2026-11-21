@@ -4,6 +4,7 @@ import {
   groupByBrand,
   heroMedia,
   lowestPrice,
+  productDetails,
   slugify,
   variantLabel,
 } from '@/modules/catalog';
@@ -80,6 +81,21 @@ describe('catálogo de la tienda', () => {
       variantLabel({ ...variant(null, 100), label: '  Set regalo ' }),
     ).toBe('Set regalo');
     expect(variantLabel(variant(null, null))).toBe('—');
+  });
+
+  it('los detalles de la ficha solo usan datos del perfume', () => {
+    const variants = [
+      variant(1000, 100),
+      variant(2000, 100),
+      variant(3000, 50),
+    ];
+    expect(productDetails({ variants }, 'Eau de Parfum')).toBe(
+      'Eau de Parfum · 100 ml · 50 ml',
+    );
+    expect(productDetails({ variants: [variant(1000, 100)] }, null)).toBe(
+      '100 ml',
+    );
+    expect(productDetails({ variants: [variant(1000, null)] }, ' ')).toBe('');
   });
 
   it('slugify quita acentos, símbolos y espacios', () => {

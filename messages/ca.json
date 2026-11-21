@@ -59,6 +59,7 @@
     "title": "Totes les fragàncies",
     "summary": "{count, plural, one {# fragància} other {# fragàncies}} de {brands, plural, one {# casa} other {# cases}}.",
     "deckLabel": "Una fragància de cada casa",
+    "metaDescription": "Tota la col·lecció de perfums àrabs de L’Atelier du Désert, a Castelldefels: filtra per casa o per públic i ordena per preu.",
     "count": "{count, plural, =0 {Cap perfum} one {# perfum} other {# perfums}}",
     "search": "Cerca per nom o casa",
     "brand": "Casa",
@@ -103,6 +104,8 @@
     "OTHER": "Fragància"
   },
   "product": {
+    "metaDescription": "{name} de {brand} ({details}) a L’Atelier du Désert, perfumeria àrab a Castelldefels.",
+    "metaDescriptionPlain": "{name} de {brand} a L’Atelier du Désert, perfumeria àrab a Castelldefels.",
     "back": "Torna a la col·lecció",
     "size": "Format",
     "pricePending": "Preu aviat",
@@ -123,6 +126,10 @@
     "sceneReplay": "Repeteix",
     "sceneDrag": "Arrossega per girar",
     "scene3d": "Vista 3D",
+    "sceneOpen": "Obrir la capsa en 3D",
+    "sceneLoading": "Carregant la capsa…",
+    "sceneClose": "Veure les fotos",
+    "sceneFailed": "No s’ha pogut carregar la vista 3D. Les fotos continuen aquí.",
     "related": "També de {brand}"
   },
   "newsletter": {
