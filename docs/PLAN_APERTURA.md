@@ -57,7 +57,9 @@ El banco no concede el TPV definitivo sin ver la venta abierta. Desde el 13/11 (
 **E. Limpieza y seguridad (cuando se pueda)**
 
 14. Firewall de Vercel: las dos reglas de §168 (paso 8 de abajo), si aún no están.
-15. Borrar en Vercel las variables de Preview de las pruebas antiguas (ramas `claude/exciting-brown-j08p6y` y `claude/vigilant-mendel-p4mv93`; siguen el 21/11) y revocar en Supabase la clave secreta creada para la prueba de octubre.
+15. **Secretos de más en Production:** la integración de Supabase con Vercel añadió el 26/10 variables que el código no usa (`POSTGRES_*`, `SUPABASE_SERVICE_ROLE_KEY`, `SUPABASE_JWT_SECRET`, `SUPABASE_ANON_KEY`…; siguen el 21/11). Desconectar la integración o borrarlas.
+16. **Next.js 16.4.5:** la 16.4.4 tiene dos avisos moderados (GHSA-mfr8-8qww-v76h y otro de la caché) que solo afectan a `'use cache'` y `unstable_cache`, que la web no usa. Subirla en una PR aparte con la CI completa.
+17. Borrar en Vercel las variables de Preview de las pruebas antiguas (ramas `claude/exciting-brown-j08p6y` y `claude/vigilant-mendel-p4mv93`; siguen el 21/11) y revocar en Supabase la clave secreta creada para la prueba de octubre.
 
 ## Comprobado el 23/10 (solo lectura)
 
