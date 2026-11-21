@@ -1,6 +1,6 @@
 # Roadmap de diseño, movimiento y 3D — para autorizar
 
-Propuestas del 10/11/2026, a petición del usuario («crea un roadmap de mejoras para autorizar mañana»). **Nada de esta lista está hecho ni empezado**: cada punto espera tu visto bueno. Lo ya entregado en la rama `claude/blissful-ramanujan-t2e9bs` está al final, como contexto.
+Propuestas del 10/11/2026, a petición del usuario («crea un roadmap de mejoras para autorizar mañana»). **Nada de esta lista está hecho ni empezado**, salvo D1 (hecho el 10/11 al integrar la #61): cada punto espera tu visto bueno. Lo ya entregado en la rama `claude/blissful-ramanujan-t2e9bs` está al final, como contexto.
 
 **Cómo autorizar:** responde con los códigos que quieras, por ejemplo «A2, A4 y B1». Puedes cambiar el orden, quitar puntos o pedir otros. Lo que no autorices no se toca.
 
@@ -8,7 +8,7 @@ Propuestas del 10/11/2026, a petición del usuario («crea un roadmap de mejoras
 
 ## Mi recomendación
 
-Por este orden: **A2** (la foto viaja de la rejilla a la ficha: es lo que más cambia la sensación de la tienda), **A4** (filtros siempre a mano: con 50 perfumes se nota), **B1** (la pirámide 3D con las notas de cada perfume), **D1** (medir el rendimiento antes de añadir más 3D) y **A1** (el frasco girando dentro de la tarjeta). El resto, después y según lo que veas en la tienda real.
+Por este orden: **A2** (la foto viaja de la rejilla a la ficha: es lo que más cambia la sensación de la tienda), **A4** (filtros siempre a mano: con 50 perfumes se nota), **B1** (la pirámide 3D con las notas de cada perfume) y **A1** (el frasco girando dentro de la tarjeta). El resto, después y según lo que veas en la tienda real.
 
 ## A. Colección y catálogo olfativo
 
@@ -42,11 +42,11 @@ Por este orden: **A2** (la foto viaja de la rejilla a la ficha: es lo que más c
 
 ## D. Calidad y rendimiento
 
-| Código | Para qué                                                                                                                                                          | Tamaño  | Depende de                                        | Riesgo o límite                                                                   | Autorizar |
-| ------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------- | ------------------------------------------------- | --------------------------------------------------------------------------------- | --------- |
-| D1     | Medir en cada cambio lo que tarda en verse y en responder la portada, la colección y una ficha (Lighthouse en la CI), con un tope que avise si el 3D los empeora. | Mediana | Nada                                              | Es el punto 7 del [ROADMAP](ROADMAP.md); hoy la CI no mide el rendimiento.        | [ ]       |
-| D2     | Datos de prueba de la CI con fotos y perfumes con escena, para que las pruebas del carrusel, el abanico y «Vista 3D» se ejecuten siempre (hoy la CI las omite).   | Pequeña | Nada                                              | Solo cambia datos ficticios de la base de pruebas; nunca `atelier-dev`.           | [ ]       |
-| D3     | Una base de pruebas aparte para las Preview de Vercel, y así ver cada cambio de diseño con el catálogo antes de fusionar (hoy las Preview salen sin perfumes).    | Mediana | **Tú:** crear el proyecto de pruebas en Supabase. | Es el paso 3 de «Completar el aislamiento remoto» de [OPERATIONS](OPERATIONS.md). | [ ]       |
+| Código | Para qué                                                                                                                                                                                                                                                                          | Tamaño  | Depende de                                        | Riesgo o límite                                                                   | Autorizar |
+| ------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------- | ------------------------------------------------- | --------------------------------------------------------------------------------- | --------- |
+| D1     | **Hecho (integrado el 21/11, §198–199, con la #61):** Lighthouse en la CI mide portada, colección, ficha con 3D, búsqueda y recorrido en móvil y escritorio con topes de peso, CLS, accesibilidad, LCP y TBT, y la portada con el carrusel 3D (`?3d`) con su propio tope de peso. | Mediana | Nada                                              | Es el punto 7 del [ROADMAP](ROADMAP.md); hoy la CI no mide el rendimiento.        | Hecho     |
+| D2     | Datos de prueba de la CI con fotos y perfumes con escena, para que las pruebas del carrusel, el abanico y «Vista 3D» se ejecuten siempre (hoy la CI las omite).                                                                                                                   | Pequeña | Nada                                              | Solo cambia datos ficticios de la base de pruebas; nunca `atelier-dev`.           | [ ]       |
+| D3     | Una base de pruebas aparte para las Preview de Vercel, y así ver cada cambio de diseño con el catálogo antes de fusionar (hoy las Preview salen sin perfumes).                                                                                                                    | Mediana | **Tú:** crear el proyecto de pruebas en Supabase. | Es el paso 3 de «Completar el aislamiento remoto» de [OPERATIONS](OPERATIONS.md). | [ ]       |
 
 ## Lo que necesito que decidas
 

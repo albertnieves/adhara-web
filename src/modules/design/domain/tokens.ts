@@ -288,6 +288,14 @@ export const TRACKING_TOKENS: readonly Token[] = [
     role: 'Versalitas: etiquetas de tablas, del menú y de las tarjetas.',
   },
   { variable: '--tracking-caps-lg', role: 'Versalitas amplias: antetítulos.' },
+  {
+    variable: '--tracking-hero',
+    role: 'Lema de la portada, al final de su entrada.',
+  },
+  {
+    variable: '--tracking-hero-from',
+    role: 'Lema de la portada, al empezar su entrada (se va cerrando).',
+  },
 ];
 
 export const LAYOUT_TOKENS: readonly Token[] = [

@@ -141,8 +141,9 @@ export function CollectionDeck({
                       media={card.media}
                       alt=""
                       brand={card.brand}
+                      // Sin precarga: el abanico solo sale desde 1280 px y,
+                      // precargadas, sus fotos también se bajarían en el móvil.
                       sizes="12rem"
-                      priority={index < 2}
                     />
                   </span>
                   <span
