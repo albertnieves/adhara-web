@@ -10,7 +10,8 @@ import {
 
 vi.mock('server-only', () => ({}));
 
-const { redsysConfig } = await import('@/modules/payments/server/config');
+const { checkoutTestMode, redsysConfig } =
+  await import('@/modules/payments/server/config');
 const {
   decodeMerchantParameters,
   encodeMerchantParameters,
@@ -370,6 +371,18 @@ describe('reglas del protocolo', () => {
       REDSYS_ENVIRONMENT: 'test',
     };
     expect(redsysConfig({ ...env, VERCEL_ENV: 'production' })).toBeNull();
+    // Venta en pruebas (§193): solo con el interruptor explícito.
+    const testing = {
+      ...env,
+      VERCEL_ENV: 'production',
+      WEB_CHECKOUT_TEST: '1',
+    };
+    expect(redsysConfig(testing)).toMatchObject({ environment: 'test' });
+    expect(checkoutTestMode(testing)).toBe(true);
+    expect(checkoutTestMode({ ...env, VERCEL_ENV: 'production' })).toBe(false);
+    expect(checkoutTestMode({ ...testing, REDSYS_ENVIRONMENT: 'live' })).toBe(
+      false,
+    );
     expect(redsysConfig({ ...env, VERCEL_ENV: 'preview' })).toMatchObject({
       environment: 'test',
     });

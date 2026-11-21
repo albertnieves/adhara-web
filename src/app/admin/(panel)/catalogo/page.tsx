@@ -139,7 +139,7 @@ export default async function CatalogAdmin({
                   'gap-1.5',
                 )}
               >
-                {filter.label} <span className="opacity-60">{count}</span>
+                {filter.label} <span className="opacity-75">{count}</span>
               </Link>
             );
           })}

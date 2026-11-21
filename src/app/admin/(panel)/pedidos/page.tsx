@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { formatEuros } from '@/lib/money';
 import { PageHeader } from '@/modules/admin';
+import { checkoutTestMode } from '@/modules/payments/server/config';
 import { isAllowed } from '@/modules/auth';
 import { requirePermission } from '@/modules/auth/server';
 import {
@@ -67,6 +68,17 @@ export default async function WebOrders({
   return (
     <main>
       <PageHeader eyebrow="Web" title="Pedidos web" />
+      {checkoutTestMode() && (
+        <p
+          role="note"
+          className="border-warning bg-warning-soft text-warning mb-6 border px-4 py-3 text-sm"
+        >
+          <strong className="font-semibold">Venta en pruebas.</strong> El TPV
+          está en el entorno de pruebas del banco: los pedidos «pagados» no
+          tienen cobro real. No se preparan ni se envían; se cancelan con
+          «Cancelar y devolver el dinero» para devolver la unidad al stock.
+        </p>
+      )}
       <p className="text-fg-muted mb-8 max-w-2xl text-sm leading-relaxed">
         Un pedido aparece en «Por preparar» cuando el banco confirma el pago.
         Los que esperan pago o caducaron sin pagar no son trabajo de

@@ -9,6 +9,7 @@ import {
 import { Link } from '@/modules/i18n';
 import { alternatesMetadata } from '@/modules/i18n/metadata';
 import { requireLocale } from '@/modules/i18n/server';
+import { NewsletterSection } from '@/modules/newsletter/server';
 import {
   Reveal,
   RisingWords,
@@ -55,49 +56,52 @@ export default async function ScentCatalog({
     profile: profiles[product.id] ?? null,
   }));
   return (
-    <main>
-      <section
-        data-tone="oud"
-        className="bg-surface text-fg grain relative overflow-hidden"
-      >
-        <div className="relative mx-auto grid max-w-[90rem] gap-x-12 gap-y-10 px-5 pt-40 pb-20 sm:px-10 sm:pt-48 sm:pb-28 xl:grid-cols-[minmax(0,1fr)_minmax(0,37rem)] xl:items-center">
-          <div className="max-w-4xl">
-            <Star className="text-accent-fg size-4" />
-            <Eyebrow tone="accent" className="mt-8">
-              {t('eyebrow')}
-            </Eyebrow>
-            <Heading level={1} size="display" className="mt-4">
-              <RisingWords text={t('title')} delay={0.1} />
-            </Heading>
-            <Reveal delay={0.45}>
-              <p className="text-fg-muted mt-8 max-w-2xl text-lg leading-relaxed">
-                {t('lead')}
-              </p>
-              <Link
-                href="/recorrido-olfativo"
-                className={buttonClass('outline', 'md', 'mt-8')}
-              >
-                {tJourney('cta')}
-              </Link>
+    <>
+      <main>
+        <section
+          data-tone="oud"
+          className="bg-surface text-fg grain relative overflow-hidden"
+        >
+          <div className="relative mx-auto grid max-w-[90rem] gap-x-12 gap-y-10 px-5 pt-40 pb-20 sm:px-10 sm:pt-48 sm:pb-28 xl:grid-cols-[minmax(0,1fr)_minmax(0,37rem)] xl:items-center">
+            <div className="max-w-4xl">
+              <Star className="text-accent-fg size-4" />
+              <Eyebrow tone="accent" className="mt-8">
+                {t('eyebrow')}
+              </Eyebrow>
+              <Heading level={1} size="display" className="mt-4">
+                <RisingWords text={t('title')} delay={0.1} />
+              </Heading>
+              <Reveal delay={0.45}>
+                <p className="text-fg-muted mt-8 max-w-2xl text-lg leading-relaxed">
+                  {t('lead')}
+                </p>
+                <Link
+                  href="/recorrido-olfativo"
+                  className={buttonClass('outline', 'md', 'mt-8')}
+                >
+                  {tJourney('cta')}
+                </Link>
+              </Reveal>
+            </div>
+            <Reveal delay={0.3}>
+              <ScentTiers
+                tiers={(['top', 'heart', 'base'] as const).map((tier) => ({
+                  key: tier,
+                  label: t(tier),
+                  hint: t(`${tier}Hint`),
+                }))}
+              />
             </Reveal>
           </div>
-          <Reveal delay={0.3}>
-            <ScentTiers
-              tiers={(['top', 'heart', 'base'] as const).map((tier) => ({
-                key: tier,
-                label: t(tier),
-                hint: t(`${tier}Hint`),
-              }))}
-            />
-          </Reveal>
+        </section>
+        <div className="mx-auto max-w-[90rem] px-5 pt-16 pb-32 sm:px-10">
+          <ScentCatalogBrowser entries={entries} />
+          <p className="text-fg-muted mt-24 max-w-2xl text-xs leading-relaxed">
+            {t('sourceNote')}
+          </p>
         </div>
-      </section>
-      <div className="mx-auto max-w-[90rem] px-5 pt-16 pb-32 sm:px-10">
-        <ScentCatalogBrowser entries={entries} />
-        <p className="text-fg-muted mt-24 max-w-2xl text-xs leading-relaxed">
-          {t('sourceNote')}
-        </p>
-      </div>
-    </main>
+      </main>
+      <NewsletterSection />
+    </>
   );
 }

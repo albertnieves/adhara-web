@@ -61,11 +61,11 @@ export type EmailCopy = Readonly<Record<string, string>>;
  * (tests/unit/order-email.test.ts comprueba que siguen siendo esos).
  */
 export const EMAIL_COLORS = {
-  ivory: '#f5f1ea',
-  paper: '#fdfcf9',
+  ivory: '#ece2d1',
+  paper: '#f6efe2',
   ink: '#151311',
-  line: '#ddd5c8',
-  smoke: '#6b645b',
+  line: '#d3c5ad',
+  smoke: '#5d554b',
 } as const;
 
 export type OrderEmailContext = {

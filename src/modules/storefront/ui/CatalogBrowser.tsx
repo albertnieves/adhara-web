@@ -47,9 +47,13 @@ function compare(sort: Sort) {
 
 export function CatalogBrowser({
   products,
+  soldOut = [],
 }: {
   products: StorefrontProduct[];
+  /** Ids de los perfumes agotados (llegan ya al final del orden destacado). */
+  soldOut?: string[];
 }) {
+  const soldOutIds = useMemo(() => new Set(soldOut), [soldOut]);
   const t = useTranslations('catalog');
   const tAudience = useTranslations('audience');
   const reduced = useReducedMotion();
@@ -220,6 +224,7 @@ export function CatalogBrowser({
                     product={product}
                     priority={index < 4}
                     compact={view === 'grid'}
+                    soldOut={soldOutIds.has(product.id)}
                   />
                 </div>
               </motion.li>

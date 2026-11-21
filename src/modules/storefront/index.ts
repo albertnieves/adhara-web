@@ -1,4 +1,3 @@
-export { BrandMarquee } from './ui/BrandMarquee';
 export { CatalogBrowser } from './ui/CatalogBrowser';
 export { CollectionDeck } from './ui/CollectionDeck';
 export { deckCards } from './domain/collection-deck';
@@ -8,6 +7,7 @@ export { Header } from './ui/Header';
 export { heroSlides } from './domain/hero-slides';
 export { Hero, RisingWords } from './ui/Hero';
 export { HeroCarousel } from './ui/HeroCarousel';
+export { HouseGallery } from './ui/HouseGallery';
 export { ProductCard } from './ui/ProductCard';
 export { ProductImage } from './ui/ProductImage';
 export { PreviewBanner } from './ui/PreviewBanner';

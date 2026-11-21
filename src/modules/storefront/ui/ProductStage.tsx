@@ -22,7 +22,7 @@ const UnboxingViewer = dynamic(
 );
 
 /** Mismo valor que --color-stage (el canvas necesita el color literal). */
-const STAGE_COLOR = '#efe9df';
+const STAGE_COLOR = '#e8dbc7';
 
 function Gallery({
   media,

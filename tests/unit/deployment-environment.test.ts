@@ -117,6 +117,20 @@ describe('aislamiento de despliegues', () => {
     expect(
       deploymentEnvironmentIssues({ ...live, REDSYS_ENVIRONMENT: 'test' }),
     ).not.toEqual([]);
+    // Venta en pruebas (§193): test solo con el interruptor, y el
+    // interruptor solo con test.
+    expect(
+      deploymentEnvironmentIssues({
+        ...live,
+        REDSYS_ENVIRONMENT: 'test',
+        WEB_CHECKOUT_TEST: '1',
+      }),
+    ).toEqual([]);
+    expect(
+      deploymentEnvironmentIssues({ ...live, WEB_CHECKOUT_TEST: '1' }).join(
+        ' ',
+      ),
+    ).toContain('WEB_CHECKOUT_TEST=1 solo vale con REDSYS_ENVIRONMENT=test');
     expect(
       deploymentEnvironmentIssues({ VERCEL_ENV: 'production' }),
     ).not.toEqual([]);

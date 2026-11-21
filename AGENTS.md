@@ -6,6 +6,7 @@ Ecommerce de perfumería árabe. Lee README.md y docs/DEVELOPMENT.md antes de ca
 
 ## Trabajo
 
+- Antes de empezar, lee [docs/METODO_DE_TRABAJO.md](docs/METODO_DE_TRABAJO.md): cómo se tocan los datos de producción, cómo se verifica y los errores que ya hemos cometido. Si aprendes algo que valga para la próxima sesión, añádelo allí.
 - Explica el objetivo, implementa dentro del alcance pedido, verifica y comunica resultados y límites en español.
 - No declarar completada la Fase 1 mientras falten sus criterios de aceptación.
 - Usa pnpm y la versión de Node de .nvmrc. Conserva versiones exactas y lockfile.

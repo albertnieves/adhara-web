@@ -17,10 +17,13 @@ export function ProductCard({
   product,
   priority = false,
   compact = false,
+  soldOut = false,
 }: {
   product: StorefrontProduct;
   priority?: boolean;
   compact?: boolean;
+  /** Sin existencias de ningún formato: lo dice la tarjeta (§195). */
+  soldOut?: boolean;
 }) {
   const t = useTranslations();
   const locale = useLocale();
@@ -49,6 +52,11 @@ export function ProductCard({
         {findSceneSlug(product.unboxingScene) && (
           <span className="bg-surface-raised text-fg text-2xs tracking-caps absolute top-3 left-3 px-2 py-1 font-sans font-semibold uppercase">
             {t('product.scene3d')}
+          </span>
+        )}
+        {soldOut && (
+          <span className="bg-fg text-fg-inverse text-2xs tracking-caps absolute right-3 bottom-3 px-2 py-1 font-sans font-semibold uppercase">
+            {t('product.outOfStock')}
           </span>
         )}
       </CardStage>

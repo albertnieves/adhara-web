@@ -12,6 +12,7 @@ import { CheckoutForm } from '@/modules/checkout/ui';
 import { STORE_DEFAULTS, storeContent } from '@/modules/content';
 import { readStoreContent } from '@/modules/content/server';
 import { Link, routing } from '@/modules/i18n';
+import { CheckoutTestNotice } from '@/modules/checkout/ui/CheckoutTestNotice';
 import { requireLocale } from '@/modules/i18n/server';
 import { TrackCommerce } from '@/modules/tracking';
 
@@ -75,6 +76,7 @@ export default async function CheckoutPage({ params }: { params: Params }) {
 
   return (
     <main className="mx-auto max-w-[90rem] px-5 pt-32 pb-20 sm:px-10">
+      <CheckoutTestNotice className="mb-8 max-w-3xl" />
       {items.length > 0 && (
         <TrackCommerce
           event={{

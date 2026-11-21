@@ -31,6 +31,8 @@ Español por defecto, catalán e inglés, todas las URL con prefijo y rutas trad
 
 ## Protocolo de trabajo
 
+El oficio detrás de estos cuatro pasos, con los errores reales de los que salió, está en [docs/METODO_DE_TRABAJO.md](docs/METODO_DE_TRABAJO.md): leerlo antes de tocar datos de producción, diseño o seguridad, y añadir lo que se aprenda.
+
 1. **PLAN:** objetivo, alcance, archivos y riesgos; preguntar solo lo que de verdad decide el usuario.
 2. **IMPLEMENT:** solo lo acordado, en una rama propia (`codex/<tema>` o la que asigne el entorno, DECISIONS §17) y revisable mediante PR.
 3. **VERIFY:** `pnpm check` (lint, tipos, unitarias y build) tras cambios funcionales; `pnpm test:e2e` tras cambios de rutas o navegación (requiere build); con Supabase local, `pnpm test:db`, `node scripts/check-db-types.ts` y `pnpm test:e2e:local`. La CI repite todo en `ci.yml`, `db.yml` y `e2e.yml`.
@@ -46,4 +48,4 @@ No desplegar a producción por defecto ni ejecutar `supabase db reset` contra `a
 
 ## Documentos
 
-[README](README.md) · [Estado](docs/STATUS.md) · [Roadmap](docs/ROADMAP.md) · [Decisiones](docs/DECISIONS.md) · [Arquitectura](docs/ARCHITECTURE.md) · [Base de datos](docs/DATABASE.md) · [Sistema de diseño](docs/DESIGN_SYSTEM.md) · [Seguridad](docs/SECURITY.md) · [Idiomas](docs/I18N.md) · [Precios](docs/PRICING.md) · [Research](docs/PRODUCT_RESEARCH.md) · [Panel](docs/ADMIN_PLAN.md) · [Guía del panel](docs/ADMIN_OPERATIONS.md) · [Textos legales](docs/LEGAL.md) · [Analítica y publicidad](docs/MEDICION_Y_PUBLICIDAD.md) · [Habilidades](docs/SKILLS.md) · [Informe de la Fase 1](docs/phases/FASE_1_REPORT.md) · [Informe de la Fase 2](docs/phases/FASE_2_REPORT.md)
+[README](README.md) · [Estado](docs/STATUS.md) · [Roadmap](docs/ROADMAP.md) · [Decisiones](docs/DECISIONS.md) · [Arquitectura](docs/ARCHITECTURE.md) · [Base de datos](docs/DATABASE.md) · [Sistema de diseño](docs/DESIGN_SYSTEM.md) · [Seguridad](docs/SECURITY.md) · [Idiomas](docs/I18N.md) · [Precios](docs/PRICING.md) · [Research](docs/PRODUCT_RESEARCH.md) · [Panel](docs/ADMIN_PLAN.md) · [Guía del panel](docs/ADMIN_OPERATIONS.md) · [Textos legales](docs/LEGAL.md) · [Analítica y publicidad](docs/MEDICION_Y_PUBLICIDAD.md) · [Método de trabajo](docs/METODO_DE_TRABAJO.md) · [Propuestas del 13/11](docs/PROPUESTAS_2026-11-13.md) · [Habilidades](docs/SKILLS.md) · [Informe de la Fase 1](docs/phases/FASE_1_REPORT.md) · [Informe de la Fase 2](docs/phases/FASE_2_REPORT.md)

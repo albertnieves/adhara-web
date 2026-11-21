@@ -337,7 +337,6 @@ export const ANIMATION_TOKENS: readonly Token[] = [
     variable: '--animate-sweep',
     role: 'Destello que recorre un elemento oscuro (.sheen).',
   },
-  { variable: '--animate-marquee', role: 'Cinta continua de marcas.' },
   {
     variable: '--animate-scroll-cue',
     role: 'Indicador de desplazamiento de la portada.',

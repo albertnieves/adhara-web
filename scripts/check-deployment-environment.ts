@@ -62,8 +62,22 @@ export function deploymentEnvironmentIssues(env: Environment): string[] {
       issues.push(
         'Production no apunta al proyecto real registrado. Revisar el corte de entorno.',
       );
-    if (env.REDSYS_ENVIRONMENT && env.REDSYS_ENVIRONMENT !== 'live')
-      issues.push('Production solo admite REDSYS_ENVIRONMENT=live.');
+    // El entorno de pruebas del banco solo con el interruptor explícito de la
+    // venta en pruebas (DECISIONS §193); con la clave real, ese interruptor
+    // tiene que haberse quitado.
+    const testMode = env.WEB_CHECKOUT_TEST === '1';
+    if (
+      env.REDSYS_ENVIRONMENT &&
+      env.REDSYS_ENVIRONMENT !== 'live' &&
+      !(testMode && env.REDSYS_ENVIRONMENT === 'test')
+    )
+      issues.push(
+        'Production solo admite REDSYS_ENVIRONMENT=live (o test con WEB_CHECKOUT_TEST=1 mientras el banco valida el comercio).',
+      );
+    if (testMode && env.REDSYS_ENVIRONMENT !== 'test')
+      issues.push(
+        'WEB_CHECKOUT_TEST=1 solo vale con REDSYS_ENVIRONMENT=test: quitarlo al poner la clave real.',
+      );
     for (const [name, format] of Object.entries(TRACKING_ID_FORMATS)) {
       const value = env[name]?.trim();
       if (value && !format.test(value))

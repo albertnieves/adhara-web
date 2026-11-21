@@ -8,6 +8,23 @@ El código del checkout, el pago con Redsys, los correos y las devoluciones est�
 
 **Actualizado el 24/10** (rama `claude/cierre-apertura`, §168): el código que quedaba para después de abrir está hecho (los tres arreglos de las devoluciones, el saludo del correo sin el nombre, el freno del formulario de contacto y los gastos de envío de los textos con las tarifas del panel). Lo que queda es del usuario o del banco: Bizum por debajo de 5 €, el pase a producción del TPV, «Ofrecer el envío», la MFA de la segunda administradora, las dos reglas del Firewall en el panel de Vercel, plazo y transportista, la asesoría y `WEB_CHECKOUT=1`. La migración nueva ya está aplicada en `atelier-dev`.
 
+## Venta en pruebas para el banco (13/11)
+
+El banco no concede el TPV definitivo sin ver la venta abierta. Desde el 13/11 (DECISIONS §193) la venta se puede encender en Production con el entorno de pruebas de Redsys, con un aviso al comprador. **Orden obligatorio:** primero fusionar la rama `claude/inventory-visual-improvements-co80yn` (el build anterior rechaza `test` en Production) y después las variables.
+
+1. Vercel → `atelier-web` → Settings → Environment Variables → **Production**:
+   - `WEB_CHECKOUT=1`
+   - `WEB_CHECKOUT_TEST=1`
+   - `REDSYS_MERCHANT_CODE=370787319`, `REDSYS_TERMINAL=001`, `REDSYS_ENVIRONMENT=test`
+   - `REDSYS_SECRET_KEY`: la de pruebas del correo de BBVA, marcada «Sensitive». No se manda por el chat.
+2. Redesplegar Production (las variables se leen al construir).
+3. Comprobar: la cabecera enseña la cesta; la cesta, «Finalizar compra» y el pedido enseñan **«Tienda en pruebas»**; Panel → Pedidos web enseña «Venta en pruebas».
+4. Un pedido con la tarjeta de pruebas 4548 8100 0000 0003: pasa solo a «Pagado»; cancelarlo con «Cancelar y devolver el dinero» (0900) para que la unidad vuelva al stock.
+5. Panel: cambiar los destacados agotados (Asad, Yara y Club de Nuit Intense Man LE tienen 0 unidades) y el texto de la portada.
+6. Avisar al banco y pedir el pase a producción.
+
+**Mientras dure:** ningún pedido se prepara ni se envía (no hay cobro real) y los de prueba se cancelan cada día; casi todo el catálogo tiene una unidad. **Para apagarla:** quitar `WEB_CHECKOUT` y redesplegar. **Al llegar la clave real:** `REDSYS_SECRET_KEY` real, `REDSYS_ENVIRONMENT=live`, **quitar `WEB_CHECKOUT_TEST`** (el build falla si se queda) y redesplegar.
+
 ## Comprobado el 23/10 (solo lectura)
 
 | Qué                               | Estado                                                                                                                                                                                | Consecuencia                                                                                                                                               |
