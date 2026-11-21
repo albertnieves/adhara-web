@@ -35,7 +35,7 @@ export function redsysConfig(
   // El entorno de pruebas del banco acepta tarjetas de prueba públicas y su
   // notificación va firmada: en producción daría pedidos «pagados» sin cobrar
   // nada (DECISIONS §161). Solo se admite con el interruptor explícito de la
-  // venta en pruebas, que además enseña el aviso al comprador (§193).
+  // venta en pruebas (§193); el aviso sale solo en el panel (§196).
   if (
     environment === 'test' &&
     env.VERCEL_ENV === 'production' &&
@@ -64,7 +64,8 @@ function checkoutTestModeRequested(
 
 /**
  * La tienda cobra con el entorno de pruebas del banco: ningún pago es real.
- * La cesta, el pago y la página del pedido lo avisan, y el panel también.
+ * Lo avisa la lista de pedidos del panel. La tienda no lo dice: el banco
+ * revisa la web definitiva antes del pase a producción (DECISIONS §196).
  */
 export function checkoutTestMode(
   env: Record<string, string | undefined> = process.env,

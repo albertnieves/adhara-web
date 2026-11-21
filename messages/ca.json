@@ -305,8 +305,6 @@
     "discountNote": "Tens un codi de descompte? L’apliques en finalitzar la compra."
   },
   "checkout": {
-    "testNoticeTitle": "Botiga en proves.",
-    "testNotice": "Els pagaments van a l’entorn de proves del banc: no es cobra res i les comandes no es preparen ni s’envien. La venda real obrirà ben aviat.",
     "title": "Finalitza la compra",
     "back": "Torna a la cistella",
     "contact": "Les teves dades",

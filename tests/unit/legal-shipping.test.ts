@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import { es } from '../../src/modules/legal/content/es';
+import { LEGAL_ENTITY } from '../../src/modules/legal/domain/entity';
+import {
+  parseLegalText,
+  resolveValue,
+} from '../../src/modules/legal/domain/placeholders';
 import {
   freeShippingText,
   shippingCostText,
@@ -70,5 +75,28 @@ describe('gastos de envío en los textos legales', () => {
       );
     expect(lines).toContain('Gastos de envío: {shippingCost}.');
     expect(lines).toContain('Envío gratis a partir de {freeShippingFrom}.');
+    expect(lines).toContain(
+      'Plazo habitual: {deliveryTime} desde la confirmación del pedido.',
+    );
+    expect(lines).toContain('Transportista: {carrier}.');
+  });
+});
+
+describe('plazo y transportista (DECISIONS §196)', () => {
+  it('se publican en los tres idiomas, sin «Pendiente»', () => {
+    for (const locale of ['es', 'ca', 'en'] as const) {
+      expect(resolveValue(LEGAL_ENTITY.deliveryTime, locale)).toBeTruthy();
+      expect(resolveValue(LEGAL_ENTITY.carrier, locale)).toBe('Correos');
+    }
+    const line = parseLegalText(
+      'Plazo habitual: {deliveryTime} desde la confirmación del pedido.',
+      { deliveryTime: resolveValue(LEGAL_ENTITY.deliveryTime, 'es') },
+    );
+    expect(line.map((segment) => segment.kind)).not.toContain('pending');
+    expect(
+      line.map((segment) => ('text' in segment ? segment.text : '')).join(''),
+    ).toBe(
+      'Plazo habitual: de 2 a 4 días laborables desde la confirmación del pedido.',
+    );
   });
 });

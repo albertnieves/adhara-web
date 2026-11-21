@@ -305,8 +305,6 @@
     "discountNote": "¿Tienes un código de descuento? Lo aplicas al finalizar la compra."
   },
   "checkout": {
-    "testNoticeTitle": "Tienda en pruebas.",
-    "testNotice": "Los pagos van al entorno de pruebas del banco: no se cobra nada y los pedidos no se preparan ni se envían. La venta real abrirá muy pronto.",
     "title": "Finalizar compra",
     "back": "Volver a la cesta",
     "contact": "Tus datos",

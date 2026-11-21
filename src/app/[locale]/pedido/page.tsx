@@ -17,7 +17,6 @@ import {
 import { STORE_DEFAULTS, storeContent } from '@/modules/content';
 import { readStoreContent } from '@/modules/content/server';
 import { Link } from '@/modules/i18n';
-import { CheckoutTestNotice } from '@/modules/checkout/ui/CheckoutTestNotice';
 import { requireLocale } from '@/modules/i18n/server';
 import { LEGAL_CONTACT_EMAIL } from '@/modules/legal';
 import { SHIPMENT_STATUSES } from '@/modules/shipping';
@@ -263,7 +262,6 @@ function Shell({
 }) {
   return (
     <main className="mx-auto max-w-[90rem] px-5 pt-32 pb-20 sm:px-10">
-      <CheckoutTestNotice className="mb-8 max-w-2xl" />
       <section className="max-w-2xl space-y-6">
         <Eyebrow>{eyebrow}</Eyebrow>
         <Heading level={1} size="h1">

@@ -43,10 +43,18 @@ export const LEGAL_ENTITY: Record<
    */
   shippingCost: null,
   freeShippingFrom: null,
-  /** Plazo de entrega habitual. */
-  deliveryTime: null,
-  /** Empresa de transporte. */
-  carrier: null,
+  /**
+   * Plazo de entrega habitual: lo decidió el titular el 21/11/2026 (hasta un
+   * día laborable para preparar el pedido más las 48 h de Correos, DECISIONS
+   * §196).
+   */
+  deliveryTime: {
+    es: 'de 2 a 4 días laborables',
+    ca: 'de 2 a 4 dies laborables',
+    en: '2 to 4 working days',
+  },
+  /** Empresa de transporte: Correos, Paq Estándar a domicilio (§196). */
+  carrier: 'Correos',
   /**
    * Medios de pago aceptados: los del TPV virtual de BBVA según su correo del
    * 23/10/2026 (DECISIONS §167). Se confirman en la prueba con el banco.
@@ -64,7 +72,7 @@ export const LEGAL_ENTITY: Record<
 export const LEGAL_CONTACT_EMAIL = 'latelierdudesert@gmail.com';
 
 /** Fecha de la versión vigente de los textos (AAAA-MM-DD). */
-export const LEGAL_UPDATED_AT = '2026-10-16';
+export const LEGAL_UPDATED_AT = '2026-11-21';
 
 /**
  * Cookie técnica que recuerda que el visitante aceptó el aviso de entrada.

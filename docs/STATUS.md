@@ -1,4 +1,18 @@
-# Estado real — 13/11/2026
+# Estado real — 21/11/2026
+
+## Correos en la península y venta en pruebas publicada (21/11)
+
+Rama `claude/purchase-branch-mail-carrier-evkiry`, sobre la PR #67. A petición del titular: revisar la rama de compra, activar Correos para poner el pago y que el banco conceda el TPV definitivo, dejar claro qué falta para vender con normalidad y fusionar lo que aporte. Decisión §196; lista completa de lo que falta en [PLAN_APERTURA.md](PLAN_APERTURA.md#correos-y-lo-que-falta-para-vender-con-normalidad-2111).
+
+- **PR #67 fusionada (21/11):** Production se desplegó con la venta en pruebas (las variables estaban puestas desde el 13/11). Comprobado en `latelierdudesert.com`: «Envíos y devoluciones» publica los gastos de envío de la península.
+- **Sin «Tienda en pruebas» en la tienda (§196):** a petición del titular tras el correo de BBVA, que pide todas las fichas con imagen y que la web no diga que la venta no está operativa. El aviso queda solo en el panel. Comprobado en producción: las 50 fichas publicadas tienen imagen (seis, con la recreación de la #66).
+- **Correos (aplicado en `atelier-dev`):** `supabase/data/20261121_correos_peninsula.sql`. Servicio `correos:standard` de Sendcloud encendido como «Correos · Paq Estándar», solo en la península (2 días, 7,50 € hasta 1 kg con el recargo de 2 € que ya tenía, gratis desde 60 €), y «Ofrecer el envío» en la península. Baleares sigue apagada. Comprobado con `private.shipping_options`.
+- **Textos legales:** plazo «de 2 a 4 días laborables» y transportista Correos en es, ca y en; `LEGAL_UPDATED_AT` al 21/11.
+- **Portada:** el texto de la tienda ya no dice «La compra online llegará muy pronto» (`supabase/data/20261121_portada_compra_online.sql`, guardado y publicado como desde el panel, revisión 1 en los tres idiomas).
+- **Comprobado en la base, solo lectura:** `PRUEBATPV` desactivado; la cuenta de administración sin MFA está dada de baja; 0 de 50 formatos publicados con peso; peso máximo con envío, 1 kg; 0 costes de compra registrados.
+- **Bloquea el envío a domicilio:** sin el peso de los formatos el checkout solo ofrece la recogida en la tienda. Los pesa el titular (Envíos → Pesos de los formatos).
+- **Bloquea enviar de verdad:** la página de Correos pone los perfumes inflamables entre lo que no circula por su red. Hace falta su confirmación por escrito para Paq Estándar por carretera (y para Baleares, por barco). En la venta en pruebas no sale ningún paquete.
+- **Siguiente (titular):** pesar los formatos, probar un pedido con la tarjeta de pruebas y cancelarlo, avisar al banco y pedir el pase a producción. Con la clave real: `live`, quitar `WEB_CHECKOUT_TEST` y redesplegar.
 
 ## Inventario real, fondo de desierto, galería de casas y venta en pruebas (13/11)
 
