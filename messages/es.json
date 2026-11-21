@@ -59,6 +59,7 @@
     "title": "Todas las fragancias",
     "summary": "{count, plural, one {# fragancia} other {# fragancias}} de {brands, plural, one {# casa} other {# casas}}.",
     "deckLabel": "Una fragancia de cada casa",
+    "metaDescription": "Toda la colección de perfumes árabes de L’Atelier du Désert, en Castelldefels: filtra por casa o por público y ordena por precio.",
     "count": "{count, plural, =0 {Ningún perfume} one {# perfume} other {# perfumes}}",
     "search": "Buscar por nombre o casa",
     "brand": "Casa",
@@ -103,6 +104,8 @@
     "OTHER": "Fragancia"
   },
   "product": {
+    "metaDescription": "{name} de {brand} ({details}) en L’Atelier du Désert, perfumería árabe en Castelldefels.",
+    "metaDescriptionPlain": "{name} de {brand} en L’Atelier du Désert, perfumería árabe en Castelldefels.",
     "back": "Volver a la colección",
     "size": "Formato",
     "pricePending": "Precio próximamente",

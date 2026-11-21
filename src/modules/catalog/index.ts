@@ -40,6 +40,7 @@ export {
   lowestPrice,
   slugify,
   soldOutProductIds,
+  productDetails,
   variantLabel,
 } from './domain/product';
 export type {
