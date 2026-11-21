@@ -36,10 +36,11 @@ Enlazados en la barra inferior del pie de todas las páginas, en pequeño junto 
 
 ## Datos que faltan
 
-| Dato                                                                          | Dónde aparece                      |
-| ----------------------------------------------------------------------------- | ---------------------------------- |
-| Plazo de entrega y transportista                                              | Envíos, privacidad (destinatarios) |
-| Si se adhiere al arbitraje de consumo (Junta Arbitral de Consum de Catalunya) | Condiciones                        |
+| Dato                                                                          | Dónde aparece |
+| ----------------------------------------------------------------------------- | ------------- |
+| Si se adhiere al arbitraje de consumo (Junta Arbitral de Consum de Catalunya) | Condiciones   |
+
+Ya no faltan (21/11, DECISIONS §196): el **plazo de entrega**, «de 2 a 4 días laborables» desde la confirmación del pedido (es, ca y en), y el **transportista**, Correos. `LEGAL_UPDATED_AT` pasa al 21/11, así que el aviso de entrada se vuelve a pedir una vez.
 
 Ya no faltan (24/10): el **teléfono y el email**, puestos en Panel → Configuración el 23/10; y los **gastos de envío y desde cuánto es gratis**, que salen solos de las tarifas activas de Panel → Configuración → Tarifas de envío (DECISIONS §168). Mientras «Ofrecer el envío» esté apagado, esas dos líneas no se publican; al encenderlo aparecen en los tres idiomas con los mismos importes que cobra el checkout (hoy guardadas: península 4 €, gratis desde 60 €; Illes Balears 10 €, gratis desde 120 €).
 

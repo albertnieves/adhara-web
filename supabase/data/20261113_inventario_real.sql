@@ -11,8 +11,9 @@
 -- · Marca: la del documento; si no la dice, «Marca por identificar» (salvo Club de Nuit,
 --   Haramain y Rayhaan, que van en el nombre). Formato sin volumen: «Formato por confirmar».
 -- · EAN: solo los del albarán que la hoja no marca como poco legibles.
--- · Los costes de los presupuestos se registraron en internal.variant_cost_records el mismo
---   día y no se guardan en el repositorio. Los del albarán no: no dice si llevan IVA.
+-- · Los costes de los presupuestos no se guardan en el repositorio. Iban a registrarse en
+--   internal.variant_cost_records el mismo día, pero no llegó a hacerse (comprobado el 21/11:
+--   0 filas; DECISIONS §196). Los del albarán no se registran: no dice si llevan IVA.
 -- Idempotente. En una sola transacción (la tabla temporal se borra al confirmar).
 
 begin;

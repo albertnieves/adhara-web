@@ -18,12 +18,46 @@ El banco no concede el TPV definitivo sin ver la venta abierta. Desde el 13/11 (
    - `REDSYS_MERCHANT_CODE=370787319`, `REDSYS_TERMINAL=001`, `REDSYS_ENVIRONMENT=test`
    - `REDSYS_SECRET_KEY`: la de pruebas del correo de BBVA, marcada «Sensitive». No se manda por el chat.
 2. Redesplegar Production (las variables se leen al construir).
-3. Comprobar: la cabecera enseña la cesta; la cesta, «Finalizar compra» y el pedido enseñan **«Tienda en pruebas»**; Panel → Pedidos web enseña «Venta en pruebas».
+3. Comprobar: la cabecera enseña la cesta y Panel → Pedidos web enseña «Venta en pruebas». Desde el 21/11 la tienda **no** enseña «Tienda en pruebas» (el banco quiere ver la web definitiva, §196).
 4. Un pedido con la tarjeta de pruebas 4548 8100 0000 0003: pasa solo a «Pagado»; cancelarlo con «Cancelar y devolver el dinero» (0900) para que la unidad vuelva al stock.
 5. Panel: cambiar los destacados agotados (Asad, Yara y Club de Nuit Intense Man LE tienen 0 unidades) y el texto de la portada.
 6. Avisar al banco y pedir el pase a producción.
 
 **Mientras dure:** ningún pedido se prepara ni se envía (no hay cobro real) y los de prueba se cancelan cada día; casi todo el catálogo tiene una unidad. **Para apagarla:** quitar `WEB_CHECKOUT` y redesplegar. **Al llegar la clave real:** `REDSYS_SECRET_KEY` real, `REDSYS_ENVIRONMENT=live`, **quitar `WEB_CHECKOUT_TEST`** (el build falla si se queda) y redesplegar.
+
+## Correos y lo que falta para vender con normalidad (21/11)
+
+**Hecho el 21/11** (rama `claude/purchase-branch-mail-carrier-evkiry`, DECISIONS §196): PR #67 fusionada, así que Production se despliega con la venta en pruebas (las variables ya estaban desde el 13/11). Correos Paq Estándar encendido en la península en `atelier-dev` («Correos · Paq Estándar», 2 días, 7,50 € hasta 1 kg, gratis desde 60 €) con «Ofrecer el envío» en la península. Plazo («de 2 a 4 días laborables») y transportista (Correos) publicados en «Envíos y devoluciones». Comprobado también: `PRUEBATPV` desactivado y la cuenta de administración sin MFA, dada de baja.
+
+**A. Para que el banco conceda el TPV definitivo (ahora)**
+
+1. **Pesar los formatos** (titular): Panel → Envíos → Pesos de los formatos. Pesar un frasco con su caja de cada tamaño (20, 100, 105, 150 y 200 ml y los dos «Formato por confirmar»), «Rellenar los vacíos por tamaño», revisar y guardar. **Sin pesos el checkout solo ofrece la recogida en la tienda** (hoy, 0 de 50).
+2. Comprobar en `latelierdudesert.com`: la cesta y el pago sin ningún aviso de pruebas; con un perfume pesado y un código postal de la península sale «Correos · Paq Estándar». Un pedido con la tarjeta de pruebas 4548 8100 0000 0003 que pase solo a «Pagado» y después «Cancelar y devolver el dinero» (0900). **Mientras dure:** revisar cada día Panel → Pedidos web y cancelar lo que entre (no hay cobro real).
+3. **Contestar al banco en su mismo hilo** que la web está completa (los dos puntos de su correo están resueltos: todas las fichas con imagen y ningún texto que diga que la venta no está operativa) y pedir el pase a producción: portal de pruebas → «Pasar a producción», o ticket con la categoría «Paso a producción» (912 983 609). El banco avisa de que cancela el contrato si en 6 meses desde la solicitud no tiene la URL completa.
+
+**B. Al llegar la clave real (el mismo día)**
+
+4. Vercel → `atelier-web` → Production: `REDSYS_SECRET_KEY` real («Sensitive»), `REDSYS_ENVIRONMENT=live` y **quitar `WEB_CHECKOUT_TEST`**; redesplegar. El build falla si el interruptor se queda.
+5. Cancelar desde el panel los pedidos de prueba que queden.
+6. Una compra real de poco importe con una tarjeta propia, el correo de confirmación y su devolución desde el panel.
+
+**C. Para enviar de verdad con Correos**
+
+7. **Confirmación por escrito de Correos** (o de Sendcloud, si se usa su contrato) de que admite perfumes con alcohol (UN1266, clase 3, cantidades limitadas) en Paq Estándar por carretera. Su página «Cómo preparar tu envío» pone los perfumes inflamables entre lo prohibido sin distinguir nacional e internacional. Sin esa confirmación no se envía nada.
+8. **Peso máximo:** subir «Peso máximo con envío» (Envíos → Remitente y zonas) de 1 kg a unos 5 kg y pulsar «Actualizar tarifas desde Sendcloud». Hoy dos frascos de 100 ml con el embalaje ya pasan de 1 kg y se quedan sin envío.
+9. **Baleares:** encenderla en el servicio y en la zona solo cuando Correos confirme que lleva perfumes allí (por barco).
+10. **Contrato propio con Correos:** si se firma la propuesta, conectarlo en Sendcloud (o un servicio manual con sus tramos) y comprobar la primera factura: si el coste ya incluye IVA, poner 0 % en «IVA del envío».
+
+**D. Legal y negocio (antes de anunciar la venta)**
+
+11. **Revisión de la asesoría:** condiciones, envíos, privacidad y el adjunto del correo de confirmación ([LEGAL.md](LEGAL.md)), más si la web debe emitir factura o ticket por pedido.
+12. **Arbitraje de consumo:** decidir si se adhiere a la Junta Arbitral de Consum de Catalunya (falta en las condiciones).
+13. **Costes de compra del 13/11:** cargar los 99 costes netos de los presupuestos desde la hoja (la base no los tiene) y después borrar `internal._inv_20261113`. No impide vender, pero sin ellos no hay márgenes.
+
+**E. Limpieza y seguridad (cuando se pueda)**
+
+14. Firewall de Vercel: las dos reglas de §168 (paso 8 de abajo), si aún no están.
+15. Borrar en Vercel las variables de Preview de las pruebas antiguas (ramas `claude/exciting-brown-j08p6y` y `claude/vigilant-mendel-p4mv93`; siguen el 21/11) y revocar en Supabase la clave secreta creada para la prueba de octubre.
 
 ## Comprobado el 23/10 (solo lectura)
 

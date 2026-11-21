@@ -17,7 +17,6 @@ import {
   readCart,
 } from '@/modules/checkout/server';
 import { updateCartLine } from '@/modules/checkout/server/actions';
-import { CheckoutTestNotice } from '@/modules/checkout/ui/CheckoutTestNotice';
 import { Link } from '@/modules/i18n';
 import { requireLocale } from '@/modules/i18n/server';
 import { bestOffer, missingCents, nextOffer } from '@/modules/promotions';
@@ -87,7 +86,6 @@ export default async function CartPage({ params }: { params: Params }) {
 
   return (
     <main className="mx-auto max-w-[90rem] px-5 pt-32 pb-20 sm:px-10">
-      <CheckoutTestNotice className="mb-8 max-w-3xl" />
       <Heading level={1} size="h1">
         {t('title')}
       </Heading>

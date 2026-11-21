@@ -305,8 +305,6 @@
     "discountNote": "Have a discount code? You can apply it at checkout."
   },
   "checkout": {
-    "testNoticeTitle": "Shop in test mode.",
-    "testNotice": "Payments go to the bank’s test environment: nothing is charged and orders are not prepared or shipped. Real sales open very soon.",
     "title": "Checkout",
     "back": "Back to basket",
     "contact": "Your details",
