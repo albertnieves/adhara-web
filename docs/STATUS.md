@@ -1,4 +1,17 @@
-# Estado real — 21/11/2026
+# Estado real — 22/11/2026
+
+## Cada página carga solo su JavaScript (22/11)
+
+Rama `claude/dreamy-heisenberg-0yu90r`. A petición del usuario: que la web cargue más rápido. Es lo que quedaba del punto 7 del roadmap (en el móvil, rendimiento 72–85 por el JavaScript que se hidrata). Decisión §200. Sin migraciones ni variables, y sin cambios de diseño.
+
+- **Causa:** todas las páginas cargaban ~275 KB comprimidos de JavaScript, la de privacidad como la portada. Los `index.ts` de los módulos metían en cada página todos los componentes que reexportan (el carrusel en la búsqueda, `zod` en todas); Next apuntaba lo que el layout comparte con la portada a todos los archivos de la portada; y `motion` iba en todas por la cabecera y por las tarjetas, que creaban ~20 valores animados cada una para una inclinación que en el móvil no existe.
+- **Cambios:** `optimizePackageImports` con los `index.ts` que solo reexportan (`src/lib/barrels.ts`) y `sideEffects` en `package.json`; el menú del móvil con CSS; la inclinación de las tarjetas con un muelle propio que solo existe mientras el ratón está encima (`card-tilt.ts`, mismos valores); «Acceso del personal» con un enlace normal.
+- **Resultado** (Supabase local con los datos de la CI, tres pasadas por página, medianas, móvil): portada 84 → 89 (TBT 354 → 237 ms), colección 79 → 83 (305 → 209), ficha 83 → 89 (393 → 208), búsqueda 89 → 92 (307 → 249), recorrido 89 → 94 (303 → 180). JavaScript al abrir: búsqueda y recorrido 180 KB, casas 172, cesta 167, textos legales 162; portada, colección y ficha 222–231 KB. El LCP no cambia. Escritorio: 97–100, como antes.
+- **Igual que antes:** la tarjeta con el cursor da la misma matriz de giro, sombra, desplazamiento y brillo (medido en el navegador); el menú se despliega y se recoge igual (capturas a 390 px); con «reducir movimiento», el menú ya no hace fundido.
+- **Comprobado en local** (Node 22.23.5, el entorno no tenía la 24; Supabase local con Docker y la configuración de `e2e.yml`): `pnpm check` correcto (lint, tipos, 859 unitarias en 83 archivos, 6 nuevas en `card-tilt.test.ts` y 2 en `barrels.test.ts`, y build); `format:check` y `scan:secrets` correctos; tienda pública 330 correctas y 68 omitidas, sin fallos; panel con sesión 67/67; Lighthouse dentro de presupuesto en las 11 medidas. El carrusel de la portada, que la base de la CI no tiene, 12/12 con tres perfumes con escena ficticios solo en la base local (no subidos), `?3d` incluido. pgTAP no se ha pasado: no hay SQL nuevo.
+- **Medido de paso, sin cambiar:** el CLS de 0,014–0,032 que Lighthouse da a veces en la portada y la búsqueda sale igual con el código anterior (cambio de fuente web). En el orden de `e2e.yml`, «Portada con 3D» mide la portada sin carrusel (se prerenderiza antes de `lighthouse.sql`).
+- **Aviso de Next.js al construir:** la 16.4.4 se para una vez con un aviso de seguridad y sigue al repetir. Ya está apuntado: subir a la 16.4.5 en una PR aparte ([PLAN_APERTURA](PLAN_APERTURA.md), punto 16).
+- **Siguiente:** en la colección el límite es ya el LCP (3,6–3,8 s en el móvil). Quitar `motion` de la colección, la ficha y la portada, o mandar solo los mensajes de cada página, son las siguientes palancas (§200).
 
 ## Correos en la península y venta en pruebas publicada (21/11)
 

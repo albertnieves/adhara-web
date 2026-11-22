@@ -1,8 +1,8 @@
 'use client';
 
-import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { useLocale, useTranslations } from 'next-intl';
 import { useParams } from 'next/navigation';
+import type { CSSProperties } from 'react';
 import { useEffect, useState } from 'react';
 import { Eyebrow, Icon, SearchField } from '@/components/ui';
 import { AccountLink } from '@/modules/account/ui';
@@ -10,7 +10,8 @@ import { Logo } from '@/modules/brand';
 import { CartLink } from '@/modules/checkout/ui';
 import { Link, routing, usePathname, useRouter } from '@/modules/i18n';
 
-const EASE = [0.22, 1, 0.36, 1] as const;
+/** Lo que dura `menu-close` (globals.css), por si el navegador no avisa del final. */
+const CLOSE_MS = 700;
 
 type Pathname = ReturnType<typeof usePathname>;
 
@@ -61,10 +62,22 @@ export function Header({
   const tSearch = useTranslations('search');
   const pathname = usePathname();
   const router = useRouter();
-  const reduced = useReducedMotion();
   const overlayPage = pathname === '/';
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  // Al cerrar, el menú sigue montado mientras se recoge (`menu-close`).
+  const [closing, setClosing] = useState(false);
+  const [wasOpen, setWasOpen] = useState(open);
+  if (wasOpen !== open) {
+    setWasOpen(open);
+    setClosing(!open);
+  }
+
+  useEffect(() => {
+    if (!closing) return;
+    const timer = window.setTimeout(() => setClosing(false), CLOSE_MS + 100);
+    return () => window.clearTimeout(timer);
+  }, [closing]);
 
   useEffect(() => {
     const update = () => setScrolled(window.scrollY > 32);
@@ -170,85 +183,79 @@ export function Header({
        * bloque contenedor de los hijos fijos, y el menú quedaba encerrado en
        * sus 72 px, recortado y sin recibir los toques.
        */}
-      <AnimatePresence>
-        {open && (
-          <motion.div
-            id="mobile-menu"
-            key="menu"
-            data-tone="dark"
-            className="bg-surface text-fg fixed inset-0 top-18 z-30 flex flex-col justify-between gap-10 overflow-y-auto px-6 pt-12 pb-10 lg:hidden"
-            initial={
-              reduced ? { opacity: 0 } : { clipPath: 'inset(0 0 100% 0)' }
+      {(open || closing) && (
+        <div
+          id="mobile-menu"
+          data-tone="dark"
+          data-state={open ? 'open' : 'closing'}
+          // Mientras se recoge ya no es el menú: ni se lee ni recibe toques.
+          inert={!open}
+          onAnimationEnd={(event) => {
+            if (event.target === event.currentTarget && !open) {
+              setClosing(false);
             }
-            animate={reduced ? { opacity: 1 } : { clipPath: 'inset(0 0 0% 0)' }}
-            exit={reduced ? { opacity: 0 } : { clipPath: 'inset(0 0 100% 0)' }}
-            transition={{ duration: 0.7, ease: EASE }}
-          >
-            <div>
-              <form
-                role="search"
-                className="mb-10"
-                onSubmit={(event) => {
-                  event.preventDefault();
-                  const q = new FormData(event.currentTarget).get('q');
-                  setOpen(false);
-                  router.push({
-                    pathname: '/buscar',
-                    ...(typeof q === 'string' && q.trim()
-                      ? { query: { q: q.trim() } }
-                      : {}),
-                  });
-                }}
-              >
-                <SearchField
-                  name="q"
-                  label={tSearch('label')}
-                  placeholder={tSearch('placeholder')}
-                  enterKeyHint="search"
-                  autoComplete="off"
-                />
-              </form>
-              <ul className="font-display space-y-4 text-5xl font-light">
-                {[
-                  { href: '/' as const, label: t('home') },
-                  { href: '/catalogo' as const, label: t('collection') },
-                  {
-                    href: '/catalogo-olfativo' as const,
-                    label: t('scentCatalog'),
-                  },
-                  { href: '/casas' as const, label: t('houses') },
-                  ...(account
-                    ? [{ href: '/cuenta' as const, label: t('accountLabel') }]
-                    : []),
-                ].map((item, index) => (
-                  <motion.li
-                    key={item.href}
-                    initial={{ opacity: 0, y: 24 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{
-                      delay: 0.25 + index * 0.08,
-                      duration: 0.8,
-                      ease: EASE,
-                    }}
-                  >
-                    <Link href={item.href} onClick={() => setOpen(false)}>
-                      {item.label}
-                    </Link>
-                  </motion.li>
-                ))}
-              </ul>
-            </div>
-            <div>
-              <Eyebrow className="mb-4">{t('language')}</Eyebrow>
-              <LanguageLinks
-                pathname={pathname}
-                onNavigate={() => setOpen(false)}
-                className="tracking-caps flex gap-6 text-sm"
+          }}
+          className="menu-sheet bg-surface text-fg fixed inset-0 top-18 z-30 flex flex-col justify-between gap-10 overflow-y-auto px-6 pt-12 pb-10 lg:hidden"
+        >
+          <div>
+            <form
+              role="search"
+              className="mb-10"
+              onSubmit={(event) => {
+                event.preventDefault();
+                const q = new FormData(event.currentTarget).get('q');
+                setOpen(false);
+                router.push({
+                  pathname: '/buscar',
+                  ...(typeof q === 'string' && q.trim()
+                    ? { query: { q: q.trim() } }
+                    : {}),
+                });
+              }}
+            >
+              <SearchField
+                name="q"
+                label={tSearch('label')}
+                placeholder={tSearch('placeholder')}
+                enterKeyHint="search"
+                autoComplete="off"
               />
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            </form>
+            <ul className="font-display space-y-4 text-5xl font-light">
+              {[
+                { href: '/' as const, label: t('home') },
+                { href: '/catalogo' as const, label: t('collection') },
+                {
+                  href: '/catalogo-olfativo' as const,
+                  label: t('scentCatalog'),
+                },
+                { href: '/casas' as const, label: t('houses') },
+                ...(account
+                  ? [{ href: '/cuenta' as const, label: t('accountLabel') }]
+                  : []),
+              ].map((item, index) => (
+                <li
+                  key={item.href}
+                  className="menu-item"
+                  style={{ '--menu-index': index } as CSSProperties}
+                >
+                  <Link href={item.href} onClick={() => setOpen(false)}>
+                    {item.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div>
+            <Eyebrow className="mb-4">{t('language')}</Eyebrow>
+            <LanguageLinks
+              pathname={pathname}
+              onNavigate={() => setOpen(false)}
+              className="tracking-caps flex gap-6 text-sm"
+            />
+          </div>
+        </div>
+      )}
     </>
   );
 }

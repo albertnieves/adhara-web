@@ -418,6 +418,45 @@
       transform: scale(0.6);
     }
   }
+
+  /*
+   * Menú del móvil (Header): se despliega de arriba abajo y sus enlaces suben
+   * escalonados; al cerrarse se recoge igual. CSS en lugar de `motion`, que
+   * así no viaja en todas las páginas (DECISIONS §200). Mismos tiempos y curva.
+   * Con «reducir movimiento», la regla de abajo lo deja abrir y cerrar sin más.
+   */
+  .menu-sheet {
+    animation: menu-open 0.7s var(--ease-luxe) both;
+  }
+  .menu-sheet[data-state='closing'] {
+    animation-name: menu-close;
+  }
+  .menu-item {
+    animation: menu-item 0.8s var(--ease-luxe) both;
+    animation-delay: calc(0.25s + var(--menu-index, 0) * 0.08s);
+  }
+  @keyframes menu-open {
+    from {
+      clip-path: inset(0 0 100% 0);
+    }
+    to {
+      clip-path: inset(0 0 0% 0);
+    }
+  }
+  @keyframes menu-close {
+    from {
+      clip-path: inset(0 0 0% 0);
+    }
+    to {
+      clip-path: inset(0 0 100% 0);
+    }
+  }
+  @keyframes menu-item {
+    from {
+      opacity: 0;
+      transform: translateY(24px);
+    }
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

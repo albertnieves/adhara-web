@@ -79,7 +79,7 @@ Lo que falta para vender es sobre todo configuración y trámites del titular, d
 
 **Pendiente:** más perfiles olfativos con fuente (hoy 47 de 50 publicados) para que el recorrido cubra todo lo que se publique; una versión con IA, solo si se decide.
 
-## 7. 3D selectivo y rendimiento — en parte (§188–191)
+## 7. 3D selectivo y rendimiento — en parte (§188–191, §198–200)
 
 **Propuestas de diseño, movimiento y 3D pendientes de autorizar:** [ROADMAP_DISENO.md](ROADMAP_DISENO.md) (10/11).
 
@@ -93,7 +93,9 @@ Ampliar a más productos destacados (los que quedan necesitan moldes nuevos: Ody
 
 **3D bajo demanda y Lighthouse en la CI — hecho (03/11, integrado el 10/11, §198):** la ficha abre con la foto y three.js solo llega al pulsar «Abrir la caja en 3D» (antes, 574 KB de JavaScript y 1,9 MB en la ficha con escena; ahora, 293 KB y 620 KB, como el resto); con movimiento reducido abre en el final y sin WebGL quedan las fotos. La escena solo se repinta mientras se mueve. La entrada de la portada y `Reveal` pasan a CSS: en el móvil, el LCP de la portada baja de 8,1 a 2,1–2,5 s. Lighthouse en `e2e.yml` con presupuestos de peso, CLS, accesibilidad, LCP y TBT para portada, colección, ficha con 3D, búsqueda y recorrido, en móvil y escritorio.
 
-**Falta:** más perfumes en 3D (cada escena nueva entra sola en el carrusel de la portada) con las medidas reales del kit de tienda (titular) y, con el primer modelo, el pipeline GLB y su presupuesto; fotos propias o con derechos. En el móvil, el rendimiento queda en 72–85 por el JavaScript que se hidrata (TBT 0,4–0,8 s): revisar qué carga cada página para llegar a 90.
+**Cada página carga solo su JavaScript — hecho (22/11, §200):** los `index.ts` se recortan por página, `motion` sale de la cabecera y de las tarjetas, y ya no viajan a todas las páginas los archivos de la portada. Móvil: búsqueda y recorrido de 275 a ~180 KB de JavaScript al abrir y 92–94 de rendimiento; portada 89, ficha 89 y colección 83 (antes 84, 83 y 79), con el TBT entre un 19 y un 47 % más bajo.
+
+**Falta:** más perfumes en 3D (cada escena nueva entra sola en el carrusel de la portada) con las medidas reales del kit de tienda (titular) y, con el primer modelo, el pipeline GLB y su presupuesto; fotos propias o con derechos. En el móvil, la colección (83) y la portada y la ficha (89) siguen por debajo de 90: la colección por el LCP y las tres por `motion`, que solo se quitaría rehaciendo sus animaciones (§200).
 
 **Cierre:** comparación móvil y escritorio con carga bajo demanda, movimiento reducido y presupuestos comprobados (hecho para los cuatro pilotos); más perfumes cuando haya medidas.
 

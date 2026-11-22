@@ -45,10 +45,12 @@ Cómo trabajamos Claude (Fable, Opus, Sonnet) y Codex en este repositorio. Compl
 
 ## 6. Errores que ya hemos cometido
 
-| Fecha | Qué pasó                                                                                                  | Qué hacemos ahora                                                                     |
-| ----- | --------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
-| 13/11 | Una cifra de control escrita de memoria en una carga de costes.                                           | Las cifras de control las calcula el script que genera los datos (§2).                |
-| 13/11 | El borrado de la tabla de trabajo pidió confirmación al titular y caducó; los costes quedaron sin cargar. | Separar lo que pide confirmación de lo que no, y dejar lo destructivo para el final.  |
-| 13/11 | El recuento dejó a cero los tres destacados de la portada.                                                | Tras un cambio de datos, mirar qué enseña la portada, no solo si la cifra cuadra.     |
-| 11/11 | Un publicado sin foto en la base (Miss Sakura) enseñaba la imagen de reserva; el banco lo vio.            | Antes de enseñar la web a un tercero, contar publicados sin imagen y sin existencias. |
-| 25/10 | Una Preview conectada a la base real para probar el TPV.                                                  | El build lo impide (#48); las excepciones, con interruptor explícito (§193).          |
+| Fecha | Qué pasó                                                                                                                   | Qué hacemos ahora                                                                     |
+| ----- | -------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| 22/11 | Una sola pasada de Lighthouse dio CLS 0 antes y 0,014 después; parecía una regresión y salía igual con el código anterior. | Rendimiento: comparar antes y después con varias pasadas, misma base y misma máquina. |
+| 22/11 | Las E2E del carrusel se omitían tras cambiar la base local: `.next/cache/fetch-cache` servía los datos del build anterior. | Al cambiar los datos de la base local, borrar `.next` antes de construir.             |
+| 13/11 | Una cifra de control escrita de memoria en una carga de costes.                                                            | Las cifras de control las calcula el script que genera los datos (§2).                |
+| 13/11 | El borrado de la tabla de trabajo pidió confirmación al titular y caducó; los costes quedaron sin cargar.                  | Separar lo que pide confirmación de lo que no, y dejar lo destructivo para el final.  |
+| 13/11 | El recuento dejó a cero los tres destacados de la portada.                                                                 | Tras un cambio de datos, mirar qué enseña la portada, no solo si la cifra cuadra.     |
+| 11/11 | Un publicado sin foto en la base (Miss Sakura) enseñaba la imagen de reserva; el banco lo vio.                             | Antes de enseñar la web a un tercero, contar publicados sin imagen y sin existencias. |
+| 25/10 | Una Preview conectada a la base real para probar el TPV.                                                                   | El build lo impide (#48); las excepciones, con interruptor explícito (§193).          |

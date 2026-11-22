@@ -1,4 +1,3 @@
-import NextLink from 'next/link';
 import { readStoreContent } from '@/modules/content/server';
 import { storeContent, STORE_DEFAULTS } from '@/modules/content';
 import { getLocale, getTranslations } from 'next-intl/server';
@@ -130,12 +129,19 @@ export async function Footer() {
               </p>
             )}
           </address>
-          <NextLink
+          {/*
+           * Enlace normal: el panel tiene otro layout raíz y se abre con una
+           * carga completa igualmente. Con next/link, el layout compartía el
+           * módulo con la portada y todas las páginas cargaban la lista de
+           * archivos de la portada, motion incluido (DECISIONS §200).
+           */}
+          {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
+          <a
             href="/admin/acceso"
             className="link-underline text-fg-muted mt-6 inline-block text-xs"
           >
             {t('staffAccess')}
-          </NextLink>
+          </a>
         </div>
       </div>
       <div className="border-border text-2xs tracking-caps mx-auto flex max-w-[90rem] flex-col gap-4 border-t px-5 py-6 uppercase sm:px-10 lg:flex-row lg:items-center lg:justify-between">

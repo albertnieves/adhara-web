@@ -1,5 +1,6 @@
 import type { NextConfig } from 'next';
 import createNextIntlPlugin from 'next-intl/plugin';
+import { OPTIMIZED_BARRELS } from './src/lib/barrels';
 import { contentSecurityPolicy } from './src/lib/csp';
 import { indexingHeaders } from './src/modules/i18n/indexing';
 const withNextIntl = createNextIntlPlugin('./src/modules/i18n/request.ts');
@@ -10,6 +11,8 @@ const config: NextConfig = {
     // Subida de imágenes desde el panel. Vercel limita el cuerpo de la
     // petición a 4,5 MB, así que el límite se queda por debajo.
     serverActions: { bodySizeLimit: '4mb' },
+    // Cada página carga solo lo que importa de los index.ts (DECISIONS §200).
+    optimizePackageImports: OPTIMIZED_BARRELS,
   },
   images: {
     // Imágenes subidas desde el panel al bucket público product-media.
