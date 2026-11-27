@@ -43,23 +43,26 @@ El banco no concede el TPV definitivo sin ver la venta abierta. Desde el 13/11 (
 
 **C. Para enviar de verdad con Correos**
 
-7. **Confirmación por escrito de Correos** (o de Sendcloud, si se usa su contrato) de que admite perfumes con alcohol (UN1266, clase 3, cantidades limitadas) en Paq Estándar por carretera. Su página «Cómo preparar tu envío» pone los perfumes inflamables entre lo prohibido sin distinguir nacional e internacional. Sin esa confirmación no se envía nada.
+7. ~~**Confirmación por escrito de Correos** de que admite perfumes con alcohol.~~ Recibida el 27/11 (DECISIONS §200): «es posible realizar envíos de perfumes que contengan alcohol a Baleares, siempre que se presenten debidamente declarados y cuenten con un embalaje adecuado». Vale para el **contrato propio**: los servicios de Correos que hay hoy son del contrato de Sendcloud y su API los marca sin mercancías peligrosas, así que con ellos no se envía.
 8. **Peso máximo:** subir «Peso máximo con envío» (Envíos → Remitente y zonas) de 1 kg a unos 5 kg y pulsar «Actualizar tarifas desde Sendcloud». Hoy dos frascos de 100 ml con el embalaje ya pasan de 1 kg y se quedan sin envío.
-9. **Baleares:** encenderla en el servicio y en la zona solo cuando Correos confirme que lleva perfumes allí (por barco).
-10. **Contrato propio con Correos:** si se firma la propuesta, conectarlo en Sendcloud (o un servicio manual con sus tramos) y comprobar la primera factura: si el coste ya incluye IVA, poner 0 % en «IVA del envío».
+9. **Preguntar a la comercial** (titular): qué es «debidamente declarados» en la práctica (marca de cantidades limitadas en la caja, campo del preregistro…) y cómo se declara si la etiqueta sale de Sendcloud; que la península por carretera también vale; qué pasa un mes con menos de 20 envíos; la tarifa y el plazo de Baleares. Y pedir el documento de tarifas si no está.
+10. **Contrato propio con Correos:** firmarlo y conectarlo en Sendcloud (número de contrato, código de cliente y usuario del preregistro). «Actualizar tarifas desde Sendcloud», comprobar que sus servicios llegan con su `contract_id` y con los tramos de la propuesta, encender su Paq Estándar en la península y apagar el del contrato de Sendcloud. Si Sendcloud no trajera los precios del contrato, un servicio manual con los tramos de la propuesta. «IVA del envío» se queda en el 21 % (sus precios son sin IVA); la tasa de combustible la cubre el recargo del servicio, a revisar con la primera factura.
+11. **Baleares:** con el contrato propio y la tarifa y el plazo de Baleares, encenderla en el servicio y en la zona; si el plazo es mayor, cambiar el de los textos legales.
+12. **Seguro** (titular): sin valor declarado Correos paga 6,67 € por kilo; con él, el 1,50 % del valor (mínimo 1,67 €). Decidir si se asegura todo, solo lo de más importe o nada.
+13. **Cada enero:** Correos actualiza sus tarifas el día 1; volver a sincronizar o revisar los tramos.
 
 **D. Legal y negocio (antes de anunciar la venta)**
 
-11. **Revisión de la asesoría:** condiciones, envíos, privacidad y el adjunto del correo de confirmación ([LEGAL.md](LEGAL.md)), más si la web debe emitir factura o ticket por pedido.
-12. **Arbitraje de consumo:** decidir si se adhiere a la Junta Arbitral de Consum de Catalunya (falta en las condiciones).
-13. **Costes de compra del 13/11:** cargar los 99 costes netos de los presupuestos desde la hoja (la base no los tiene) y después borrar `internal._inv_20261113`. No impide vender, pero sin ellos no hay márgenes.
+14. **Revisión de la asesoría:** condiciones, envíos, privacidad y el adjunto del correo de confirmación ([LEGAL.md](LEGAL.md)), más si la web debe emitir factura o ticket por pedido.
+15. **Arbitraje de consumo:** decidir si se adhiere a la Junta Arbitral de Consum de Catalunya (falta en las condiciones).
+16. **Costes de compra del 13/11:** cargar los 99 costes netos de los presupuestos desde la hoja (la base no los tiene) y después borrar `internal._inv_20261113`. No impide vender, pero sin ellos no hay márgenes.
 
 **E. Limpieza y seguridad (cuando se pueda)**
 
-14. Firewall de Vercel: las dos reglas de §168 (paso 8 de abajo), si aún no están.
-15. **Secretos de más en Production:** la integración de Supabase con Vercel añadió el 26/10 variables que el código no usa (`POSTGRES_*`, `SUPABASE_SERVICE_ROLE_KEY`, `SUPABASE_JWT_SECRET`, `SUPABASE_ANON_KEY`…; siguen el 21/11). Desconectar la integración o borrarlas.
-16. **Next.js 16.4.5:** la 16.4.4 tiene dos avisos moderados (GHSA-mfr8-8qww-v76h y otro de la caché) que solo afectan a `'use cache'` y `unstable_cache`, que la web no usa. Subirla en una PR aparte con la CI completa.
-17. Borrar en Vercel las variables de Preview de las pruebas antiguas (ramas `claude/exciting-brown-j08p6y` y `claude/vigilant-mendel-p4mv93`; siguen el 21/11) y revocar en Supabase la clave secreta creada para la prueba de octubre.
+17. Firewall de Vercel: las dos reglas de §168 (paso 8 de abajo), si aún no están.
+18. **Secretos de más en Production:** la integración de Supabase con Vercel añadió el 26/10 variables que el código no usa (`POSTGRES_*`, `SUPABASE_SERVICE_ROLE_KEY`, `SUPABASE_JWT_SECRET`, `SUPABASE_ANON_KEY`…; siguen el 21/11). Desconectar la integración o borrarlas.
+19. **Next.js 16.4.5:** la 16.4.4 tiene dos avisos moderados (GHSA-mfr8-8qww-v76h y otro de la caché) que solo afectan a `'use cache'` y `unstable_cache`, que la web no usa. Subirla en una PR aparte con la CI completa.
+20. Borrar en Vercel las variables de Preview de las pruebas antiguas (ramas `claude/exciting-brown-j08p6y` y `claude/vigilant-mendel-p4mv93`; siguen el 21/11) y revocar en Supabase la clave secreta creada para la prueba de octubre.
 
 ## Comprobado el 23/10 (solo lectura)
 

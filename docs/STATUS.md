@@ -1,4 +1,14 @@
-# Estado real — 21/11/2026
+# Estado real — 27/11/2026
+
+## Respuesta de Correos sobre perfumes y el contrato (27/11)
+
+Rama `claude/nice-sagan-qtusri`. A petición del titular, con el último correo de la comercial de Correos («ya nos permite cerrar la incertidumbre de los envíos»). Decisión §200; solo documentación, sin cambios de código ni de datos.
+
+- **Perfumes:** Correos confirma por escrito que lleva perfumes con alcohol, también a Baleares, declarados y bien embalados. Cierra la duda de la §196.
+- **Con el contrato propio:** los servicios de Correos de `atelier-dev` son del contrato de Sendcloud y la API los marca sin mercancías peligrosas (comprobado el 27/11, solo lectura). El envío real espera a firmar el contrato propio y conectarlo en Sendcloud; Baleares sigue apagada hasta entonces.
+- **Contrato:** mínimo de 20 envíos al mes, factura mensual domiciliada, tarifas que cambian cada 1 de enero y tasa de combustible mensual además del IVA. «IVA del envío» se queda en el 21 %.
+- **Recogida en la tienda incluida**, sin coste ni mínimo. Seguro del 1,50 % (mínimo 1,67 €); sin él, 6,67 € por kilo. Zonas desde Castelldefels: Barcelona, provincias limítrofes, resto de la península y más de 700 km.
+- **Siguiente (titular):** el documento de tarifas, firmar, y preguntar qué es «debidamente declarados» (y cómo desde Sendcloud), si la península por carretera también vale, qué pasa con menos de 20 envíos al mes y la tarifa y el plazo de Baleares. Lista en [PLAN_APERTURA.md](PLAN_APERTURA.md#correos-y-lo-que-falta-para-vender-con-normalidad-2111), bloque C.
 
 ## Correos en la península y venta en pruebas publicada (21/11)
 
