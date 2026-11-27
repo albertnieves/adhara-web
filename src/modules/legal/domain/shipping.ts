@@ -1,7 +1,7 @@
 import { formatEuros } from '@/lib/money';
 
 /*
- * Gastos de envío de los textos legales, a partir de las zonas activas de
+ * Zonas y gastos de envío de los textos legales, a partir de las zonas activas de
  * Panel → Envíos (DECISIONS §136, §168, §172). Desde §172 el
  * precio depende del peso y del transportista que elige el cliente: el texto
  * lo dice y remite al importe que se ve antes de pagar. Sin ninguna zona
@@ -22,6 +22,15 @@ const ZONES: Record<Locale, Record<LegalShippingZone['zone'], string>> = {
   ca: { peninsula: 'a la península', baleares: 'a les Illes Balears' },
   en: { peninsula: 'to mainland Spain', baleares: 'to the Balearic Islands' },
 };
+/** Nombre de cada zona tras «Enviamos a…» (DECISIONS §136, §200). */
+const DESTINATIONS: Record<
+  Locale,
+  Record<LegalShippingZone['zone'], string>
+> = {
+  es: { peninsula: 'la España peninsular', baleares: 'las Illes Balears' },
+  ca: { peninsula: 'l’Espanya peninsular', baleares: 'les Illes Balears' },
+  en: { peninsula: 'mainland Spain', baleares: 'the Balearic Islands' },
+};
 const AND: Record<Locale, string> = { es: ' y ', ca: ' i ', en: ' and ' };
 const ORDER: readonly LegalShippingZone['zone'][] = ['peninsula', 'baleares'];
 
@@ -41,11 +50,24 @@ const FREE_NOTE: Record<Locale, string> = {
 
 function zonesIn(
   zones: readonly LegalShippingZone[],
-  locale: Locale,
+  names: Record<LegalShippingZone['zone'], string>,
 ): string[] {
   return ORDER.filter((zone) => zones.some((z) => z.zone === zone)).map(
-    (zone) => ZONES[locale][zone],
+    (zone) => names[zone],
   );
+}
+
+/**
+ * «la España peninsular y las Illes Balears» con las zonas que tienen
+ * «Ofrecer el envío», o null sin ninguna: el texto no promete una zona que el
+ * checkout no ofrece (§200).
+ */
+export function shippingZonesText(
+  zones: readonly LegalShippingZone[],
+  locale: Locale,
+): string | null {
+  const names = zonesIn(zones, DESTINATIONS[locale]);
+  return names.length > 0 ? names.join(AND[locale]) : null;
 }
 
 /**
@@ -56,7 +78,7 @@ export function shippingCostText(
   zones: readonly LegalShippingZone[],
   locale: Locale,
 ): string | null {
-  const names = zonesIn(zones, locale);
+  const names = zonesIn(zones, ZONES[locale]);
   return names.length > 0 ? COST[locale](names.join(AND[locale])) : null;
 }
 

@@ -8,6 +8,7 @@ import {
 import {
   freeShippingText,
   shippingCostText,
+  shippingZonesText,
 } from '../../src/modules/legal/domain/shipping';
 
 /*
@@ -79,6 +80,41 @@ describe('gastos de envío en los textos legales', () => {
       'Plazo habitual: {deliveryTime} desde la confirmación del pedido.',
     );
     expect(lines).toContain('Transportista: {carrier}.');
+  });
+});
+
+describe('zonas de envío en los textos legales (DECISIONS §200)', () => {
+  it('las dos zonas activas, en orden y en los tres idiomas', () => {
+    expect(shippingZonesText(zones, 'es')).toBe(
+      'la España peninsular y las Illes Balears',
+    );
+    expect(shippingZonesText(zones, 'ca')).toBe(
+      'l’Espanya peninsular i les Illes Balears',
+    );
+    expect(shippingZonesText(zones, 'en')).toBe(
+      'mainland Spain and the Balearic Islands',
+    );
+  });
+
+  it('con Baleares apagada no la promete', () => {
+    const peninsula = [{ zone: 'peninsula', freeFromCents: 6000 }] as const;
+    expect(shippingZonesText(peninsula, 'es')).toBe('la España peninsular');
+    expect(shippingZonesText(peninsula, 'ca')).toBe('l’Espanya peninsular');
+    expect(shippingZonesText(peninsula, 'en')).toBe('mainland Spain');
+  });
+
+  it('sin zonas activas no hay línea, y nada la fija a mano', () => {
+    expect(shippingZonesText([], 'es')).toBeNull();
+    expect(LEGAL_ENTITY.shippingZones).toBeNull();
+    const line = parseLegalText('Enviamos a {shippingZones}.', {
+      shippingZones: shippingZonesText(
+        [{ zone: 'peninsula', freeFromCents: null }],
+        'es',
+      ),
+    });
+    expect(
+      line.map((segment) => ('text' in segment ? segment.text : '')).join(''),
+    ).toBe('Enviamos a la España peninsular.');
   });
 });
 

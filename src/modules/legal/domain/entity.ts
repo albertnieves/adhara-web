@@ -30,12 +30,12 @@ export const LEGAL_ENTITY: Record<
   registry: null,
   /** Dominio definitivo de la web. */
   domain: 'www.latelierdudesert.com',
-  /** Zonas de envío: las decidió el usuario el 12/10/2026 (DECISIONS §136). */
-  shippingZones: {
-    es: 'la España peninsular y las Illes Balears',
-    ca: 'l’Espanya peninsular i les Illes Balears',
-    en: 'mainland Spain and the Balearic Islands',
-  },
+  /**
+   * Zonas de envío (península e Illes Balears, DECISIONS §136): con `null`
+   * salen de las zonas con «Ofrecer el envío» del panel, para no prometer una
+   * zona apagada (§200). Un texto aquí las sustituye.
+   */
+  shippingZones: null,
   /**
    * Tarifa de envío y desde cuánto es gratis: con `null` salen de las
    * tarifas activas de Panel → Configuración → Tarifas de envío (DECISIONS
