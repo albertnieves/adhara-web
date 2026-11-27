@@ -1,4 +1,15 @@
-# Estado real — 21/11/2026
+# Estado real — 27/11/2026
+
+## Revisión de lo que falta para abrir el lunes 30/11 (27/11)
+
+Rama `claude/stoic-euler-lvbkqt`. A petición del usuario: revisar a fondo qué queda antes de abrir la tienda y preparar un plan para cerrarlo antes del lunes. Solo documentación; sin cambios de código, datos ni variables. Plan día a día en [PLAN_APERTURA.md](PLAN_APERTURA.md#plan-de-cierre-para-abrir-el-lunes-3011-revisión-del-2711).
+
+- **Comprobado en solo lectura** (`atelier-dev`, Vercel y la web en producción): Production sana (PR #69, sin errores en 7 días), copias, informes y correos funcionando, MFA de las dos cuentas activas.
+- **Bloquea cobrar:** la clave real de BBVA (pase a producción). El pedido de prueba 1006 del 21/11 nunca recibió el aviso del banco: la prueba de punta a punta en Production sigue sin hacerse.
+- **Bloquea enviar:** 0 de 50 formatos con peso, caja guardada de 30 × 30 × 30 cm, peso máximo y tramos de 1 kg, y sin confirmación escrita de Correos para UN1266.
+- **Nuevo:** el texto legal dice que se envía a Baleares, que está apagada; `pnpm audit --prod` da 7 avisos moderados de Next.js 16.4.4 (2 el 21/11), corregidos en 16.4.5. Las dos cosas son de código (V5–V6 del plan).
+- **Siguen:** secretos de la integración de Supabase en Production y variables de Preview de las pruebas (una con la clave privilegiada); Firewall sin verificar (el conector no tiene acceso); web sin indexar; feed vacío (fotos provisionales); costes del 13/11 sin cargar.
+- **Siguiente:** titular, hoy: BBVA, pedido de prueba, Correos y asesoría. Código, con su visto bueno: Next.js 16.4.5 y las zonas del texto legal.
 
 ## Correos en la península y venta en pruebas publicada (21/11)
 
