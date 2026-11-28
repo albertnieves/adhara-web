@@ -46,9 +46,15 @@ test('el índice lleva a cada sección y no se publican datos pendientes', async
   // Los datos que faltan no se ven en la tienda; los decididos, sí.
   await expect(page.locator('mark[data-pending]')).toHaveCount(0);
   await expect(page.getByText('Pendiente', { exact: false })).toHaveCount(0);
-  await expect(
-    page.getByText('Enviamos a la España peninsular y las Illes Balears.'),
-  ).toBeVisible();
+  // Las zonas salen de «Ofrecer el envío», como los gastos (§200): las dos
+  // líneas prometen los mismos destinos, o ninguna sale (la base de la CI no
+  // tiene zonas activas).
+  const zones = await page.getByText(/^Enviamos a /).allTextContents();
+  const cost = await page.getByText(/^Gastos de envío:/).allTextContents();
+  expect(zones.length).toBe(cost.length);
+  expect(zones.join().includes('Illes Balears')).toBe(
+    cost.join().includes('Illes Balears'),
+  );
   await expect(
     page.getByText(/^A la atención de L’Atelier du Désert, .+Castelldefels:$/),
   ).toBeVisible();

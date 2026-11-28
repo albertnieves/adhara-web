@@ -1,5 +1,86 @@
 # Abrir la venta online — semana del 26/10/2026
 
+## Plan de cierre para abrir el lunes 30/11 (revisión del 27/11)
+
+A petición del usuario (27/11): revisar a fondo qué falta antes de abrir la tienda y un plan para cerrarlo antes del lunes. Hoy es viernes: **es el único día laborable antes del lunes**, así que lo que depende del banco, de Correos o de la asesoría se pide hoy. Lo de abajo de esta sección (21/11 y anteriores) sigue valiendo como detalle de cada paso.
+
+### Comprobado hoy (solo lectura: `atelier-dev`, Vercel `atelier-web` y `latelierdudesert.com`)
+
+| Qué                | Estado el 27/11                                                                                                                                                                                                                                                                                                                                    |
+| ------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Production         | Despliegue de la PR #69 (21/11), `READY`; sin errores de ejecución en 7 días. Venta en pruebas encendida (`WEB_CHECKOUT=1`, `WEB_CHECKOUT_TEST=1`, `REDSYS_ENVIRONMENT=test`).                                                                                                                                                                     |
+| Tareas programadas | Funcionan: copia diaria hasta el 27/11, informe diario hasta el 26/11, correos de pedidos enviados (2).                                                                                                                                                                                                                                            |
+| Pedidos            | 1001 y 1005 cancelados y devueltos (pruebas de octubre). 1002, 1003, 1004 y **1006** (21/11, 02:03 UTC, recogida, 29,90 €) siguen «esperando pago» con la reserva liberada: **el 1006 nunca recibió aviso del banco**, así que la prueba del 21/11 con la tarjeta de pruebas no se completó.                                                       |
+| Pesos              | **0 de 50** formatos publicados con peso (tamaños 20, 100, 105, 150, 200 ml y uno sin tamaño). Sin pesos solo se ofrece la recogida.                                                                                                                                                                                                               |
+| Envíos             | Correos Paq Estándar activo solo en la península, gratis desde 60 €; Baleares apagada. Peso máximo 1 kg y tramos de Correos sincronizados solo hasta 1 kg. Caja guardada de **30 × 30 × 30 cm** (peso volumétrico de unos 4,5–5,4 kg: encarece la etiqueta real). 0 etiquetas creadas.                                                             |
+| Textos legales     | «Envíos y devoluciones» publica «Enviamos a la España peninsular y las Illes Balears», pero Baleares está apagada: **el texto promete una zona que el checkout no ofrece.** Falta el arbitraje de consumo y la revisión de la asesoría.                                                                                                            |
+| Accesos            | Las dos cuentas activas (administración del sistema y de la tienda) tienen MFA; la del 30/09 sin MFA está dada de baja. Hecho.                                                                                                                                                                                                                     |
+| Dependencias       | `pnpm audit --prod`: **7 avisos moderados de Next.js 16.4.4** (eran 2 el 21/11), todos corregidos en 16.4.5. Casi todos son de `'use cache'`/Cache Components, que la web no usa; el de SVG en la optimización de imágenes y el de cookies en rutas Edge tienen poca exposición aquí.                                                              |
+| Secretos en Vercel | Siguen en Production las variables de la integración de Supabase que el código no usa (`POSTGRES_*`, `SUPABASE_SERVICE_ROLE_KEY`, `SUPABASE_JWT_SECRET`, `SUPABASE_ANON_KEY`…). Siguen las de Preview de `claude/exciting-brown-j08p6y` y `claude/vigilant-mendel-p4mv93`, esta con un `SUPABASE_SECRET_KEY` (clave privilegiada de la base real). |
+| Firewall de Vercel | No se puede leer con el conector (sin permiso): comprobarlo a mano.                                                                                                                                                                                                                                                                                |
+| Buscadores         | `robots.txt` con `Disallow: /` y `noindex` (`SEO_INDEXING` sin poner). El feed de Google/Meta sale vacío: las 75 fotos publicadas son oficiales de marca «provisionales», que el feed no admite.                                                                                                                                                   |
+| Catálogo           | 50 publicados, 44 con unidades (332 en total), 6 agotados (van al final). 0 costes de compra cargados; la tabla de trabajo `internal._inv_20261113` sigue.                                                                                                                                                                                         |
+| Asesor de Supabase | Los mismos tipos de aviso de siempre (funciones `security definer` ejecutables y RLS sin política en tablas internas): nada nuevo.                                                                                                                                                                                                                 |
+
+### Qué es «abrir» el lunes
+
+- **Con la clave real de BBVA** (pase a producción concedido): venta real. Es el único camino para cobrar.
+- **Sin la clave real:** la web sigue en venta en pruebas, sin cobro. Se puede enseñar, pero **no anunciar** ni aceptar pedidos de clientes: no hay cobro y el pedido no se prepara.
+
+El camino crítico es el banco: ninguna tarea de código lo acorta.
+
+### Viernes 27 (hoy, día laborable)
+
+| #   | Tarea                                                                                                                                                                                                                                                                                                                      | Quién   |
+| --- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------- |
+| V1  | **BBVA:** contestar en su hilo que la web está completa y pedir el pase a producción (portal de pruebas → «Pasar a producción» o ticket «Paso a producción», 912 983 609, 24 h). Si ya se pidió, preguntar el plazo.                                                                                                       | Titular |
+| V2  | **Pedido de prueba completo en Production** con la tarjeta 4548 8100 0000 0003 (el 1006 se quedó sin pagar): que pase solo a «Pagado», llegue el correo y «Cancelar y devolver el dinero» dé 0900. Es lo que el banco quiere ver y comprueba el pago de punta a punta.                                                     | Titular |
+| V3  | **Correos:** pedir por escrito que admite perfumes con alcohol (UN1266, clase 3, cantidades limitadas) en Paq Estándar por carretera. Sin esa confirmación no sale ningún paquete.                                                                                                                                         | Titular |
+| V4  | **Asesoría:** enviar condiciones, envíos, privacidad y el adjunto del correo de confirmación; preguntar si cada pedido necesita factura o ticket y si conviene el arbitraje de consumo (Junta Arbitral de Consum de Catalunya).                                                                                            | Titular |
+| V5  | **Hecho en la rama el 27/11 (§200), falta la CI y fusionar.** **Next.js 16.4.5** en una PR aparte (con `next-intl` si lo pide), con la CI completa (`ci.yml`, `db.yml`, `e2e.yml` con Lighthouse) en verde antes de fusionar.                                                                                              | Código  |
+| V6  | **Hecho en la rama el 27/11 (§200), falta la CI y fusionar.** **Zonas del texto legal según las zonas activas:** que «Enviamos a…» diga solo la península mientras Baleares esté apagada (sale de `shipping_rates`, como ya hacen los gastos, §168), en es, ca y en, con su prueba unitaria. Misma PR que V5 o una propia. | Código  |
+
+### Sábado 28 y domingo 29
+
+| #   | Tarea                                                                                                                                                                                                                                                                                             | Quién                             |
+| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------- |
+| S1  | **Pesar los formatos** (Panel → Envíos → Pesos de los formatos): un frasco con su caja de cada tamaño, «Rellenar los vacíos por tamaño», revisar y guardar. Sin esto no hay envío a domicilio.                                                                                                    | Titular                           |
+| S2  | **Caja y peso máximo** (Envíos → Remitente y zonas): medir la caja real de envío y guardar sus medidas (no 30 × 30 × 30), comprobar el embalaje (200 g), subir «Peso máximo con envío» a 5 kg y pulsar «Actualizar tarifas desde Sendcloud» para traer los tramos de más de 1 kg.                 | Titular                           |
+| S3  | **Comprobar el checkout** en `latelierdudesert.com` con un perfume pesado: código postal de la península → «Correos · Paq Estándar» con su precio; uno de Baleares → solo recogida; dos frascos de 100 ml siguen teniendo envío.                                                                  | Titular o código                  |
+| S4  | **Firewall de Vercel:** las dos reglas de 60 peticiones por minuto (paso 8 de «Configuración de Production», abajo) y publicarlas.                                                                                                                                                                | Titular                           |
+| S5  | **Limpieza de secretos:** desconectar la integración de Supabase en Vercel (o borrar sus variables de Production); borrar las variables de Preview de las dos ramas de prueba; **revocar en Supabase la clave secreta creada para la prueba de octubre** (la de la Preview de `vigilant-mendel`). | Titular (o código con su permiso) |
+| S6  | **GitHub:** proteger `main` (PR obligatoria y `CI`, `Database` y `E2E` en verde).                                                                                                                                                                                                                 | Titular                           |
+| S7  | Fusionar V5–V6 con la CI en verde; comprobar en producción portada, ficha, cesta, pago de prueba y «Envíos y devoluciones».                                                                                                                                                                       | Código                            |
+
+### Lunes 30
+
+**Si ha llegado la clave real:**
+
+1. Vercel → `atelier-web` → Production: `REDSYS_SECRET_KEY` real («Sensitive»), `REDSYS_ENVIRONMENT=live` y **quitar `WEB_CHECKOUT_TEST`** (el build falla si se queda); redesplegar.
+2. Cancelar desde el panel los pedidos de prueba que queden (1002, 1003, 1004, 1006 y los de V2).
+3. Compra real de poco importe con una tarjeta propia (y, si se puede, con Bizum), correo recibido y devolución desde el panel.
+4. Si se decide (pregunta 3): `SEO_INDEXING=1` y redesplegar.
+5. Anunciar la venta.
+
+**Si no ha llegado:** la web se queda como está (venta en pruebas, sin anunciar); revisar Panel → Pedidos web cada día y cancelar lo que entre. Seguir con el banco.
+
+### Criterios para anunciar la venta (todos)
+
+- [ ] Clave real puesta, `live`, sin `WEB_CHECKOUT_TEST`, y una compra real pequeña con su devolución comprobadas.
+- [ ] Envío a domicilio: formatos pesados **y** confirmación escrita de Correos. Si falta cualquiera de las dos, abrir solo con recogida en la tienda (apagar «Ofrecer el envío» en la península; los textos legales se ajustan solos).
+- [ ] Textos legales sin promesas que el checkout no cumple (V6) y con el visto bueno de la asesoría, o con la decisión explícita del titular de abrir antes de tenerlo.
+- [ ] Next.js 16.4.5 desplegado; Firewall con sus reglas; secretos de más retirados.
+
+### Para después de abrir (no bloquea el lunes)
+
+Costes de compra del 13/11 y borrar `internal._inv_20261113` (sin ellos no hay márgenes); fotos propias o con derechos para el feed de Google Merchant y Meta; IDs de analítica y publicidad tras la asesoría; Baleares cuando Correos confirme el barco; contrato propio con Correos y la primera factura (IVA del envío); envío gratis temporal (`claude/epic-fermat-o5afnx`, toca `web_order_create`); formulario de contacto y cuentas de cliente (apagados); captcha solo si hay abusos.
+
+### Preguntas para el titular
+
+1. ¿Se pidió ya a BBVA el pase a producción? ¿Han dicho plazo?
+2. Si el lunes no hay confirmación escrita de Correos, ¿abrir solo con recogida en la tienda o esperar?
+3. ¿Se abre la web a los buscadores (`SEO_INDEXING=1`) el mismo lunes, o tras la revisión de la asesoría?
+
 **Operación, 25/10:** la rama `codex/entornos-operacion` parte de la #47. Su nuevo build rechaza conectar una Preview a la base real; completar la prueba antigua de Bizum y después el aislamiento de [OPERATIONS.md](OPERATIONS.md). No retiró variables ni claves remotas. La #47 sigue abierta. Esta lista conserva los pasos del banco y negocio; STATUS contiene el estado vigente.
 
 A petición del usuario (23/10): el banco ya ha dado el TPV virtual y la venta online se quiere abrir la semana que viene. Esta lista sustituye a «Pendientes para activar ventas» de [PLAN_PEDIDOS_WEB.md](PLAN_PEDIDOS_WEB.md) y recoge lo comprobado el 23/10. Decisiones en [DECISIONS.md](DECISIONS.md) §164–165.
