@@ -418,25 +418,28 @@ export function HeroCarousel({
             onPointerLeave={() => setHeld((h) => ({ ...h, hover: false }))}
           >
             {count > 1 && (
+              // Con seis perfumes la fila no cabe a 390 px: flechas y pausa no
+              // se encogen (32 px de ancho en el móvil, 44 desde sm) y ceden
+              // las rayas, hasta 24 px (WCAG 2.5.8).
               <div className="flex items-center justify-center gap-1">
                 <button
                   type="button"
                   onClick={() => step(-1)}
                   aria-label={t('home.carouselPrevious')}
-                  className="text-fg-muted hover:text-fg flex size-11 items-center justify-center transition-colors"
+                  className="text-fg-muted hover:text-fg flex h-11 w-8 shrink-0 items-center justify-center transition-colors sm:w-11"
                 >
                   <Icon name="chevron" direction="left" />
                 </button>
-                <ul className="flex items-center gap-2">
+                <ul className="flex min-w-0 items-center gap-1 sm:gap-2">
                   {slides.map((item, i) => (
-                    <li key={item.id}>
+                    <li key={item.id} className="w-10 min-w-6">
                       <button
                         type="button"
                         onClick={() => goTo(i)}
                         aria-label={t('home.carouselShow', { name: item.name })}
                         aria-current={i === index ? 'true' : undefined}
                         // Raya fina, botón de 44 px de alto para el dedo.
-                        className="group flex h-11 w-10 items-center"
+                        className="group flex h-11 w-full items-center"
                       >
                         <span
                           className={`relative block h-px w-full overflow-hidden transition-colors duration-500 ${i === index ? 'bg-fg/35' : 'bg-fg/15 group-hover:bg-fg/50'}`}
@@ -456,7 +459,7 @@ export function HeroCarousel({
                   type="button"
                   onClick={() => step(1)}
                   aria-label={t('home.carouselNext')}
-                  className="text-fg-muted hover:text-fg flex size-11 items-center justify-center transition-colors"
+                  className="text-fg-muted hover:text-fg flex h-11 w-8 shrink-0 items-center justify-center transition-colors sm:w-11"
                 >
                   <Icon name="chevron" />
                 </button>
@@ -466,7 +469,7 @@ export function HeroCarousel({
                   aria-label={
                     playing ? t('home.carouselPause') : t('home.carouselPlay')
                   }
-                  className="text-fg-muted hover:text-fg ml-2 flex size-11 items-center justify-center transition-colors"
+                  className="text-fg-muted hover:text-fg ml-1 flex h-11 w-8 shrink-0 items-center justify-center transition-colors sm:ml-2 sm:w-11"
                 >
                   <Icon name={playing ? 'pause' : 'play'} size="sm" />
                 </button>
